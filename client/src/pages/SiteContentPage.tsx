@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
 import SiteLayout from "@/components/SiteLayout";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
+import { DSButton } from "@/components/ds/Button";
+import { DSBadge } from "@/components/ds/Badge";
 
 interface SiteContentPageProps {
   title: string;
@@ -26,16 +27,33 @@ export default function SiteContentPage({
     <SiteLayout>
       {/* Breadcrumbs */}
       {breadcrumbs && (
-        <div className="bg-[#F5F5DC] border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center gap-2 text-sm">
+        <div
+          style={{
+            background: "var(--ds-color-bg-secondary)",
+            borderBottom: "1px solid rgba(230, 81, 0, 0.1)",
+          }}
+        >
+          <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "var(--ds-space-3) var(--ds-space-4)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)", fontSize: "var(--ds-text-sm)" }}>
               {breadcrumbs.map((crumb, idx) => (
-                <div key={crumb.href} className="flex items-center gap-2">
-                  <Link to={crumb.href} className="text-[#E65100] hover:text-[#D84500]">
+                <div key={crumb.href} style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)" }}>
+                  <Link
+                    to={crumb.href}
+                    style={{
+                      color: idx === breadcrumbs.length - 1 ? "var(--ds-color-text-muted)" : "var(--ds-color-accent)",
+                      textDecoration: "none",
+                      transition: "color 0.2s",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ds-color-accent-hover)")}
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color =
+                        idx === breadcrumbs.length - 1 ? "var(--ds-color-text-muted)" : "var(--ds-color-accent)")
+                    }
+                  >
                     {crumb.label}
                   </Link>
                   {idx < breadcrumbs.length - 1 && (
-                    <span className="text-gray-400">/</span>
+                    <ChevronRight size={14} style={{ color: "var(--ds-color-text-muted)" }} />
                   )}
                 </div>
               ))}
@@ -45,36 +63,77 @@ export default function SiteContentPage({
       )}
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#004D40] to-[#00251A] text-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-4 font-montserrat">{title}</h1>
-          {subtitle && <p className="text-xl text-gray-200">{subtitle}</p>}
+      <section
+        style={{
+          background: "linear-gradient(180deg, var(--ds-color-bg-secondary) 0%, var(--ds-color-bg-primary) 100%)",
+          padding: "var(--ds-space-12) 0 var(--ds-space-16)",
+        }}
+      >
+        <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "0 var(--ds-space-4)" }}>
+          <h1
+            style={{
+              fontSize: "clamp(2rem, 5vw, 3rem)",
+              fontWeight: "var(--ds-font-bold)",
+              color: "var(--ds-color-text-primary)",
+              marginBottom: "var(--ds-space-4)",
+              fontFamily: "var(--ds-font-display)",
+            }}
+          >
+            {title}
+          </h1>
+          {subtitle && (
+            <p
+              style={{
+                fontSize: "var(--ds-text-xl)",
+                color: "var(--ds-color-text-muted)",
+                lineHeight: "var(--ds-leading-relaxed)",
+              }}
+            >
+              {subtitle}
+            </p>
+          )}
         </div>
       </section>
 
       {/* Content */}
-      <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+      <section style={{ padding: "var(--ds-space-16) 0", background: "var(--ds-color-bg-primary)" }}>
+        <div style={{ maxWidth: "48rem", margin: "0 auto", padding: "0 var(--ds-space-4)" }}>
+          <div
+            className="ds-content-prose"
+            style={{
+              color: "var(--ds-color-text-secondary)",
+              lineHeight: "var(--ds-leading-relaxed)",
+              fontSize: "var(--ds-text-base)",
+            }}
+          >
             {content}
           </div>
 
           {/* CTA */}
           {cta && (
-            <div className="mt-12 p-8 bg-[#F5F5DC] rounded-lg border-2 border-[#E65100]">
-              <p className="text-lg text-gray-700 mb-4">
+            <div
+              style={{
+                marginTop: "var(--ds-space-12)",
+                padding: "var(--ds-space-8)",
+                background: "var(--ds-color-bg-secondary)",
+                borderRadius: "var(--ds-radius-xl)",
+                border: "1px solid rgba(230, 81, 0, 0.2)",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "var(--ds-text-lg)",
+                  color: "var(--ds-color-text-secondary)",
+                  marginBottom: "var(--ds-space-4)",
+                }}
+              >
                 Quer explorar mais? Baixe o app Oranje e tenha acesso a todas as experiências!
               </p>
-              <Button
-                asChild
-                size="lg"
-                className="bg-[#E65100] hover:bg-[#D84500] text-white flex items-center gap-2"
-              >
-                <Link to={cta.href}>
+              <Link to={cta.href} style={{ textDecoration: "none" }}>
+                <DSButton variant="primary" size="lg" iconRight={<ArrowRight size={18} />}>
                   {cta.label}
-                  <ArrowRight size={18} />
-                </Link>
-              </Button>
+                </DSButton>
+              </Link>
             </div>
           )}
         </div>

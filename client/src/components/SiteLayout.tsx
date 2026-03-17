@@ -9,9 +9,12 @@ interface SiteLayoutProps {
 
 export default function SiteLayout({ children, className = "" }: SiteLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div
+      className={`min-h-screen flex flex-col ${className}`}
+      style={{ background: "var(--ds-color-bg-primary, #00251A)" }}
+    >
       <SiteHeader />
-      <main className={`flex-1 pt-20 ${className}`}>
+      <main className="flex-1 pt-20">
         {children}
       </main>
       <SiteFooter />

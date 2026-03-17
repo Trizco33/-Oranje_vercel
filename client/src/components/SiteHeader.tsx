@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { DSButton } from "@/components/ds/Button";
 
 export default function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,27 +20,73 @@ export default function SiteHeader() {
   const isActive = (href: string) => location.pathname === href;
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <header
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        background: "rgba(0, 37, 26, 0.92)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        borderBottom: "1px solid rgba(230, 81, 0, 0.1)",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "72rem",
+          margin: "0 auto",
+          padding: "0.75rem 1rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
+        <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
           <picture>
             <source srcSet="/logo.webp" type="image/webp" />
-            <img src="/logo.png" alt="Oranje" className="h-12 w-auto" />
+            <img src="/logo.png" alt="Oranje" style={{ height: "40px", width: "auto" }} />
           </picture>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav
+          style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
+          className="hidden md:flex"
+        >
           {navItems.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                isActive(item.href)
-                  ? "text-[#E65100] bg-[#F5F5DC]"
-                  : "text-gray-700 hover:text-[#E65100] hover:bg-gray-50"
-              }`}
+              style={{
+                padding: "0.5rem 0.75rem",
+                borderRadius: "var(--ds-radius-md)",
+                fontSize: "var(--ds-text-sm)",
+                fontWeight: 500,
+                textDecoration: "none",
+                transition: "all 0.2s ease",
+                color: isActive(item.href)
+                  ? "var(--ds-color-accent)"
+                  : "var(--ds-color-text-muted)",
+                background: isActive(item.href)
+                  ? "rgba(230, 81, 0, 0.1)"
+                  : "transparent",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive(item.href)) {
+                  e.currentTarget.style.color = "var(--ds-color-accent)";
+                  e.currentTarget.style.background = "rgba(230, 81, 0, 0.06)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive(item.href)) {
+                  e.currentTarget.style.color = "var(--ds-color-text-muted)";
+                  e.currentTarget.style.background = "transparent";
+                }
+              }}
             >
               {item.label}
             </Link>
@@ -49,18 +95,26 @@ export default function SiteHeader() {
 
         {/* Desktop CTA Button */}
         <div className="hidden md:block">
-          <Button
-            asChild
-            className="bg-[#E65100] hover:bg-[#D84500] text-white font-montserrat font-bold"
-          >
-            <Link to="/app">Abrir o App</Link>
-          </Button>
+          <Link to="/app" style={{ textDecoration: "none" }}>
+            <DSButton variant="primary" size="sm">
+              Abrir o App
+            </DSButton>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+          className="md:hidden"
+          style={{
+            padding: "0.5rem",
+            borderRadius: "var(--ds-radius-md)",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "var(--ds-color-text-primary)",
+            transition: "background 0.2s",
+          }}
           aria-label="Toggle menu"
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -69,28 +123,42 @@ export default function SiteHeader() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white animate-in fade-in slide-in-from-top-2">
-          <nav className="flex flex-col p-4 gap-2">
+        <div
+          className="md:hidden"
+          style={{
+            borderTop: "1px solid rgba(230, 81, 0, 0.1)",
+            background: "rgba(0, 37, 26, 0.98)",
+            backdropFilter: "blur(16px)",
+            animation: "ds-fade-in 0.2s ease-out",
+          }}
+        >
+          <nav style={{ display: "flex", flexDirection: "column", padding: "1rem", gap: "0.25rem" }}>
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
                 onClick={() => setIsMenuOpen(false)}
-                className={`block px-4 py-3 rounded-lg transition font-medium ${
-                  isActive(item.href)
-                    ? "bg-[#E65100] text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
+                style={{
+                  display: "block",
+                  padding: "0.75rem 1rem",
+                  borderRadius: "var(--ds-radius-md)",
+                  textDecoration: "none",
+                  fontWeight: 500,
+                  transition: "all 0.2s ease",
+                  color: isActive(item.href) ? "#FFFFFF" : "var(--ds-color-text-muted)",
+                  background: isActive(item.href) ? "var(--ds-color-accent)" : "transparent",
+                }}
               >
                 {item.label}
               </Link>
             ))}
-            <Button
-              asChild
-              className="w-full bg-[#E65100] hover:bg-[#D84500] text-white mt-4 font-montserrat font-bold"
-            >
-              <Link to="/app">Abrir o App</Link>
-            </Button>
+            <div style={{ marginTop: "0.75rem" }}>
+              <Link to="/app" style={{ textDecoration: "none" }} onClick={() => setIsMenuOpen(false)}>
+                <DSButton variant="primary" size="md" fullWidth>
+                  Abrir o App
+                </DSButton>
+              </Link>
+            </div>
           </nav>
         </div>
       )}

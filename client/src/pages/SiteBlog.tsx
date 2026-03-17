@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import SiteLayout from "@/components/SiteLayout";
-import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { DSButton } from "@/components/ds/Button";
+import { DSCard } from "@/components/ds/Card";
+import { DSBadge } from "@/components/ds/Badge";
 
 export default function SiteBlog() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
-  
+
   const { data: articles = [], isError: articlesError } = trpc.articles.listPublished.useQuery(
     {
       category: selectedCategory,
@@ -18,89 +19,128 @@ export default function SiteBlog() {
       retry: false,
     }
   );
-  
+
   const { data: categories = [], isError: categoriesError } = trpc.articles.categories.useQuery(undefined, {
     retry: false,
   });
 
   return (
     <SiteLayout>
-      <section className="bg-gradient-to-b from-[#004D40] to-[#00251A] text-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-4 font-montserrat">Blog Oranje</h1>
-          <p className="text-xl text-gray-200">Dicas, histórias e guias sobre Holambra</p>
+      {/* Hero */}
+      <section
+        style={{
+          background: "linear-gradient(180deg, var(--ds-color-bg-secondary) 0%, var(--ds-color-bg-primary) 100%)",
+          padding: "var(--ds-space-12) 0 var(--ds-space-16)",
+        }}
+      >
+        <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "0 var(--ds-space-4)" }}>
+          <DSBadge variant="accent" size="md">Artigos</DSBadge>
+          <h1
+            style={{
+              fontSize: "clamp(2rem, 5vw, 3rem)",
+              fontWeight: "var(--ds-font-bold)",
+              color: "var(--ds-color-text-primary)",
+              marginTop: "var(--ds-space-4)",
+              marginBottom: "var(--ds-space-3)",
+              fontFamily: "var(--ds-font-display)",
+            }}
+          >
+            Blog Oranje
+          </h1>
+          <p style={{ fontSize: "var(--ds-text-xl)", color: "var(--ds-color-text-muted)" }}>
+            Dicas, histórias e guias sobre Holambra
+          </p>
         </div>
       </section>
 
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="mb-12">
-            <h3 className="text-lg font-bold text-[#004D40] mb-4">Categorias</h3>
-            <div className="flex flex-wrap gap-2">
-              <Button
+      {/* Content */}
+      <section style={{ padding: "var(--ds-space-16) 0", background: "var(--ds-color-bg-primary)" }}>
+        <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "0 var(--ds-space-4)" }}>
+          {/* Categories Filter */}
+          <div style={{ marginBottom: "var(--ds-space-12)" }}>
+            <h3 style={{ fontSize: "var(--ds-text-lg)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-4)" }}>
+              Categorias
+            </h3>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--ds-space-2)" }}>
+              <DSButton
+                variant={selectedCategory === undefined ? "primary" : "secondary"}
+                size="sm"
                 onClick={() => setSelectedCategory(undefined)}
-                variant={selectedCategory === undefined ? "default" : "outline"}
-                className={selectedCategory === undefined ? "bg-[#E65100] hover:bg-[#D84500]" : ""}
               >
                 Todas
-              </Button>
+              </DSButton>
               {categories && categories.length > 0 && categories.map((cat) => (
-                <Button
+                <DSButton
                   key={cat}
+                  variant={selectedCategory === cat ? "primary" : "secondary"}
+                  size="sm"
                   onClick={() => setSelectedCategory(cat)}
-                  variant={selectedCategory === cat ? "default" : "outline"}
-                  className={selectedCategory === cat ? "bg-[#E65100] hover:bg-[#D84500]" : ""}
                 >
                   {cat}
-                </Button>
+                </DSButton>
               ))}
             </div>
           </div>
 
           {articlesError || categoriesError ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Nenhum artigo disponível no momento</p>
+            <div style={{ textAlign: "center", padding: "var(--ds-space-12) 0" }}>
+              <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-lg)" }}>
+                Nenhum artigo disponível no momento
+              </p>
             </div>
           ) : !articles || articles.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Nenhum artigo encontrado</p>
+            <div style={{ textAlign: "center", padding: "var(--ds-space-12) 0" }}>
+              <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-lg)" }}>
+                Nenhum artigo encontrado
+              </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "var(--ds-space-6)",
+              }}
+            >
               {articles.map((article) => {
                 if (!article) return null;
                 return (
-                  <Card 
-                    key={article.id} 
-                    className="overflow-hidden hover:shadow-xl transition cursor-pointer h-full flex flex-col"
-                    onClick={() => navigate(`/blog/${article.slug}`)}
-                  >
-                    {article.coverImageUrl && (
-                      <div
-                        className="h-48 bg-cover bg-center"
-                        style={{ backgroundImage: `url('${article.coverImageUrl}')` }}
-                      ></div>
-                    )}
-                    <CardContent className="p-6 flex-1 flex flex-col">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xs bg-[#E65100] text-white px-2 py-1 rounded">
-                          {article.category || "Geral"}
-                        </span>
+                  <div key={article.id} onClick={() => navigate(`/blog/${article.slug}`)} style={{ cursor: "pointer" }}>
+                    <DSCard
+                      variant="elevated"
+                      interactive
+                      image={article.coverImageUrl || undefined}
+                      imageAlt={article.title || "Artigo"}
+                      overlay={!!article.coverImageUrl}
+                      padding="none"
+                      className="h-full"
+                    >
+                      <div style={{ padding: "var(--ds-space-4)", display: "flex", flexDirection: "column", flex: 1 }}>
+                        <div style={{ marginBottom: "var(--ds-space-3)" }}>
+                          <DSBadge variant="accent" size="sm">
+                            {article.category || "Geral"}
+                          </DSBadge>
+                        </div>
+                        <h3
+                          style={{
+                            fontSize: "var(--ds-text-lg)",
+                            fontWeight: "var(--ds-font-bold)",
+                            color: "var(--ds-color-text-primary)",
+                            marginBottom: "var(--ds-space-2)",
+                            flex: 1,
+                          }}
+                        >
+                          {article.title || "Sem título"}
+                        </h3>
+                        <p style={{ fontSize: "var(--ds-text-sm)", color: "var(--ds-color-text-muted)", marginBottom: "var(--ds-space-4)" }}>
+                          {article.excerpt || "Sem descrição"}
+                        </p>
+                        <DSButton variant="secondary" size="sm" fullWidth>
+                          Ler Mais
+                        </DSButton>
                       </div>
-                      <h3 className="text-lg font-bold text-[#004D40] mb-2 flex-1">
-                        {article.title || "Sem título"}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        {article.excerpt || "Sem descrição"}
-                      </p>
-                      <Button
-                        variant="outline"
-                        className="w-full border-[#E65100] text-[#E65100] hover:bg-[#E65100] hover:text-white"
-                      >
-                        Ler Mais
-                      </Button>
-                    </CardContent>
-                  </Card>
+                    </DSCard>
+                  </div>
                 );
               })}
             </div>

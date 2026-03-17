@@ -172,10 +172,20 @@ export default function SiteSEOPages() {
 
   if (!pageData) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-[#004D40]">Página não encontrada</h1>
-          <p className="text-gray-600">A página que você procura não existe.</p>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+          background: "var(--ds-color-bg-primary)",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <h1 style={{ fontSize: "var(--ds-text-2xl)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)" }}>
+            Página não encontrada
+          </h1>
+          <p style={{ color: "var(--ds-color-text-muted)" }}>A página que você procura não existe.</p>
         </div>
       </div>
     );
@@ -192,15 +202,18 @@ export default function SiteSEOPages() {
               .split("\n")
               .map((line) => {
                 if (line.startsWith("## ")) {
-                  return `<h2 class="text-2xl font-bold text-[#004D40] mt-6 mb-3">${line.substring(3)}</h2>`;
+                  return `<h2 style="font-size: var(--ds-text-2xl); font-weight: var(--ds-font-bold); color: var(--ds-color-text-primary); margin-top: var(--ds-space-8); margin-bottom: var(--ds-space-3); font-family: var(--ds-font-display);">${line.substring(3)}</h2>`;
                 }
                 if (line.startsWith("### ")) {
-                  return `<h3 class="text-xl font-bold text-[#004D40] mt-4 mb-2">${line.substring(4)}</h3>`;
+                  return `<h3 style="font-size: var(--ds-text-xl); font-weight: var(--ds-font-bold); color: var(--ds-color-text-primary); margin-top: var(--ds-space-6); margin-bottom: var(--ds-space-2);">${line.substring(4)}</h3>`;
+                }
+                if (line.trim().startsWith("- ")) {
+                  return `<div style="display: flex; align-items: flex-start; gap: var(--ds-space-2); margin-bottom: var(--ds-space-2); padding-left: var(--ds-space-2);"><span style="color: var(--ds-color-accent); margin-top: 6px; flex-shrink: 0;">•</span><span style="color: var(--ds-color-text-secondary);">${line.trim().substring(2)}</span></div>`;
                 }
                 if (line.trim() === "") {
-                  return "<br />";
+                  return "";
                 }
-                return `<p class="mb-3">${line}</p>`;
+                return `<p style="margin-bottom: var(--ds-space-3); color: var(--ds-color-text-secondary); line-height: var(--ds-leading-relaxed);">${line.trim()}</p>`;
               })
               .join(""),
           }}

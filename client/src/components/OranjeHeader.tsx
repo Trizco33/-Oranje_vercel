@@ -26,6 +26,7 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
 
   return (
     <header
+      role="banner"
       style={{
         position: "sticky",
         top: 0,
@@ -43,6 +44,7 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
           {showBack ? (
             <button
               onClick={onBack ?? (() => navigate(-1))}
+              aria-label="Voltar para página anterior"
               className="flex items-center justify-center transition-all duration-200"
               style={{
                 width: 40,
@@ -54,13 +56,14 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
               onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-accent-subtle)")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-accent-muted)")}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ds-color-accent)" strokeWidth="2.5" strokeLinecap="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ds-color-accent)" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M19 12H5M12 5l-7 7 7 7" />
               </svg>
             </button>
           ) : (
             <Link
               to="/"
+              aria-label="Oranje - Página inicial"
               className="flex items-center transition-transform duration-200 hover:scale-[1.02]"
             >
               <img
@@ -89,13 +92,14 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-1.5">
+        <nav className="flex items-center gap-1.5" aria-label="Ações do app">
           <MobileMenu />
           {!hideThemeToggle && <ThemeToggle />}
           {showSearch && (
-            <Link to="/app/busca">
+            <Link to="/app/busca" aria-label="Buscar">
               <button
                 className="flex items-center justify-center transition-all duration-200"
+                aria-label="Abrir busca"
                 style={{
                   width: 40,
                   height: 40,
@@ -105,15 +109,16 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
                 onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
               >
-                <Search size={18} style={{ color: "var(--ds-color-accent)" }} />
+                <Search size={18} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
               </button>
             </Link>
           )}
 
           {user && (
-            <Link to="/app/notificacoes">
+            <Link to="/app/notificacoes" aria-label={`Notificações${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}>
               <button
                 className="flex items-center justify-center relative transition-all duration-200"
+                aria-label={`Notificações${unreadCount > 0 ? ` - ${unreadCount} não lidas` : ''}`}
                 style={{
                   width: 40,
                   height: 40,
@@ -123,10 +128,11 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
                 onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
               >
-                <Bell size={18} style={{ color: "var(--ds-color-accent)" }} />
+                <Bell size={18} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
                 {unreadCount > 0 && (
                   <span
                     className="absolute flex items-center justify-center font-bold"
+                    aria-hidden="true"
                     style={{
                       top: -2,
                       right: -2,
@@ -146,9 +152,10 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
           )}
 
           {user?.role === "admin" && (
-            <Link to="/app/admin">
+            <Link to="/app/admin" aria-label="Painel de administração">
               <button
                 className="flex items-center justify-center transition-all duration-200"
+                aria-label="Configurações de administrador"
                 style={{
                   width: 40,
                   height: 40,
@@ -158,11 +165,11 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
                 onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
               >
-                <Settings size={18} style={{ color: "var(--ds-color-accent)" }} />
+                <Settings size={18} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
               </button>
             </Link>
           )}
-        </div>
+        </nav>
       </div>
     </header>
   );

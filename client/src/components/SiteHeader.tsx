@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
+import { trackEvent } from "@/lib/analytics";
 
 export default function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,8 +20,13 @@ export default function SiteHeader() {
 
   const isActive = (href: string) => location.pathname === href;
 
+  const handleNavClick = (label: string) => {
+    trackEvent('navigation', { item: label, location: 'header' });
+  };
+
   return (
     <header
+      role="banner"
       style={{
         position: "fixed",
         top: 0,
@@ -45,7 +51,11 @@ export default function SiteHeader() {
         }}
       >
         {/* Logo */}
-        <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
+        <Link
+          to="/"
+          style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}
+          aria-label="Oranje - Página inicial"
+        >
           <picture>
             <source srcSet="/logo.webp" type="image/webp" />
             <img src="/logo.png" alt="Oranje" style={{ height: "40px", width: "auto" }} />
@@ -54,6 +64,7 @@ export default function SiteHeader() {
 
         {/* Desktop Navigation */}
         <nav
+          aria-label="Navegação principal"
           style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
           className="hidden md:flex"
         >
@@ -61,6 +72,8 @@ export default function SiteHeader() {
             <Link
               key={item.href}
               to={item.href}
+              onClick={() => handleNavClick(item.label)}
+              aria-current={isActive(item.href) ? "page" : undefined}
               style={{
                 padding: "0.5rem 0.75rem",
                 borderRadius: "var(--ds-radius-md)",
@@ -95,7 +108,11 @@ export default function SiteHeader() {
 
         {/* Desktop CTA Button */}
         <div className="hidden md:block">
-          <Link to="/app" style={{ textDecoration: "none" }}>
+          <Link
+            to="/app"
+            style={{ textDecoration: "none" }}
+            onClick={() => trackEvent('cta_click', { button_text: 'Abrir o App', location: 'header' })}
+          >
             <DSButton variant="primary" size="sm">
               Abrir o App
             </DSButton>
@@ -115,15 +132,18 @@ export default function SiteHeader() {
             color: "var(--ds-color-text-primary)",
             transition: "background 0.2s",
           }}
-          aria-label="Toggle menu"
+          aria-label={isMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-navigation"
         >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {isMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
         </button>
       </div>
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <div
+          id="mobile-navigation"
           className="md:hidden"
           style={{
             borderTop: "1px solid rgba(230, 81, 0, 0.1)",
@@ -132,12 +152,16 @@ export default function SiteHeader() {
             animation: "ds-fade-in 0.2s ease-out",
           }}
         >
-          <nav style={{ display: "flex", flexDirection: "column", padding: "1rem", gap: "0.25rem" }}>
+          <nav aria-label="Navegação mobile" style={{ display: "flex", flexDirection: "column", padding: "1rem", gap: "0.25rem" }}>
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  handleNavClick(item.label);
+                }}
+                aria-current={isActive(item.href) ? "page" : undefined}
                 style={{
                   display: "block",
                   padding: "0.75rem 1rem",
@@ -153,7 +177,14 @@ export default function SiteHeader() {
               </Link>
             ))}
             <div style={{ marginTop: "0.75rem" }}>
-              <Link to="/app" style={{ textDecoration: "none" }} onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/app"
+                style={{ textDecoration: "none" }}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  trackEvent('cta_click', { button_text: 'Abrir o App', location: 'mobile_menu' });
+                }}
+              >
                 <DSButton variant="primary" size="md" fullWidth>
                   Abrir o App
                 </DSButton>

@@ -98,7 +98,7 @@ export default function RegisterDriver() {
           <div className="rounded-2xl p-6 border-2 border-dashed" style={{ borderColor: "rgba(230,81,0,0.3)", background: "rgba(230,81,0,0.05)" }}>
             {photoUrl ? (
               <div className="space-y-3">
-                <img src={photoUrl} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
+                <img src={photoUrl} alt="Pré-visualização da foto do motorista" className="w-full h-40 object-cover rounded-lg" loading="lazy" />
                 <DSButton variant="secondary" type="button" onClick={() => document.getElementById("photo")?.click()} style={{ width: "100%" }}>
                   <Upload size={16} className="mr-2" /> Trocar Foto
                 </DSButton>

@@ -5,20 +5,17 @@ import { Suspense } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { lazy } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
-import { SplashScreen } from "./components/SplashScreen";
-import { NotificationCenter } from "./components/NotificationCenter";
-import AdminGuard from "./components/AdminGuard";
+import { usePageTracking } from "@/hooks/usePageTracking";
 
-// Eagerly loaded - critical pages that appear immediately
-import Landing from "./pages/Landing";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import LoginCallback from "./pages/LoginCallback";
-import Onboarding from "./pages/Onboarding";
+// Eagerly loaded - only the most critical first-paint page
 import SiteHome from "./pages/SiteHome";
 
-// Lazy loaded - secondary pages loaded on demand
+// Lazy loaded - all other pages loaded on demand for better code splitting
+const Landing = lazy(() => import("./pages/Landing"));
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const LoginCallback = lazy(() => import("./pages/LoginCallback"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Explore = lazy(() => import("./pages/Explore"));
 const SearchPage = lazy(() => import("./pages/Search"));
 const PlaceDetail = lazy(() => import("./pages/PlaceDetail"));
@@ -46,12 +43,26 @@ const SiteSecondaryPages = lazy(() => import("./pages/SiteSecondaryPages"));
 const SiteBlog = lazy(() => import("./pages/SiteBlog"));
 const SiteBlogPost = lazy(() => import("./pages/SiteBlogPost"));
 
-// Loading fallback component
+// Lazy loaded - heavy app shell components
+const PWAInstallPrompt = lazy(() => import("./components/PWAInstallPrompt").then(m => ({ default: m.PWAInstallPrompt })));
+const SplashScreen = lazy(() => import("./components/SplashScreen").then(m => ({ default: m.SplashScreen })));
+const NotificationCenter = lazy(() => import("./components/NotificationCenter").then(m => ({ default: m.NotificationCenter })));
+const AdminGuard = lazy(() => import("./components/AdminGuard"));
+
+// Loading fallback component with accessible markup
 function LoadingFallback() {
   return (
-    <div className="oranje-app min-h-screen flex items-center justify-center">
+    <div
+      className="oranje-app min-h-screen flex items-center justify-center"
+      role="status"
+      aria-live="polite"
+      aria-label="Carregando conteúdo"
+    >
       <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-oranje-orange"></div>
+        <div
+          className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-oranje-orange"
+          aria-hidden="true"
+        />
         <p className="mt-4" style={{ color: "#C8C5C0" }}>Carregando...</p>
       </div>
     </div>
@@ -59,6 +70,9 @@ function LoadingFallback() {
 }
 
 function Router() {
+  // Automatic GA4 pageview tracking on route changes
+  usePageTracking();
+
   return (
       <Routes>
         {/* Site Pages - NO PWA, Splash, or Notifications */}
@@ -81,12 +95,12 @@ function Router() {
         <Route path="/blog" element={<Suspense fallback={<LoadingFallback />}><SiteBlog /></Suspense>} />
         <Route path="/blog/:slug" element={<Suspense fallback={<LoadingFallback />}><SiteBlogPost /></Suspense>} />
         {/* Landing Page */}
-        <Route path="/landing" element={<Landing />} />
+        <Route path="/landing" element={<Suspense fallback={<LoadingFallback />}><Landing /></Suspense>} />
         {/* App Routes - WITH PWA, Splash, and Notifications */}
         <Route path="/app">
-          <Route path="onboarding" element={<Onboarding />} />
-          <Route path="login" element={<Login />} />
-          <Route path="login/callback" element={<LoginCallback />} />
+          <Route path="onboarding" element={<Suspense fallback={<LoadingFallback />}><Onboarding /></Suspense>} />
+          <Route path="login" element={<Suspense fallback={<LoadingFallback />}><Login /></Suspense>} />
+          <Route path="login/callback" element={<Suspense fallback={<LoadingFallback />}><LoginCallback /></Suspense>} />
           <Route path="explorar/:slug" element={<Suspense fallback={<LoadingFallback />}><Explore /></Suspense>} />
           <Route path="explorar" element={<Suspense fallback={<LoadingFallback />}><Explore /></Suspense>} />
           <Route path="busca" element={<Suspense fallback={<LoadingFallback />}><SearchPage /></Suspense>} />
@@ -102,12 +116,12 @@ function Router() {
           <Route path="motoristas" element={<Suspense fallback={<LoadingFallback />}><Drivers /></Suspense>} />
           <Route path="cadastrar-motorista" element={<Suspense fallback={<LoadingFallback />}><RegisterDriver /></Suspense>} />
           <Route path="motorista/:id" element={<Suspense fallback={<LoadingFallback />}><DriverDetail /></Suspense>} />
-          <Route index element={<>
+          <Route index element={<Suspense fallback={<LoadingFallback />}>
             <SplashScreen />
             <PWAInstallPrompt />
             <NotificationCenter />
             <Home />
-          </>} />
+          </Suspense>} />
         </Route>
         <Route path="/guia" element={<Suspense fallback={<LoadingFallback />}><Guide /></Suspense>} />
         <Route path="/guia/:slug" element={<Suspense fallback={<LoadingFallback />}><GuideDetail /></Suspense>} />
@@ -115,7 +129,7 @@ function Router() {
         <Route path="/admin/login" element={<Suspense fallback={<LoadingFallback />}><CMSLogin /></Suspense>} />
         <Route path="/admin" element={<Suspense fallback={<LoadingFallback />}><CMSDashboard /></Suspense>} />
         <Route path="/admin/conteudo" element={<Suspense fallback={<LoadingFallback />}><CMSEditor /></Suspense>} />
-        <Route path="/app/admin" element={<AdminGuard><Suspense fallback={<LoadingFallback />}><Admin /></Suspense></AdminGuard>} />
+        <Route path="/app/admin" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><Admin /></AdminGuard></Suspense>} />
         <Route path="/adm" element={<Suspense fallback={<LoadingFallback />}><CMSDashboard /></Suspense>} />
         <Route path="/adm/conteudo" element={<Suspense fallback={<LoadingFallback />}><CMSEditor /></Suspense>} />
         <Route path="/adm/login" element={<Suspense fallback={<LoadingFallback />}><CMSLogin /></Suspense>} />
@@ -127,7 +141,7 @@ function Router() {
 
 function ErrorFallback() {
   return (
-    <div className="oranje-app min-h-screen flex items-center justify-center">
+    <div className="oranje-app min-h-screen flex items-center justify-center" role="alert">
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-4" style={{ color: "#E8E6E3" }}>Algo deu errado</h1>
         <p style={{ color: "#C8C5C0" }}>Por favor, recarregue a página.</p>

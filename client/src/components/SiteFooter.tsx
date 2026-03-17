@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 export default function SiteFooter() {
   return (
-    <footer style={{ background: "var(--ds-color-bg-secondary, #004D40)" }}>
+    <footer role="contentinfo" style={{ background: "var(--ds-color-bg-secondary, #004D40)" }}>
       {/* Main Footer */}
       <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "var(--ds-space-16) var(--ds-space-4)" }}>
         <div
@@ -18,7 +19,7 @@ export default function SiteFooter() {
           <div>
             <picture>
               <source srcSet="/logo.webp" type="image/webp" />
-              <img src="/logo.png" alt="Oranje" style={{ height: "36px", width: "auto", marginBottom: "var(--ds-space-4)" }} />
+              <img src="/logo.png" alt="Oranje - Guia Cultural de Holambra" style={{ height: "36px", width: "auto", marginBottom: "var(--ds-space-4)" }} loading="lazy" />
             </picture>
             <p style={{ fontSize: "var(--ds-text-sm)", color: "var(--ds-color-text-muted)", lineHeight: "var(--ds-leading-relaxed)" }}>
               Seu guia definitivo de Holambra. Descubra os melhores lugares, eventos e experiências.
@@ -26,7 +27,7 @@ export default function SiteFooter() {
           </div>
 
           {/* Navigation */}
-          <div>
+          <nav aria-label="Links de navegação do rodapé">
             <h4
               style={{
                 fontWeight: "var(--ds-font-bold)",
@@ -49,6 +50,7 @@ export default function SiteFooter() {
                 <li key={item.to}>
                   <Link
                     to={item.to}
+                    onClick={() => trackEvent('navigation', { item: item.label, location: 'footer' })}
                     style={{
                       fontSize: "var(--ds-text-sm)",
                       color: "var(--ds-color-text-muted)",
@@ -63,10 +65,10 @@ export default function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Legal */}
-          <div>
+          <nav aria-label="Links legais">
             <h4
               style={{
                 fontWeight: "var(--ds-font-bold)",
@@ -102,7 +104,7 @@ export default function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
           <div>
@@ -120,9 +122,11 @@ export default function SiteFooter() {
             </h4>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "var(--ds-space-3)" }}>
               <li style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)" }}>
-                <Mail size={16} style={{ color: "var(--ds-color-accent)" }} />
+                <Mail size={16} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
                 <a
                   href="mailto:contato@oranje.com.br"
+                  aria-label="Enviar e-mail para contato@oranje.com.br"
+                  onClick={() => trackEvent('contact_click', { type: 'email' })}
                   style={{
                     fontSize: "var(--ds-text-sm)",
                     color: "var(--ds-color-text-muted)",
@@ -136,9 +140,11 @@ export default function SiteFooter() {
                 </a>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)" }}>
-                <Phone size={16} style={{ color: "var(--ds-color-accent)" }} />
+                <Phone size={16} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
                 <a
                   href="tel:+551940000000"
+                  aria-label="Ligar para (19) 4000-0000"
+                  onClick={() => trackEvent('contact_click', { type: 'phone' })}
                   style={{
                     fontSize: "var(--ds-text-sm)",
                     color: "var(--ds-color-text-muted)",
@@ -152,7 +158,7 @@ export default function SiteFooter() {
                 </a>
               </li>
               <li style={{ display: "flex", alignItems: "flex-start", gap: "var(--ds-space-2)" }}>
-                <MapPin size={16} style={{ color: "var(--ds-color-accent)", marginTop: "2px" }} />
+                <MapPin size={16} style={{ color: "var(--ds-color-accent)", marginTop: "2px" }} aria-hidden="true" />
                 <span style={{ fontSize: "var(--ds-text-sm)", color: "var(--ds-color-text-muted)" }}>Holambra, SP</span>
               </li>
             </ul>
@@ -167,7 +173,7 @@ export default function SiteFooter() {
             marginBottom: "var(--ds-space-8)",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "center", gap: "var(--ds-space-6)" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "var(--ds-space-6)" }} role="list" aria-label="Redes sociais">
             {[
               { icon: <Facebook size={20} />, href: "https://facebook.com", label: "Facebook" },
               { icon: <Instagram size={20} />, href: "https://instagram.com", label: "Instagram" },
@@ -178,7 +184,9 @@ export default function SiteFooter() {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={social.label}
+                role="listitem"
+                aria-label={`Seguir Oranje no ${social.label}`}
+                onClick={() => trackEvent('contact_click', { type: 'social', network: social.label })}
                 style={{
                   color: "var(--ds-color-text-muted)",
                   transition: "color 0.2s",
@@ -186,7 +194,7 @@ export default function SiteFooter() {
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ds-color-accent)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ds-color-text-muted)")}
               >
-                {social.icon}
+                <span aria-hidden="true">{social.icon}</span>
               </a>
             ))}
           </div>

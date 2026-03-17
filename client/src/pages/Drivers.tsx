@@ -74,7 +74,7 @@ export default function Drivers() {
               <div key={driver.id} className="rounded-2xl overflow-hidden transition-all" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.15)" }}>
                 {driver.photoUrl && (
                   <div className="h-40 overflow-hidden">
-                    <img src={driver.photoUrl} alt={driver.name} className="w-full h-full object-cover" />
+                    <img src={driver.photoUrl} alt={driver.name} className="w-full h-full object-cover" loading="lazy" />
                   </div>
                 )}
                 <div className="p-4 space-y-3">

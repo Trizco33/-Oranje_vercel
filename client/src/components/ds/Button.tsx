@@ -72,6 +72,8 @@ export const DSButton = React.forwardRef<HTMLButtonElement, DSButtonProps>(
       <button
         ref={ref}
         disabled={disabled || loading}
+        aria-busy={loading || undefined}
+        aria-disabled={disabled || loading || undefined}
         className={cn(
           // Base
           'inline-flex items-center justify-center',

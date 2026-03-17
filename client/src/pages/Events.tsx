@@ -45,7 +45,7 @@ export function EventsList() {
                 >
                   {event.coverImage ? (
                     <div className="flex-shrink-0 overflow-hidden" style={{ width: 64, height: 64, borderRadius: "var(--ds-radius-lg)" }}>
-                      <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
+                      <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" loading="lazy" />
                     </div>
                   ) : (
                     <div
@@ -131,7 +131,7 @@ export function EventDetail() {
       {/* Cover */}
       <div className="relative" style={{ height: 240 }}>
         {event.coverImage ? (
-          <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
+          <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" loading="lazy" />
         ) : (
           <div className="w-full h-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, var(--ds-color-bg-secondary), var(--ds-color-bg-elevated))" }}>
             <CalendarDays size={60} style={{ color: "var(--ds-color-accent-muted)" }} />

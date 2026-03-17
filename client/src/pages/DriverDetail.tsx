@@ -42,7 +42,7 @@ export default function DriverDetail() {
       <div className="max-w-2xl mx-auto px-4 py-6 pb-20">
         {currentDriver.photoUrl && (
           <div className="mb-6 rounded-2xl overflow-hidden">
-            <img src={currentDriver.photoUrl} alt={currentDriver.name} className="w-full h-64 object-cover" />
+            <img src={currentDriver.photoUrl} alt={currentDriver.name} className="w-full h-64 object-cover" loading="lazy" />
           </div>
         )}
 

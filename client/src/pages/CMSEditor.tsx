@@ -232,7 +232,7 @@ export default function CMSEditor() {
                   {uploading && <p className="text-sm text-gray-500">Enviando...</p>}
                   {hero.imageUrl && (
                     <div className="mt-4">
-                      <img src={hero.imageUrl} alt="Preview" className="w-full h-48 object-cover rounded" />
+                      <img src={hero.imageUrl} alt="Pré-visualização do conteúdo hero" className="w-full h-48 object-cover rounded" loading="lazy" />
                     </div>
                   )}
                 </div>

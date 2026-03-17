@@ -16,6 +16,8 @@ export function TabBar() {
   return (
     <nav
       className="tab-bar"
+      aria-label="Navegação principal do app"
+      role="navigation"
       style={{
         position: "fixed",
         bottom: 0,
@@ -29,7 +31,7 @@ export function TabBar() {
         boxShadow: "0 -4px 24px rgba(0,0,0,0.3)",
       }}
     >
-      <div className="flex items-center justify-around px-1" style={{ paddingTop: 8, paddingBottom: "max(8px, env(safe-area-inset-bottom))" }}>
+      <div className="flex items-center justify-around px-1" role="tablist" style={{ paddingTop: 8, paddingBottom: "max(8px, env(safe-area-inset-bottom))" }}>
         {tabs.map((tab) => {
           const isActive =
             tab.path === "/app"
@@ -38,8 +40,16 @@ export function TabBar() {
           const Icon = tab.icon;
 
           return (
-            <Link key={tab.path} to={tab.path} className="flex-1">
-              <button
+            <Link
+              key={tab.path}
+              to={tab.path}
+              className="flex-1"
+              role="tab"
+              aria-selected={isActive}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={tab.label}
+            >
+              <div
                 className="flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all duration-300 w-full"
                 style={{
                   minHeight: 48,
@@ -61,6 +71,7 @@ export function TabBar() {
                   <Icon
                     size={isActive ? 18 : 20}
                     strokeWidth={isActive ? 2.5 : 1.8}
+                    aria-hidden="true"
                     style={{
                       color: isActive
                         ? "var(--ds-color-text-inverse)"
@@ -81,7 +92,7 @@ export function TabBar() {
                 >
                   {tab.label}
                 </span>
-              </button>
+              </div>
             </Link>
           );
         })}

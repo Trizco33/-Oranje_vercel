@@ -12,6 +12,7 @@ import AdminGuard from "./components/AdminGuard";
 
 // Eagerly loaded - critical pages that appear immediately
 import LandingNew from "./pages/LandingNew";
+import LandingProposal from "./pages/LandingProposal";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import LoginCallback from "./pages/LoginCallback";
@@ -82,6 +83,8 @@ function Router() {
         <Route path="/blog/:slug" element={<Suspense fallback={<LoadingFallback />}><SiteBlogPost /></Suspense>} />
         {/* Legacy Landing */}
         <Route path="/landing" element={<LandingNew />} />
+        {/* Landing Proposal - Redesign Preview */}
+        <Route path="/landing-proposal" element={<LandingProposal />} />
         {/* App Routes - WITH PWA, Splash, and Notifications */}
         <Route path="/app">
           <Route path="onboarding" element={<Onboarding />} />

@@ -151,7 +151,6 @@ export function subscribeToPlaces(
         table: "places",
       },
       (payload: any) => {
-        console.log("[Supabase] Mudança detectada em lugares:", payload);
         getActivePlaces()
           .then(onUpdate)
           .catch((err) => {
@@ -186,7 +185,6 @@ export function subscribeToPlace(
         filter: `id=eq.${placeId}`,
       },
       (payload: any) => {
-        console.log("[Supabase] Mudança detectada no lugar:", payload);
         getPlaceById(placeId)
           .then((place) => {
             if (place) onUpdate(place);

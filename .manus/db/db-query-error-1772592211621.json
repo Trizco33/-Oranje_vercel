@@ -1,8 +1,0 @@
-{
-  "query": "INSERT INTO users (email, role, createdAt) VALUES ('admin@oranje.com', 'admin', NOW()) ON DUPLICATE KEY UPDATE role = 'admin';",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute INSERT INTO users (email, role, createdAt) VALUES ('admin@oranje.com', 'admin', NOW()) ON DUPLICATE KEY UPDATE role = 'admin';",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1364 (HY000) at line 1: Field 'openId' doesn't have a default value"
-  ]
-}

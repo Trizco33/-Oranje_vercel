@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO drivers (id, name, whatsapp, serviceType, area, capacity, notes, photoUrl, status, isPartner, partnerUntil, isVerified, createdAt, updatedAt) VALUES ('test-driver-partner', 'Maria Santos - Parceiro ORANJE', '11988888888', 'Motorista Particular', 'Holambra e região', 5, 'Motorista parceira com serviço premium', NULL, 'ACTIVE', true, DATE_ADD(NOW(), INTERVAL 30 DAY), true, NOW(), NOW());",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute INSERT INTO drivers (id, name, whatsapp, serviceType, area, capacity, notes, photoUrl, status, isPartner, partnerUntil, isVerified, createdAt, updatedAt) VALUES ('test-driver-partner', 'Maria Santos - Parceiro ORANJE', '11988888888', 'Motorista Particular', 'Holambra e região', 5, 'Motorista parceira com serviço premium', NULL, 'ACTIVE', true, DATE_ADD(NOW(), INTERVAL 30 DAY), true, NOW(), NOW());",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 364
-}

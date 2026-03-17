@@ -36,7 +36,6 @@ export function AdminDrivers() {
   const handleSubmit = async (data: Record<string, any>) => {
     try {
       if (editingDriver) {
-        console.log("Atualizando motorista:", { id: editingDriver.id, ...data });
         await updateDriver.mutateAsync({ id: editingDriver.id, ...data });
         toast.success("Motorista atualizado");
       } else {

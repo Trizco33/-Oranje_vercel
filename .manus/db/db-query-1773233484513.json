@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `articles` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`title` varchar(255) NOT NULL,\n\t`slug` varchar(255) NOT NULL,\n\t`excerpt` text,\n\t`content` text NOT NULL,\n\t`coverImageUrl` text,\n\t`seoTitle` varchar(255),\n\t`seoDescription` varchar(255),\n\t`seoKeywords` varchar(500),\n\t`category` varchar(100) DEFAULT 'Geral',\n\t`published` boolean NOT NULL DEFAULT false,\n\t`publishedAt` timestamp,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `articles_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `articles_slug_unique` UNIQUE(`slug`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE TABLE IF NOT EXISTS `articles` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`title` varchar(255) NOT NULL,\n\t`slug` varchar(255) NOT NULL,\n\t`excerpt` text,\n\t`content` text NOT NULL,\n\t`coverImageUrl` text,\n\t`seoTitle` varchar(255),\n\t`seoDescription` varchar(255),\n\t`seoKeywords` varchar(500),\n\t`category` varchar(100) DEFAULT 'Geral',\n\t`published` boolean NOT NULL DEFAULT false,\n\t`publishedAt` timestamp,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `articles_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `articles_slug_unique` UNIQUE(`slug`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 158
-}

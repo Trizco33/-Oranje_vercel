@@ -22,7 +22,7 @@ export function InstallPrompt() {
     if (window.location.pathname.startsWith("/app")) {
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/app/sw.js", { scope: "/app/" }).catch(() => {
-          console.log("Service Worker registration failed");
+          // SW registration failed;
         });
       }
     }

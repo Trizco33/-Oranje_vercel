@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `site_content` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `key` varchar(100) NOT NULL UNIQUE,\n  `value` text NOT NULL,\n  `section` varchar(50) NOT NULL,\n  `updatedBy` int NOT NULL,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `site_content_id` PRIMARY KEY(`id`),\n  CONSTRAINT `site_content_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users` (`id`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE TABLE IF NOT EXISTS `site_content` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `key` varchar(100) NOT NULL UNIQUE,\n  `value` text NOT NULL,\n  `section` varchar(50) NOT NULL,\n  `updatedBy` int NOT NULL,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `site_content_id` PRIMARY KEY(`id`),\n  CONSTRAINT `site_content_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users` (`id`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 229
-}

@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO drivers (id, name, whatsapp, serviceType, area, capacity, notes, photoUrl, status, isPartner, partnerUntil, isVerified, createdAt, updatedAt) VALUES ('test-driver-1', 'João Silva - Teste PENDING', '11999999999', 'Táxi', 'Holambra', 4, 'Motorista de teste - status PENDING', NULL, 'PENDING', false, NULL, false, NOW(), NOW());",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute INSERT INTO drivers (id, name, whatsapp, serviceType, area, capacity, notes, photoUrl, status, isPartner, partnerUntil, isVerified, createdAt, updatedAt) VALUES ('test-driver-1', 'João Silva - Teste PENDING', '11999999999', 'Táxi', 'Holambra', 4, 'Motorista de teste - status PENDING', NULL, 'PENDING', false, NULL, false, NOW(), NOW());",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 434
-}

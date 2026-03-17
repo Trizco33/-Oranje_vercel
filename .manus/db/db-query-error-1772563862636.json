@@ -1,8 +1,0 @@
-{
-  "query": "ALTER TABLE drivers ADD COLUMN vehicleModel VARCHAR(100) AFTER photoUrl;\nALTER TABLE drivers ADD COLUMN vehicleColor VARCHAR(50) AFTER vehicleModel;\nALTER TABLE drivers ADD COLUMN plate VARCHAR(20) AFTER vehicleColor;\nALTER TABLE drivers ADD COLUMN region VARCHAR(100) NOT NULL DEFAULT 'Holambra' AFTER serviceType;\nALTER TABLE drivers ADD COLUMN area TEXT AFTER region;\nALTER TABLE drivers ADD COLUMN isVerified BOOLEAN NOT NULL DEFAULT false AFTER partnerUntil;\nALTER TABLE drivers ADD COLUMN isActive BOOLEAN NOT NULL DEFAULT true AFTER isVerified;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute ALTER TABLE drivers ADD COLUMN vehicleModel VARCHAR(100) AFTER photoUrl;\nALTER TABLE drivers ADD COLUMN vehicleColor VARCHAR(50) AFTER vehicleModel;\nALTER TABLE drivers ADD COLUMN plate VARCHAR(20) AFTER vehicleColor;\nALTER TABLE drivers ADD COLUMN region VARCHAR(100) NOT NULL DEFAULT 'Holambra' AFTER serviceType;\nALTER TABLE drivers ADD COLUMN area TEXT AFTER region;\nALTER TABLE drivers ADD COLUMN isVerified BOOLEAN NOT NULL DEFAULT false AFTER partnerUntil;\nALTER TABLE drivers ADD COLUMN isActive BOOLEAN NOT NULL DEFAULT true AFTER isVerified;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1060 (42S21) at line 5: Duplicate column name 'area'"
-  ]
-}

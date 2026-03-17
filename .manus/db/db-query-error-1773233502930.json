@@ -1,8 +1,0 @@
-{
-  "query": "ALTER TABLE `site_content` ADD CONSTRAINT `site_content_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;\nALTER TABLE `site_pages` ADD CONSTRAINT `site_pages_createdBy_users_id_fk` FOREIGN KEY (`createdBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;\nALTER TABLE `site_pages` ADD CONSTRAINT `site_pages_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;\nALTER TABLE `site_seo` ADD CONSTRAINT `site_seo_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute ALTER TABLE `site_content` ADD CONSTRAINT `site_content_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;\nALTER TABLE `site_pages` ADD CONSTRAINT `site_pages_createdBy_users_id_fk` FOREIGN KEY (`createdBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;\nALTER TABLE `site_pages` ADD CONSTRAINT `site_pages_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;\nALTER TABLE `site_seo` ADD CONSTRAINT `site_seo_updatedBy_users_id_fk` FOREIGN KEY (`updatedBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1826 (HY000) at line 1: Duplicate foreign key constraint name 'site_content_updatedBy_users_id_fk'"
-  ]
-}

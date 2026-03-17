@@ -14,8 +14,22 @@ export function TabBar() {
   const pathname = location.pathname;
 
   return (
-    <nav className="tab-bar">
-      <div className="flex items-center justify-around px-2 py-2">
+    <nav
+      className="tab-bar"
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        background: "rgba(0, 37, 26, 0.92)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        borderTop: "1px solid var(--ds-color-border-default)",
+        boxShadow: "0 -4px 24px rgba(0,0,0,0.3)",
+      }}
+    >
+      <div className="flex items-center justify-around px-1" style={{ paddingTop: 8, paddingBottom: "max(8px, env(safe-area-inset-bottom))" }}>
         {tabs.map((tab) => {
           const isActive =
             tab.path === "/app"
@@ -25,18 +39,45 @@ export function TabBar() {
 
           return (
             <Link key={tab.path} to={tab.path} className="flex-1">
-              <button className="flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-all duration-200 min-w-[56px]"
+              <button
+                className="flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all duration-300 w-full"
                 style={{
-                  background: isActive ? "rgba(216,138,61,0.12)" : "transparent",
-                }}>
-                <Icon
-                  size={22}
-                  strokeWidth={isActive ? 2.5 : 1.8}
-                  style={{ color: isActive ? "#D88A3D" : "#6B7A8D" }}
-                />
+                  minHeight: 48,
+                  background: isActive
+                    ? "var(--ds-color-accent-muted)"
+                    : "transparent",
+                  transform: isActive ? "scale(1.05)" : "scale(1)",
+                }}
+              >
+                <div
+                  className="flex items-center justify-center transition-all duration-300"
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    background: isActive ? "var(--ds-color-accent)" : "transparent",
+                  }}
+                >
+                  <Icon
+                    size={isActive ? 18 : 20}
+                    strokeWidth={isActive ? 2.5 : 1.8}
+                    style={{
+                      color: isActive
+                        ? "var(--ds-color-text-inverse)"
+                        : "var(--ds-color-text-muted)",
+                      transition: "color 0.3s ease",
+                    }}
+                  />
+                </div>
                 <span
-                  className="text-[10px] font-medium tracking-wide"
-                  style={{ color: isActive ? "#D88A3D" : "#6B7A8D" }}
+                  className="font-medium tracking-wide transition-all duration-300"
+                  style={{
+                    fontSize: 10,
+                    color: isActive
+                      ? "var(--ds-color-accent)"
+                      : "var(--ds-color-text-muted)",
+                    fontWeight: isActive ? 700 : 500,
+                  }}
                 >
                   {tab.label}
                 </span>

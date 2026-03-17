@@ -1,16 +1,14 @@
-import { Skeleton } from "@/components/ui/skeleton";
-
 export function PlaceCardSkeleton() {
   return (
-    <div className="rounded-lg overflow-hidden bg-card border border-border">
-      <Skeleton className="w-full h-48" />
+    <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.12)" }}>
+      <div className="w-full animate-pulse" style={{ height: 192, background: "var(--ds-color-bg-secondary)" }} />
       <div className="p-4 space-y-3">
-        <Skeleton className="h-5 w-3/4" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-2/3" />
+        <div className="animate-pulse rounded-lg" style={{ height: 20, width: "75%", background: "var(--ds-color-bg-secondary)" }} />
+        <div className="animate-pulse rounded-lg" style={{ height: 16, background: "var(--ds-color-bg-secondary)" }} />
+        <div className="animate-pulse rounded-lg" style={{ height: 16, width: "66%", background: "var(--ds-color-bg-secondary)" }} />
         <div className="flex justify-between items-center pt-2">
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-8 w-8 rounded-full" />
+          <div className="animate-pulse rounded-lg" style={{ height: 16, width: "25%", background: "var(--ds-color-bg-secondary)" }} />
+          <div className="animate-pulse rounded-full" style={{ height: 32, width: 32, background: "var(--ds-color-bg-secondary)" }} />
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { DSButton } from "@/components/ds";
 
 export default function Favorites() {
   const navigate = useNavigate();
@@ -25,11 +26,11 @@ export default function Favorites() {
 
   if (loading) {
     return (
-      <div className="oranje-app min-h-screen">
+      <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
         <OranjeHeader title="Favoritos" />
-        <div className="p-4 grid grid-cols-2 gap-3">
+        <div className="p-5 grid grid-cols-2 gap-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="shimmer rounded-2xl" style={{ height: 200 }} />
+            <div key={i} className="rounded-2xl" style={{ height: 200, background: "var(--ds-color-bg-surface)", animation: "ds-pulse-glow 2s ease-in-out infinite" }} />
           ))}
         </div>
         <TabBar />
@@ -39,22 +40,37 @@ export default function Favorites() {
 
   if (!user) {
     return (
-      <div className="oranje-app min-h-screen">
+      <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
         <OranjeHeader title="Favoritos" />
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
-            style={{ background: "rgba(216,138,61,0.1)" }}>
-            <Heart size={36} style={{ color: "#D88A3D" }} />
+          <div
+            className="flex items-center justify-center mb-6"
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: "var(--ds-radius-full)",
+              background: "var(--ds-color-accent-muted)",
+            }}
+          >
+            <Heart size={36} style={{ color: "var(--ds-color-accent)" }} />
           </div>
-          <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif", color: "#E8E6E3" }}>
+          <h2
+            style={{
+              fontSize: 22,
+              fontWeight: 700,
+              fontFamily: "var(--ds-font-display)",
+              color: "var(--ds-color-text-primary)",
+              marginBottom: 8,
+            }}
+          >
             Seus Favoritos
           </h2>
-          <p className="text-sm mb-6" style={{ color: "#C8C5C0" }}>
+          <p className="text-sm mb-6" style={{ color: "var(--ds-color-text-muted)" }}>
             Faça login para salvar seus lugares favoritos e acessá-los a qualquer momento.
           </p>
-          <button onClick={() => window.open(getLoginUrl(), '_blank')} className="btn-gold px-6 py-3 rounded-xl text-sm font-semibold">
+          <DSButton onClick={() => window.open(getLoginUrl(), '_blank')}>
             Entrar com ORANJE
-          </button>
+          </DSButton>
         </div>
         <TabBar />
       </div>
@@ -62,32 +78,44 @@ export default function Favorites() {
   }
 
   return (
-    <div className="oranje-app min-h-screen">
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
       <OranjeHeader title="Favoritos" showSearch />
 
-      <div className="px-4 pt-4">
+      <div className="px-5 pt-5">
         {favoritePlaces.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
-              style={{ background: "rgba(216,138,61,0.1)" }}>
-              <Heart size={36} style={{ color: "#D88A3D" }} />
+            <div
+              className="flex items-center justify-center mb-6"
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: "var(--ds-radius-full)",
+                background: "var(--ds-color-accent-muted)",
+              }}
+            >
+              <Heart size={36} style={{ color: "var(--ds-color-accent)" }} />
             </div>
-            <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif", color: "#E8E6E3" }}>
+            <h2
+              style={{
+                fontSize: 22,
+                fontWeight: 700,
+                fontFamily: "var(--ds-font-display)",
+                color: "var(--ds-color-text-primary)",
+                marginBottom: 8,
+              }}
+            >
               Nenhum favorito ainda
             </h2>
-            <p className="text-sm mb-6" style={{ color: "#C8C5C0" }}>
+            <p className="text-sm mb-6" style={{ color: "var(--ds-color-text-muted)" }}>
               Explore Holambra e salve os lugares que você ama.
             </p>
-            <button
-              onClick={() => navigate("/app/explorar")}
-              className="btn-gold px-6 py-3 rounded-xl text-sm font-semibold"
-            >
+            <DSButton onClick={() => navigate("/app/explorar")}>
               Explorar lugares
-            </button>
+            </DSButton>
           </div>
         ) : (
           <>
-            <p className="text-xs mb-4" style={{ color: "#C8C5C0" }}>
+            <p className="text-xs mb-4" style={{ color: "var(--ds-color-text-muted)" }}>
               {favoritePlaces.length} {favoritePlaces.length === 1 ? "lugar salvo" : "lugares salvos"}
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -105,7 +133,7 @@ export default function Favorites() {
         )}
       </div>
 
-      <div className="mb-tab" />
+      <div style={{ height: 100 }} />
       <TabBar />
     </div>
   );

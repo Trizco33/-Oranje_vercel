@@ -23,14 +23,12 @@ export function ReviewForm({ onSubmit, isLoading, isAuthenticated, onLoginClick 
 
   if (!isAuthenticated) {
     return (
-      <div className="glass-card p-4 mb-4 text-center">
-        <p className="text-sm mb-3" style={{ color: "#C8C5C0" }}>
-          Faça login para deixar uma avaliação
-        </p>
+      <div className="p-4 mb-4 text-center rounded-2xl" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.12)" }}>
+        <p className="text-sm mb-3" style={{ color: "var(--ds-color-text-secondary)" }}>Faça login para deixar uma avaliação</p>
         <button
           onClick={onLoginClick}
-          className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
-          style={{ background: "#D88A3D", color: "#0E1A26" }}
+          className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+          style={{ background: "var(--ds-color-accent)", color: "#fff" }}
         >
           Fazer Login
         </button>
@@ -39,12 +37,9 @@ export function ReviewForm({ onSubmit, isLoading, isAuthenticated, onLoginClick 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-card p-4 mb-4">
-      <p className="text-xs font-semibold mb-3 tracking-wide" style={{ color: "#D88A3D" }}>
-        DEIXE SUA AVALIAÇÃO
-      </p>
+    <form onSubmit={handleSubmit} className="p-4 mb-4 rounded-2xl" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.12)" }}>
+      <p className="text-xs font-semibold mb-3 tracking-wide" style={{ color: "var(--ds-color-accent)" }}>DEIXE SUA AVALIAÇÃO</p>
 
-      {/* Star Rating */}
       <div className="flex gap-2 mb-3">
         {[1, 2, 3, 4, 5].map(star => (
           <button
@@ -58,36 +53,30 @@ export function ReviewForm({ onSubmit, isLoading, isAuthenticated, onLoginClick 
             <Star
               size={24}
               style={{
-                fill: star <= (hoverRating || rating) ? "#D88A3D" : "rgba(216,138,61,0.2)",
-                color: star <= (hoverRating || rating) ? "#D88A3D" : "rgba(216,138,61,0.2)",
+                fill: star <= (hoverRating || rating) ? "var(--ds-color-accent)" : "rgba(230,81,0,0.2)",
+                color: star <= (hoverRating || rating) ? "var(--ds-color-accent)" : "rgba(230,81,0,0.2)",
               }}
             />
           </button>
         ))}
       </div>
 
-      {/* Comment */}
       <textarea
         value={comment}
         onChange={e => setComment(e.target.value)}
         placeholder="Compartilhe sua experiência... (opcional)"
-        className="w-full p-3 rounded-lg text-sm mb-3 resize-none"
-        style={{
-          background: "rgba(14,26,38,0.5)",
-          border: "1px solid rgba(216,138,61,0.2)",
-          color: "#E8E6E3",
-        }}
+        className="w-full p-3 rounded-xl text-sm mb-3 resize-none"
+        style={{ background: "rgba(0,37,26,0.5)", border: "1px solid rgba(230,81,0,0.2)", color: "var(--ds-color-text-primary)" }}
         rows={3}
       />
 
-      {/* Submit */}
       <button
         type="submit"
         disabled={rating === 0 || isLoading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
         style={{
-          background: rating === 0 ? "rgba(216,138,61,0.2)" : "#D88A3D",
-          color: rating === 0 ? "#C8C5C0" : "#0E1A26",
+          background: rating === 0 ? "rgba(230,81,0,0.2)" : "var(--ds-color-accent)",
+          color: rating === 0 ? "var(--ds-color-text-secondary)" : "#fff",
         }}
       >
         <Send size={14} />

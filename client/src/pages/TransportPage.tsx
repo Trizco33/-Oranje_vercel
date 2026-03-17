@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { OranjeHeader } from "@/components/OranjeHeader";
+import { TabBar } from "@/components/TabBar";
+import { DSButton, DSInput, DSBadge } from "@/components/ds";
 import { AlertCircle, MapPin, Users, MessageCircle, CheckCircle } from "lucide-react";
 
 interface Driver {
@@ -33,10 +32,8 @@ export default function TransportPage() {
   });
   const [submitMessage, setSubmitMessage] = useState("");
 
-  // Fetch public drivers list
   const { data: drivers = [], isLoading, error } = trpc.drivers.list.useQuery();
 
-  // Create driver mutation
   const createMutation = trpc.drivers.createPublic.useMutation({
     onSuccess: () => {
       setFormData({ name: "", whatsapp: "", serviceType: "", area: "", capacity: "", notes: "" });
@@ -49,12 +46,10 @@ export default function TransportPage() {
     },
   });
 
-  // Sort drivers: partners first (valid), then by createdAt desc
   const sortedDrivers = [...(drivers as Driver[])].sort((a, b) => {
     const now = new Date();
     const aIsValidPartner = a.isPartner && a.partnerUntil && new Date(a.partnerUntil) > now;
     const bIsValidPartner = b.isPartner && b.partnerUntil && new Date(b.partnerUntil) > now;
-
     if (aIsValidPartner && !bIsValidPartner) return -1;
     if (!aIsValidPartner && bIsValidPartner) return 1;
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -67,15 +62,11 @@ export default function TransportPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Clean WhatsApp number (keep only digits)
     const cleanWhatsapp = formData.whatsapp.replace(/\D/g, "");
-    
     if (!formData.name || !cleanWhatsapp || !formData.serviceType) {
       setSubmitMessage("Por favor, preencha os campos obrigatórios.");
       return;
     }
-
     createMutation.mutate({
       name: formData.name,
       whatsapp: cleanWhatsapp,
@@ -90,243 +81,190 @@ export default function TransportPage() {
     });
   };
 
-  const cleanWhatsappNumber = (number: string): string => {
-    return number.replace(/\D/g, "");
-  };
-
   const getWhatsappUrl = (number: string): string => {
-    const clean = cleanWhatsappNumber(number);
+    const clean = number.replace(/\D/g, "");
     return `https://wa.me/${clean}?text=Olá, vi seu perfil no ORANJE`;
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-oranje-navy to-background border-b border-border">
-        <div className="container py-8">
-          <h1 className="text-4xl font-bold text-oranje-gold mb-2">Transporte & Motoristas</h1>
-          <p className="text-muted-foreground text-lg">
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
+      <OranjeHeader title="Transporte & Motoristas" />
+
+      <div className="px-4 pt-4">
+        {/* Header Info */}
+        <div className="mb-6">
+          <p className="text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>
             Encontre motoristas parceiros ORANJE para suas necessidades de transporte
           </p>
         </div>
-      </div>
 
-      <div className="container py-8">
         {/* Register Button */}
-        <div className="mb-8">
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            variant={showForm ? "secondary" : "default"}
-            className="w-full sm:w-auto"
-          >
+        <div className="mb-6">
+          <DSButton variant={showForm ? "secondary" : "primary"} onClick={() => setShowForm(!showForm)} style={{ width: "100%" }}>
             {showForm ? "Cancelar" : "Cadastre-se como Motorista"}
-          </Button>
+          </DSButton>
         </div>
 
         {/* Registration Form */}
         {showForm && (
-          <Card className="mb-8 border-oranje-gold/30">
-            <CardHeader>
-              <CardTitle>Cadastro de Motorista</CardTitle>
-              <CardDescription>
-                Preencha seus dados. Após aprovação, seu perfil será exibido na plataforma.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Nome *</label>
-                    <Input
-                      name="name"
-                      value={formData.name}
-                      onChange={handleFormChange}
-                      placeholder="Seu nome completo"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">WhatsApp *</label>
-                    <Input
-                      name="whatsapp"
-                      value={formData.whatsapp}
-                      onChange={handleFormChange}
-                      placeholder="(11) 99999-9999"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Tipo de Serviço *</label>
-                    <select
-                      name="serviceType"
-                      value={formData.serviceType}
-                      onChange={handleFormChange}
-                      className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
-                      required
-                    >
-                      <option value="">Selecione um tipo</option>
-                      <option value="Táxi">Táxi</option>
-                      <option value="Motorista Particular">Motorista Particular</option>
-                      <option value="Transporte Executivo">Transporte Executivo</option>
-                      <option value="Van">Van</option>
-                      <option value="Ônibus">Ônibus</option>
-                      <option value="Outro">Outro</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Área de Atuação</label>
-                    <Input
-                      name="area"
-                      value={formData.area}
-                      onChange={handleFormChange}
-                      placeholder="Ex: Holambra e região"
-                    />
-                  </div>
-                </div>
-
+          <div className="mb-8 rounded-2xl p-5" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.2)" }}>
+            <h3 className="text-lg font-semibold mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Cadastro de Motorista</h3>
+            <p className="text-xs mb-4" style={{ color: "var(--ds-color-text-secondary)" }}>
+              Preencha seus dados. Após aprovação, seu perfil será exibido na plataforma.
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Capacidade de Passageiros</label>
-                  <Input
-                    name="capacity"
-                    type="number"
-                    value={formData.capacity}
-                    onChange={handleFormChange}
-                    placeholder="Ex: 4"
-                    min="1"
-                  />
+                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Nome *</label>
+                  <DSInput name="name" value={formData.name} onChange={handleFormChange} placeholder="Seu nome completo" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium mb-1">Observações</label>
-                  <textarea
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleFormChange}
-                    placeholder="Informações adicionais sobre seus serviços..."
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground min-h-20"
-                  />
+                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>WhatsApp *</label>
+                  <DSInput name="whatsapp" value={formData.whatsapp} onChange={handleFormChange} placeholder="(11) 99999-9999" />
                 </div>
+              </div>
 
-                {submitMessage && (
-                  <div className={`p-3 rounded-md text-sm ${
-                    submitMessage.includes("sucesso")
-                      ? "bg-green-500/20 text-green-400 border border-green-500/50"
-                      : "bg-red-500/20 text-red-400 border border-red-500/50"
-                  }`}>
-                    {submitMessage}
-                  </div>
-                )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Tipo de Serviço *</label>
+                  <select
+                    name="serviceType"
+                    value={formData.serviceType}
+                    onChange={handleFormChange}
+                    className="w-full px-3 py-2 rounded-xl text-sm"
+                    style={{ background: "rgba(230,81,0,0.08)", border: "1px solid rgba(230,81,0,0.2)", color: "var(--ds-color-text-primary)" }}
+                    required
+                  >
+                    <option value="">Selecione um tipo</option>
+                    <option value="Táxi">Táxi</option>
+                    <option value="Motorista Particular">Motorista Particular</option>
+                    <option value="Transporte Executivo">Transporte Executivo</option>
+                    <option value="Van">Van</option>
+                    <option value="Ônibus">Ônibus</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Área de Atuação</label>
+                  <DSInput name="area" value={formData.area} onChange={handleFormChange} placeholder="Ex: Holambra e região" />
+                </div>
+              </div>
 
-                <Button type="submit" disabled={createMutation.isPending} className="w-full">
-                  {createMutation.isPending ? "Enviando..." : "Enviar Cadastro"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Capacidade de Passageiros</label>
+                <DSInput name="capacity" type="number" value={formData.capacity} onChange={handleFormChange} placeholder="Ex: 4" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Observações</label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleFormChange}
+                  placeholder="Informações adicionais sobre seus serviços..."
+                  className="w-full px-3 py-2 rounded-xl text-sm min-h-20 resize-none"
+                  style={{ background: "rgba(230,81,0,0.08)", border: "1px solid rgba(230,81,0,0.2)", color: "var(--ds-color-text-primary)" }}
+                />
+              </div>
+
+              {submitMessage && (
+                <div className="p-3 rounded-xl text-sm" style={{
+                  background: submitMessage.includes("sucesso") ? "rgba(76,175,80,0.15)" : "rgba(244,67,54,0.15)",
+                  border: `1px solid ${submitMessage.includes("sucesso") ? "rgba(76,175,80,0.3)" : "rgba(244,67,54,0.3)"}`,
+                  color: submitMessage.includes("sucesso") ? "#66BB6A" : "#EF5350",
+                }}>
+                  {submitMessage}
+                </div>
+              )}
+
+              <DSButton variant="primary" type="submit" disabled={createMutation.isPending} style={{ width: "100%" }}>
+                {createMutation.isPending ? "Enviando..." : "Enviar Cadastro"}
+              </DSButton>
+            </form>
+          </div>
         )}
 
         {/* Drivers List */}
         <div>
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-2">Motoristas Disponíveis</h2>
-            <p className="text-muted-foreground">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Motoristas Disponíveis</h2>
+            <p className="text-xs" style={{ color: "var(--ds-color-text-secondary)" }}>
               {sortedDrivers.length} motorista{sortedDrivers.length !== 1 ? "s" : ""} aprovado{sortedDrivers.length !== 1 ? "s" : ""}
             </p>
           </div>
 
           {isLoading && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-muted-foreground">Carregando motoristas...</div>
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="rounded-2xl animate-pulse" style={{ height: 160, background: "var(--ds-color-bg-secondary)" }} />
+              ))}
             </div>
           )}
 
           {error && (
-            <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400">
+            <div className="flex items-center gap-2 p-4 rounded-2xl" style={{ background: "rgba(244,67,54,0.1)", border: "1px solid rgba(244,67,54,0.3)", color: "#EF5350" }}>
               <AlertCircle className="w-5 h-5" />
               Erro ao carregar motoristas
             </div>
           )}
 
           {!isLoading && !error && sortedDrivers.length === 0 && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                <p className="text-muted-foreground">Nenhum motorista disponível no momento</p>
-              </div>
+            <div className="text-center py-12">
+              <Users className="w-12 h-12 mx-auto mb-3" style={{ color: "rgba(230,81,0,0.3)" }} />
+              <p className="text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>Nenhum motorista disponível no momento</p>
             </div>
           )}
 
           {!isLoading && !error && sortedDrivers.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {sortedDrivers.map((driver) => {
                 const now = new Date();
                 const isValidPartner = driver.isPartner && driver.partnerUntil && new Date(driver.partnerUntil) > now;
-
                 return (
-                  <Card key={driver.id} className={`overflow-hidden transition-all hover:shadow-lg ${
-                    isValidPartner ? "border-oranje-gold/50 bg-gradient-to-br from-oranje-gold/5 to-transparent" : ""
-                  }`}>
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between gap-2">
+                  <div key={driver.id} className="rounded-2xl overflow-hidden transition-all" style={{
+                    background: isValidPartner ? "rgba(230,81,0,0.08)" : "rgba(230,81,0,0.04)",
+                    border: `1px solid ${isValidPartner ? "rgba(230,81,0,0.3)" : "rgba(230,81,0,0.12)"}`,
+                  }}>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex-1">
-                          <CardTitle className="text-lg">{driver.name}</CardTitle>
-                          <CardDescription className="text-sm mt-1">{driver.serviceType}</CardDescription>
+                          <h3 className="text-base font-semibold" style={{ color: "var(--ds-color-text-primary)" }}>{driver.name}</h3>
+                          <p className="text-xs mt-0.5" style={{ color: "var(--ds-color-text-secondary)" }}>{driver.serviceType}</p>
                         </div>
-                        {isValidPartner && (
-                          <Badge className="bg-oranje-gold text-oranje-navy whitespace-nowrap">
-                            Parceiro ORANJE
-                          </Badge>
-                        )}
+                        {isValidPartner && <DSBadge variant="accent">Parceiro ORANJE</DSBadge>}
                       </div>
                       {driver.isVerified && (
-                        <div className="flex items-center gap-1 text-green-400 text-xs mt-2">
-                          <CheckCircle className="w-4 h-4" />
-                          Verificado
+                        <div className="flex items-center gap-1 text-xs mb-2" style={{ color: "#66BB6A" }}>
+                          <CheckCircle className="w-4 h-4" /> Verificado
                         </div>
                       )}
-                    </CardHeader>
-
-                    <CardContent className="space-y-3">
                       {driver.area && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <MapPin className="w-4 h-4" />
-                          {driver.area}
+                        <div className="flex items-center gap-2 text-xs mb-1" style={{ color: "var(--ds-color-text-secondary)" }}>
+                          <MapPin className="w-3 h-3" /> {driver.area}
                         </div>
                       )}
-
                       {driver.capacity && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Users className="w-4 h-4" />
-                          Até {driver.capacity} passageiro{driver.capacity !== 1 ? "s" : ""}
+                        <div className="flex items-center gap-2 text-xs mb-1" style={{ color: "var(--ds-color-text-secondary)" }}>
+                          <Users className="w-3 h-3" /> Até {driver.capacity} passageiro{driver.capacity !== 1 ? "s" : ""}
                         </div>
                       )}
-
-                      {driver.notes && (
-                        <p className="text-sm text-muted-foreground italic">{driver.notes}</p>
-                      )}
-
-                      <a
-                        href={getWhatsappUrl(driver.whatsapp)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full"
-                      >
-                        <Button variant="default" className="w-full gap-2 bg-green-600 hover:bg-green-700">
-                          <MessageCircle className="w-4 h-4" />
-                          Contatar via WhatsApp
-                        </Button>
+                      {driver.notes && <p className="text-xs italic mt-2" style={{ color: "var(--ds-color-text-secondary)" }}>{driver.notes}</p>}
+                      <a href={getWhatsappUrl(driver.whatsapp)} target="_blank" rel="noopener noreferrer" className="block mt-3">
+                        <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold" style={{ background: "#25D366", color: "#fff" }}>
+                          <MessageCircle className="w-4 h-4" /> Contatar via WhatsApp
+                        </button>
                       </a>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 );
               })}
             </div>
           )}
         </div>
       </div>
+
+      <div style={{ height: 100 }} />
+      <TabBar />
     </div>
   );
 }

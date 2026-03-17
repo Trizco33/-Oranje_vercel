@@ -7,6 +7,7 @@ import { ChevronRight, Clock, Map, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { DSButton, DSBadge, DSInput } from "@/components/ds";
 
 const ROUTE_THEMES = ["Romântico", "Família", "Gastronômico", "Cultural", "Aventura", "Relaxante"];
 
@@ -50,47 +51,64 @@ export default function Routes() {
   }
 
   return (
-    <div className="oranje-app min-h-screen">
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
       <OranjeHeader title="Roteiros" />
 
-      <div className="px-4 pt-4">
-        {/* ── Curated Routes ─────────────────────────────────────────── */}
+      <div className="px-5 pt-5">
+        {/* ── Curated Routes ── */}
         {publicRoutes && publicRoutes.length > 0 && (
           <section className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Map size={18} style={{ color: "#D88A3D" }} />
-              <h2 className="section-title text-base">Roteiros Curados</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <Map size={18} style={{ color: "var(--ds-color-accent)" }} />
+              <h2 style={{ fontFamily: "var(--ds-font-display)", fontSize: 16, fontWeight: 700, color: "var(--ds-color-text-primary)" }}>
+                Roteiros Curados
+              </h2>
             </div>
             <div className="flex flex-col gap-3">
               {publicRoutes.map(route => {
                 const placeIds: number[] = Array.isArray(route.placeIds) ? route.placeIds : [];
                 return (
                   <Link key={route.id} to={`/roteiro/${route.id}`}>
-                    <div className="glass-card p-4 flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{ background: "linear-gradient(135deg, rgba(216,138,61,0.2), rgba(216,138,61,0.1))" }}>
-                        <Map size={22} style={{ color: "#D88A3D" }} />
+                    <div
+                      className="flex items-center gap-4 transition-all duration-200"
+                      style={{
+                        padding: 16,
+                        borderRadius: "var(--ds-radius-xl)",
+                        background: "var(--ds-color-bg-surface)",
+                        border: "1px solid var(--ds-color-border-default)",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--ds-color-border-accent)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--ds-color-border-default)"; e.currentTarget.style.transform = "translateY(0)"; }}
+                    >
+                      <div
+                        className="flex items-center justify-center flex-shrink-0"
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: "var(--ds-radius-lg)",
+                          background: "linear-gradient(135deg, var(--ds-color-accent-muted), var(--ds-color-accent-subtle))",
+                        }}
+                      >
+                        <Map size={22} style={{ color: "var(--ds-color-accent)" }} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "#E8E6E3" }}>
+                        <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "var(--ds-color-text-primary)" }}>
                           {route.title}
                         </h3>
                         <div className="flex items-center gap-3 mt-1">
-                          {route.theme && (
-                            <span className="tag-chip">{route.theme}</span>
-                          )}
+                          {route.theme && <DSBadge variant="accent" size="sm">{route.theme}</DSBadge>}
                           {route.duration && (
                             <div className="flex items-center gap-1">
-                              <Clock size={10} style={{ color: "#C8C5C0" }} />
-                              <span className="text-xs" style={{ color: "#C8C5C0" }}>{route.duration}</span>
+                              <Clock size={10} style={{ color: "var(--ds-color-text-muted)" }} />
+                              <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>{route.duration}</span>
                             </div>
                           )}
-                          <span className="text-xs" style={{ color: "#C8C5C0" }}>
+                          <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
                             {placeIds.length} lugares
                           </span>
                         </div>
                       </div>
-                      <ChevronRight size={16} style={{ color: "#D88A3D" }} />
+                      <ChevronRight size={16} style={{ color: "var(--ds-color-accent)" }} />
                     </div>
                   </Link>
                 );
@@ -99,55 +117,80 @@ export default function Routes() {
           </section>
         )}
 
-        {/* ── My Routes ──────────────────────────────────────────────── */}
+        {/* ── My Routes ── */}
         {user ? (
           <section className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="section-title text-base">Meus Roteiros</h2>
-              <button
-                onClick={() => setShowCreate(true)}
-                className="btn-gold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1"
-              >
-                <Plus size={13} /> Novo
-              </button>
+            <div className="flex items-center justify-between mb-4">
+              <h2 style={{ fontFamily: "var(--ds-font-display)", fontSize: 16, fontWeight: 700, color: "var(--ds-color-text-primary)" }}>
+                Meus Roteiros
+              </h2>
+              <DSButton size="sm" iconLeft={<Plus size={13} />} onClick={() => setShowCreate(true)}>
+                Novo
+              </DSButton>
             </div>
 
             {myRoutes && myRoutes.length === 0 ? (
-              <div className="text-center py-8 glass-card">
+              <div
+                className="text-center py-10"
+                style={{
+                  borderRadius: "var(--ds-radius-xl)",
+                  background: "var(--ds-color-bg-surface)",
+                  border: "1px solid var(--ds-color-border-default)",
+                }}
+              >
                 <p className="text-3xl mb-2">🗺️</p>
-                <p className="text-sm font-medium mb-1" style={{ color: "#E8E6E3" }}>Crie seu primeiro roteiro</p>
-                <p className="text-xs" style={{ color: "#C8C5C0" }}>Organize seus lugares favoritos em um roteiro personalizado</p>
+                <p className="text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Crie seu primeiro roteiro</p>
+                <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>Organize seus lugares favoritos em um roteiro personalizado</p>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
                 {myRoutes?.map(route => {
                   const placeIds: number[] = Array.isArray(route.placeIds) ? route.placeIds : [];
                   return (
-                    <div key={route.id} className="glass-card p-4 flex items-center gap-3">
+                    <div
+                      key={route.id}
+                      className="flex items-center gap-3"
+                      style={{
+                        padding: 16,
+                        borderRadius: "var(--ds-radius-xl)",
+                        background: "var(--ds-color-bg-surface)",
+                        border: "1px solid var(--ds-color-border-default)",
+                      }}
+                    >
                       <Link to={`/roteiro/${route.id}`} className="flex-1 flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                          style={{ background: "rgba(216,138,61,0.15)" }}>
-                          <Map size={18} style={{ color: "#D88A3D" }} />
+                        <div
+                          className="flex items-center justify-center flex-shrink-0"
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: "var(--ds-radius-lg)",
+                            background: "var(--ds-color-accent-muted)",
+                          }}
+                        >
+                          <Map size={18} style={{ color: "var(--ds-color-accent)" }} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "#E8E6E3" }}>
+                          <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "var(--ds-color-text-primary)" }}>
                             {route.title}
                           </h3>
                           <div className="flex items-center gap-2 mt-0.5">
-                            {route.theme && <span className="tag-chip">{route.theme}</span>}
-                            <span className="text-xs" style={{ color: "#C8C5C0" }}>{placeIds.length} lugares</span>
-                            {route.isPublic && (
-                              <span className="text-xs" style={{ color: "#D88A3D" }}>Público</span>
-                            )}
+                            {route.theme && <DSBadge variant="accent" size="sm">{route.theme}</DSBadge>}
+                            <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>{placeIds.length} lugares</span>
+                            {route.isPublic && <DSBadge variant="success" size="sm">Público</DSBadge>}
                           </div>
                         </div>
                       </Link>
                       <button
                         onClick={() => handleDelete(route.id)}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ background: "rgba(216,138,61,0.08)" }}
+                        className="flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: "var(--ds-radius-lg)",
+                          background: "var(--ds-color-bg-surface-hover)",
+                        }}
                       >
-                        <Trash2 size={14} style={{ color: "#C8C5C0" }} />
+                        <Trash2 size={14} style={{ color: "var(--ds-color-text-muted)" }} />
                       </button>
                     </div>
                   );
@@ -156,118 +199,144 @@ export default function Routes() {
             )}
           </section>
         ) : (
-          <div className="glass-card p-6 text-center mb-6">
+          <div
+            className="text-center mb-6"
+            style={{
+              padding: 24,
+              borderRadius: "var(--ds-radius-xl)",
+              background: "var(--ds-color-bg-surface)",
+              border: "1px solid var(--ds-color-border-default)",
+            }}
+          >
             <p className="text-3xl mb-3">🗺️</p>
-            <h3 className="text-base font-semibold mb-2" style={{ color: "#E8E6E3", fontFamily: "'Playfair Display', serif" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--ds-color-text-primary)", fontFamily: "var(--ds-font-display)", marginBottom: 8 }}>
               Crie seus roteiros
             </h3>
-            <p className="text-sm mb-4" style={{ color: "#C8C5C0" }}>
+            <p className="text-sm mb-4" style={{ color: "var(--ds-color-text-muted)" }}>
               Faça login para criar e salvar roteiros personalizados.
             </p>
-            <a href={getLoginUrl()} className="btn-gold px-5 py-2.5 rounded-xl text-sm inline-block">
+            <DSButton onClick={() => window.open(getLoginUrl(), '_blank')}>
               Entrar
-            </a>
+            </DSButton>
           </div>
         )}
       </div>
 
-      {/* ── Create Modal ─────────────────────────────────────────────── */}
+      {/* ── Create Modal ── */}
       {showCreate && (
         <div className="fixed inset-0 z-50 flex items-end" style={{ background: "rgba(0,0,0,0.7)" }}>
-          <div className="w-full rounded-t-3xl p-6" style={{ background: "#162233" }}>
+          <div
+            className="w-full"
+            style={{
+              padding: 24,
+              borderRadius: "var(--ds-radius-2xl) var(--ds-radius-2xl) 0 0",
+              background: "var(--ds-color-bg-elevated)",
+              border: "1px solid var(--ds-color-border-default)",
+              borderBottom: "none",
+            }}
+          >
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-semibold" style={{ fontFamily: "'Playfair Display', serif", color: "#E8E6E3" }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--ds-font-display)", color: "var(--ds-color-text-primary)" }}>
                 Novo Roteiro
               </h3>
               <button onClick={() => setShowCreate(false)}>
-                <X size={20} style={{ color: "#C8C5C0" }} />
+                <X size={20} style={{ color: "var(--ds-color-text-muted)" }} />
               </button>
             </div>
 
             <div className="space-y-4">
+              <DSInput
+                label="Título"
+                placeholder="Ex: Fim de semana em Holambra"
+                value={newTitle}
+                onChange={e => setNewTitle(e.target.value)}
+              />
               <div>
-                <label className="text-xs font-semibold tracking-wide mb-1 block" style={{ color: "#D88A3D" }}>
-                  TÍTULO *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ex: Fim de semana em Holambra"
-                  value={newTitle}
-                  onChange={e => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl text-sm"
-                  style={{ background: "rgba(216,138,61,0.08)", border: "1px solid rgba(216,138,61,0.2)", color: "#E8E6E3" }}
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold tracking-wide mb-1 block" style={{ color: "#D88A3D" }}>
-                  DESCRIÇÃO
+                <label className="text-xs font-semibold tracking-wide mb-1.5 block" style={{ color: "var(--ds-color-accent)", textTransform: "uppercase" }}>
+                  Descrição
                 </label>
                 <textarea
                   placeholder="Descreva seu roteiro..."
                   value={newDesc}
                   onChange={e => setNewDesc(e.target.value)}
                   rows={2}
-                  className="w-full px-4 py-3 rounded-xl text-sm resize-none"
-                  style={{ background: "rgba(216,138,61,0.08)", border: "1px solid rgba(216,138,61,0.2)", color: "#E8E6E3" }}
+                  className="w-full px-4 py-3 text-sm resize-none outline-none transition-all duration-200"
+                  style={{
+                    borderRadius: "var(--ds-radius-lg)",
+                    background: "var(--ds-color-bg-surface)",
+                    border: "1px solid var(--ds-color-border-default)",
+                    color: "var(--ds-color-text-primary)",
+                  }}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = "var(--ds-color-border-focus)")}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = "var(--ds-color-border-default)")}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold tracking-wide mb-1 block" style={{ color: "#D88A3D" }}>
-                    TEMA
+                  <label className="text-xs font-semibold tracking-wide mb-1.5 block" style={{ color: "var(--ds-color-accent)", textTransform: "uppercase" }}>
+                    Tema
                   </label>
                   <select
                     value={newTheme}
                     onChange={e => setNewTheme(e.target.value)}
-                    className="w-full px-3 py-3 rounded-xl text-sm"
-                    style={{ background: "rgba(216,138,61,0.08)", border: "1px solid rgba(216,138,61,0.2)", color: "#E8E6E3" }}
+                    className="w-full px-3 py-3 text-sm outline-none"
+                    style={{
+                      borderRadius: "var(--ds-radius-lg)",
+                      background: "var(--ds-color-bg-surface)",
+                      border: "1px solid var(--ds-color-border-default)",
+                      color: "var(--ds-color-text-primary)",
+                    }}
                   >
                     <option value="">Selecionar</option>
                     {ROUTE_THEMES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
-                <div>
-                  <label className="text-xs font-semibold tracking-wide mb-1 block" style={{ color: "#D88A3D" }}>
-                    DURAÇÃO
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: 1 dia"
-                    value={newDuration}
-                    onChange={e => setNewDuration(e.target.value)}
-                    className="w-full px-3 py-3 rounded-xl text-sm"
-                    style={{ background: "rgba(216,138,61,0.08)", border: "1px solid rgba(216,138,61,0.2)", color: "#E8E6E3" }}
-                  />
-                </div>
+                <DSInput
+                  label="Duração"
+                  placeholder="Ex: 1 dia"
+                  value={newDuration}
+                  onChange={e => setNewDuration(e.target.value)}
+                />
               </div>
 
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setIsPublic(!isPublic)}
-                  className="w-10 h-6 rounded-full transition-all flex items-center px-1"
-                  style={{ background: isPublic ? "#D88A3D" : "rgba(216,138,61,0.2)" }}
+                  className="flex items-center transition-all duration-200"
+                  style={{
+                    width: 44,
+                    height: 24,
+                    borderRadius: "var(--ds-radius-full)",
+                    background: isPublic ? "var(--ds-color-accent)" : "var(--ds-color-bg-surface-hover)",
+                    padding: 2,
+                  }}
                 >
-                  <div className="w-4 h-4 rounded-full bg-white transition-all"
-                    style={{ transform: isPublic ? "translateX(16px)" : "translateX(0)" }} />
+                  <div
+                    className="bg-white rounded-full transition-all duration-200"
+                    style={{
+                      width: 20,
+                      height: 20,
+                      transform: isPublic ? "translateX(20px)" : "translateX(0)",
+                    }}
+                  />
                 </button>
-                <span className="text-sm" style={{ color: "#E8E6E3" }}>Tornar público</span>
+                <span className="text-sm" style={{ color: "var(--ds-color-text-primary)" }}>Tornar público</span>
               </div>
 
-              <button
+              <DSButton
+                fullWidth
                 onClick={handleCreate}
-                disabled={createRoute.isPending}
-                className="w-full btn-gold py-3 rounded-xl text-sm font-semibold"
+                loading={createRoute.isPending}
               >
-                {createRoute.isPending ? "Criando..." : "Criar Roteiro"}
-              </button>
+                Criar Roteiro
+              </DSButton>
             </div>
           </div>
         </div>
       )}
 
-      <div className="mb-tab" />
+      <div style={{ height: 100 }} />
       <TabBar />
     </div>
   );

@@ -7,6 +7,7 @@ import { getLoginUrl } from "@/const";
 import { Filter, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { DSBadge } from "@/components/ds";
 
 const POPULAR_TAGS = ["romântico", "família", "pet friendly", "vegetariano", "artesanal", "ao ar livre", "vista", "tradicional"];
 
@@ -23,11 +24,26 @@ const LOCATIONS = [
   { label: "Próximo ao Centro", value: "proximo_centro" },
 ];
 
+function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200"
+      style={{
+        background: active ? "var(--ds-color-accent-muted)" : "var(--ds-color-bg-surface)",
+        border: `1px solid ${active ? "var(--ds-color-border-accent)" : "var(--ds-color-border-default)"}`,
+        color: active ? "var(--ds-color-accent)" : "var(--ds-color-text-muted)",
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
 export default function SearchPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const searchStr = location.search;
-  const params = new URLSearchParams(searchStr);
+  const params = new URLSearchParams(location.search);
 
   const [query, setQuery] = useState(params.get("q") ?? "");
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
@@ -40,17 +56,12 @@ export default function SearchPage() {
 
   const { user } = useAuth();
   const { data: categories } = trpc.categories.list.useQuery();
-  const { data: places, isLoading } = trpc.places.list.useQuery({
-    categoryId: selectedCategory,
-    limit: 50,
-    offset: 0,
-  });
+  const { data: places, isLoading } = trpc.places.list.useQuery({ categoryId: selectedCategory, limit: 50, offset: 0 });
 
   const { data: userFavs } = trpc.favorites.list.useQuery(undefined, { enabled: !!user });
   const addFav = trpc.favorites.add.useMutation();
   const removeFav = trpc.favorites.remove.useMutation();
   const utils = trpc.useUtils();
-
   const favoriteIds = new Set(userFavs?.map(f => f.placeId) ?? []);
 
   useEffect(() => {
@@ -71,199 +82,114 @@ export default function SearchPage() {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
   }
 
-  function mapPriceRangeToFilter(priceRange: string | undefined): boolean {
-    if (!priceRange) return true;
-    return true;
-  }
-
   const filteredPlaces = places?.filter((p: any) => {
-    // Filtro de tags
     if (selectedTags.length > 0) {
       const placeTags: string[] = Array.isArray(p.tags) ? p.tags : [];
       if (!selectedTags.some(t => placeTags.includes(t))) return false;
     }
-    
-    // Filtro de preço
-    if (selectedPriceRange && !mapPriceRangeToFilter(selectedPriceRange)) return false;
-    
-    // Filtro de localização (simplificado)
-    if (selectedLocation) {
-      return true;
-    }
-    
+    if (selectedLocation) return true;
     return true;
   }).sort((a: any, b: any) => {
-    if (sortBy === "avaliacao") {
-      return (b.rating ?? 0) - (a.rating ?? 0);
-    } else if (sortBy === "recente") {
-      return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
-    }
+    if (sortBy === "avaliacao") return (b.rating ?? 0) - (a.rating ?? 0);
+    if (sortBy === "recente") return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
     return 0;
   });
 
   return (
-    <div className="oranje-app min-h-screen">
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
       <OranjeHeader title="Busca" showBack onBack={() => navigate("/")} />
 
-      <div className="px-4 pt-4">
+      <div className="px-5 pt-4">
         {/* Search Input */}
-        <div className="search-bar flex items-center gap-3 px-4 py-3 mb-3">
-          <Search size={18} style={{ color: "#D88A3D" }} />
+        <div
+          className="flex items-center gap-3 mb-3"
+          style={{
+            padding: "10px 16px",
+            borderRadius: "var(--ds-radius-xl)",
+            background: "var(--ds-color-bg-surface)",
+            border: "1px solid var(--ds-color-border-default)",
+          }}
+        >
+          <Search size={18} style={{ color: "var(--ds-color-accent)" }} />
           <input
             type="text"
             placeholder="Restaurantes, cafés, eventos..."
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="flex-1 text-sm"
+            className="flex-1 text-sm bg-transparent outline-none"
+            style={{ color: "var(--ds-color-text-primary)" }}
             autoFocus
           />
           {query && (
             <button onClick={() => setQuery("")}>
-              <X size={16} style={{ color: "#C8C5C0" }} />
+              <X size={16} style={{ color: "var(--ds-color-text-muted)" }} />
             </button>
           )}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: showFilters ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.1)" }}
+            className="flex items-center justify-center"
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "var(--ds-radius-lg)",
+              background: showFilters ? "var(--ds-color-accent-muted)" : "var(--ds-color-bg-surface-hover)",
+            }}
           >
-            <Filter size={15} style={{ color: "#D88A3D" }} />
+            <Filter size={15} style={{ color: "var(--ds-color-accent)" }} />
           </button>
         </div>
 
         {/* Filters */}
         {showFilters && (
-          <div className="glass-card p-4 mb-4">
-            <p className="text-xs font-semibold mb-3 tracking-wide" style={{ color: "#D88A3D" }}>
-              CATEGORIAS
-            </p>
-            <div className="scroll-x flex gap-2 pb-1 mb-4">
-              <button
-                onClick={() => setSelectedCategory(undefined)}
-                className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-                style={{
-                  background: !selectedCategory ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                  border: `1px solid ${!selectedCategory ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                  color: !selectedCategory ? "#D88A3D" : "#C8C5C0",
-                }}
-              >
-                Todos
-              </button>
+          <div
+            className="mb-4"
+            style={{
+              padding: 16,
+              borderRadius: "var(--ds-radius-xl)",
+              background: "var(--ds-color-bg-surface)",
+              border: "1px solid var(--ds-color-border-default)",
+            }}
+          >
+            <p className="text-xs font-semibold mb-3 tracking-wide uppercase" style={{ color: "var(--ds-color-accent)" }}>Categorias</p>
+            <div className="flex gap-2 overflow-x-auto pb-1 mb-4" style={{ scrollbarWidth: "none" }}>
+              <FilterChip label="Todos" active={!selectedCategory} onClick={() => setSelectedCategory(undefined)} />
               {categories?.map((cat: any) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(selectedCategory === cat.id ? undefined : cat.id)}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-                  style={{
-                    background: selectedCategory === cat.id ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                    border: `1px solid ${selectedCategory === cat.id ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                    color: selectedCategory === cat.id ? "#D88A3D" : "#C8C5C0",
-                  }}
-                >
-                  {cat.name}
-                </button>
+                <FilterChip key={cat.id} label={cat.name} active={selectedCategory === cat.id} onClick={() => setSelectedCategory(selectedCategory === cat.id ? undefined : cat.id)} />
               ))}
             </div>
 
-            <p className="text-xs font-semibold mb-3 tracking-wide" style={{ color: "#D88A3D" }}>
-              TAGS
-            </p>
+            <p className="text-xs font-semibold mb-3 tracking-wide uppercase" style={{ color: "var(--ds-color-accent)" }}>Tags</p>
             <div className="flex flex-wrap gap-2 mb-4">
               {POPULAR_TAGS.map(tag => (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  className="px-3 py-1 rounded-full text-xs font-medium transition-all"
-                  style={{
-                    background: selectedTags.includes(tag) ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                    border: `1px solid ${selectedTags.includes(tag) ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                    color: selectedTags.includes(tag) ? "#D88A3D" : "#C8C5C0",
-                  }}
-                >
-                  {tag}
-                </button>
+                <FilterChip key={tag} label={tag} active={selectedTags.includes(tag)} onClick={() => toggleTag(tag)} />
               ))}
             </div>
 
-            <p className="text-xs font-semibold mb-3 tracking-wide" style={{ color: "#D88A3D" }}>
-              FAIXA DE PREÇO
-            </p>
+            <p className="text-xs font-semibold mb-3 tracking-wide uppercase" style={{ color: "var(--ds-color-accent)" }}>Faixa de Preço</p>
             <div className="flex flex-wrap gap-2 mb-4">
-              <button
-                onClick={() => setSelectedPriceRange(undefined)}
-                className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-                style={{
-                  background: !selectedPriceRange ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                  border: `1px solid ${!selectedPriceRange ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                  color: !selectedPriceRange ? "#D88A3D" : "#C8C5C0",
-                }}
-              >
-                Qualquer preço
-              </button>
+              <FilterChip label="Qualquer preço" active={!selectedPriceRange} onClick={() => setSelectedPriceRange(undefined)} />
               {PRICE_RANGES.map(range => (
-                <button
-                  key={range.value}
-                  onClick={() => setSelectedPriceRange(selectedPriceRange === range.value ? undefined : range.value)}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-                  style={{
-                    background: selectedPriceRange === range.value ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                    border: `1px solid ${selectedPriceRange === range.value ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                    color: selectedPriceRange === range.value ? "#D88A3D" : "#C8C5C0",
-                  }}
-                >
-                  {range.label}
-                </button>
+                <FilterChip key={range.value} label={range.label} active={selectedPriceRange === range.value} onClick={() => setSelectedPriceRange(selectedPriceRange === range.value ? undefined : range.value)} />
               ))}
             </div>
 
-            <p className="text-xs font-semibold mb-3 tracking-wide" style={{ color: "#D88A3D" }}>
-              LOCALIZAÇÃO
-            </p>
+            <p className="text-xs font-semibold mb-3 tracking-wide uppercase" style={{ color: "var(--ds-color-accent)" }}>Localização</p>
             <div className="flex flex-wrap gap-2 mb-4">
-              <button
-                onClick={() => setSelectedLocation(undefined)}
-                className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-                style={{
-                  background: !selectedLocation ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                  border: `1px solid ${!selectedLocation ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                  color: !selectedLocation ? "#D88A3D" : "#C8C5C0",
-                }}
-              >
-                Qualquer local
-              </button>
+              <FilterChip label="Qualquer local" active={!selectedLocation} onClick={() => setSelectedLocation(undefined)} />
               {LOCATIONS.map(loc => (
-                <button
-                  key={loc.value}
-                  onClick={() => setSelectedLocation(selectedLocation === loc.value ? undefined : loc.value)}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-                  style={{
-                    background: selectedLocation === loc.value ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                    border: `1px solid ${selectedLocation === loc.value ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                    color: selectedLocation === loc.value ? "#D88A3D" : "#C8C5C0",
-                  }}
-                >
-                  {loc.label}
-                </button>
+                <FilterChip key={loc.value} label={loc.label} active={selectedLocation === loc.value} onClick={() => setSelectedLocation(selectedLocation === loc.value ? undefined : loc.value)} />
               ))}
             </div>
 
-            <p className="text-xs font-semibold mb-3 tracking-wide" style={{ color: "#D88A3D" }}>
-              ORDENAR POR
-            </p>
+            <p className="text-xs font-semibold mb-3 tracking-wide uppercase" style={{ color: "var(--ds-color-accent)" }}>Ordenar Por</p>
             <div className="flex flex-wrap gap-2">
               {(["relevancia", "avaliacao", "recente"] as const).map(sort => (
-                <button
+                <FilterChip
                   key={sort}
+                  label={sort === "relevancia" ? "Relevância" : sort === "avaliacao" ? "Melhor avaliação" : "Mais recente"}
+                  active={sortBy === sort}
                   onClick={() => setSortBy(sort)}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all capitalize"
-                  style={{
-                    background: sortBy === sort ? "rgba(216,138,61,0.2)" : "rgba(216,138,61,0.08)",
-                    border: `1px solid ${sortBy === sort ? "#D88A3D" : "rgba(216,138,61,0.2)"}`,
-                    color: sortBy === sort ? "#D88A3D" : "#C8C5C0",
-                  }}
-                >
-                  {sort === "relevancia" ? "Relevância" : sort === "avaliacao" ? "Melhor avaliação" : "Mais recente"}
-                </button>
+                />
               ))}
             </div>
           </div>
@@ -271,20 +197,14 @@ export default function SearchPage() {
 
         {/* Results */}
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs" style={{ color: "#C8C5C0" }}>
+          <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
             {isLoading ? "Buscando..." : `${filteredPlaces?.length ?? 0} resultados`}
           </p>
           {(selectedTags.length > 0 || selectedCategory || selectedPriceRange || selectedLocation || sortBy !== "relevancia") && (
             <button
-              onClick={() => { 
-                setSelectedTags([]); 
-                setSelectedCategory(undefined);
-                setSelectedPriceRange(undefined);
-                setSelectedLocation(undefined);
-                setSortBy("relevancia");
-              }}
+              onClick={() => { setSelectedTags([]); setSelectedCategory(undefined); setSelectedPriceRange(undefined); setSelectedLocation(undefined); setSortBy("relevancia"); }}
               className="text-xs flex items-center gap-1"
-              style={{ color: "#D88A3D" }}
+              style={{ color: "var(--ds-color-accent)" }}
             >
               <X size={12} /> Limpar filtros
             </button>
@@ -294,35 +214,25 @@ export default function SearchPage() {
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="shimmer rounded-2xl" style={{ height: 200 }} />
+              <div key={i} className="rounded-2xl" style={{ height: 200, background: "var(--ds-color-bg-surface)", animation: "ds-pulse-glow 2s ease-in-out infinite" }} />
             ))}
           </div>
         ) : filteredPlaces?.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-4xl mb-3">🔍</p>
-            <p className="text-sm font-medium mb-1" style={{ color: "#E8E6E3" }}>
-              Nenhum resultado encontrado
-            </p>
-            <p className="text-xs" style={{ color: "#C8C5C0" }}>
-              Tente outros termos ou remova os filtros
-            </p>
+            <p className="text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Nenhum resultado encontrado</p>
+            <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>Tente outros termos ou remova os filtros</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {filteredPlaces?.map((place: any) => (
-              <PlaceCard
-                key={place.id}
-                place={place}
-                isFavorite={favoriteIds.has(place.id)}
-                onToggleFavorite={handleToggleFavorite}
-                compact
-              />
+              <PlaceCard key={place.id} place={place} isFavorite={favoriteIds.has(place.id)} onToggleFavorite={handleToggleFavorite} compact />
             ))}
           </div>
         )}
       </div>
 
-      <div className="mb-tab" />
+      <div style={{ height: 100 }} />
       <TabBar />
     </div>
   );

@@ -25,96 +25,119 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
   const unreadCount = notifications?.filter(n => !n.isRead).length ?? 0;
 
   return (
-    <header className="oranje-header" style={{
-      background: "rgba(15, 27, 20, 0.72)",
-      backdropFilter: "blur(12px)",
-      borderBottom: "1px solid rgba(242, 140, 40, 0.12)",
-      boxShadow: "0 8px 24px rgba(0,0,0,0.35)"
-    }}>
-      <div className="flex items-center justify-between px-4 py-3 relative">
+    <header
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 40,
+        background: "rgba(0, 37, 26, 0.85)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        borderBottom: "1px solid var(--ds-color-border-default)",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
+      }}
+    >
+      <div className="flex items-center justify-between px-4" style={{ height: 56 }}>
         {/* Left */}
-        <div className="flex items-center gap-3 relative" style={{ zIndex: 10000 }}>
+        <div className="flex items-center gap-3">
           {showBack ? (
             <button
               onClick={onBack ?? (() => navigate(-1))}
-              className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-              style={{ 
-                background: "rgba(242,140,40,0.15)",
-                cursor: "pointer"
+              className="flex items-center justify-center transition-all duration-200"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "var(--ds-radius-full)",
+                background: "var(--ds-color-accent-muted)",
+                cursor: "pointer",
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.25)"}
-              onMouseLeave={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.15)"}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-accent-subtle)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-accent-muted)")}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F28C28" strokeWidth="2.5" strokeLinecap="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ds-color-accent)" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M19 12H5M12 5l-7 7 7 7" />
               </svg>
             </button>
           ) : (
-            /* Brand Wordmark - Animado */
-            <Link 
-              to="/" 
-              className="brand-wordmark"
-              style={{
-                animation: "brandWordmarkFadeIn 550ms ease-out forwards",
-                display: "flex",
-                alignItems: "center",
-                transition: "transform 200ms ease-out"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.02)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-              }}
+            <Link
+              to="/"
+              className="flex items-center transition-transform duration-200 hover:scale-[1.02]"
             >
-              <img 
-                src="/brand/oranje-wordmark.png" 
-                alt="Oranje" 
-                style={{ 
-                  height: "clamp(40px, 10vw, 48px)",
+              <img
+                src="/brand/oranje-wordmark.png"
+                alt="Oranje"
+                style={{
+                  height: "clamp(36px, 9vw, 44px)",
                   width: "auto",
-                  opacity: 1,
-                  filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
-                  flexShrink: 0,
-                  animation: "brandWordmarkFadeIn 600ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
-                }} 
+                  filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))",
+                }}
               />
             </Link>
           )}
           {title && (
-            <h1 className="text-base font-semibold" style={{ color: "#EAEAEA", fontFamily: "'Montserrat', sans-serif" }}>
+            <h1
+              className="text-base font-semibold"
+              style={{
+                color: "var(--ds-color-text-primary)",
+                fontFamily: "var(--ds-font-display)",
+                letterSpacing: "-0.01em",
+              }}
+            >
               {title}
             </h1>
           )}
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-2 relative z-10">
+        <div className="flex items-center gap-1.5">
           <MobileMenu />
           {!hideThemeToggle && <ThemeToggle />}
           {showSearch && (
             <Link to="/app/busca">
-              <button className="w-10 h-10 rounded-full flex items-center justify-center transition-all" 
-                style={{ background: "rgba(242,140,40,0.08)" }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.15)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.08)"}
+              <button
+                className="flex items-center justify-center transition-all duration-200"
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "var(--ds-radius-full)",
+                  background: "var(--ds-color-bg-surface)",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
               >
-                <Search size={18} style={{ color: "#F28C28" }} />
+                <Search size={18} style={{ color: "var(--ds-color-accent)" }} />
               </button>
             </Link>
           )}
 
           {user && (
             <Link to="/app/notificacoes">
-              <button className="w-10 h-10 rounded-full flex items-center justify-center relative transition-all" 
-                style={{ background: "rgba(242,140,40,0.08)" }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.15)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.08)"}
+              <button
+                className="flex items-center justify-center relative transition-all duration-200"
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "var(--ds-radius-full)",
+                  background: "var(--ds-color-bg-surface)",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
               >
-                <Bell size={18} style={{ color: "#F28C28" }} />
+                <Bell size={18} style={{ color: "var(--ds-color-accent)" }} />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
-                    style={{ background: "#F28C28", color: "#0F1B14" }}>
+                  <span
+                    className="absolute flex items-center justify-center font-bold"
+                    style={{
+                      top: -2,
+                      right: -2,
+                      width: 18,
+                      height: 18,
+                      borderRadius: "var(--ds-radius-full)",
+                      background: "var(--ds-color-accent)",
+                      color: "var(--ds-color-text-inverse)",
+                      fontSize: 9,
+                    }}
+                  >
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
@@ -124,39 +147,23 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
 
           {user?.role === "admin" && (
             <Link to="/app/admin">
-              <button className="w-10 h-10 rounded-full flex items-center justify-center transition-all" 
-                style={{ background: "rgba(242,140,40,0.08)" }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.15)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(242,140,40,0.08)"}
+              <button
+                className="flex items-center justify-center transition-all duration-200"
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "var(--ds-radius-full)",
+                  background: "var(--ds-color-bg-surface)",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
               >
-                <Settings size={18} style={{ color: "#F28C28" }} />
+                <Settings size={18} style={{ color: "var(--ds-color-accent)" }} />
               </button>
             </Link>
           )}
         </div>
       </div>
-
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes brandWordmarkFadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.8) translateY(-8px);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .brand-wordmark {
-            animation: none !important;
-            opacity: 1;
-            transform: scale(1) translateY(0) !important;
-          }
-        }
-      `}</style>
     </header>
   );
 }

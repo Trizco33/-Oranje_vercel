@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DSButton, DSInput } from "@/components/ds";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { Mail } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -35,38 +34,37 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-2">
-          <CardTitle className="text-2xl">Bem-vindo</CardTitle>
-          <CardDescription>
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)", display: "flex", alignItems: "center", justifyContent: "center" }} className="p-4">
+      <div className="w-full max-w-md rounded-2xl p-6" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.15)" }}>
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(230,81,0,0.15)" }}>
+            <Mail size={28} style={{ color: "var(--ds-color-accent)" }} />
+          </div>
+          <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Bem-vindo</h1>
+          <p className="text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>
             Insira seu email para receber um link de acesso
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Enviando..." : "Enviar Link de Acesso"}
-            </Button>
-          </form>
-          <p className="text-xs text-muted-foreground text-center mt-4">
-            Você receberá um link por email para fazer login
           </p>
-        </CardContent>
-      </Card>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: "var(--ds-color-text-primary)" }}>Email</label>
+            <DSInput
+              id="email"
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+          <DSButton variant="primary" type="submit" disabled={isLoading} style={{ width: "100%" }}>
+            {isLoading ? "Enviando..." : "Enviar Link de Acesso"}
+          </DSButton>
+        </form>
+        <p className="text-xs text-center mt-4" style={{ color: "var(--ds-color-text-secondary)" }}>
+          Você receberá um link por email para fazer login
+        </p>
+      </div>
     </div>
   );
 }

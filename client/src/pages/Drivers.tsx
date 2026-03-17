@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { OranjeHeader } from "@/components/OranjeHeader";
+import { TabBar } from "@/components/TabBar";
+import { DSButton } from "@/components/ds";
 import { MessageCircle, MapPin, Car, Users, AlertCircle, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,52 +24,36 @@ export default function Drivers() {
   };
 
   return (
-    <div className="oranje-app min-h-screen bg-gradient-to-b from-oranje-teal to-oranje-dark">
-      {/* Header */}
-      <div className="sticky top-0 z-10 backdrop-blur-md" style={{ background: "rgba(15,27,20,0.8)" }}>
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold" style={{ color: "#E8E6E3" }}>
-            Motoristas
-          </h1>
-          <Button
-            onClick={() => navigate("/app/cadastrar-motorista")}
-            className="flex items-center gap-2"
-            style={{ background: "#D88A3D", color: "#0F1B14" }}
-          >
-            <Plus size={18} />
-            Cadastrar
-          </Button>
-        </div>
-      </div>
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
+      <OranjeHeader title="Motoristas" />
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-6 pb-20">
+      <div className="px-4 pt-4">
+        {/* Register CTA */}
+        <div className="mb-6">
+          <DSButton variant="primary" onClick={() => navigate("/app/cadastrar-motorista")} style={{ width: "100%" }}>
+            <Plus size={18} className="mr-2" /> Cadastrar como Motorista
+          </DSButton>
+        </div>
+
         {/* Loading State */}
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-80 rounded-2xl" />
+              <div key={i} className="rounded-2xl animate-pulse" style={{ height: 200, background: "var(--ds-color-bg-secondary)" }} />
             ))}
           </div>
         )}
 
         {/* Error State */}
         {error && !isLoading && (
-          <div
-            className="rounded-2xl p-6 flex items-start gap-4"
-            style={{ background: "rgba(255,100,100,0.1)", border: "1px solid rgba(255,100,100,0.2)" }}
-          >
-            <AlertCircle size={24} style={{ color: "#FF6464", flexShrink: 0 }} />
+          <div className="rounded-2xl p-6 flex items-start gap-4" style={{ background: "rgba(244,67,54,0.1)", border: "1px solid rgba(244,67,54,0.2)" }}>
+            <AlertCircle size={24} style={{ color: "#EF5350", flexShrink: 0 }} />
             <div className="flex-1">
-              <p className="font-medium mb-2" style={{ color: "#FF6464" }}>
-                Erro ao carregar motoristas
-              </p>
-              <p className="text-sm mb-4" style={{ color: "#E8E6E3" }}>
+              <p className="font-medium mb-2" style={{ color: "#EF5350" }}>Erro ao carregar motoristas</p>
+              <p className="text-sm mb-4" style={{ color: "var(--ds-color-text-primary)" }}>
                 {error instanceof Error ? error.message : "Tente novamente mais tarde"}
               </p>
-              <Button onClick={handleRetry} variant="outline" size="sm">
-                Tentar Novamente
-              </Button>
+              <DSButton variant="secondary" onClick={handleRetry}>Tentar Novamente</DSButton>
             </div>
           </div>
         )}
@@ -76,21 +61,9 @@ export default function Drivers() {
         {/* Empty State */}
         {!isLoading && !error && drivers.length === 0 && (
           <div className="text-center py-12">
-            <Car size={48} className="mx-auto mb-4 opacity-50" style={{ color: "#D88A3D" }} />
-            <p className="text-lg font-medium mb-2" style={{ color: "#E8E6E3" }}>
-              Nenhum motorista disponível no momento
-            </p>
-            <p className="text-sm mb-6" style={{ color: "#C8C5C0" }}>
-              Verifique novamente em breve ou cadastre-se como motorista
-            </p>
-            <Button
-              onClick={() => navigate("/app/cadastrar-motorista")}
-              className="flex items-center gap-2 mx-auto"
-              style={{ background: "#D88A3D", color: "#0F1B14" }}
-            >
-              <Plus size={18} />
-              Cadastrar como Motorista
-            </Button>
+            <Car size={48} className="mx-auto mb-4" style={{ color: "rgba(230,81,0,0.3)" }} />
+            <p className="text-lg font-medium mb-2" style={{ color: "var(--ds-color-text-primary)" }}>Nenhum motorista disponível</p>
+            <p className="text-sm mb-6" style={{ color: "var(--ds-color-text-secondary)" }}>Verifique novamente em breve ou cadastre-se como motorista</p>
           </div>
         )}
 
@@ -98,71 +71,46 @@ export default function Drivers() {
         {!isLoading && !error && drivers.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {drivers.map((driver: any) => (
-              <div
-                key={driver.id}
-                className="rounded-2xl overflow-hidden transition-all hover:shadow-lg"
-                style={{ background: "rgba(216,138,61,0.05)", border: "1px solid rgba(216,138,61,0.2)" }}
-              >
-                {/* Photo */}
+              <div key={driver.id} className="rounded-2xl overflow-hidden transition-all" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.15)" }}>
                 {driver.photoUrl && (
                   <div className="h-40 overflow-hidden">
                     <img src={driver.photoUrl} alt={driver.name} className="w-full h-full object-cover" />
                   </div>
                 )}
-
-                {/* Content */}
                 <div className="p-4 space-y-3">
-                  {/* Name */}
-                  <div>
-                    <h3 className="text-lg font-bold" style={{ color: "#E8E6E3" }}>
-                      {driver.name}
-                    </h3>
-                  </div>
-
-                  {/* Service Type & Region */}
-                  <div className="flex items-center gap-2 text-sm" style={{ color: "#C8C5C0" }}>
+                  <h3 className="text-lg font-bold" style={{ color: "var(--ds-color-text-primary)" }}>{driver.name}</h3>
+                  <div className="flex items-center gap-2 text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>
                     <span>{driver.serviceType}</span>
                     <span>•</span>
-                    <div className="flex items-center gap-1">
-                      <MapPin size={14} />
-                      <span>{driver.region}</span>
-                    </div>
+                    <div className="flex items-center gap-1"><MapPin size={14} /><span>{driver.region}</span></div>
                   </div>
-
-                  {/* Vehicle Info */}
-                  {(driver.vehicleModel || driver.vehicleColor || driver.plate) && (
-                    <div className="flex items-center gap-2 text-sm" style={{ color: "#D88A3D" }}>
+                  {(driver.vehicleModel || driver.vehicleColor) && (
+                    <div className="flex items-center gap-2 text-sm" style={{ color: "var(--ds-color-accent)" }}>
                       <Car size={14} />
-                      <span>
-                        {driver.vehicleModel}
-                        {driver.vehicleColor && ` • ${driver.vehicleColor}`}
-                      </span>
+                      <span>{driver.vehicleModel}{driver.vehicleColor && ` • ${driver.vehicleColor}`}</span>
                     </div>
                   )}
-
-                  {/* Capacity */}
                   {driver.capacity && (
-                    <div className="flex items-center gap-2 text-sm" style={{ color: "#C8C5C0" }}>
-                      <Users size={14} />
-                      <span>{driver.capacity} pessoas</span>
+                    <div className="flex items-center gap-2 text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>
+                      <Users size={14} /><span>{driver.capacity} pessoas</span>
                     </div>
                   )}
-
-                  {/* Contact Button */}
-                  <Button
+                  <button
                     onClick={() => handleContact(driver.whatsapp)}
-                    className="w-full flex items-center justify-center gap-2 py-2"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold"
                     style={{ background: "#25D366", color: "#fff" }}
                   >
-                    <MessageCircle size={16} />
-                    Contatar no WhatsApp
-                  </Button>
+                    <MessageCircle size={16} /> Contatar no WhatsApp
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      <div style={{ height: 100 }} />
+      <TabBar />
     </div>
   );
 }

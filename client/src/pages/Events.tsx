@@ -3,79 +3,92 @@ import { TabBar } from "@/components/TabBar";
 import { trpc } from "@/lib/trpc";
 import { CalendarDays, Clock, MapPin, Tag } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import { DSBadge, DSButton } from "@/components/ds";
 
 export function EventsList() {
   const { data: events, isLoading } = trpc.events.list.useQuery({ upcoming: false });
 
   return (
-    <div className="oranje-app min-h-screen">
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
       <OranjeHeader title="Eventos" />
 
-      <div className="px-4 pt-4">
-        <p className="text-xs mb-4" style={{ color: "#C8C5C0" }}>
+      <div className="px-5 pt-5">
+        <p className="text-xs mb-4" style={{ color: "var(--ds-color-text-muted)" }}>
           Agenda cultural de Holambra
         </p>
 
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="shimmer rounded-2xl" style={{ height: 100 }} />
+              <div key={i} className="rounded-2xl" style={{ height: 100, background: "var(--ds-color-bg-surface)", animation: "ds-pulse-glow 2s ease-in-out infinite" }} />
             ))}
           </div>
         ) : events?.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-4xl mb-3">🎪</p>
-            <p className="text-sm" style={{ color: "#C8C5C0" }}>Nenhum evento cadastrado ainda.</p>
+            <p className="text-sm" style={{ color: "var(--ds-color-text-muted)" }}>Nenhum evento cadastrado ainda.</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
             {events?.map(event => (
               <Link key={event.id} to={`/evento/${event.id}`}>
-                <div className="event-card p-4 flex gap-4">
-                  {/* Image or date block */}
+                <div
+                  className="flex gap-4 transition-all duration-200"
+                  style={{
+                    padding: 16,
+                    borderRadius: "var(--ds-radius-xl)",
+                    background: "var(--ds-color-bg-surface)",
+                    border: "1px solid var(--ds-color-border-default)",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--ds-color-border-accent)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--ds-color-border-default)"; e.currentTarget.style.transform = "translateY(0)"; }}
+                >
                   {event.coverImage ? (
-                    <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+                    <div className="flex-shrink-0 overflow-hidden" style={{ width: 64, height: 64, borderRadius: "var(--ds-radius-lg)" }}>
                       <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
                     </div>
                   ) : (
-                    <div className="w-16 h-16 rounded-xl flex flex-col items-center justify-center flex-shrink-0"
-                      style={{ background: "rgba(216,138,61,0.15)", border: "1px solid rgba(216,138,61,0.3)" }}>
-                      <span className="text-lg font-bold" style={{ color: "#D88A3D" }}>
+                    <div
+                      className="flex flex-col items-center justify-center flex-shrink-0"
+                      style={{
+                        width: 64,
+                        height: 64,
+                        borderRadius: "var(--ds-radius-lg)",
+                        background: "var(--ds-color-accent-muted)",
+                        border: "1px solid var(--ds-color-border-accent)",
+                      }}
+                    >
+                      <span className="text-lg font-bold" style={{ color: "var(--ds-color-accent)" }}>
                         {new Date(event.startsAt).toLocaleDateString("pt-BR", { day: "2-digit" })}
                       </span>
-                      <span className="text-[10px] uppercase font-medium" style={{ color: "#C8C5C0" }}>
+                      <span className="text-[10px] uppercase font-medium" style={{ color: "var(--ds-color-text-muted)" }}>
                         {new Date(event.startsAt).toLocaleDateString("pt-BR", { month: "short" })}
                       </span>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      {event.isFeatured && <span className="badge-featured">Destaque</span>}
-                      {event.status === "cancelled" && (
-                        <span className="text-xs px-2 py-0.5 rounded-full"
-                          style={{ background: "rgba(255,100,100,0.1)", color: "#ff6464" }}>
-                          Cancelado
-                        </span>
-                      )}
+                      {event.isFeatured && <DSBadge variant="accent" size="sm">Destaque</DSBadge>}
+                      {event.status === "cancelled" && <DSBadge variant="error" size="sm">Cancelado</DSBadge>}
                     </div>
-                    <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "#E8E6E3" }}>
+                    <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "var(--ds-color-text-primary)" }}>
                       {event.title}
                     </h3>
                     {event.location && (
                       <div className="flex items-center gap-1 mt-1">
-                        <MapPin size={10} style={{ color: "#D88A3D" }} />
-                        <span className="text-xs line-clamp-1" style={{ color: "#C8C5C0" }}>{event.location}</span>
+                        <MapPin size={10} style={{ color: "var(--ds-color-accent)" }} />
+                        <span className="text-xs line-clamp-1" style={{ color: "var(--ds-color-text-muted)" }}>{event.location}</span>
                       </div>
                     )}
                     <div className="flex items-center gap-3 mt-1">
                       <div className="flex items-center gap-1">
-                        <Clock size={10} style={{ color: "#C8C5C0" }} />
-                        <span className="text-xs" style={{ color: "#C8C5C0" }}>
+                        <Clock size={10} style={{ color: "var(--ds-color-text-muted)" }} />
+                        <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
                           {new Date(event.startsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       </div>
                       {event.price && (
-                        <span className="text-xs font-medium" style={{ color: "#D88A3D" }}>{event.price}</span>
+                        <span className="text-xs font-medium" style={{ color: "var(--ds-color-accent)" }}>{event.price}</span>
                       )}
                     </div>
                   </div>
@@ -86,7 +99,7 @@ export function EventsList() {
         )}
       </div>
 
-      <div className="mb-tab" />
+      <div style={{ height: 100 }} />
       <TabBar />
     </div>
   );
@@ -99,11 +112,11 @@ export function EventDetail() {
 
   if (isLoading) {
     return (
-      <div className="oranje-app min-h-screen">
+      <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
         <OranjeHeader showBack onBack={() => navigate(-1)} />
-        <div className="p-4 space-y-4">
-          <div className="shimmer rounded-2xl" style={{ height: 220 }} />
-          <div className="shimmer rounded-xl" style={{ height: 80 }} />
+        <div className="p-5 space-y-4">
+          <div className="rounded-2xl" style={{ height: 220, background: "var(--ds-color-bg-surface)", animation: "ds-pulse-glow 2s ease-in-out infinite" }} />
+          <div className="rounded-xl" style={{ height: 80, background: "var(--ds-color-bg-surface)", animation: "ds-pulse-glow 2s ease-in-out infinite" }} />
         </div>
       </div>
     );
@@ -114,97 +127,100 @@ export function EventDetail() {
   const tags: string[] = Array.isArray(event.tags) ? event.tags : [];
 
   return (
-    <div className="oranje-app min-h-screen">
+    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
       {/* Cover */}
-      <div className="relative" style={{ height: 220 }}>
+      <div className="relative" style={{ height: 240 }}>
         {event.coverImage ? (
           <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #162233, rgba(216,138,61,0.1))" }}>
-            <CalendarDays size={60} style={{ color: "rgba(216,138,61,0.3)" }} />
+          <div className="w-full h-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, var(--ds-color-bg-secondary), var(--ds-color-bg-elevated))" }}>
+            <CalendarDays size={60} style={{ color: "var(--ds-color-accent-muted)" }} />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,37,26,0.3) 0%, rgba(0,37,26,0.8) 100%)" }} />
         <button
-          onClick={() => navigate("~-1")}
-          className="absolute top-4 left-4 w-10 h-10 rounded-full flex items-center justify-center"
-          style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 flex items-center justify-center"
+          style={{ width: 40, height: 40, borderRadius: "var(--ds-radius-full)", background: "rgba(0,37,26,0.6)", backdropFilter: "blur(8px)" }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8E6E3" strokeWidth="2.5" strokeLinecap="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ds-color-text-primary)" strokeWidth="2.5" strokeLinecap="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
           </svg>
         </button>
         {event.isFeatured && (
           <div className="absolute top-4 right-4">
-            <span className="badge-featured">Destaque</span>
+            <DSBadge variant="accent">Destaque</DSBadge>
           </div>
         )}
       </div>
 
-      <div className="px-4 pt-5">
-        <h1 className="text-2xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif", color: "#E8E6E3" }}>
+      <div className="px-5 pt-5">
+        <h1 style={{ fontSize: 24, fontWeight: 700, fontFamily: "var(--ds-font-display)", color: "var(--ds-color-text-primary)", marginBottom: 12 }}>
           {event.title}
         </h1>
 
         {/* Meta info */}
-        <div className="glass-card p-4 mb-4 space-y-3">
+        <div
+          className="space-y-3 mb-5"
+          style={{
+            padding: 16,
+            borderRadius: "var(--ds-radius-xl)",
+            background: "var(--ds-color-bg-surface)",
+            border: "1px solid var(--ds-color-border-default)",
+          }}
+        >
           <div className="flex items-center gap-3">
-            <CalendarDays size={16} style={{ color: "#D88A3D" }} />
+            <CalendarDays size={16} style={{ color: "var(--ds-color-accent)" }} />
             <div>
-              <p className="text-sm font-medium" style={{ color: "#E8E6E3" }}>
+              <p className="text-sm font-medium" style={{ color: "var(--ds-color-text-primary)" }}>
                 {new Date(event.startsAt).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
               </p>
-              <p className="text-xs" style={{ color: "#C8C5C0" }}>
+              <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
                 às {new Date(event.startsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                 {event.endsAt && ` — ${new Date(event.endsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`}
               </p>
             </div>
           </div>
-
           {event.location && (
             <div className="flex items-center gap-3">
-              <MapPin size={16} style={{ color: "#D88A3D" }} />
-              <p className="text-sm" style={{ color: "#E8E6E3" }}>{event.location}</p>
+              <MapPin size={16} style={{ color: "var(--ds-color-accent)" }} />
+              <p className="text-sm" style={{ color: "var(--ds-color-text-primary)" }}>{event.location}</p>
             </div>
           )}
-
           {event.price && (
             <div className="flex items-center gap-3">
-              <Tag size={16} style={{ color: "#D88A3D" }} />
-              <p className="text-sm font-semibold" style={{ color: "#D88A3D" }}>{event.price}</p>
+              <Tag size={16} style={{ color: "var(--ds-color-accent)" }} />
+              <p className="text-sm font-semibold" style={{ color: "var(--ds-color-accent)" }}>{event.price}</p>
             </div>
           )}
         </div>
 
         {event.description && (
-          <div className="mb-4">
-            <p className="text-sm leading-relaxed" style={{ color: "#C8C5C0" }}>
+          <div className="mb-5">
+            <p className="text-sm leading-relaxed" style={{ color: "var(--ds-color-text-secondary)" }}>
               {event.description}
             </p>
           </div>
         )}
 
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {tags.map(tag => <span key={tag} className="tag-chip">{tag}</span>)}
+          <div className="flex flex-wrap gap-2 mb-5">
+            {tags.map(tag => <DSBadge key={tag} variant="default" size="sm">{tag}</DSBadge>)}
           </div>
         )}
 
         {event.mapsUrl && (
-          <a
-            href={event.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full btn-gold py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"
+          <DSButton
+            fullWidth
+            iconLeft={<MapPin size={16} />}
+            onClick={() => window.open(event.mapsUrl!, '_blank')}
           >
-            <MapPin size={16} />
             Como chegar
-          </a>
+          </DSButton>
         )}
       </div>
 
-      <div className="mb-tab" />
+      <div style={{ height: 100 }} />
       <TabBar />
     </div>
   );

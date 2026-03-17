@@ -1,0 +1,73 @@
+{
+  "query": "SELECT * FROM categories;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT * FROM categories;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Restaurantes",
+      "slug": "restaurantes",
+      "icon": "UtensilsCrossed",
+      "description": "Culinária variada e sabores únicos de Holambra",
+      "coverImage": "NULL",
+      "createdAt": "2026-02-27 04:08:07"
+    },
+    {
+      "id": "2",
+      "name": "Pizzarias & Casual",
+      "slug": "pizzarias",
+      "icon": "Pizza",
+      "description": "Pizzas artesanais e refeições casuais",
+      "coverImage": "NULL",
+      "createdAt": "2026-02-27 04:08:07"
+    },
+    {
+      "id": "3",
+      "name": "Bares & Drinks",
+      "slug": "bares",
+      "icon": "Wine",
+      "description": "Cervejas artesanais, vinhos e coquetéis",
+      "coverImage": "NULL",
+      "createdAt": "2026-02-27 04:08:07"
+    },
+    {
+      "id": "4",
+      "name": "Cafés & Confeitarias",
+      "slug": "cafes",
+      "icon": "Coffee",
+      "description": "Cafés especiais, doces e sobremesas",
+      "coverImage": "NULL",
+      "createdAt": "2026-02-27 04:08:07"
+    },
+    {
+      "id": "5",
+      "name": "Pontos Turísticos",
+      "slug": "turistico",
+      "icon": "Landmark",
+      "description": "Atrações culturais e históricas de Holambra",
+      "coverImage": "NULL",
+      "createdAt": "2026-02-27 04:08:07"
+    },
+    {
+      "id": "6",
+      "name": "Hospedagem",
+      "slug": "hospedagem",
+      "icon": "BedDouble",
+      "description": "Hotéis, pousadas e acomodações",
+      "coverImage": "NULL",
+      "createdAt": "2026-02-27 04:08:07"
+    },
+    {
+      "id": "7",
+      "name": "Eventos",
+      "slug": "eventos",
+      "icon": "CalendarDays",
+      "description": "Festivais, feiras e eventos culturais",
+      "coverImage": "NULL",
+      "createdAt": "2026-02-27 04:08:07"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\ticon\tdescription\tcoverImage\tcreatedAt\n1\tRestaurantes\trestaurantes\tUtensilsCrossed\tCulinária variada e sabores únicos de Holambra\tNULL\t2026-02-27 04:08:07\n2\tPizzarias & Casual\tpizzarias\tPizza\tPizzas artesanais e refeições casuais\tNULL\t2026-02-27 04:08:07\n3\tBares & Drinks\tbares\tWine\tCervejas artesanais, vinhos e coquetéis\tNULL\t2026-02-27 04:08:07\n4\tCafés & Confeitarias\tcafes\tCoffee\tCafés especiais, doces e sobremesas\tNULL\t2026-02-27 04:08:07\n5\tPontos Turísticos\tturistico\tLandmark\tAtrações culturais e históricas de Holambra\tNULL\t2026-02-27 04:08:07\n6\tHospedagem\thospedagem\tBedDouble\tHotéis, pousadas e acomodações\tNULL\t2026-02-27 04:08:07\n7\tEventos\teventos\tCalendarDays\tFestivais, feiras e eventos culturais\tNULL\t2026-02-27 04:08:07\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

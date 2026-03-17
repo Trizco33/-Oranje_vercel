@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, name FROM places LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT id, name FROM places LIMIT 20;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Martin Holandesa Confeitaria e Restaurante"
+    },
+    {
+      "id": "2",
+      "name": "Casa Bela Café & Restaurante"
+    },
+    {
+      "id": "3",
+      "name": "Lago do Holandês"
+    },
+    {
+      "id": "4",
+      "name": "The Old Dutch"
+    },
+    {
+      "id": "5",
+      "name": "Trattorie Holandesa"
+    },
+    {
+      "id": "6",
+      "name": "Restaurante Madurodam"
+    },
+    {
+      "id": "7",
+      "name": "Hana Restaurante Holambra"
+    },
+    {
+      "id": "8",
+      "name": "Rancho da Cachaça"
+    },
+    {
+      "id": "9",
+      "name": "Restaurante Casa da Nona"
+    },
+    {
+      "id": "10",
+      "name": "Restaurante Villa Flor"
+    },
+    {
+      "id": "11",
+      "name": "Restaurante Empório Van Gogh"
+    },
+    {
+      "id": "12",
+      "name": "Restaurante Di Komê"
+    },
+    {
+      "id": "13",
+      "name": "Dr. Pizza"
+    },
+    {
+      "id": "14",
+      "name": "Pizzaria La Farina"
+    },
+    {
+      "id": "15",
+      "name": "Di Napoli Pizzaria"
+    },
+    {
+      "id": "16",
+      "name": "Pizzaria Dona Flor"
+    },
+    {
+      "id": "17",
+      "name": "Hoek Burger"
+    },
+    {
+      "id": "18",
+      "name": "Mais Coxinha"
+    },
+    {
+      "id": "19",
+      "name": "Fratelli Wine Bar"
+    },
+    {
+      "id": "20",
+      "name": "Cervejaria Holambier"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\n1\tMartin Holandesa Confeitaria e Restaurante\n2\tCasa Bela Café & Restaurante\n3\tLago do Holandês\n4\tThe Old Dutch\n5\tTrattorie Holandesa\n6\tRestaurante Madurodam\n7\tHana Restaurante Holambra\n8\tRancho da Cachaça\n9\tRestaurante Casa da Nona\n10\tRestaurante Villa Flor\n11\tRestaurante Empório Van Gogh\n12\tRestaurante Di Komê\n13\tDr. Pizza\n14\tPizzaria La Farina\n15\tDi Napoli Pizzaria\n16\tPizzaria Dona Flor\n17\tHoek Burger\n18\tMais Coxinha\n19\tFratelli Wine Bar\n20\tCervejaria Holambier\n",
+  "stderr": "",
+  "execution_time_ms": 718
+}

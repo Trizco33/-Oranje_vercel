@@ -1,0 +1,8 @@
+{
+  "query": "SELECT * FROM __drizzle_migrations__ ORDER BY id DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT * FROM __drizzle_migrations__ ORDER BY id DESC LIMIT 10;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table '8rzdssws85gxvtjheebplg.__drizzle_migrations__' doesn't exist"
+  ]
+}

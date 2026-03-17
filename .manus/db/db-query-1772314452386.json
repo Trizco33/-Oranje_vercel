@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS driver_listings (\n  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),\n  name VARCHAR(255) NOT NULL,\n  whatsapp VARCHAR(20) NOT NULL,\n  serviceType VARCHAR(100) NOT NULL,\n  capacity INT,\n  serviceArea TEXT,\n  photoUrl TEXT,\n  notes TEXT,\n  isVerified BOOLEAN DEFAULT false NOT NULL,\n  isPartner BOOLEAN DEFAULT false NOT NULL,\n  status ENUM('PENDING', 'ACTIVE', 'REJECTED') DEFAULT 'PENDING' NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  INDEX status_idx (status),\n  INDEX isPartner_idx (isPartner)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE TABLE IF NOT EXISTS driver_listings (\n  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),\n  name VARCHAR(255) NOT NULL,\n  whatsapp VARCHAR(20) NOT NULL,\n  serviceType VARCHAR(100) NOT NULL,\n  capacity INT,\n  serviceArea TEXT,\n  photoUrl TEXT,\n  notes TEXT,\n  isVerified BOOLEAN DEFAULT false NOT NULL,\n  isPartner BOOLEAN DEFAULT false NOT NULL,\n  status ENUM('PENDING', 'ACTIVE', 'REJECTED') DEFAULT 'PENDING' NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  INDEX status_idx (status),\n  INDEX isPartner_idx (isPartner)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 530
+}

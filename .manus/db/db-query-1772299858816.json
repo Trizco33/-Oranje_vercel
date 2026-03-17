@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS magic_links (\n  token VARCHAR(64) PRIMARY KEY NOT NULL,\n  userId INT NOT NULL,\n  expiresAt TIMESTAMP NOT NULL,\n  usedAt TIMESTAMP NULL,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  FOREIGN KEY (userId) REFERENCES users(id)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE TABLE IF NOT EXISTS magic_links (\n  token VARCHAR(64) PRIMARY KEY NOT NULL,\n  userId INT NOT NULL,\n  expiresAt TIMESTAMP NOT NULL,\n  usedAt TIMESTAMP NULL,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  FOREIGN KEY (userId) REFERENCES users(id)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 511
+}

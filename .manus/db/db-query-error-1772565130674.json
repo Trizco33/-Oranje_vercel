@@ -1,0 +1,8 @@
+{
+  "query": "SELECT id, name, slug, isActive, createdAt FROM categories LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT id, name, slug, isActive, createdAt FROM categories LIMIT 20;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'isactive' in 'field list'"
+  ]
+}

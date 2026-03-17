@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `site_seo` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`page` varchar(100) NOT NULL,\n\t`metaTitle` varchar(255) NOT NULL,\n\t`metaDescription` text NOT NULL,\n\t`metaKeywords` text,\n\t`ogImage` text,\n\t`ogTitle` varchar(255),\n\t`ogDescription` text,\n\t`canonical` text,\n\t`index` boolean NOT NULL DEFAULT true,\n\t`updatedBy` int NOT NULL,\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `site_seo_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `site_seo_page_unique` UNIQUE(`page`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE TABLE IF NOT EXISTS `site_seo` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`page` varchar(100) NOT NULL,\n\t`metaTitle` varchar(255) NOT NULL,\n\t`metaDescription` text NOT NULL,\n\t`metaKeywords` text,\n\t`ogImage` text,\n\t`ogTitle` varchar(255),\n\t`ogDescription` text,\n\t`canonical` text,\n\t`index` boolean NOT NULL DEFAULT true,\n\t`updatedBy` int NOT NULL,\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `site_seo_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `site_seo_page_unique` UNIQUE(`page`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 66
+}

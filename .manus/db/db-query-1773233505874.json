@@ -1,0 +1,9 @@
+{
+  "query": "CREATE INDEX IF NOT EXISTS `slug_idx` ON `articles` (`slug`);\nCREATE INDEX IF NOT EXISTS `published_idx` ON `articles` (`published`);\nCREATE INDEX IF NOT EXISTS `category_idx` ON `articles` (`category`);\nCREATE INDEX IF NOT EXISTS `status_idx` ON `drivers` (`status`);\nCREATE INDEX IF NOT EXISTS `isPartner_idx` ON `drivers` (`isPartner`);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE INDEX IF NOT EXISTS `slug_idx` ON `articles` (`slug`);\nCREATE INDEX IF NOT EXISTS `published_idx` ON `articles` (`published`);\nCREATE INDEX IF NOT EXISTS `category_idx` ON `articles` (`category`);\nCREATE INDEX IF NOT EXISTS `status_idx` ON `drivers` (`status`);\nCREATE INDEX IF NOT EXISTS `isPartner_idx` ON `drivers` (`isPartner`);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 865
+}

@@ -1,0 +1,13 @@
+{
+  "query": "SHOW TABLES LIKE 'articles';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SHOW TABLES LIKE 'articles';",
+  "rows": [
+    {
+      "Tables_in_8rzdsSWs85gXVtjhEeBpLG (articles)": "articles"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_8rzdsSWs85gXVtjhEeBpLG (articles)\narticles\n",
+  "stderr": "",
+  "execution_time_ms": 100
+}

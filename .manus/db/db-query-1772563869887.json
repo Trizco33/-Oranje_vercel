@@ -1,0 +1,64 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='drivers' AND TABLE_SCHEMA=DATABASE();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='drivers' AND TABLE_SCHEMA=DATABASE();",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "name"
+    },
+    {
+      "COLUMN_NAME": "whatsapp"
+    },
+    {
+      "COLUMN_NAME": "serviceType"
+    },
+    {
+      "COLUMN_NAME": "region"
+    },
+    {
+      "COLUMN_NAME": "area"
+    },
+    {
+      "COLUMN_NAME": "capacity"
+    },
+    {
+      "COLUMN_NAME": "notes"
+    },
+    {
+      "COLUMN_NAME": "photoUrl"
+    },
+    {
+      "COLUMN_NAME": "vehicleModel"
+    },
+    {
+      "COLUMN_NAME": "vehicleColor"
+    },
+    {
+      "COLUMN_NAME": "plate"
+    },
+    {
+      "COLUMN_NAME": "status"
+    },
+    {
+      "COLUMN_NAME": "isPartner"
+    },
+    {
+      "COLUMN_NAME": "partnerUntil"
+    },
+    {
+      "COLUMN_NAME": "isVerified"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nname\nwhatsapp\nserviceType\nregion\narea\ncapacity\nnotes\nphotoUrl\nvehicleModel\nvehicleColor\nplate\nstatus\nisPartner\npartnerUntil\nisVerified\ncreatedAt\nupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

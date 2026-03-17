@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, name, status FROM drivers WHERE name LIKE 'Carlos%' ORDER BY createdAt DESC LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT id, name, status FROM drivers WHERE name LIKE 'Carlos%' ORDER BY createdAt DESC LIMIT 1;",
+  "rows": [
+    {
+      "id": "48510f2d-1515-11f1-a4df-32d5fa5204b9",
+      "name": "Carlos Oliveira",
+      "status": "PENDING"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tstatus\n48510f2d-1515-11f1-a4df-32d5fa5204b9\tCarlos Oliveira\tPENDING\n",
+  "stderr": "",
+  "execution_time_ms": 374
+}

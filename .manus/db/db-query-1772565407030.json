@@ -1,0 +1,52 @@
+{
+  "query": "SELECT id, name, slug, isActive FROM categories;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT id, name, slug, isActive FROM categories;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Restaurantes",
+      "slug": "restaurantes",
+      "isActive": "1"
+    },
+    {
+      "id": "2",
+      "name": "Pizzarias & Casual",
+      "slug": "pizzarias",
+      "isActive": "1"
+    },
+    {
+      "id": "3",
+      "name": "Bares & Drinks",
+      "slug": "bares",
+      "isActive": "1"
+    },
+    {
+      "id": "4",
+      "name": "Cafés & Confeitarias",
+      "slug": "cafes",
+      "isActive": "1"
+    },
+    {
+      "id": "5",
+      "name": "Pontos Turísticos",
+      "slug": "turistico",
+      "isActive": "1"
+    },
+    {
+      "id": "6",
+      "name": "Hospedagem",
+      "slug": "hospedagem",
+      "isActive": "1"
+    },
+    {
+      "id": "7",
+      "name": "Eventos",
+      "slug": "eventos",
+      "isActive": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tisActive\n1\tRestaurantes\trestaurantes\t1\n2\tPizzarias & Casual\tpizzarias\t1\n3\tBares & Drinks\tbares\t1\n4\tCafés & Confeitarias\tcafes\t1\n5\tPontos Turísticos\tturistico\t1\n6\tHospedagem\thospedagem\t1\n7\tEventos\teventos\t1\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `site_seo` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `page` varchar(100) NOT NULL UNIQUE,\n  `metaTitle` varchar(255) NOT NULL,\n  `metaDescription` text NOT NULL,\n  `metaKeywords` text,\n  `ogImage` text,\n  `ogTitle` varchar(255),\n  `ogDescription` text,\n  `robots` varchar(100),\n  `canonical` text,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `site_seo_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE TABLE IF NOT EXISTS `site_seo` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `page` varchar(100) NOT NULL UNIQUE,\n  `metaTitle` varchar(255) NOT NULL,\n  `metaDescription` text NOT NULL,\n  `metaKeywords` text,\n  `ogImage` text,\n  `ogTitle` varchar(255),\n  `ogDescription` text,\n  `robots` varchar(100),\n  `canonical` text,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `site_seo_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 161
+}

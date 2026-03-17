@@ -1,0 +1,20 @@
+{
+  "query": "SELECT id, email, role FROM users WHERE role = 'admin' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT id, email, role FROM users WHERE role = 'admin' LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "email": "fotografia.ramone@gmail.com",
+      "role": "admin"
+    },
+    {
+      "id": "330021",
+      "email": "admin-1772309734416@example.com",
+      "role": "admin"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\trole\n1\tfotografia.ramone@gmail.com\tadmin\n330021\tadmin-1772309734416@example.com\tadmin\n",
+  "stderr": "",
+  "execution_time_ms": 66
+}

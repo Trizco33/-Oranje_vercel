@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /guia
+Allow: /blog
+Allow: /sobre
+Allow: /parcerias
+Allow: /contato
+Disallow: /app
+Disallow: /cms
+Disallow: /admin
+
+Sitemap: https://culturaguia-8rzdssws.manus.space/sitemap.xml

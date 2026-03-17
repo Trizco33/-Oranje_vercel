@@ -1,0 +1,208 @@
+{
+  "query": "SHOW FULL COLUMNS FROM drivers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SHOW FULL COLUMNS FROM drivers;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "varchar(36)",
+      "Collation": "utf8mb4_bin",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "uuid()",
+      "Extra": "DEFAULT_GENERATED",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "name",
+      "Type": "varchar(255)",
+      "Collation": "utf8mb4_bin",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "whatsapp",
+      "Type": "varchar(20)",
+      "Collation": "utf8mb4_bin",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "serviceType",
+      "Type": "varchar(100)",
+      "Collation": "utf8mb4_bin",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "region",
+      "Type": "varchar(100)",
+      "Collation": "utf8mb4_bin",
+      "Null": "NO",
+      "Key": "",
+      "Default": "Holambra",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "area",
+      "Type": "text",
+      "Collation": "utf8mb4_bin",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "capacity",
+      "Type": "int",
+      "Collation": "NULL",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "notes",
+      "Type": "text",
+      "Collation": "utf8mb4_bin",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "photoUrl",
+      "Type": "text",
+      "Collation": "utf8mb4_bin",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "vehicleModel",
+      "Type": "varchar(100)",
+      "Collation": "utf8mb4_bin",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "vehicleColor",
+      "Type": "varchar(50)",
+      "Collation": "utf8mb4_bin",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "plate",
+      "Type": "varchar(20)",
+      "Collation": "utf8mb4_bin",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "status",
+      "Type": "enum('PENDING','ACTIVE','REJECTED')",
+      "Collation": "utf8mb4_bin",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "PENDING",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "isPartner",
+      "Type": "tinyint(1)",
+      "Collation": "NULL",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "0",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "partnerUntil",
+      "Type": "timestamp",
+      "Collation": "NULL",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "isVerified",
+      "Type": "tinyint(1)",
+      "Collation": "NULL",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "createdAt",
+      "Type": "timestamp",
+      "Collation": "NULL",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": "",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    },
+    {
+      "Field": "updatedAt",
+      "Type": "timestamp",
+      "Collation": "NULL",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP",
+      "Privileges": "select,insert,update,references",
+      "Comment": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tCollation\tNull\tKey\tDefault\tExtra\tPrivileges\tComment\nid\tvarchar(36)\tutf8mb4_bin\tNO\tPRI\tuuid()\tDEFAULT_GENERATED\tselect,insert,update,references\t\nname\tvarchar(255)\tutf8mb4_bin\tNO\t\tNULL\t\tselect,insert,update,references\t\nwhatsapp\tvarchar(20)\tutf8mb4_bin\tNO\t\tNULL\t\tselect,insert,update,references\t\nserviceType\tvarchar(100)\tutf8mb4_bin\tNO\t\tNULL\t\tselect,insert,update,references\t\nregion\tvarchar(100)\tutf8mb4_bin\tNO\t\tHolambra\t\tselect,insert,update,references\t\narea\ttext\tutf8mb4_bin\tYES\t\tNULL\t\tselect,insert,update,references\t\ncapacity\tint\tNULL\tYES\t\tNULL\t\tselect,insert,update,references\t\nnotes\ttext\tutf8mb4_bin\tYES\t\tNULL\t\tselect,insert,update,references\t\nphotoUrl\ttext\tutf8mb4_bin\tYES\t\tNULL\t\tselect,insert,update,references\t\nvehicleModel\tvarchar(100)\tutf8mb4_bin\tYES\t\tNULL\t\tselect,insert,update,references\t\nvehicleColor\tvarchar(50)\tutf8mb4_bin\tYES\t\tNULL\t\tselect,insert,update,references\t\nplate\tvarchar(20)\tutf8mb4_bin\tYES\t\tNULL\t\tselect,insert,update,references\t\nstatus\tenum('PENDING','ACTIVE','REJECTED')\tutf8mb4_bin\tNO\tMUL\tPENDING\t\tselect,insert,update,references\t\nisPartner\ttinyint(1)\tNULL\tNO\tMUL\t0\t\tselect,insert,update,references\t\npartnerUntil\ttimestamp\tNULL\tYES\t\tNULL\t\tselect,insert,update,references\t\nisVerified\ttinyint(1)\tNULL\tNO\t\t0\t\tselect,insert,update,references\t\ncreatedAt\ttimestamp\tNULL\tNO\t\tCURRENT_TIMESTAMP\t\tselect,insert,update,references\t\nupdatedAt\ttimestamp\tNULL\tNO\t\tCURRENT_TIMESTAMP\tDEFAULT_GENERATED on update CURRENT_TIMESTAMP\tselect,insert,update,references\t\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

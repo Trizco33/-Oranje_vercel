@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total, COUNT(CASE WHEN status = 'ACTIVE' THEN 1 END) as active FROM drivers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute SELECT COUNT(*) as total, COUNT(CASE WHEN status = 'ACTIVE' THEN 1 END) as active FROM drivers;",
+  "rows": [
+    {
+      "total": "2",
+      "active": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tactive\n2\t2\n",
+  "stderr": "",
+  "execution_time_ms": 346
+}

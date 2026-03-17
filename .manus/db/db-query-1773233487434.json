@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `drivers` (\n\t`id` varchar(36) NOT NULL DEFAULT (UUID()),\n\t`name` varchar(255) NOT NULL,\n\t`whatsapp` varchar(20) NOT NULL,\n\t`photoUrl` text,\n\t`vehicleModel` varchar(100),\n\t`vehicleColor` varchar(50),\n\t`plate` varchar(20),\n\t`capacity` int,\n\t`serviceType` varchar(100) NOT NULL,\n\t`region` varchar(100) NOT NULL,\n\t`area` text,\n\t`notes` text,\n\t`status` enum('PENDING','ACTIVE','REJECTED') NOT NULL DEFAULT 'PENDING',\n\t`isPartner` boolean NOT NULL DEFAULT false,\n\t`partnerUntil` timestamp,\n\t`isVerified` boolean NOT NULL DEFAULT false,\n\t`isActive` boolean NOT NULL DEFAULT true,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `drivers_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute CREATE TABLE IF NOT EXISTS `drivers` (\n\t`id` varchar(36) NOT NULL DEFAULT (UUID()),\n\t`name` varchar(255) NOT NULL,\n\t`whatsapp` varchar(20) NOT NULL,\n\t`photoUrl` text,\n\t`vehicleModel` varchar(100),\n\t`vehicleColor` varchar(50),\n\t`plate` varchar(20),\n\t`capacity` int,\n\t`serviceType` varchar(100) NOT NULL,\n\t`region` varchar(100) NOT NULL,\n\t`area` text,\n\t`notes` text,\n\t`status` enum('PENDING','ACTIVE','REJECTED') NOT NULL DEFAULT 'PENDING',\n\t`isPartner` boolean NOT NULL DEFAULT false,\n\t`partnerUntil` timestamp,\n\t`isVerified` boolean NOT NULL DEFAULT false,\n\t`isActive` boolean NOT NULL DEFAULT true,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `drivers_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 66
+}

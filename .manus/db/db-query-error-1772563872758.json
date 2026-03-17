@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE drivers ADD COLUMN isVerified BOOLEAN NOT NULL DEFAULT false;\nALTER TABLE drivers ADD COLUMN isActive BOOLEAN NOT NULL DEFAULT true;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user copY82mBvvc3FwW.root --database 8rzdsSWs85gXVtjhEeBpLG --execute ALTER TABLE drivers ADD COLUMN isVerified BOOLEAN NOT NULL DEFAULT false;\nALTER TABLE drivers ADD COLUMN isActive BOOLEAN NOT NULL DEFAULT true;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1060 (42S21) at line 1: Duplicate column name 'isVerified'"
+  ]
+}

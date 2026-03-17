@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ChevronRight, MapPin, Calendar, Users, Car } from "lucide-react";
 
@@ -55,18 +55,18 @@ export default function Landing() {
             <a href="#inicio" className="text-sm" style={{ color: "#F5F5DC" }}>
               Início
             </a>
-            <a href="/guia" className="text-sm" style={{ color: "#F5F5DC" }}>
+            <Link to="/guia" className="text-sm" style={{ color: "#F5F5DC" }}>
               Guia
-            </a>
+            </Link>
             <a href="#parcerias" className="text-sm" style={{ color: "#F5F5DC" }}>
               Parcerias
             </a>
-            <a href="/sobre" className="text-sm" style={{ color: "#F5F5DC" }}>
+            <Link to="/sobre" className="text-sm" style={{ color: "#F5F5DC" }}>
               Sobre
-            </a>
-            <a href="/contato" className="text-sm" style={{ color: "#F5F5DC" }}>
+            </Link>
+            <Link to="/contato" className="text-sm" style={{ color: "#F5F5DC" }}>
               Contato
-            </a>
+            </Link>
             <button
               onClick={handleOpenApp}
               className="px-4 py-2 rounded-lg text-sm font-medium"
@@ -285,19 +285,19 @@ export default function Landing() {
             </h4>
             <ul className="space-y-2">
               <li>
-                <a href="/guia" style={{ color: "#C8C5C0" }}>
+                <Link to="/guia" style={{ color: "#C8C5C0" }}>
                   Guia
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/sobre" style={{ color: "#C8C5C0" }}>
+                <Link to="/sobre" style={{ color: "#C8C5C0" }}>
                   Sobre
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/parcerias" style={{ color: "#C8C5C0" }}>
+                <Link to="/parcerias" style={{ color: "#C8C5C0" }}>
                   Parcerias
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -307,14 +307,14 @@ export default function Landing() {
             </h4>
             <ul className="space-y-2">
               <li>
-                <a href="/privacidade" style={{ color: "#C8C5C0" }}>
+                <Link to="/privacidade" style={{ color: "#C8C5C0" }}>
                   Privacidade
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/termos" style={{ color: "#C8C5C0" }}>
+                <Link to="/termos" style={{ color: "#C8C5C0" }}>
                   Termos
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -322,9 +322,9 @@ export default function Landing() {
             <h4 className="font-semibold mb-4" style={{ color: "#FFFFFF" }}>
               Contato
             </h4>
-            <a href="/contato" style={{ color: "#C8C5C0" }}>
+            <Link to="/contato" style={{ color: "#C8C5C0" }}>
               Fale conosco
-            </a>
+            </Link>
           </div>
         </div>
         <div

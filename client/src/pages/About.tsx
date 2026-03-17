@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
 export default function About() {
@@ -114,7 +114,7 @@ export default function About() {
 
           <div className="mt-12 pt-8 border-t" style={{ borderColor: "rgba(230, 81, 0, 0.1)" }}>
             <p style={{ color: "#C8C5C0" }}>
-              Tem dúvidas? <a href="/contato" style={{ color: "#E65100" }}>Entre em contato conosco</a>.
+              Tem dúvidas? <Link to="/contato" style={{ color: "#E65100" }}>Entre em contato conosco</Link>.
             </p>
           </div>
         </div>

@@ -10,7 +10,6 @@ import {
   Star,
   ArrowRight,
   Download,
-  Instagram,
   CheckCircle,
 } from "lucide-react";
 
@@ -445,59 +444,7 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* 10) FOOTER */}
-      <footer className="bg-[#00251A] text-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <Link to="/" className="inline-block mb-4 hover:opacity-80 transition">
-                <picture>
-                  <source srcSet="/logo.webp" type="image/webp" />
-                  <img src="/logo.png" alt="Oranje" className="h-12 w-auto" />
-                </picture>
-              </Link>
-              <p className="text-gray-400 text-sm">
-                Seu guia definitivo de Holambra. Curadoria local, parceiros verificados.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Navegação</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link to="/" className="hover:text-white">Início</Link></li>
-                <li><Link to="/blog" className="hover:text-white">Blog</Link></li>
-                <li><Link to="/roteiros" className="hover:text-white">Roteiros</Link></li>
-                <li><Link to="/mapa" className="hover:text-white">Mapa</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link to="/privacidade" className="hover:text-white">Privacidade</Link></li>
-                <li><Link to="/termos" className="hover:text-white">Termos</Link></li>
-                <li><Link to="/contato" className="hover:text-white">Contato</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Redes Sociais</h4>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-gray-400 hover:text-white"
-              >
-                <Instagram size={20} />
-                Instagram
-              </a>
-            </div>
-          </div>
 
-          <div className="border-t border-white/10 pt-8 text-center text-gray-400 text-sm">
-            <p>
-              © 2026 Oranje. Plataforma de curadoria e conexão local. Todos os direitos reservados.
-            </p>
-          </div>
-        </div>
-      </footer>
     </SiteLayout>
   );
 }

@@ -35,11 +35,7 @@ const RegisterDriver = lazy(() => import("./pages/RegisterDriver"));
 const DriverDetail = lazy(() => import("./pages/DriverDetail"));
 const Guide = lazy(() => import("./pages/Guide"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
-const About = lazy(() => import("./pages/About"));
 const Partnerships = lazy(() => import("./pages/Partnerships"));
-const Contact = lazy(() => import("./pages/Contact"));
-const Privacy = lazy(() => import("./pages/Privacy"));
-const Terms = lazy(() => import("./pages/Terms"));
 const CMSLogin = lazy(() => import("./pages/CMSLogin"));
 const CMSDashboard = lazy(() => import("./pages/CMSDashboard"));
 const CMSEditor = lazy(() => import("./pages/CMSEditor"));
@@ -115,11 +111,7 @@ function Router() {
         </Route>
         <Route path="/guia" element={<Suspense fallback={<LoadingFallback />}><Guide /></Suspense>} />
         <Route path="/guia/:slug" element={<Suspense fallback={<LoadingFallback />}><GuideDetail /></Suspense>} />
-        <Route path="/sobre" element={<Suspense fallback={<LoadingFallback />}><About /></Suspense>} />
         <Route path="/parcerias" element={<Suspense fallback={<LoadingFallback />}><Partnerships /></Suspense>} />
-        <Route path="/contato" element={<Suspense fallback={<LoadingFallback />}><Contact /></Suspense>} />
-        <Route path="/privacidade" element={<Suspense fallback={<LoadingFallback />}><Privacy /></Suspense>} />
-        <Route path="/termos" element={<Suspense fallback={<LoadingFallback />}><Terms /></Suspense>} />
         <Route path="/admin/login" element={<Suspense fallback={<LoadingFallback />}><CMSLogin /></Suspense>} />
         <Route path="/admin" element={<Suspense fallback={<LoadingFallback />}><CMSDashboard /></Suspense>} />
         <Route path="/admin/conteudo" element={<Suspense fallback={<LoadingFallback />}><CMSEditor /></Suspense>} />

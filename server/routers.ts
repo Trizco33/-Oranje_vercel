@@ -42,7 +42,7 @@ export const appRouter = router({
   // ── SEO ────────────────────────────────────────────────────────────────────
   seo: router({
     sitemap: publicProcedure.query(async ({ ctx }) => {
-      const baseUrl = ctx.req.headers.origin || "https://oranje.manus.space";
+      const baseUrl = ctx.req.headers.origin || "https://oranjeapp.com.br";
       const xml = await generateSitemap(baseUrl);
       return { xml };
     }),

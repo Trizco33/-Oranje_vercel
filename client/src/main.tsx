@@ -1,19 +1,11 @@
 import { trpc } from "@/lib/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import "./index.css";
-
-// Redirecionamento automático de rotas sem hash para rotas com hash
-if (!window.location.hash || window.location.hash === '#') {
-  const p = window.location.pathname;
-  if (p && p !== '/' && !p.startsWith('/api')) {
-    window.location.replace('/#' + p + window.location.search);
-  }
-}
 
 // Registrar Service Worker para PWA
 if ('serviceWorker' in navigator) {
@@ -65,9 +57,9 @@ const trpcClient = trpc.createClient({
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
-      <HashRouter>
+      <BrowserRouter>
         <App />
-      </HashRouter>
+      </BrowserRouter>
     </QueryClientProvider>
   </trpc.Provider>
 );

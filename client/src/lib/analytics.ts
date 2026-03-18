@@ -1,34 +1,15 @@
 /**
- * Google Analytics 4 - Integration Module
- * 
- * Configuração:
- * 1. Defina a variável de ambiente VITE_GA4_MEASUREMENT_ID no .env
- *    Exemplo: VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
- * 
- * 2. O script do GA4 é injetado automaticamente via initGA4()
- *    chamado em main.tsx na inicialização do app.
- * 
- * 3. O tracking de pageviews é automático via usePageTracking()
- *    hook integrado no App.tsx.
- * 
- * 4. Eventos customizados podem ser disparados via trackEvent().
- * 
- * Eventos rastreados automaticamente:
- * - page_view: Todas as navegações de rota
- * - cta_click: Cliques em botões de CTA importantes
- * - navigation: Navegação principal do site
- * - app_open: Abertura do app (/app)
- * - pwa_install: Instalação do PWA
- * - search: Buscas realizadas
- * - place_view: Visualização de lugares
- * - event_view: Visualização de eventos
- * - contact_click: Cliques em links de contato
+ * Google Analytics 4 - Módulo de integração
+ *
+ * O script gtag.js é carregado globalmente via client/index.html
+ * com o Measurement ID G-00YQZ6WTKZ e send_page_view: false.
+ *
+ * Este módulo expõe helpers tipados para disparar eventos no GA4:
+ * - trackPageView: chamado automaticamente pelo hook usePageTracking
+ * - trackEvent: para eventos customizados opcionais
  */
 
-// GA4 Measurement ID from environment variable
-const GA4_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
-
-// Extend window for gtag
+// Tipagem global do gtag (já inicializado no index.html)
 declare global {
   interface Window {
     dataLayer: unknown[];
@@ -37,46 +18,11 @@ declare global {
 }
 
 /**
- * Initialize Google Analytics 4 by injecting the gtag.js script.
- * Should be called once at app startup (main.tsx).
- */
-export function initGA4(): void {
-  if (!GA4_ID) {
-    if (import.meta.env.DEV) {
-      console.info('[GA4] VITE_GA4_MEASUREMENT_ID not set. Analytics disabled.');
-    }
-    return;
-  }
-
-  // Avoid double initialization
-  if (document.querySelector(`script[src*="googletagmanager.com/gtag"]`)) {
-    return;
-  }
-
-  // Inject gtag.js script
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`;
-  document.head.appendChild(script);
-
-  // Initialize dataLayer and gtag function
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer.push(args);
-  };
-
-  window.gtag('js', new Date());
-  window.gtag('config', GA4_ID, {
-    send_page_view: false, // We handle pageviews manually for SPA
-  });
-}
-
-/**
- * Track a pageview event.
- * Called automatically by usePageTracking() hook.
+ * Dispara um evento page_view no GA4.
+ * Chamado automaticamente pelo hook usePageTracking() a cada mudança de rota.
  */
 export function trackPageView(path: string, title?: string): void {
-  if (!GA4_ID || typeof window.gtag !== 'function') return;
+  if (typeof window.gtag !== 'function') return;
 
   window.gtag('event', 'page_view', {
     page_path: path,
@@ -85,18 +31,16 @@ export function trackPageView(path: string, title?: string): void {
 }
 
 /**
- * Track a custom event.
- * 
- * @param eventName - The event name (e.g., 'cta_click', 'search')
- * @param params - Additional event parameters
- * 
+ * Dispara um evento customizado no GA4.
+ *
  * @example
  * trackEvent('cta_click', { button_text: 'Abrir App', location: 'hero' });
- * trackEvent('search', { search_term: 'restaurantes' });
- * trackEvent('place_view', { place_id: '123', place_name: 'Restaurante X' });
  */
-export function trackEvent(eventName: string, params?: Record<string, string | number | boolean>): void {
-  if (!GA4_ID || typeof window.gtag !== 'function') return;
+export function trackEvent(
+  eventName: string,
+  params?: Record<string, string | number | boolean>,
+): void {
+  if (typeof window.gtag !== 'function') return;
 
   window.gtag('event', eventName, params);
 }

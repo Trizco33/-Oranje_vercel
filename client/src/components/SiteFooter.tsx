@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
-import { trackEvent } from "@/lib/analytics";
-
 export default function SiteFooter() {
   return (
     <footer role="contentinfo" style={{ background: "var(--ds-color-bg-secondary, #004D40)" }}>
@@ -50,7 +48,6 @@ export default function SiteFooter() {
                 <li key={item.to}>
                   <Link
                     to={item.to}
-                    onClick={() => trackEvent('navigation', { item: item.label, location: 'footer' })}
                     style={{
                       fontSize: "var(--ds-text-sm)",
                       color: "var(--ds-color-text-muted)",
@@ -126,7 +123,6 @@ export default function SiteFooter() {
                 <a
                   href="mailto:contato@oranje.com.br"
                   aria-label="Enviar e-mail para contato@oranje.com.br"
-                  onClick={() => trackEvent('contact_click', { type: 'email' })}
                   style={{
                     fontSize: "var(--ds-text-sm)",
                     color: "var(--ds-color-text-muted)",
@@ -144,7 +140,6 @@ export default function SiteFooter() {
                 <a
                   href="tel:+551940000000"
                   aria-label="Ligar para (19) 4000-0000"
-                  onClick={() => trackEvent('contact_click', { type: 'phone' })}
                   style={{
                     fontSize: "var(--ds-text-sm)",
                     color: "var(--ds-color-text-muted)",
@@ -186,7 +181,6 @@ export default function SiteFooter() {
                 rel="noopener noreferrer"
                 role="listitem"
                 aria-label={`Seguir Oranje no ${social.label}`}
-                onClick={() => trackEvent('contact_click', { type: 'social', network: social.label })}
                 style={{
                   color: "var(--ds-color-text-muted)",
                   transition: "color 0.2s",

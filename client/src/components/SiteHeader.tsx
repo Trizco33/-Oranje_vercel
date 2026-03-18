@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
-import { trackEvent } from "@/lib/analytics";
 
 export default function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,10 +18,6 @@ export default function SiteHeader() {
   ];
 
   const isActive = (href: string) => location.pathname === href;
-
-  const handleNavClick = (label: string) => {
-    trackEvent('navigation', { item: label, location: 'header' });
-  };
 
   return (
     <header
@@ -72,7 +67,6 @@ export default function SiteHeader() {
             <Link
               key={item.href}
               to={item.href}
-              onClick={() => handleNavClick(item.label)}
               aria-current={isActive(item.href) ? "page" : undefined}
               style={{
                 padding: "0.5rem 0.75rem",
@@ -111,7 +105,6 @@ export default function SiteHeader() {
           <Link
             to="/app"
             style={{ textDecoration: "none" }}
-            onClick={() => trackEvent('cta_click', { button_text: 'Abrir o App', location: 'header' })}
           >
             <DSButton variant="primary" size="sm">
               Abrir o App
@@ -157,10 +150,7 @@ export default function SiteHeader() {
               <Link
                 key={item.href}
                 to={item.href}
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  handleNavClick(item.label);
-                }}
+                onClick={() => setIsMenuOpen(false)}
                 aria-current={isActive(item.href) ? "page" : undefined}
                 style={{
                   display: "block",
@@ -180,10 +170,7 @@ export default function SiteHeader() {
               <Link
                 to="/app"
                 style={{ textDecoration: "none" }}
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  trackEvent('cta_click', { button_text: 'Abrir o App', location: 'mobile_menu' });
-                }}
+                onClick={() => setIsMenuOpen(false)}
               >
                 <DSButton variant="primary" size="md" fullWidth>
                   Abrir o App

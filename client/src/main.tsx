@@ -5,11 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
-import { initGA4 } from "@/lib/analytics";
-import "./index.css";
 
-// Inicializar Google Analytics 4
-initGA4();
 
 // Registrar Service Worker para PWA
 if ('serviceWorker' in navigator) {

@@ -1,130 +1,122 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
-export type ButtonSize = 'sm' | 'md' | 'lg';
-
-export interface DSButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Visual variant */
-  variant?: ButtonVariant;
-  /** Size preset */
-  size?: ButtonSize;
-  /** Full width */
+interface DSButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "secondary" | "ghost" | "accent-outline" | "danger";
+  size?: "sm" | "md" | "lg" | "xl";
   fullWidth?: boolean;
-  /** Loading state */
   loading?: boolean;
-  /** Icon slot (left) */
-  iconLeft?: React.ReactNode;
-  /** Icon slot (right) */
-  iconRight?: React.ReactNode;
+  iconLeft?: ReactNode;
+  iconRight?: ReactNode;
 }
 
-const variantStyles: Record<ButtonVariant, string> = {
-  primary: [
-    'bg-[var(--ds-color-accent)] text-white',
-    'hover:bg-[var(--ds-color-accent-hover)] hover:shadow-[var(--ds-shadow-accent)]',
-    'active:bg-[var(--ds-color-accent-active)] active:scale-[0.97]',
-    'focus-visible:ring-2 focus-visible:ring-[var(--ds-color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-color-bg-primary)]',
-    'disabled:opacity-40 disabled:pointer-events-none disabled:shadow-none',
-  ].join(' '),
-
-  secondary: [
-    'bg-transparent text-[var(--ds-color-text-primary)]',
-    'border border-[var(--ds-color-border-emphasis)]',
-    'hover:bg-[var(--ds-color-bg-surface-hover)] hover:border-[var(--ds-color-text-secondary)]',
-    'active:scale-[0.97] active:bg-[var(--ds-color-bg-surface)]',
-    'focus-visible:ring-2 focus-visible:ring-[var(--ds-color-border-emphasis)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-color-bg-primary)]',
-    'disabled:opacity-40 disabled:pointer-events-none',
-  ].join(' '),
-
-  ghost: [
-    'bg-transparent text-[var(--ds-color-text-secondary)]',
-    'hover:bg-[var(--ds-color-bg-surface)] hover:text-[var(--ds-color-text-primary)]',
-    'active:scale-[0.97] active:bg-[var(--ds-color-bg-surface-hover)]',
-    'focus-visible:ring-2 focus-visible:ring-[var(--ds-color-border-default)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-color-bg-primary)]',
-    'disabled:opacity-40 disabled:pointer-events-none',
-  ].join(' '),
+const sizeMap = {
+  sm: { height: 34, fontSize: "var(--ds-text-xs)", padding: "0 14px", gap: 6, radius: "var(--ds-radius-md)" },
+  md: { height: 42, fontSize: "var(--ds-text-sm)", padding: "0 20px", gap: 8, radius: "var(--ds-radius-lg)" },
+  lg: { height: 50, fontSize: "var(--ds-text-base)", padding: "0 28px", gap: 10, radius: "var(--ds-radius-xl)" },
+  xl: { height: 58, fontSize: "var(--ds-text-lg)", padding: "0 36px", gap: 12, radius: "var(--ds-radius-xl)" },
 };
 
-const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-9 px-3.5 text-[var(--ds-text-sm)] gap-1.5 rounded-[var(--ds-radius-md)]',
-  md: 'h-11 px-5 text-[var(--ds-text-base)] gap-2 rounded-[var(--ds-radius-lg)]',
-  lg: 'h-[3.25rem] px-7 text-[var(--ds-text-lg)] gap-2.5 rounded-[var(--ds-radius-xl)]',
+const variantStyles: Record<string, React.CSSProperties> = {
+  primary: {
+    background: "linear-gradient(135deg, var(--oranje-orange) 0%, #BF360C 100%)",
+    color: "#FFFFFF",
+    border: "none",
+    boxShadow: "var(--ds-shadow-accent)",
+  },
+  secondary: {
+    background: "var(--ds-color-bg-glass)",
+    color: "var(--ds-color-text-primary)",
+    border: "1px solid var(--ds-color-border-default)",
+    backdropFilter: "blur(12px)",
+  },
+  ghost: {
+    background: "transparent",
+    color: "var(--ds-color-text-secondary)",
+    border: "1px solid transparent",
+  },
+  "accent-outline": {
+    background: "var(--ds-color-accent-subtle)",
+    color: "var(--ds-color-accent)",
+    border: "1px solid var(--ds-color-border-accent)",
+  },
+  danger: {
+    background: "rgba(248, 113, 113, 0.12)",
+    color: "var(--ds-color-error)",
+    border: "1px solid rgba(248, 113, 113, 0.25)",
+  },
 };
 
-export const DSButton = React.forwardRef<HTMLButtonElement, DSButtonProps>(
-  (
-    {
-      variant = 'primary',
-      size = 'md',
-      fullWidth = false,
-      loading = false,
-      iconLeft,
-      iconRight,
-      children,
-      className,
-      disabled,
-      ...rest
-    },
-    ref
-  ) => {
+export const DSButton = forwardRef<HTMLButtonElement, DSButtonProps>(
+  ({ variant = "primary", size = "md", fullWidth, loading, iconLeft, iconRight, children, disabled, style, ...props }, ref) => {
+    const s = sizeMap[size];
+    const v = variantStyles[variant] ?? variantStyles.primary;
+
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
-        aria-busy={loading || undefined}
-        aria-disabled={disabled || loading || undefined}
-        className={cn(
-          // Base
-          'inline-flex items-center justify-center',
-          'font-[var(--ds-font-semibold)] tracking-[var(--ds-tracking-wide)]',
-          'select-none whitespace-nowrap',
-          'transition-all duration-[var(--ds-duration-normal)] ease-[var(--ds-ease-default)]',
-          // Touch target
-          'min-h-[var(--ds-touch-target-sm)]',
-          // Variant & size
-          variantStyles[variant],
-          sizeStyles[size],
-          // Full width
-          fullWidth && 'w-full',
-          // Custom
-          className
-        )}
-        {...rest}
+        style={{
+          ...v,
+          height: s.height,
+          fontSize: s.fontSize,
+          padding: s.padding,
+          borderRadius: s.radius,
+          fontFamily: "var(--ds-font-sans)",
+          fontWeight: "var(--ds-font-semibold)" as any,
+          letterSpacing: "var(--ds-tracking-wide)",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: s.gap,
+          width: fullWidth ? "100%" : undefined,
+          cursor: disabled || loading ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.45 : 1,
+          transition: "all var(--ds-duration-normal) var(--ds-ease-smooth)",
+          whiteSpace: "nowrap",
+          userSelect: "none",
+          textDecoration: "none",
+          lineHeight: 1,
+          ...style,
+        }}
+        onMouseEnter={(e) => {
+          if (!disabled && !loading) {
+            e.currentTarget.style.transform = "translateY(-1px)";
+            if (variant === "primary") {
+              e.currentTarget.style.boxShadow = "var(--ds-shadow-accent-lg)";
+            } else {
+              e.currentTarget.style.boxShadow = "var(--ds-shadow-md)";
+            }
+          }
+          props.onMouseEnter?.(e);
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = v.boxShadow as string ?? "none";
+          props.onMouseLeave?.(e);
+        }}
+        {...props}
       >
-        {loading && (
-          <svg
-            className="animate-spin -ml-0.5 mr-2 h-4 w-4"
-            xmlns="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Loading_spinner.svg/960px-Loading_spinner.svg.png"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <circle
-              className="opacity-25"
-              cx="12" cy="12" r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-            />
-          </svg>
-        )}
-        {!loading && iconLeft && (
-          <span className="flex-shrink-0 [&>svg]:w-[1.1em] [&>svg]:h-[1.1em]">{iconLeft}</span>
-        )}
-        {children && <span>{children}</span>}
-        {!loading && iconRight && (
-          <span className="flex-shrink-0 [&>svg]:w-[1.1em] [&>svg]:h-[1.1em]">{iconRight}</span>
+        {loading ? (
+          <span
+            style={{
+              width: 16,
+              height: 16,
+              border: "2px solid currentColor",
+              borderTopColor: "transparent",
+              borderRadius: "50%",
+              animation: "spin 0.6s linear infinite",
+            }}
+          />
+        ) : (
+          <>
+            {iconLeft}
+            {children}
+            {iconRight}
+          </>
         )}
       </button>
     );
   }
 );
 
-DSButton.displayName = 'DSButton';
-
-export default DSButton;
+DSButton.displayName = "DSButton";

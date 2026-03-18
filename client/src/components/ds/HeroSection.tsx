@@ -1,168 +1,205 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
+import type { ReactNode } from "react";
 
-export interface DSHeroSectionProps extends React.HTMLAttributes<HTMLElement> {
-  /** Main headline */
+interface DSHeroSectionProps {
+  eyebrow?: string;
   title: string;
-  /** Optional subtitle / description */
   subtitle?: string;
-  /** Primary CTA button */
-  cta?: React.ReactNode;
-  /** Secondary CTA button */
-  ctaSecondary?: React.ReactNode;
-  /** Optional badge/eyebrow above the title */
-  eyebrow?: React.ReactNode;
-  /** Background image URL */
+  size?: "sm" | "md" | "lg" | "xl";
+  align?: "left" | "center";
+  background?: string;
   backgroundImage?: string;
-  /** Size preset */
-  size?: 'sm' | 'md' | 'lg';
-  /** Text alignment */
-  align?: 'left' | 'center';
-  /** Bottom content (e.g. search bar, stats) */
-  bottomContent?: React.ReactNode;
+  overlay?: boolean;
+  children?: ReactNode;
+  stats?: Array<{ value: string; label: string }>;
+  cta?: ReactNode;
 }
 
-const sizeStyles = {
-  sm: 'py-12 sm:py-16',
-  md: 'py-16 sm:py-24',
-  lg: 'py-20 sm:py-32 lg:py-40',
+const sizeMap = {
+  sm: { py: "var(--ds-space-12)", titleSize: "var(--ds-text-3xl)" },
+  md: { py: "var(--ds-space-16)", titleSize: "var(--ds-text-4xl)" },
+  lg: { py: "var(--ds-space-20)", titleSize: "var(--ds-text-5xl)" },
+  xl: { py: "var(--ds-space-24)", titleSize: "var(--ds-text-6xl)" },
 };
 
-export const DSHeroSection = React.forwardRef<HTMLElement, DSHeroSectionProps>(
-  (
-    {
-      title,
-      subtitle,
-      cta,
-      ctaSecondary,
-      eyebrow,
-      backgroundImage,
-      size = 'md',
-      align = 'center',
-      bottomContent,
-      className,
-      children,
-      ...rest
-    },
-    ref
-  ) => {
-    return (
-      <section
-        ref={ref}
-        className={cn(
-          'relative overflow-hidden',
-          sizeStyles[size],
-          className
-        )}
-        {...rest}
-      >
-        {/* Background layers */}
-        <div
-          className="absolute inset-0 bg-[var(--ds-color-bg-primary)]"
-          aria-hidden="true"
-        >
-          {/* Gradient orb — decorative */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,var(--ds-color-bg-secondary),transparent)]" />
-          {/* Accent glow — subtle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,var(--ds-color-accent-subtle),transparent_70%)] opacity-60" />
+export function DSHeroSection({
+  eyebrow,
+  title,
+  subtitle,
+  size = "lg",
+  align = "center",
+  background,
+  backgroundImage,
+  overlay = true,
+  children,
+  stats,
+  cta,
+}: DSHeroSectionProps) {
+  const s = sizeMap[size];
 
-          {/* Background image */}
-          {backgroundImage && (
-            <>
-              <img
-                src={backgroundImage}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover opacity-20"
-                loading="eager"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-[var(--ds-color-bg-primary)]/80 via-[var(--ds-color-bg-primary)]/60 to-[var(--ds-color-bg-primary)]" />
-            </>
-          )}
-        </div>
-
-        {/* Content */}
-        <div
-          className={cn(
-            'relative z-10 container mx-auto px-4 sm:px-6',
-            align === 'center' && 'text-center',
-            align === 'left' && 'text-left'
-          )}
-        >
+  return (
+    <section
+      style={{
+        position: "relative",
+        padding: `${s.py} 0`,
+        background: backgroundImage
+          ? undefined
+          : background ?? "linear-gradient(165deg, var(--oranje-green-dark) 0%, var(--oranje-green-deep) 50%, #0B3129 100%)",
+        overflow: "hidden",
+      }}
+    >
+      {backgroundImage && (
+        <>
           <div
-            className={cn(
-              'max-w-3xl',
-              align === 'center' && 'mx-auto',
-            )}
-            style={{ animation: 'ds-fade-up 0.6s ease-out both' }}
-          >
-            {/* Eyebrow */}
-            {eyebrow && (
-              <div className="mb-4 sm:mb-5">
-                {eyebrow}
-              </div>
-            )}
-
-            {/* Title */}
-            <h1
-              className={cn(
-                'font-[var(--ds-font-bold)] tracking-[var(--ds-tracking-tight)]',
-                'text-[var(--ds-color-text-primary)]',
-                'text-[clamp(1.75rem,5vw,var(--ds-text-5xl))]',
-                'leading-[var(--ds-leading-tight)]',
-                'mb-4 sm:mb-6'
-              )}
-            >
-              {title}
-            </h1>
-
-            {/* Subtitle */}
-            {subtitle && (
-              <p
-                className={cn(
-                  'text-[var(--ds-color-text-secondary)]',
-                  'text-[clamp(1rem,2.5vw,var(--ds-text-xl))]',
-                  'leading-[var(--ds-leading-relaxed)]',
-                  'max-w-2xl',
-                  align === 'center' && 'mx-auto',
-                  'mb-8 sm:mb-10'
-                )}
-              >
-                {subtitle}
-              </p>
-            )}
-
-            {/* CTAs */}
-            {(cta || ctaSecondary) && (
-              <div
-                className={cn(
-                  'flex flex-wrap gap-3 sm:gap-4',
-                  align === 'center' && 'justify-center',
-                )}
-              >
-                {cta}
-                {ctaSecondary}
-              </div>
-            )}
-          </div>
-
-          {/* Bottom content */}
-          {bottomContent && (
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
+          />
+          {overlay && (
             <div
-              className="mt-10 sm:mt-14"
-              style={{ animation: 'ds-fade-up 0.7s 0.15s ease-out both' }}
-            >
-              {bottomContent}
-            </div>
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(to bottom, rgba(0,37,26,0.75) 0%, rgba(0,37,26,0.9) 100%)",
+              }}
+            />
           )}
+        </>
+      )}
 
-          {/* Extra children */}
-          {children}
-        </div>
-      </section>
-    );
-  }
-);
+      {/* Decorative orbs */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-20%",
+          right: "-10%",
+          width: "50%",
+          height: "80%",
+          background: "radial-gradient(ellipse, rgba(230,81,0,0.06) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "-15%",
+          left: "-10%",
+          width: "40%",
+          height: "60%",
+          background: "radial-gradient(ellipse, rgba(13,74,64,0.3) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
 
-DSHeroSection.displayName = 'DSHeroSection';
+      <div
+        style={{
+          position: "relative",
+          maxWidth: "72rem",
+          margin: "0 auto",
+          padding: "0 var(--ds-space-6)",
+          textAlign: align,
+        }}
+      >
+        {eyebrow && (
+          <span
+            style={{
+              display: "inline-block",
+              fontSize: "var(--ds-text-xs)",
+              fontWeight: "var(--ds-font-semibold)" as any,
+              letterSpacing: "var(--ds-tracking-wider)",
+              textTransform: "uppercase" as const,
+              color: "var(--ds-color-accent)",
+              marginBottom: "var(--ds-space-4)",
+              padding: "4px 14px",
+              borderRadius: "var(--ds-radius-full)",
+              background: "var(--ds-color-accent-subtle)",
+              border: "1px solid var(--ds-color-border-accent)",
+            }}
+          >
+            {eyebrow}
+          </span>
+        )}
 
-export default DSHeroSection;
+        <h1
+          style={{
+            fontSize: s.titleSize,
+            fontWeight: "var(--ds-font-bold)" as any,
+            fontFamily: "var(--ds-font-display)",
+            color: "var(--ds-color-text-primary)",
+            lineHeight: "var(--ds-leading-tight)",
+            letterSpacing: "var(--ds-tracking-tight)",
+            marginBottom: subtitle ? "var(--ds-space-5)" : "var(--ds-space-8)",
+            maxWidth: align === "center" ? "48rem" : "40rem",
+            margin: align === "center" ? "0 auto" : undefined,
+          }}
+        >
+          {title}
+        </h1>
+
+        {subtitle && (
+          <p
+            style={{
+              fontSize: "var(--ds-text-lg)",
+              fontWeight: "var(--ds-font-regular)" as any,
+              color: "var(--ds-color-text-secondary)",
+              lineHeight: "var(--ds-leading-relaxed)",
+              maxWidth: "42rem",
+              margin: align === "center" ? "0 auto" : undefined,
+              marginBottom: "var(--ds-space-8)",
+              opacity: 0.85,
+            }}
+          >
+            {subtitle}
+          </p>
+        )}
+
+        {cta && <div style={{ marginBottom: stats ? "var(--ds-space-12)" : 0 }}>{cta}</div>}
+
+        {stats && stats.length > 0 && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: align === "center" ? "center" : "flex-start",
+              gap: "var(--ds-space-8)",
+              flexWrap: "wrap",
+              marginTop: "var(--ds-space-8)",
+            }}
+          >
+            {stats.map((stat, i) => (
+              <div key={i} style={{ textAlign: "center", minWidth: 80 }}>
+                <p
+                  style={{
+                    fontSize: "var(--ds-text-3xl)",
+                    fontWeight: "var(--ds-font-bold)" as any,
+                    fontFamily: "var(--ds-font-display)",
+                    color: "var(--ds-color-accent)",
+                    lineHeight: 1,
+                  }}
+                >
+                  {stat.value}
+                </p>
+                <p
+                  style={{
+                    fontSize: "var(--ds-text-xs)",
+                    color: "var(--ds-color-text-muted)",
+                    marginTop: "var(--ds-space-1)",
+                    letterSpacing: "var(--ds-tracking-wide)",
+                    textTransform: "uppercase" as const,
+                  }}
+                >
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {children}
+      </div>
+    </section>
+  );
+}

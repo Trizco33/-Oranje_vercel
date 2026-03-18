@@ -8,26 +8,35 @@ export function ThemeToggle() {
     return null;
   }
 
+  const isDark = theme === "dark";
+
   return (
     <button
       onClick={toggleTheme}
-      className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
+      className="flex items-center justify-center transition-all duration-200"
       style={{
-        background: theme === "dark" ? "rgba(242,140,40,0.15)" : "rgba(242,140,40,0.08)",
+        width: "40px",
+        height: "40px",
+        borderRadius: "var(--ds-radius-lg)",
+        background: isDark ? "rgba(230, 81, 0, 0.12)" : "rgba(13, 74, 64, 0.08)",
+        border: "1px solid " + (isDark ? "rgba(230, 81, 0, 0.15)" : "rgba(13, 74, 64, 0.12)"),
         cursor: "pointer",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = theme === "dark" ? "rgba(242,140,40,0.25)" : "rgba(242,140,40,0.15)";
+        e.currentTarget.style.background = isDark ? "rgba(230, 81, 0, 0.2)" : "rgba(13, 74, 64, 0.15)";
+        e.currentTarget.style.transform = "scale(1.05)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.background = theme === "dark" ? "rgba(242,140,40,0.15)" : "rgba(242,140,40,0.08)";
+        e.currentTarget.style.background = isDark ? "rgba(230, 81, 0, 0.12)" : "rgba(13, 74, 64, 0.08)";
+        e.currentTarget.style.transform = "scale(1)";
       }}
-      title={`Mudar para modo ${theme === "dark" ? "claro" : "escuro"}`}
+      title={`Mudar para modo ${isDark ? "claro" : "escuro"}`}
+      aria-label={`Mudar para modo ${isDark ? "claro" : "escuro"}`}
     >
-      {theme === "dark" ? (
-        <Sun width={18} height={18} color="#F28C28" />
+      {isDark ? (
+        <Sun width={18} height={18} style={{ color: "var(--ds-color-accent)" }} />
       ) : (
-        <Moon width={18} height={18} color="#F28C28" />
+        <Moon width={18} height={18} style={{ color: "var(--oranje-green-deep)" }} />
       )}
     </button>
   );

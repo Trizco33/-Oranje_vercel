@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
+import { usePlaceById, useFavorites, useReviewsByPlace, useMockMutation } from "@/hooks/useMockData";
 import { MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2, Star } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -15,35 +15,26 @@ export default function PlaceDetail() {
   const { user } = useAuth();
   const placeId = Number(id) || 0;
 
-  const { data: placeData, isLoading, error: queryError } = trpc.places.byId.useQuery(
-    { id: placeId },
-    { enabled: placeId > 0 }
-  );
+  const { data: placeData, isLoading } = usePlaceById(placeId);
 
-  const { data: userFavs } = trpc.favorites.list.useQuery(undefined, { enabled: !!user });
-  const addFav = trpc.favorites.add.useMutation();
-  const removeFav = trpc.favorites.remove.useMutation();
-  const utils = trpc.useUtils();
+  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
-  const { data: placeReviews = [] } = trpc.reviews.listByPlace.useQuery(
-    { placeId },
-    { enabled: placeId > 0 }
-  );
+  const { data: placeReviews = [] } = useReviewsByPlace(placeId);
 
-  const createReview = trpc.reviews.create.useMutation();
-  const markHelpful = trpc.reviews.markHelpful.useMutation();
+  const createReview = useMockMutation();
+  const markHelpful = useMockMutation();
 
   const [, setReviewKey] = useState(0);
 
   const place = placeData as any;
-  const isFavorite = userFavs?.some((f: any) => f.placeId === placeId) ?? false;
+  const isFavorite = favoriteIds.has(placeId);
 
   function handleToggleFavorite() {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
     if (isFavorite) {
-      removeFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      removeFavorite(placeId);
     } else {
-      addFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      addFavorite(placeId);
     }
   }
 
@@ -62,17 +53,14 @@ export default function PlaceDetail() {
       { placeId, rating, comment },
       {
         onSuccess: () => {
-          utils.reviews.listByPlace.invalidate({ placeId });
           setReviewKey(k => k + 1);
         },
       }
     );
   }
 
-  function handleMarkHelpful(reviewId: number) {
-    markHelpful.mutate(reviewId, {
-      onSuccess: () => utils.reviews.listByPlace.invalidate({ placeId }),
-    });
+  function handleMarkHelpful(_reviewId: number) {
+    markHelpful.mutate(_reviewId, {});
   }
 
   if (isLoading) {
@@ -95,7 +83,7 @@ export default function PlaceDetail() {
     );
   }
 
-  if (!place && !queryError) {
+  if (!place) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }} className="flex flex-col">
         <OranjeHeader showBack title="Lugar não encontrado" />
@@ -117,10 +105,8 @@ export default function PlaceDetail() {
     );
   }
 
-  if (!place) return null;
-
-  const imageUrl = place.coverImage || "https://placehold.co/1200x600/e2e8f0/1e293b?text=A_cover_image_representing_a_place__likely_a_lands";
-  const mapsUrl = place.mapsUrl || (place.lat && place.lng ? `https://www.google.com/maps/search/${place.lat},${place.lng}` : null);
+  const imageUrl = place.coverImage || "https://placehold.co/1200x600/e2e8f0/1e293b?text=Holambra";
+  const mapsUrl = place.lat && place.lng ? `https://www.google.com/maps/search/${place.lat},${place.lng}` : null;
   const whatsappUrl = place.whatsapp
     ? `https://wa.me/${place.whatsapp.replace(/\D/g, '')}?text=Olá%20${encodeURIComponent(place.name)}%2C%20gostaria%20de%20informações`
     : null;
@@ -196,10 +182,10 @@ export default function PlaceDetail() {
             </div>
           )}
 
-          {place.openingHours && (
+          {place.hours && (
             <div className="mb-6">
               <h2 className="text-lg font-semibold mb-2" style={{ color: "var(--ds-color-text-primary)" }}>Horário de Funcionamento</h2>
-              <p className="text-sm whitespace-pre-line" style={{ color: "var(--ds-color-text-secondary)" }}>{place.openingHours}</p>
+              <p className="text-sm whitespace-pre-line" style={{ color: "var(--ds-color-text-secondary)" }}>{place.hours}</p>
             </div>
           )}
 

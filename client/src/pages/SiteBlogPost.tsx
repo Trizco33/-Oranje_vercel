@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { trpc } from "@/lib/trpc";
+import { useArticleBySlug } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
 import { ArrowLeft, Calendar, Share2 } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
@@ -9,10 +9,7 @@ import { DSCard } from "@/components/ds/Card";
 export default function SiteBlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { data: article, isLoading, error } = trpc.articles.bySlug.useQuery(
-    { slug: slug || "" },
-    { enabled: !!slug }
-  );
+  const { data: article, isLoading } = useArticleBySlug(slug || "");
 
   if (isLoading) {
     return (
@@ -37,7 +34,7 @@ export default function SiteBlogPost() {
     );
   }
 
-  if (error || !article) {
+  if (!article) {
     return (
       <SiteLayout>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px" }}>

@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
+import type { ReactNode, CSSProperties } from "react";
 
 interface DSHeroSectionProps {
-  eyebrow?: string;
+  eyebrow?: ReactNode;
   title: string;
   subtitle?: string;
   size?: "sm" | "md" | "lg" | "xl";
@@ -12,6 +12,11 @@ interface DSHeroSectionProps {
   children?: ReactNode;
   stats?: Array<{ value: string; label: string }>;
   cta?: ReactNode;
+  ctaSecondary?: ReactNode;
+  bottomContent?: ReactNode;
+  id?: string;
+  className?: string;
+  style?: CSSProperties;
 }
 
 const sizeMap = {
@@ -33,11 +38,18 @@ export function DSHeroSection({
   children,
   stats,
   cta,
+  ctaSecondary,
+  bottomContent,
+  id,
+  className,
+  style: customStyle,
 }: DSHeroSectionProps) {
   const s = sizeMap[size];
 
   return (
     <section
+      id={id}
+      className={className}
       style={{
         position: "relative",
         padding: `${s.py} 0`,
@@ -45,6 +57,7 @@ export function DSHeroSection({
           ? undefined
           : background ?? "linear-gradient(165deg, var(--oranje-green-dark) 0%, var(--oranje-green-deep) 50%, #0B3129 100%)",
         overflow: "hidden",
+        ...customStyle,
       }}
     >
       {backgroundImage && (
@@ -105,23 +118,27 @@ export function DSHeroSection({
         }}
       >
         {eyebrow && (
-          <span
-            style={{
-              display: "inline-block",
-              fontSize: "var(--ds-text-xs)",
-              fontWeight: "var(--ds-font-semibold)" as any,
-              letterSpacing: "var(--ds-tracking-wider)",
-              textTransform: "uppercase" as const,
-              color: "var(--ds-color-accent)",
-              marginBottom: "var(--ds-space-4)",
-              padding: "4px 14px",
-              borderRadius: "var(--ds-radius-full)",
-              background: "var(--ds-color-accent-subtle)",
-              border: "1px solid var(--ds-color-border-accent)",
-            }}
-          >
-            {eyebrow}
-          </span>
+          typeof eyebrow === "string" ? (
+            <span
+              style={{
+                display: "inline-block",
+                fontSize: "var(--ds-text-xs)",
+                fontWeight: "var(--ds-font-semibold)" as any,
+                letterSpacing: "var(--ds-tracking-wider)",
+                textTransform: "uppercase" as const,
+                color: "var(--ds-color-accent)",
+                marginBottom: "var(--ds-space-4)",
+                padding: "4px 14px",
+                borderRadius: "var(--ds-radius-full)",
+                background: "var(--ds-color-accent-subtle)",
+                border: "1px solid var(--ds-color-border-accent)",
+              }}
+            >
+              {eyebrow}
+            </span>
+          ) : (
+            <div style={{ marginBottom: "var(--ds-space-4)" }}>{eyebrow}</div>
+          )
         )}
 
         <h1
@@ -134,7 +151,8 @@ export function DSHeroSection({
             letterSpacing: "var(--ds-tracking-tight)",
             marginBottom: subtitle ? "var(--ds-space-5)" : "var(--ds-space-8)",
             maxWidth: align === "center" ? "48rem" : "40rem",
-            margin: align === "center" ? "0 auto" : undefined,
+            marginLeft: align === "center" ? "auto" : undefined,
+            marginRight: align === "center" ? "auto" : undefined,
           }}
         >
           {title}
@@ -148,7 +166,8 @@ export function DSHeroSection({
               color: "var(--ds-color-text-secondary)",
               lineHeight: "var(--ds-leading-relaxed)",
               maxWidth: "42rem",
-              margin: align === "center" ? "0 auto" : undefined,
+              marginLeft: align === "center" ? "auto" : undefined,
+              marginRight: align === "center" ? "auto" : undefined,
               marginBottom: "var(--ds-space-8)",
               opacity: 0.85,
             }}
@@ -157,7 +176,18 @@ export function DSHeroSection({
           </p>
         )}
 
-        {cta && <div style={{ marginBottom: stats ? "var(--ds-space-12)" : 0 }}>{cta}</div>}
+        {(cta || ctaSecondary) && (
+          <div style={{
+            display: "flex",
+            gap: "var(--ds-space-4)",
+            justifyContent: align === "center" ? "center" : "flex-start",
+            flexWrap: "wrap",
+            marginBottom: stats || bottomContent ? "var(--ds-space-12)" : 0,
+          }}>
+            {cta}
+            {ctaSecondary}
+          </div>
+        )}
 
         {stats && stats.length > 0 && (
           <div
@@ -169,7 +199,7 @@ export function DSHeroSection({
               marginTop: "var(--ds-space-8)",
             }}
           >
-            {stats.map((stat, i) => (
+            {stats.map((stat: any, i: number) => (
               <div key={i} style={{ textAlign: "center", minWidth: 80 }}>
                 <p
                   style={{
@@ -180,7 +210,7 @@ export function DSHeroSection({
                     lineHeight: 1,
                   }}
                 >
-                  {stat.value}
+                  {stat?.value ?? ""}
                 </p>
                 <p
                   style={{
@@ -191,10 +221,16 @@ export function DSHeroSection({
                     textTransform: "uppercase" as const,
                   }}
                 >
-                  {stat.label}
+                  {stat?.label ?? ""}
                 </p>
               </div>
             ))}
+          </div>
+        )}
+
+        {bottomContent && (
+          <div style={{ marginTop: "var(--ds-space-8)" }}>
+            {bottomContent}
           </div>
         )}
 

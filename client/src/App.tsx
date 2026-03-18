@@ -117,9 +117,9 @@ function Router() {
           <Route path="cadastrar-motorista" element={<Suspense fallback={<LoadingFallback />}><RegisterDriver /></Suspense>} />
           <Route path="motorista/:id" element={<Suspense fallback={<LoadingFallback />}><DriverDetail /></Suspense>} />
           <Route index element={<Suspense fallback={<LoadingFallback />}>
-            <SplashScreen />
-            <PWAInstallPrompt />
-            <NotificationCenter />
+            <ErrorBoundary FallbackComponent={() => null}><SplashScreen /></ErrorBoundary>
+            <ErrorBoundary FallbackComponent={() => null}><PWAInstallPrompt /></ErrorBoundary>
+            <ErrorBoundary FallbackComponent={() => null}><NotificationCenter /></ErrorBoundary>
             <Home />
           </Suspense>} />
         </Route>
@@ -139,12 +139,69 @@ function Router() {
   );
 }
 
-function ErrorFallback() {
+function ErrorFallback({ error, resetErrorBoundary }: { error?: unknown; resetErrorBoundary?: () => void }) {
+  // Log error for debugging but don't block the user
+  if (error) console.error("[ErrorFallback]", error);
+
   return (
-    <div className="oranje-app min-h-screen flex items-center justify-center" role="alert">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4" style={{ color: "#E8E6E3" }}>Algo deu errado</h1>
-        <p style={{ color: "#C8C5C0" }}>Por favor, recarregue a página.</p>
+    <div
+      role="alert"
+      style={{
+        position: "fixed",
+        bottom: "1.5rem",
+        right: "1.5rem",
+        zIndex: 9999,
+        maxWidth: 360,
+        background: "rgba(0, 37, 26, 0.95)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(230,81,0,0.25)",
+        borderRadius: "1rem",
+        padding: "1rem 1.25rem",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+        <span style={{ fontSize: "1.5rem", lineHeight: 1 }}>🌷</span>
+        <div style={{ flex: 1 }}>
+          <p style={{ color: "#E8E6E3", fontSize: "0.85rem", fontWeight: 600, margin: 0 }}>
+            Algo inesperado aconteceu
+          </p>
+          <p style={{ color: "#C8C5C0", fontSize: "0.75rem", margin: "0.25rem 0 0.75rem" }}>
+            Você pode continuar navegando normalmente.
+          </p>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button
+              onClick={() => { resetErrorBoundary?.(); }}
+              style={{
+                padding: "0.375rem 1rem",
+                borderRadius: "0.5rem",
+                background: "#E65100",
+                color: "#fff",
+                border: "none",
+                fontWeight: 600,
+                fontSize: "0.75rem",
+                cursor: "pointer",
+              }}
+            >
+              Continuar
+            </button>
+            <button
+              onClick={() => { window.location.href = "/"; }}
+              style={{
+                padding: "0.375rem 1rem",
+                borderRadius: "0.5rem",
+                background: "rgba(230,81,0,0.12)",
+                color: "#E65100",
+                border: "1px solid rgba(230,81,0,0.3)",
+                fontWeight: 600,
+                fontSize: "0.75rem",
+                cursor: "pointer",
+              }}
+            >
+              Ir ao Início
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

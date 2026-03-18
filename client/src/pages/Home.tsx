@@ -1,4 +1,3 @@
-import { trpc } from "@/lib/trpc";
 import { getLoginUrl } from "@/const";
 import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -11,6 +10,7 @@ import { TabBar } from "@/components/TabBar";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { DSButton, DSBadge } from "@/components/ds";
 import { toast } from "sonner";
+import { useCategoriesList, usePlacesList, useFavorites } from "@/hooks/useMockData";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   restaurantes: <UtensilsCrossed size={20} />,
@@ -34,23 +34,18 @@ export default function Home() {
     }
   }, [user, navigate]);
 
-  const { data: categories } = trpc.categories.list.useQuery();
-  const { data: featuredPlaces, error: featuredError, isLoading: featuredLoading } = trpc.places.list.useQuery({ limit: 6, offset: 0 });
-  const { data: recommendedPlaces, error: recommendedError, isLoading: recommendedLoading } = trpc.places.list.useQuery({ limit: 6, offset: 6 });
+  const { data: categories } = useCategoriesList();
+  const { data: featuredPlaces, isLoading: featuredLoading } = usePlacesList({ limit: 6, offset: 0 });
+  const { data: recommendedPlaces, isLoading: recommendedLoading } = usePlacesList({ limit: 6, offset: 6 });
 
-  const { data: userFavs } = trpc.favorites.list.useQuery(undefined, { enabled: !!user });
-  const addFav = trpc.favorites.add.useMutation();
-  const removeFav = trpc.favorites.remove.useMutation();
-  const utils = trpc.useUtils();
-
-  const favoriteIds = new Set(userFavs?.map(f => f.placeId) ?? []);
+  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
     if (favoriteIds.has(placeId)) {
-      removeFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      removeFavorite(placeId);
     } else {
-      addFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      addFavorite(placeId);
     }
   }
 
@@ -229,11 +224,6 @@ export default function Home() {
       </section>
 
       {/* ── Featured Places ── */}
-      {featuredError ? (
-        <section className="px-5 mt-8">
-          <p className="text-xs" style={{ color: "var(--ds-color-error)" }}>Erro ao carregar destaques</p>
-        </section>
-      ) : (
         <section className="px-5 mt-8">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -267,14 +257,9 @@ export default function Home() {
             )}
           </div>
         </section>
-      )}
 
       {/* ── Recommended Places ── */}
-      {recommendedError ? (
-        <section className="px-5 mt-8">
-          <p className="text-xs" style={{ color: "var(--ds-color-error)" }}>Erro ao carregar recomendados</p>
-        </section>
-      ) : !recommendedPlaces || recommendedLoading ? (
+      {!recommendedPlaces || recommendedLoading ? (
         <section className="px-5 mt-8">
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map(i => (

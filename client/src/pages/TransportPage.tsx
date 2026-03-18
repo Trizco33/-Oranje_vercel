@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { trpc } from "@/lib/trpc";
+import { useDriversList, useMockMutation } from "@/hooks/useMockData";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
 import { DSButton, DSInput, DSBadge } from "@/components/ds";
 import { AlertCircle, MapPin, Users, MessageCircle, CheckCircle } from "lucide-react";
 
 interface Driver {
-  id: string;
+  id: number;
   name: string;
   whatsapp: string;
   serviceType: string;
@@ -15,9 +15,9 @@ interface Driver {
   notes?: string;
   photoUrl?: string;
   isPartner: boolean;
-  partnerUntil?: Date;
+  partnerUntil?: string;
   isVerified: boolean;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export default function TransportPage() {
@@ -32,19 +32,9 @@ export default function TransportPage() {
   });
   const [submitMessage, setSubmitMessage] = useState("");
 
-  const { data: drivers = [], isLoading, error } = trpc.drivers.list.useQuery();
+  const { data: drivers = [], isLoading, error } = useDriversList();
 
-  const createMutation = trpc.drivers.createPublic.useMutation({
-    onSuccess: () => {
-      setFormData({ name: "", whatsapp: "", serviceType: "", area: "", capacity: "", notes: "" });
-      setShowForm(false);
-      setSubmitMessage("Cadastro realizado com sucesso! Após aprovação, seu perfil será exibido.");
-      setTimeout(() => setSubmitMessage(""), 5000);
-    },
-    onError: (error) => {
-      setSubmitMessage(`Erro: ${error.message}`);
-    },
-  });
+  const createMutation = useMockMutation();
 
   const sortedDrivers = [...(drivers as Driver[])].sort((a, b) => {
     const now = new Date();
@@ -67,18 +57,24 @@ export default function TransportPage() {
       setSubmitMessage("Por favor, preencha os campos obrigatórios.");
       return;
     }
-    createMutation.mutate({
-      name: formData.name,
-      whatsapp: cleanWhatsapp,
-      serviceType: formData.serviceType,
-      region: formData.area || "Holambra",
-      vehicleModel: undefined,
-      vehicleColor: undefined,
-      plate: undefined,
-      capacity: formData.capacity ? parseInt(formData.capacity) : undefined,
-      photoUrl: undefined,
-      notes: formData.notes || undefined,
-    });
+    createMutation.mutate(
+      {
+        name: formData.name,
+        whatsapp: cleanWhatsapp,
+        serviceType: formData.serviceType,
+        region: formData.area || "Holambra",
+        capacity: formData.capacity ? parseInt(formData.capacity) : undefined,
+        notes: formData.notes || undefined,
+      },
+      {
+        onSuccess: () => {
+          setFormData({ name: "", whatsapp: "", serviceType: "", area: "", capacity: "", notes: "" });
+          setShowForm(false);
+          setSubmitMessage("Cadastro realizado com sucesso! Após aprovação, seu perfil será exibido.");
+          setTimeout(() => setSubmitMessage(""), 5000);
+        },
+      }
+    );
   };
 
   const getWhatsappUrl = (number: string): string => {
@@ -201,21 +197,14 @@ export default function TransportPage() {
             </div>
           )}
 
-          {error && (
-            <div className="flex items-center gap-2 p-4 rounded-2xl" style={{ background: "rgba(244,67,54,0.1)", border: "1px solid rgba(244,67,54,0.3)", color: "#EF5350" }}>
-              <AlertCircle className="w-5 h-5" />
-              Erro ao carregar motoristas
-            </div>
-          )}
-
-          {!isLoading && !error && sortedDrivers.length === 0 && (
+          {!isLoading && sortedDrivers.length === 0 && (
             <div className="text-center py-12">
               <Users className="w-12 h-12 mx-auto mb-3" style={{ color: "rgba(230,81,0,0.3)" }} />
               <p className="text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>Nenhum motorista disponível no momento</p>
             </div>
           )}
 
-          {!isLoading && !error && sortedDrivers.length > 0 && (
+          {!isLoading && sortedDrivers.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {sortedDrivers.map((driver) => {
                 const now = new Date();

@@ -1,12 +1,12 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { PlaceCard } from "@/components/PlaceCard";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { getCategoryIcon, getCategorycover, normalizeSlug, isValidCategorySlug } from "@/constants/categories";
 import { DSButton, DSBadge } from "@/components/ds";
+import { useCategoryBySlug, usePlacesList, useFavorites } from "@/hooks/useMockData";
 
 interface CategoryDetailProps {
   slug: string;
@@ -55,24 +55,18 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
     );
   }
 
-  const { data: category } = trpc.categories.bySlug.useQuery({ slug: normalizedSlug });
-  const { data: places, error: placesError, isLoading: placesLoading } = trpc.places.list.useQuery(
-    category?.id ? { categoryId: category.id, limit: 50, offset: 0 } : { limit: 50, offset: 0 },
-    { enabled: !!category?.id }
+  const { data: category } = useCategoryBySlug(normalizedSlug);
+  const { data: places, isLoading: placesLoading } = usePlacesList(
+    category?.id ? { categoryId: category.id, limit: 50, offset: 0 } : { limit: 50, offset: 0 }
   );
-  const { data: userFavs } = trpc.favorites.list.useQuery(undefined, { enabled: !!user });
-  const addFav = trpc.favorites.add.useMutation();
-  const removeFav = trpc.favorites.remove.useMutation();
-  const utils = trpc.useUtils();
-
-  const favoriteIds = new Set(userFavs?.map(f => f.placeId) ?? []);
+  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
     if (favoriteIds.has(placeId)) {
-      removeFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      removeFavorite(placeId);
     } else {
-      addFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      addFavorite(placeId);
     }
   }
 
@@ -113,11 +107,7 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
       </div>
 
       <div className="px-5 mt-4">
-        {placesError ? (
-          <div className="text-center py-12">
-            <p className="text-sm" style={{ color: "var(--ds-color-error)" }}>Erro ao carregar lugares. Tente novamente.</p>
-          </div>
-        ) : !places || placesLoading ? (
+        {!places || placesLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[...Array(6)].map((_, i) => (
               <div

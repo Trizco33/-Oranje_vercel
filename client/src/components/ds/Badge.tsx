@@ -1,8 +1,12 @@
-import type { ReactNode } from "react";
+import type { ReactNode, CSSProperties } from "react";
 
 interface DSBadgeProps {
   variant?: "default" | "accent" | "success" | "warning" | "error" | "outline" | "premium";
   size?: "sm" | "md" | "lg";
+  icon?: ReactNode;
+  dot?: boolean;
+  className?: string;
+  style?: CSSProperties;
   children: ReactNode;
 }
 
@@ -45,17 +49,18 @@ const variantStyles: Record<string, React.CSSProperties> = {
 };
 
 const sizeMap = {
-  sm: { fontSize: "var(--ds-text-xs)", padding: "2px 8px", height: 22 },
-  md: { fontSize: "var(--ds-text-xs)", padding: "4px 12px", height: 26 },
-  lg: { fontSize: "var(--ds-text-sm)", padding: "5px 14px", height: 30 },
+  sm: { fontSize: "var(--ds-text-xs)", padding: "2px 8px", height: 22, gap: 4 },
+  md: { fontSize: "var(--ds-text-xs)", padding: "4px 12px", height: 26, gap: 5 },
+  lg: { fontSize: "var(--ds-text-sm)", padding: "5px 14px", height: 30, gap: 6 },
 };
 
-export function DSBadge({ variant = "default", size = "sm", children }: DSBadgeProps) {
+export function DSBadge({ variant = "default", size = "sm", icon, dot, className, style: customStyle, children }: DSBadgeProps) {
   const v = variantStyles[variant] ?? variantStyles.default;
   const s = sizeMap[size];
 
   return (
     <span
+      className={className}
       style={{
         ...v,
         fontSize: s.fontSize,
@@ -63,14 +68,26 @@ export function DSBadge({ variant = "default", size = "sm", children }: DSBadgeP
         height: s.height,
         display: "inline-flex",
         alignItems: "center",
+        gap: s.gap,
         borderRadius: "var(--ds-radius-full)",
         fontFamily: "var(--ds-font-sans)",
         fontWeight: "var(--ds-font-semibold)" as any,
         letterSpacing: "var(--ds-tracking-wide)",
         whiteSpace: "nowrap",
         lineHeight: 1,
+        ...customStyle,
       }}
     >
+      {dot && (
+        <span style={{
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          background: "currentColor",
+          flexShrink: 0,
+        }} />
+      )}
+      {icon && <span style={{ display: "inline-flex", alignItems: "center", flexShrink: 0 }}>{icon}</span>}
       {children}
     </span>
   );

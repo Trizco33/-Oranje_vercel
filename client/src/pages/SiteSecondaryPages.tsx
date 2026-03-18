@@ -315,8 +315,8 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
             Formulário de Contato
           </h3>
           <form style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)" }}>
-            <DSInput label="Nome" size="md" />
-            <DSInput label="Email" size="md" />
+            <DSInput label="Nome" />
+            <DSInput label="Email" />
             <div>
               <label
                 style={{

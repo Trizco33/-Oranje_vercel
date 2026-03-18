@@ -1,22 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { trpc } from "@/lib/trpc";
+import { useDriversListPublic } from "@/hooks/useMockData";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
 import { DSButton } from "@/components/ds";
 import { MessageCircle, MapPin, Car, Users, AlertCircle, Plus } from "lucide-react";
-import { toast } from "sonner";
 
 export default function Drivers() {
   const navigate = useNavigate();
-  const [retryCount, setRetryCount] = useState(0);
 
-  const { data: drivers = [], isLoading, error, refetch } = trpc.drivers.listPublic.useQuery();
-
-  const handleRetry = () => {
-    setRetryCount((c) => c + 1);
-    refetch();
-  };
+  const { data: drivers = [], isLoading, error } = useDriversListPublic();
 
   const handleContact = (whatsapp: string) => {
     const cleaned = whatsapp.replace(/\D/g, "");
@@ -44,22 +37,8 @@ export default function Drivers() {
           </div>
         )}
 
-        {/* Error State */}
-        {error && !isLoading && (
-          <div className="rounded-2xl p-6 flex items-start gap-4" style={{ background: "rgba(244,67,54,0.1)", border: "1px solid rgba(244,67,54,0.2)" }}>
-            <AlertCircle size={24} style={{ color: "#EF5350", flexShrink: 0 }} />
-            <div className="flex-1">
-              <p className="font-medium mb-2" style={{ color: "#EF5350" }}>Erro ao carregar motoristas</p>
-              <p className="text-sm mb-4" style={{ color: "var(--ds-color-text-primary)" }}>
-                {error instanceof Error ? error.message : "Tente novamente mais tarde"}
-              </p>
-              <DSButton variant="secondary" onClick={handleRetry}>Tentar Novamente</DSButton>
-            </div>
-          </div>
-        )}
-
         {/* Empty State */}
-        {!isLoading && !error && drivers.length === 0 && (
+        {!isLoading && (!drivers || drivers.length === 0) && (
           <div className="text-center py-12">
             <Car size={48} className="mx-auto mb-4" style={{ color: "rgba(230,81,0,0.3)" }} />
             <p className="text-lg font-medium mb-2" style={{ color: "var(--ds-color-text-primary)" }}>Nenhum motorista disponível</p>
@@ -68,7 +47,7 @@ export default function Drivers() {
         )}
 
         {/* Drivers Grid */}
-        {!isLoading && !error && drivers.length > 0 && (
+        {!isLoading && drivers && drivers.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {drivers.map((driver: any) => (
               <div key={driver.id} className="rounded-2xl overflow-hidden transition-all" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.15)" }}>
@@ -82,14 +61,8 @@ export default function Drivers() {
                   <div className="flex items-center gap-2 text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>
                     <span>{driver.serviceType}</span>
                     <span>•</span>
-                    <div className="flex items-center gap-1"><MapPin size={14} /><span>{driver.region}</span></div>
+                    <div className="flex items-center gap-1"><MapPin size={14} /><span>{driver.area || driver.region || "Holambra"}</span></div>
                   </div>
-                  {(driver.vehicleModel || driver.vehicleColor) && (
-                    <div className="flex items-center gap-2 text-sm" style={{ color: "var(--ds-color-accent)" }}>
-                      <Car size={14} />
-                      <span>{driver.vehicleModel}{driver.vehicleColor && ` • ${driver.vehicleColor}`}</span>
-                    </div>
-                  )}
                   {driver.capacity && (
                     <div className="flex items-center gap-2 text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>
                       <Users size={14} /><span>{driver.capacity} pessoas</span>

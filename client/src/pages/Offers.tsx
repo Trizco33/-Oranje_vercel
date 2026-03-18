@@ -1,15 +1,15 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
+import { useVouchersList, usePartnersList, useAdsList } from "@/hooks/useMockData";
 import { ExternalLink, QrCode, Sparkles, Tag, Ticket } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { DSBadge } from "@/components/ds";
 
 export default function Offers() {
-  const { data: vouchers } = trpc.vouchers.list.useQuery({});
-  const { data: partners } = trpc.partners.list.useQuery({ status: "active" });
-  const { data: ads } = trpc.ads.list.useQuery({ placement: "offers_page" });
+  const { data: vouchers } = useVouchersList();
+  const { data: partners } = usePartnersList({ status: "active" });
+  const { data: ads } = useAdsList({ placement: "offers_page" });
   const [openVoucher, setOpenVoucher] = useState<number | null>(null);
 
   return (
@@ -20,7 +20,7 @@ export default function Offers() {
         {/* Ads Banner */}
         {ads && ads.length > 0 && (
           <div className="mb-5">
-            {ads.slice(0, 1).map(ad => (
+            {ads.slice(0, 1).map((ad: any) => (
               <a key={ad.id} href={ad.linkUrl ?? "#"} target="_blank" rel="noopener noreferrer" className="block">
                 <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(230,81,0,0.15), rgba(230,81,0,0.05))", border: "1px solid rgba(230,81,0,0.3)" }}>
                   <div className="absolute top-2 right-2">
@@ -50,12 +50,12 @@ export default function Offers() {
 
           {vouchers?.length === 0 ? (
             <div className="p-6 text-center rounded-2xl" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.12)" }}>
-              <p className="text-3xl mb-2">🎟️</p>
+              <p className="text-3xl mb-2">🎫️</p>
               <p className="text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>Nenhum voucher disponível no momento.</p>
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              {vouchers?.map(v => (
+              {vouchers?.map((v: any) => (
                 <div key={v.id} className="p-4 pl-6 rounded-2xl" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.15)", borderLeft: "4px solid var(--ds-color-accent)" }}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
@@ -63,7 +63,7 @@ export default function Offers() {
                       {v.description && <p className="text-xs mt-1" style={{ color: "var(--ds-color-text-secondary)" }}>{v.description}</p>}
                       {v.discount && <p className="text-xl font-bold mt-2" style={{ color: "var(--ds-color-accent)" }}>{v.discount}</p>}
                       {v.placeId && (
-                        <Link to={`/lugar/${v.placeId}`}>
+                        <Link to={`/app/lugar/${v.placeId}`}>
                           <p className="text-xs mt-1 flex items-center gap-1" style={{ color: "var(--ds-color-accent)" }}>📍 Ver estabelecimento</p>
                         </Link>
                       )}
@@ -108,7 +108,7 @@ export default function Offers() {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              {partners?.map(partner => {
+              {partners?.map((partner: any) => {
                 const planColors: Record<string, string> = {
                   Essencial: "#5B8DD9",
                   Destaque: "#E65100",

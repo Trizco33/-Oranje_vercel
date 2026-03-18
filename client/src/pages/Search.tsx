@@ -1,7 +1,7 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { PlaceCard } from "@/components/PlaceCard";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
+import { useCategoriesList, usePlacesList, useFavorites } from "@/hooks/useMockData";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Filter, Search, X } from "lucide-react";
@@ -55,14 +55,10 @@ export default function SearchPage() {
   const [debouncedQuery, setDebouncedQuery] = useState(query);
 
   const { user } = useAuth();
-  const { data: categories } = trpc.categories.list.useQuery();
-  const { data: places, isLoading } = trpc.places.list.useQuery({ categoryId: selectedCategory, limit: 50, offset: 0 });
+  const { data: categories } = useCategoriesList();
+  const { data: places, isLoading } = usePlacesList({ categoryId: selectedCategory, limit: 50, offset: 0 });
 
-  const { data: userFavs } = trpc.favorites.list.useQuery(undefined, { enabled: !!user });
-  const addFav = trpc.favorites.add.useMutation();
-  const removeFav = trpc.favorites.remove.useMutation();
-  const utils = trpc.useUtils();
-  const favoriteIds = new Set(userFavs?.map(f => f.placeId) ?? []);
+  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query), 350);
@@ -72,9 +68,9 @@ export default function SearchPage() {
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.location.href = getLoginUrl(); return; }
     if (favoriteIds.has(placeId)) {
-      removeFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      removeFavorite(placeId);
     } else {
-      addFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+      addFavorite(placeId);
     }
   }
 

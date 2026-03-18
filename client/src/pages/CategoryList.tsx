@@ -1,18 +1,18 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryIcon, getCategorycover, normalizeSlug } from "@/constants/categories";
 import { DSBadge } from "@/components/ds";
 import coverPontosTuristicos from "../assets/covers/pontos-turisticos.jpg";
+import { useCategoriesList } from "@/hooks/useMockData";
 
 const CARD_COVER_OVERRIDE: Record<string, string> = {
   "pontos-turisticos": coverPontosTuristicos,
 };
 
 export default function CategoryList() {
-  const { data: categories } = trpc.categories.list.useQuery();
+  const { data: categories } = useCategoriesList();
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>

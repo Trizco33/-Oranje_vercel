@@ -20,6 +20,7 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
   const { data: notifications } = trpc.notifications.list.useQuery(undefined, {
     enabled: !!user,
     refetchInterval: 30000,
+    throwOnError: false,
   });
 
   const unreadCount = notifications?.filter(n => !n.isRead).length ?? 0;

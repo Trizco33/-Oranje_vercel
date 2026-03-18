@@ -1,5 +1,7 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 
+type ImageAspect = "video" | "square" | "portrait" | "wide" | string;
+
 interface DSCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "elevated" | "glass" | "outline" | "accent";
   padding?: "none" | "sm" | "md" | "lg" | "xl";
@@ -7,6 +9,9 @@ interface DSCardProps extends HTMLAttributes<HTMLDivElement> {
   image?: string;
   imageAlt?: string;
   imageHeight?: number;
+  imageAspect?: ImageAspect;
+  overlay?: boolean;
+  overlayContent?: ReactNode;
   children?: ReactNode;
 }
 
@@ -16,6 +21,13 @@ const paddingMap = {
   md: "20px",
   lg: "28px",
   xl: "36px",
+};
+
+const aspectMap: Record<string, string> = {
+  video: "56.25%",   // 16:9
+  square: "100%",    // 1:1
+  portrait: "133%",  // 3:4
+  wide: "42.85%",    // 21:9
 };
 
 const variantStyles: Record<string, React.CSSProperties> = {
@@ -46,12 +58,14 @@ const variantStyles: Record<string, React.CSSProperties> = {
 };
 
 export const DSCard = forwardRef<HTMLDivElement, DSCardProps>(
-  ({ variant = "default", padding = "md", interactive = false, image, imageAlt, imageHeight = 200, children, style, ...props }, ref) => {
+  ({ variant = "default", padding = "md", interactive = false, image, imageAlt, imageHeight = 200, imageAspect, overlay = false, overlayContent, children, style, className, ...props }, ref) => {
     const v = variantStyles[variant] ?? variantStyles.default;
+    const aspectPadding = imageAspect ? (aspectMap[imageAspect] ?? imageAspect) : undefined;
 
     return (
       <div
         ref={ref}
+        className={className}
         style={{
           ...v,
           borderRadius: "var(--ds-radius-xl)",
@@ -71,20 +85,28 @@ export const DSCard = forwardRef<HTMLDivElement, DSCardProps>(
         onMouseLeave={(e) => {
           if (interactive) {
             e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = v.boxShadow as string ?? "none";
-            e.currentTarget.style.borderColor = (v.border as string)?.includes("accent") ? "var(--ds-color-border-accent)" : "var(--ds-color-border-default)";
+            e.currentTarget.style.boxShadow = (v.boxShadow as string) ?? "none";
+            e.currentTarget.style.borderColor = (v.border as string)?.includes?.("accent") ? "var(--ds-color-border-accent)" : "var(--ds-color-border-default)";
           }
           props.onMouseLeave?.(e);
         }}
         {...props}
       >
         {image && (
-          <div style={{ height: imageHeight, overflow: "hidden", position: "relative" }}>
+          <div style={{
+            height: aspectPadding ? 0 : imageHeight,
+            paddingBottom: aspectPadding,
+            overflow: "hidden",
+            position: "relative",
+          }}>
             <img
               src={image}
               alt={imageAlt ?? ""}
               loading="lazy"
               style={{
+                position: aspectPadding ? "absolute" : undefined,
+                top: aspectPadding ? 0 : undefined,
+                left: aspectPadding ? 0 : undefined,
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
@@ -93,6 +115,25 @@ export const DSCard = forwardRef<HTMLDivElement, DSCardProps>(
               onMouseEnter={(e) => { if (interactive) e.currentTarget.style.transform = "scale(1.05)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
             />
+            {overlay && (
+              <div style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(to top, rgba(0,37,26,0.85) 0%, rgba(0,37,26,0.3) 50%, transparent 100%)",
+              }} />
+            )}
+            {overlayContent && (
+              <div style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                padding: paddingMap[padding],
+              }}>
+                {overlayContent}
+              </div>
+            )}
           </div>
         )}
         {children && (

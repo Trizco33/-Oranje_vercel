@@ -1,7 +1,7 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { PlaceCard } from "@/components/PlaceCard";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
+import { useRouteById } from "@/hooks/useMockData";
 import { Clock, Map } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DSBadge } from "@/components/ds";
@@ -9,7 +9,7 @@ import { DSBadge } from "@/components/ds";
 export default function RouteDetail() {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: route, isLoading } = trpc.routes.byId.useQuery({ id: Number(params.id) });
+  const { data: route, isLoading } = useRouteById(Number(params.id));
 
   if (isLoading) {
     return (
@@ -29,7 +29,7 @@ export default function RouteDetail() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
-      <OranjeHeader title={route.title} showBack onBack={() => navigate("/roteiros")} />
+      <OranjeHeader title={route.title} showBack onBack={() => navigate("/app/roteiros")} />
 
       <div className="px-4 pt-4">
         {/* Route Info */}

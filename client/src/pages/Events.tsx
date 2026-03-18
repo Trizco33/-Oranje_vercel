@@ -1,12 +1,12 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
 import { CalendarDays, Clock, MapPin, Tag } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { DSBadge, DSButton } from "@/components/ds";
+import { useEventsList, useEventById } from "@/hooks/useMockData";
 
 export function EventsList() {
-  const { data: events, isLoading } = trpc.events.list.useQuery({ upcoming: false });
+  const { data: events, isLoading } = useEventsList({ upcoming: false });
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
@@ -31,7 +31,7 @@ export function EventsList() {
         ) : (
           <div className="flex flex-col gap-3">
             {events?.map(event => (
-              <Link key={event.id} to={`/evento/${event.id}`}>
+              <Link key={event.id} to={`/app/evento/${event.id}`}>
                 <div
                   className="flex gap-4 transition-all duration-200"
                   style={{
@@ -59,17 +59,17 @@ export function EventsList() {
                       }}
                     >
                       <span className="text-lg font-bold" style={{ color: "var(--ds-color-accent)" }}>
-                        {new Date(event.startsAt).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                        {new Date(event.date).toLocaleDateString("pt-BR", { day: "2-digit" })}
                       </span>
                       <span className="text-[10px] uppercase font-medium" style={{ color: "var(--ds-color-text-muted)" }}>
-                        {new Date(event.startsAt).toLocaleDateString("pt-BR", { month: "short" })}
+                        {new Date(event.date).toLocaleDateString("pt-BR", { month: "short" })}
                       </span>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       {event.isFeatured && <DSBadge variant="accent" size="sm">Destaque</DSBadge>}
-                      {event.status === "cancelled" && <DSBadge variant="error" size="sm">Cancelado</DSBadge>}
+                      {event.isCancelled && <DSBadge variant="error" size="sm">Cancelado</DSBadge>}
                     </div>
                     <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "var(--ds-color-text-primary)" }}>
                       {event.title}
@@ -84,7 +84,7 @@ export function EventsList() {
                       <div className="flex items-center gap-1">
                         <Clock size={10} style={{ color: "var(--ds-color-text-muted)" }} />
                         <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
-                          {new Date(event.startsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                          {event.time}
                         </span>
                       </div>
                       {event.price && (
@@ -108,7 +108,7 @@ export function EventsList() {
 export function EventDetail() {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: event, isLoading } = trpc.events.byId.useQuery({ id: Number(params.id) });
+  const { data: event, isLoading } = useEventById(Number(params.id));
 
   if (isLoading) {
     return (
@@ -123,8 +123,6 @@ export function EventDetail() {
   }
 
   if (!event) return null;
-
-  const tags: string[] = Array.isArray(event.tags) ? event.tags : [];
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
@@ -173,11 +171,11 @@ export function EventDetail() {
             <CalendarDays size={16} style={{ color: "var(--ds-color-accent)" }} />
             <div>
               <p className="text-sm font-medium" style={{ color: "var(--ds-color-text-primary)" }}>
-                {new Date(event.startsAt).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
+                {new Date(event.date).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
               </p>
               <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
-                às {new Date(event.startsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-                {event.endsAt && ` — ${new Date(event.endsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`}
+                às {event.time}
+                {event.endDate && ` — até ${new Date(event.endDate).toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}`}
               </p>
             </div>
           </div>
@@ -203,21 +201,7 @@ export function EventDetail() {
           </div>
         )}
 
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-5">
-            {tags.map(tag => <DSBadge key={tag} variant="default" size="sm">{tag}</DSBadge>)}
-          </div>
-        )}
-
-        {event.mapsUrl && (
-          <DSButton
-            fullWidth
-            iconLeft={<MapPin size={16} />}
-            onClick={() => window.open(event.mapsUrl!, '_blank')}
-          >
-            Como chegar
-          </DSButton>
-        )}
+        <DSBadge variant="default" size="sm">{event.category}</DSBadge>
       </div>
 
       <div style={{ height: 100 }} />

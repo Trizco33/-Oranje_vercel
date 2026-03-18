@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { trpc } from "@/lib/trpc";
+import { useArticlesListPublished, useArticleCategories } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
 import { useNavigate } from "react-router-dom";
 import { DSButton } from "@/components/ds/Button";
@@ -10,19 +10,12 @@ export default function SiteBlog() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
 
-  const { data: articles = [], isError: articlesError } = trpc.articles.listPublished.useQuery(
-    {
-      category: selectedCategory,
-      limit: 20,
-    },
-    {
-      retry: false,
-    }
-  );
-
-  const { data: categories = [], isError: categoriesError } = trpc.articles.categories.useQuery(undefined, {
-    retry: false,
+  const { data: articles = [] } = useArticlesListPublished({
+    category: selectedCategory,
+    limit: 20,
   });
+
+  const { data: categories = [] } = useArticleCategories();
 
   return (
     <SiteLayout>
@@ -82,13 +75,7 @@ export default function SiteBlog() {
             </div>
           </div>
 
-          {articlesError || categoriesError ? (
-            <div style={{ textAlign: "center", padding: "var(--ds-space-12) 0" }}>
-              <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-lg)" }}>
-                Nenhum artigo disponível no momento
-              </p>
-            </div>
-          ) : !articles || articles.length === 0 ? (
+          {!articles || articles.length === 0 ? (
             <div style={{ textAlign: "center", padding: "var(--ds-space-12) 0" }}>
               <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-lg)" }}>
                 Nenhum artigo encontrado

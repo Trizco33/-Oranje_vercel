@@ -2,14 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DSButton, DSInput } from "@/components/ds";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
 import { Mail } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const requestMagicLink = trpc.auth.requestMagicLink.useMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,18 +17,11 @@ export default function Login() {
     }
 
     setIsLoading(true);
-    try {
-      await requestMagicLink.mutateAsync({
-        email,
-        origin: window.location.origin,
-      });
-      toast.success("Link enviado! Verifique seu email");
-      setEmail("");
-    } catch (error) {
-      toast.error("Erro ao enviar link");
-    } finally {
-      setIsLoading(false);
-    }
+    // Mock magic link - simulate sending email
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    toast.success("Link enviado! Verifique seu email");
+    setEmail("");
+    setIsLoading(false);
   };
 
   return (

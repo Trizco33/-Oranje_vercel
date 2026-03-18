@@ -22,6 +22,10 @@ const queryClient = new QueryClient({
       retry: 1,
       staleTime: 30_000,
       refetchOnWindowFocus: false,
+      throwOnError: false,
+    },
+    mutations: {
+      throwOnError: false,
     },
   },
 });
@@ -48,6 +52,13 @@ const trpcClient = trpc.createClient({
         return globalThis.fetch(input, {
           ...(init ?? {}),
           credentials: "include",
+        }).catch((err) => {
+          console.warn("[tRPC] Network request failed (backend unreachable):", err?.message || err);
+          // Return an empty successful response so tRPC doesn't crash the app
+          return new Response(JSON.stringify([{ result: { data: null } }]), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
         });
       },
     }),

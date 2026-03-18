@@ -1,63 +1,79 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Mail, Phone, MapPin } from "lucide-react";
+
 export default function SiteFooter() {
   return (
-    <footer role="contentinfo" style={{ background: "var(--ds-color-bg-secondary, #004D40)" }}>
-      {/* Main Footer */}
-      <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "var(--ds-space-16) var(--ds-space-4)" }}>
+    <footer
+      role="contentinfo"
+      style={{
+        background: "linear-gradient(180deg, #001A12 0%, #00120C 100%)",
+        borderTop: "1px solid rgba(230, 81, 0, 0.08)",
+      }}
+    >
+      <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "3.5rem 1.5rem 2rem" }}>
+        {/* Top Section - Brand + Nav */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "var(--ds-space-8)",
-            marginBottom: "var(--ds-space-8)",
+            gap: "2.5rem",
+            marginBottom: "3rem",
           }}
         >
           {/* Brand */}
           <div>
             <picture>
               <source srcSet="/logo.webp" type="image/webp" />
-              <img src="/logo.png" alt="Oranje - Guia Cultural de Holambra" style={{ height: "36px", width: "auto", marginBottom: "var(--ds-space-4)" }} loading="lazy" />
+              <img
+                src="/logo.png"
+                alt="Oranje - Guia Cultural de Holambra"
+                style={{ height: "32px", width: "auto", marginBottom: "1rem", opacity: 0.9 }}
+                loading="lazy"
+              />
             </picture>
-            <p style={{ fontSize: "var(--ds-text-sm)", color: "var(--ds-color-text-muted)", lineHeight: "var(--ds-leading-relaxed)" }}>
-              Seu guia definitivo de Holambra. Descubra os melhores lugares, eventos e experiências.
+            <p style={{
+              fontSize: "0.8125rem",
+              color: "rgba(232,230,227,0.5)",
+              lineHeight: 1.7,
+              maxWidth: "280px",
+            }}>
+              O guia definitivo de Holambra. Descubra os melhores lugares, eventos e experi\u00eancias da cidade das flores.
             </p>
           </div>
 
           {/* Navigation */}
-          <nav aria-label="Links de navegação do rodapé">
-            <h4
-              style={{
-                fontWeight: "var(--ds-font-bold)",
-                color: "var(--ds-color-text-primary)",
-                marginBottom: "var(--ds-space-4)",
-                fontSize: "var(--ds-text-sm)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
-              Navegação
+          <nav aria-label="Links de navega\u00e7\u00e3o do rodap\u00e9">
+            <h4 style={{
+              fontWeight: 600,
+              color: "rgba(232,230,227,0.4)",
+              marginBottom: "1rem",
+              fontSize: "0.6875rem",
+              textTransform: "uppercase" as const,
+              letterSpacing: "0.1em",
+            }}>
+              Navega\u00e7\u00e3o
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "var(--ds-space-2)" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {[
-                { label: "Início", to: "/" },
+                { label: "In\u00edcio", to: "/" },
+                { label: "O que fazer", to: "/o-que-fazer-em-holambra" },
                 { label: "Roteiros", to: "/roteiros" },
                 { label: "Blog", to: "/blog" },
                 { label: "Parceiros", to: "/parceiros" },
-              ].map((item) => (
-                <li key={item.to}>
+              ].map((item: any) => (
+                <li key={item?.to}>
                   <Link
-                    to={item.to}
+                    to={item?.to}
                     style={{
-                      fontSize: "var(--ds-text-sm)",
-                      color: "var(--ds-color-text-muted)",
+                      fontSize: "0.8125rem",
+                      color: "rgba(232,230,227,0.55)",
                       textDecoration: "none",
                       transition: "color 0.2s",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ds-color-accent)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ds-color-text-muted)")}
+                    onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
+                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
                   >
-                    {item.label}
+                    {item?.label}
                   </Link>
                 </li>
               ))}
@@ -66,37 +82,35 @@ export default function SiteFooter() {
 
           {/* Legal */}
           <nav aria-label="Links legais">
-            <h4
-              style={{
-                fontWeight: "var(--ds-font-bold)",
-                color: "var(--ds-color-text-primary)",
-                marginBottom: "var(--ds-space-4)",
-                fontSize: "var(--ds-text-sm)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
+            <h4 style={{
+              fontWeight: 600,
+              color: "rgba(232,230,227,0.4)",
+              marginBottom: "1rem",
+              fontSize: "0.6875rem",
+              textTransform: "uppercase" as const,
+              letterSpacing: "0.1em",
+            }}>
               Legal
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "var(--ds-space-2)" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {[
-                { label: "Política de Privacidade", to: "/privacidade" },
-                { label: "Termos de Serviço", to: "/termos" },
+                { label: "Pol\u00edtica de Privacidade", to: "/privacidade" },
+                { label: "Termos de Servi\u00e7o", to: "/termos" },
                 { label: "Abrir App", to: "/app" },
-              ].map((item) => (
-                <li key={item.to}>
+              ].map((item: any) => (
+                <li key={item?.to}>
                   <Link
-                    to={item.to}
+                    to={item?.to}
                     style={{
-                      fontSize: "var(--ds-text-sm)",
-                      color: "var(--ds-color-text-muted)",
+                      fontSize: "0.8125rem",
+                      color: "rgba(232,230,227,0.55)",
                       textDecoration: "none",
                       transition: "color 0.2s",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ds-color-accent)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ds-color-text-muted)")}
+                    onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
+                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
                   >
-                    {item.label}
+                    {item?.label}
                   </Link>
                 </li>
               ))}
@@ -105,106 +119,75 @@ export default function SiteFooter() {
 
           {/* Contact */}
           <div>
-            <h4
-              style={{
-                fontWeight: "var(--ds-font-bold)",
-                color: "var(--ds-color-text-primary)",
-                marginBottom: "var(--ds-space-4)",
-                fontSize: "var(--ds-text-sm)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
+            <h4 style={{
+              fontWeight: 600,
+              color: "rgba(232,230,227,0.4)",
+              marginBottom: "1rem",
+              fontSize: "0.6875rem",
+              textTransform: "uppercase" as const,
+              letterSpacing: "0.1em",
+            }}>
               Contato
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "var(--ds-space-3)" }}>
-              <li style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)" }}>
-                <Mail size={16} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+              <li style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                <Mail size={14} style={{ color: "rgba(230,81,0,0.6)", flexShrink: 0 }} aria-hidden="true" />
                 <a
                   href="mailto:contato@oranje.com.br"
-                  aria-label="Enviar e-mail para contato@oranje.com.br"
-                  style={{
-                    fontSize: "var(--ds-text-sm)",
-                    color: "var(--ds-color-text-muted)",
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ds-color-accent)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ds-color-text-muted)")}
+                  style={{ fontSize: "0.8125rem", color: "rgba(232,230,227,0.55)", textDecoration: "none", transition: "color 0.2s" }}
+                  onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
+                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
                 >
                   contato@oranje.com.br
                 </a>
               </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)" }}>
-                <Phone size={16} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
+              <li style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                <Phone size={14} style={{ color: "rgba(230,81,0,0.6)", flexShrink: 0 }} aria-hidden="true" />
                 <a
                   href="tel:+551940000000"
-                  aria-label="Ligar para (19) 4000-0000"
-                  style={{
-                    fontSize: "var(--ds-text-sm)",
-                    color: "var(--ds-color-text-muted)",
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ds-color-accent)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ds-color-text-muted)")}
+                  style={{ fontSize: "0.8125rem", color: "rgba(232,230,227,0.55)", textDecoration: "none", transition: "color 0.2s" }}
+                  onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
+                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
                 >
                   (19) 4000-0000
                 </a>
               </li>
-              <li style={{ display: "flex", alignItems: "flex-start", gap: "var(--ds-space-2)" }}>
-                <MapPin size={16} style={{ color: "var(--ds-color-accent)", marginTop: "2px" }} aria-hidden="true" />
-                <span style={{ fontSize: "var(--ds-text-sm)", color: "var(--ds-color-text-muted)" }}>Holambra, SP</span>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}>
+                <MapPin size={14} style={{ color: "rgba(230,81,0,0.6)", marginTop: "2px", flexShrink: 0 }} aria-hidden="true" />
+                <span style={{ fontSize: "0.8125rem", color: "rgba(232,230,227,0.55)" }}>Holambra, SP</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Social Links */}
+        {/* Bottom bar */}
         <div
           style={{
-            borderTop: "1px solid rgba(230, 81, 0, 0.1)",
-            paddingTop: "var(--ds-space-8)",
-            marginBottom: "var(--ds-space-8)",
+            borderTop: "1px solid rgba(230, 81, 0, 0.06)",
+            paddingTop: "1.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "center", gap: "var(--ds-space-6)" }} role="list" aria-label="Redes sociais">
-            {[
-              { icon: <Facebook size={20} />, href: "https://facebook.com", label: "Facebook" },
-              { icon: <Instagram size={20} />, href: "https://instagram.com", label: "Instagram" },
-              { icon: <Twitter size={20} />, href: "https://twitter.com", label: "Twitter" },
-            ].map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                role="listitem"
-                aria-label={`Seguir Oranje no ${social.label}`}
-                style={{
-                  color: "var(--ds-color-text-muted)",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ds-color-accent)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ds-color-text-muted)")}
-              >
-                <span aria-hidden="true">{social.icon}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Copyright */}
-        <div
-          style={{
-            borderTop: "1px solid rgba(230, 81, 0, 0.1)",
-            paddingTop: "var(--ds-space-8)",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ fontSize: "var(--ds-text-sm)", color: "var(--ds-color-text-muted)" }}>
+          <p style={{ fontSize: "0.75rem", color: "rgba(232,230,227,0.3)" }}>
             &copy; 2026 Oranje. Todos os direitos reservados.
           </p>
+          <div style={{ display: "flex", gap: "1rem" }} aria-label="Redes sociais">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Seguir Oranje no Instagram"
+              style={{ color: "rgba(232,230,227,0.35)", transition: "color 0.2s" }}
+              onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
+              onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.35)")}
+            >
+              <Instagram size={18} />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

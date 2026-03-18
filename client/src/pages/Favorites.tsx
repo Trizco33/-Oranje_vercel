@@ -1,7 +1,7 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { PlaceCard } from "@/components/PlaceCard";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
+import { useFavorites, usePlacesList } from "@/hooks/useMockData";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Heart } from "lucide-react";
@@ -12,16 +12,13 @@ export default function Favorites() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  const { data: userFavs } = trpc.favorites.list.useQuery(undefined, { enabled: !!user });
-  const { data: allPlaces } = trpc.places.list.useQuery({}, { enabled: !!userFavs });
-  const removeFav = trpc.favorites.remove.useMutation();
-  const utils = trpc.useUtils();
+  const { favoriteIds, removeFavorite } = useFavorites(!!user);
+  const { data: allPlaces } = usePlacesList();
 
-  const favoriteIds = new Set(userFavs?.map(f => f.placeId) ?? []);
   const favoritePlaces = allPlaces?.filter((p: any) => favoriteIds.has(p.id)) ?? [];
 
   function handleRemoveFavorite(placeId: number) {
-    removeFav.mutate({ placeId }, { onSuccess: () => utils.favorites.list.invalidate() });
+    removeFavorite(placeId);
   }
 
   if (loading) {

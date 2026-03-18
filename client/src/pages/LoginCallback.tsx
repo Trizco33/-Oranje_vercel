@@ -1,54 +1,48 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
 
 export default function LoginCallback() {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const verifyMagicLink = trpc.auth.verifyMagicLink.useMutation();
 
   useEffect(() => {
-    const verifyToken = async () => {
-      const token = searchParams.get("token");
-      if (!token) {
-        toast.error("Token inválido");
-        navigate("/login");
-        return;
-      }
-
-      try {
-        await verifyMagicLink.mutateAsync({ token });
-        toast.success("Login realizado com sucesso!");
-        navigate("/");
-      } catch (error) {
-        toast.error("Erro ao fazer login");
-        navigate("/login");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    verifyToken();
-  }, [searchParams, navigate, verifyMagicLink]);
+    // Mock verification - briefly show loading then redirect
+    const timer = setTimeout(() => {
+      toast.success("Login realizado com sucesso!");
+      navigate("/");
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-2">
-          <CardTitle className="text-2xl">Verificando...</CardTitle>
-          <CardDescription>
-            {isLoading ? "Processando seu login..." : "Redirecionando..."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        </CardContent>
-      </Card>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "var(--ds-color-bg-primary, #00251A)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            border: "3px solid rgba(230,81,0,0.2)",
+            borderTopColor: "#E65100",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite",
+            margin: "0 auto 1rem",
+          }}
+        />
+        <h2 style={{ color: "var(--ds-color-text-primary, #E8E6E3)", fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+          Verificando...
+        </h2>
+        <p style={{ color: "var(--ds-color-text-secondary, #C8C5C0)", fontSize: "0.875rem" }}>
+          Processando seu login...
+        </p>
+      </div>
     </div>
   );
 }

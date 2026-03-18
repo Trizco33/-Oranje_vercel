@@ -1,6 +1,6 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
+import { usePublicRoutes, useMyRoutes, useMockMutation } from "@/hooks/useMockData";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { ChevronRight, Clock, Map, Plus, Trash2, X } from "lucide-react";
@@ -15,11 +15,10 @@ export default function Routes() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { data: publicRoutes } = trpc.routes.public.useQuery();
-  const { data: myRoutes } = trpc.routes.mine.useQuery(undefined, { enabled: !!user });
-  const createRoute = trpc.routes.create.useMutation();
-  const deleteRoute = trpc.routes.delete.useMutation();
-  const utils = trpc.useUtils();
+  const { data: publicRoutes } = usePublicRoutes();
+  const { data: myRoutes } = useMyRoutes(!!user);
+  const createRoute = useMockMutation();
+  const deleteRoute = useMockMutation();
 
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -35,7 +34,6 @@ export default function Routes() {
       {
         onSuccess: () => {
           toast.success("Roteiro criado!");
-          utils.routes.mine.invalidate();
           setShowCreate(false);
           setNewTitle(""); setNewDesc(""); setNewTheme(""); setNewDuration("");
         },
@@ -44,9 +42,9 @@ export default function Routes() {
     );
   }
 
-  function handleDelete(id: number) {
-    deleteRoute.mutate({ id }, {
-      onSuccess: () => { toast.success("Roteiro removido."); utils.routes.mine.invalidate(); },
+  function handleDelete(_id: number) {
+    deleteRoute.mutate({ id: _id }, {
+      onSuccess: () => { toast.success("Roteiro removido."); },
     });
   }
 
@@ -65,10 +63,10 @@ export default function Routes() {
               </h2>
             </div>
             <div className="flex flex-col gap-3">
-              {publicRoutes.map(route => {
+              {publicRoutes.map((route: any) => {
                 const placeIds: number[] = Array.isArray(route.placeIds) ? route.placeIds : [];
                 return (
-                  <Link key={route.id} to={`/roteiro/${route.id}`}>
+                  <Link key={route.id} to={`/app/roteiro/${route.id}`}>
                     <div
                       className="flex items-center gap-4 transition-all duration-200"
                       style={{
@@ -144,7 +142,7 @@ export default function Routes() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {myRoutes?.map(route => {
+                {myRoutes?.map((route: any) => {
                   const placeIds: number[] = Array.isArray(route.placeIds) ? route.placeIds : [];
                   return (
                     <div
@@ -157,7 +155,7 @@ export default function Routes() {
                         border: "1px solid var(--ds-color-border-default)",
                       }}
                     >
-                      <Link to={`/roteiro/${route.id}`} className="flex-1 flex items-center gap-3 min-w-0">
+                      <Link to={`/app/roteiro/${route.id}`} className="flex-1 flex items-center gap-3 min-w-0">
                         <div
                           className="flex items-center justify-center flex-shrink-0"
                           style={{

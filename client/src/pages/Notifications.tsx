@@ -1,6 +1,6 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { trpc } from "@/lib/trpc";
+import { useNotificationsList } from "@/hooks/useMockData";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Bell, CalendarDays, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +8,10 @@ import { useNavigate } from "react-router-dom";
 export default function Notifications() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: notifications, isLoading } = trpc.notifications.list.useQuery(undefined, { enabled: !!user });
-  const markRead = trpc.notifications.markRead.useMutation();
-  const utils = trpc.useUtils();
+  const { data: notifications, isLoading, markRead } = useNotificationsList(!!user);
 
   function handleMarkRead(id: number) {
-    markRead.mutate({ id }, { onSuccess: () => utils.notifications.list.invalidate() });
+    markRead(id);
   }
 
   if (!user) {
@@ -47,7 +45,7 @@ export default function Notifications() {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {notifications?.map(notif => (
+            {notifications?.map((notif: any) => (
               <div
                 key={notif.id}
                 className="p-4 flex items-start gap-3 rounded-2xl"

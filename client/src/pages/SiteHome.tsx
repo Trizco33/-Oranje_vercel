@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { trpc } from "@/lib/trpc";
+import { usePlacesList, useArticlesListPublished } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
 import { Link } from "react-router-dom";
 import {
@@ -26,9 +26,9 @@ import { DSHeroSection } from "@/components/ds/HeroSection";
 
 export default function SiteHome() {
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const { data: hero } = trpc.content.getHero.useQuery();
-  const { data: articles = [] } = trpc.articles.listPublished.useQuery({ limit: 3 });
-  const { data: places = [] } = trpc.places.list.useQuery({ limit: 6 });
+  const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
+  const { data: allPlaces = [] } = usePlacesList();
+  const places = allPlaces.slice(0, 6);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -244,7 +244,7 @@ export default function SiteHome() {
                 <DSCard
                   variant="elevated"
                   interactive
-                  image={place.photos?.[0]?.url}
+                  image={place.coverImage}
                   imageAlt={place.name}
                   overlay
                   padding="none"

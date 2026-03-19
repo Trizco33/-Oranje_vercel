@@ -150,7 +150,15 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+// Only include Manus-specific plugins in development (they inject heavy runtime code
+// that conflicts with non-Manus deployments like Vercel).
+const isProduction = process.env.NODE_ENV === "production";
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  ...(isProduction ? [] : [vitePluginManusRuntime(), vitePluginManusDebugCollector()]),
+];
 
 export default defineConfig({
   base: "/",

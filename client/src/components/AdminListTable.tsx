@@ -53,12 +53,16 @@ export function AdminListTable<T extends { id: number | string }>({
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="section-title text-lg">{title}</h2>
+      <div className="flex items-center justify-between mb-5">
+        <h2 style={{
+          fontSize: '1.25rem',
+          fontWeight: 700,
+          color: 'var(--admin-text-primary, #1A1A1A)',
+          fontFamily: "'Montserrat', system-ui, sans-serif",
+        }}>{title}</h2>
         <button
           onClick={onCreate}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all"
-          style={{ backgroundColor: "#D88A3D", color: "#0F1B14" }}
+          className="admin-btn-primary"
         >
           <Plus size={16} />
           Novo
@@ -68,79 +72,146 @@ export function AdminListTable<T extends { id: number | string }>({
       {/* Search */}
       {onSearch && (
         <div className="mb-4 relative">
-          <Search size={16} className="absolute left-3 top-3" style={{ color: "#C8C5C0" }} />
+          <Search size={16} style={{
+            position: 'absolute',
+            left: '14px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: 'var(--admin-text-muted, #718096)',
+          }} />
           <input
             type="text"
             placeholder="Buscar..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg text-sm"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(216,138,61,0.2)",
-              color: "#E8E6E3",
-            }}
+            className="admin-input"
+            style={{ paddingLeft: '40px' }}
           />
         </div>
       )}
 
-      {/* Table */}
+      {/* Table / Cards */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 size={20} className="animate-spin" style={{ color: "#D88A3D" }} />
+        <div className="flex items-center justify-center py-16">
+          <Loader2 size={24} className="animate-spin" style={{ color: 'var(--admin-orange, #E65100)' }} />
         </div>
       ) : !data || data.length === 0 ? (
-        <div className="glass-card p-8 text-center">
-          <p style={{ color: "#C8C5C0" }}>Nenhum item encontrado.</p>
+        <div className="admin-card" style={{ padding: '48px 24px', textAlign: 'center' }}>
+          <p style={{ color: 'var(--admin-text-muted, #718096)', fontSize: '0.875rem' }}>
+            Nenhum item encontrado.
+          </p>
         </div>
       ) : (
-        <div className="glass-card overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="admin-card">
+          <table className="admin-table-responsive" style={{ width: '100%', fontSize: '0.875rem', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(216,138,61,0.2)" }}>
+              <tr style={{ borderBottom: '1px solid var(--admin-border, rgba(0,37,26,0.08))' }}>
                 {columns.map((col) => (
                   <th
                     key={String(col.key)}
-                    className="text-left px-4 py-3"
-                    style={{ color: "#D88A3D", fontWeight: 600, width: col.width }}
+                    style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      color: 'var(--admin-text-muted, #718096)',
+                      fontWeight: 600,
+                      fontSize: '0.75rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      width: col.width,
+                    }}
                   >
                     {col.label}
                   </th>
                 ))}
-                <th className="text-left px-4 py-3" style={{ color: "#D88A3D", fontWeight: 600 }}>
+                <th style={{
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  color: 'var(--admin-text-muted, #718096)',
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  width: '100px',
+                }}>
                   Ações
                 </th>
               </tr>
             </thead>
             <tbody>
               {data.map((item) => (
-                <tr key={item.id} style={{ borderBottom: "1px solid rgba(216,138,61,0.1)" }}>
+                <tr key={item.id} style={{ borderBottom: '1px solid var(--admin-border-light, rgba(0,37,26,0.05))' }}>
                   {columns.map((col) => (
-                    <td key={String(col.key)} className="px-4 py-3" style={{ color: "#E8E6E3" }}>
+                    <td
+                      key={String(col.key)}
+                      data-label={col.label}
+                      style={{
+                        padding: '14px 16px',
+                        color: 'var(--admin-text-primary, #1A1A1A)',
+                      }}
+                    >
                       {col.render ? col.render(item[col.key], item) : String(item[col.key] ?? "-")}
                     </td>
                   ))}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
+                  <td data-label="Ações" style={{ padding: '14px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <button
                         onClick={() => onEdit(item)}
-                        className="p-2 rounded-lg transition-all"
-                        style={{ background: "rgba(216,138,61,0.1)" }}
+                        style={{
+                          padding: '8px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--admin-border, rgba(0,37,26,0.08))',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          transition: 'all 200ms ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: '36px',
+                          minHeight: '36px',
+                        }}
                         title="Editar"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(230, 81, 0, 0.06)';
+                          e.currentTarget.style.borderColor = 'rgba(230, 81, 0, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.borderColor = 'var(--admin-border, rgba(0,37,26,0.08))';
+                        }}
                       >
-                        <Edit2 size={14} style={{ color: "#D88A3D" }} />
+                        <Edit2 size={14} style={{ color: 'var(--admin-orange, #E65100)' }} />
                       </button>
                       <button
                         onClick={() => handleDelete(item)}
                         disabled={deletingId === item.id}
-                        className="p-2 rounded-lg transition-all disabled:opacity-50"
-                        style={{ background: "rgba(255,100,100,0.1)" }}
+                        style={{
+                          padding: '8px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--admin-border, rgba(0,37,26,0.08))',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          transition: 'all 200ms ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: deletingId === item.id ? 0.5 : 1,
+                          minWidth: '36px',
+                          minHeight: '36px',
+                        }}
                         title="Deletar"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(248, 113, 113, 0.06)';
+                          e.currentTarget.style.borderColor = 'rgba(248, 113, 113, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.borderColor = 'var(--admin-border, rgba(0,37,26,0.08))';
+                        }}
                       >
                         {deletingId === item.id ? (
-                          <Loader2 size={14} className="animate-spin" style={{ color: "#FF6464" }} />
+                          <Loader2 size={14} className="animate-spin" style={{ color: '#F87171' }} />
                         ) : (
-                          <Trash2 size={14} style={{ color: "#FF6464" }} />
+                          <Trash2 size={14} style={{ color: '#F87171' }} />
                         )}
                       </button>
                     </div>

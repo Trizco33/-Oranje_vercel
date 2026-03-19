@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-// CMS Login - Admin authentication page
 export default function CMSLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,50 +34,128 @@ export default function CMSLogin() {
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: '10px',
+    border: '1px solid rgba(0, 37, 26, 0.12)',
+    background: '#FFFFFF',
+    color: '#1A1A1A',
+    fontSize: '0.9375rem',
+    fontFamily: "'Montserrat', system-ui, sans-serif",
+    transition: 'border-color 200ms ease, box-shadow 200ms ease',
+    minHeight: '48px',
+    outline: 'none',
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#004D40] to-[#00251A] flex items-center justify-center px-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <img src="/logo.png" alt="Oranje" className="h-12 w-auto mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-[#004D40]">CMS Oranje</h1>
-          <p className="text-gray-600 mt-2">Painel administrativo</p>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #00251A 0%, #004D40 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+      fontFamily: "'Montserrat', system-ui, sans-serif",
+    }}>
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: '20px',
+        boxShadow: '0 8px 40px rgba(0, 0, 0, 0.15)',
+        padding: '40px 36px',
+        width: '100%',
+        maxWidth: '420px',
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <img src="/logo.png" alt="Oranje" style={{ height: '48px', width: 'auto', margin: '0 auto 16px' }} />
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#00251A', marginBottom: '4px' }}>CMS Oranje</h1>
+          <p style={{ color: '#718096', fontSize: '0.875rem' }}>Painel administrativo</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <Input
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '6px', color: '#4A5568' }}>
+              Email
+            </label>
+            <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@oranje.com"
               required
               disabled={isLoading}
+              style={{ ...inputStyle, opacity: isLoading ? 0.6 : 1 }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#E65100';
+                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.12)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-            <Input
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '6px', color: '#4A5568' }}>
+              Senha
+            </label>
+            <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
               disabled={isLoading}
+              style={{ ...inputStyle, opacity: isLoading ? 0.6 : 1 }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#E65100';
+                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.12)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
             />
           </div>
 
-          <Button
+          <button
             type="submit"
-            className="w-full bg-[#E65100] hover:bg-[#D84800] text-white py-3 text-lg font-semibold"
             disabled={isLoading}
+            style={{
+              width: '100%',
+              padding: '14px',
+              borderRadius: '10px',
+              background: '#E65100',
+              color: '#FFFFFF',
+              fontSize: '1rem',
+              fontWeight: 600,
+              fontFamily: "'Montserrat', system-ui, sans-serif",
+              border: 'none',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              opacity: isLoading ? 0.7 : 1,
+              transition: 'all 200ms ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              minHeight: '52px',
+            }}
+            onMouseEnter={(e) => { if (!isLoading) e.currentTarget.style.background = '#FF6D00'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#E65100'; }}
           >
-            {isLoading ? "Conectando..." : "Entrar"}
-          </Button>
+            {isLoading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                Conectando...
+              </>
+            ) : (
+              "Entrar"
+            )}
+          </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p style={{ textAlign: 'center', fontSize: '0.8125rem', color: '#718096', marginTop: '24px' }}>
           Acesso restrito a administradores
         </p>
       </div>

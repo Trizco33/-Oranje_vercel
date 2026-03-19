@@ -228,6 +228,40 @@
   border-radius: 8px;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN THEME — Clean, Minimal, Unified
+   Applied via .admin-layout class
+   White backgrounds, dark green sidebar, orange CTAs
+   ═══════════════════════════════════════════════════════════════ */
+.admin-layout {
+  --admin-bg: #F7F7F2;
+  --admin-bg-white: #FFFFFF;
+  --admin-bg-beige: #F5F5DC;
+  --admin-sidebar: #00251A;
+  --admin-sidebar-hover: #003D2E;
+  --admin-sidebar-active: rgba(230, 81, 0, 0.12);
+  --admin-text-primary: #1A1A1A;
+  --admin-text-secondary: #4A5568;
+  --admin-text-muted: #718096;
+  --admin-text-sidebar: rgba(255, 255, 255, 0.7);
+  --admin-text-sidebar-active: #FFFFFF;
+  --admin-orange: #E65100;
+  --admin-orange-hover: #FF6D00;
+  --admin-green: #00251A;
+  --admin-green-light: #004D40;
+  --admin-border: rgba(0, 37, 26, 0.08);
+  --admin-border-light: rgba(0, 37, 26, 0.05);
+  --admin-shadow-sm: 0 1px 3px rgba(0, 37, 26, 0.06);
+  --admin-shadow-md: 0 2px 8px rgba(0, 37, 26, 0.06);
+  --admin-shadow-lg: 0 4px 16px rgba(0, 37, 26, 0.08);
+  --admin-radius: 12px;
+  --admin-radius-sm: 8px;
+  --admin-radius-lg: 16px;
+  --admin-sidebar-width: 260px;
+  --admin-header-height: 64px;
+  --admin-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* ── Scroll indicator bounce ── */
 @keyframes site-scroll-bounce {
   0%, 100% { transform: translateY(0); opacity: 0.6; }

@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   ORANJE DESIGN SYSTEM — Premium Tokens v3.0
-   Brand: Verde Profundo #0D4A40 · Verde Escuro #00251A · Laranja Queimado #E65100 · Bege #F5F5DC · Branco #FFFFFF
+   ORANJE DESIGN SYSTEM — Premium Tokens v4.0
+   Clean. Minimal. Premium.
+   Brand: Verde Escuro #00251A · Laranja #E65100 · Bege #F5F5DC · Branco #FFFFFF
    Typography: Montserrat (300–700)
    ═══════════════════════════════════════════════════════════════ */
 
@@ -28,16 +29,16 @@
   --ds-font-semibold: 600;
   --ds-font-bold: 700;
 
-  --ds-text-xs: 0.6875rem;   /* 11px */
-  --ds-text-sm: 0.8125rem;   /* 13px */
-  --ds-text-base: 0.9375rem; /* 15px */
-  --ds-text-lg: 1.0625rem;   /* 17px */
-  --ds-text-xl: 1.25rem;     /* 20px */
-  --ds-text-2xl: 1.5rem;     /* 24px */
-  --ds-text-3xl: 1.875rem;   /* 30px */
-  --ds-text-4xl: 2.25rem;    /* 36px */
-  --ds-text-5xl: 3rem;       /* 48px */
-  --ds-text-6xl: 3.75rem;    /* 60px */
+  --ds-text-xs: 0.6875rem;
+  --ds-text-sm: 0.8125rem;
+  --ds-text-base: 0.9375rem;
+  --ds-text-lg: 1.0625rem;
+  --ds-text-xl: 1.25rem;
+  --ds-text-2xl: 1.5rem;
+  --ds-text-3xl: 1.875rem;
+  --ds-text-4xl: 2.25rem;
+  --ds-text-5xl: 3rem;
+  --ds-text-6xl: 3.75rem;
 
   --ds-leading-none: 1;
   --ds-leading-tight: 1.15;
@@ -165,8 +166,9 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SITE LIGHT THEME — Premium White/Beige for public site pages
+   SITE LIGHT THEME — Clean, Minimal, Premium
    Applied via .site-light class on SiteLayout
+   No glassmorphism. Solid colors. Generous spacing.
    ═══════════════════════════════════════════════════════════════ */
 .site-light {
   /* ── Backgrounds ── */
@@ -176,7 +178,6 @@
   --ds-color-bg-surface: rgba(0, 37, 26, 0.03);
   --ds-color-bg-surface-hover: rgba(0, 37, 26, 0.06);
   --ds-color-bg-overlay: rgba(0, 37, 26, 0.6);
-  --ds-color-bg-glass: rgba(255, 255, 255, 0.85);
 
   /* ── Text ── */
   --ds-color-text-primary: #00251A;
@@ -192,37 +193,30 @@
   --ds-color-border-focus: rgba(230, 81, 0, 0.6);
   --ds-color-border-subtle: rgba(0, 37, 26, 0.06);
 
-  /* ── Accent (unchanged) ── */
+  /* ── Accent ── */
   --ds-color-accent: #E65100;
   --ds-color-accent-hover: #FF6D00;
   --ds-color-accent-muted: rgba(230, 81, 0, 0.1);
   --ds-color-accent-subtle: rgba(230, 81, 0, 0.05);
 
-  /* ── Shadows — Light, warm ── */
-  --ds-shadow-xs: 0 1px 3px rgba(0, 37, 26, 0.04);
-  --ds-shadow-sm: 0 2px 8px rgba(0, 37, 26, 0.08);
-  --ds-shadow-md: 0 4px 16px rgba(0, 37, 26, 0.1);
-  --ds-shadow-lg: 0 8px 24px rgba(0, 37, 26, 0.12);
-  --ds-shadow-xl: 0 12px 32px rgba(0, 37, 26, 0.16);
-  --ds-shadow-accent: 0 4px 16px rgba(230, 81, 0, 0.2);
-  --ds-shadow-accent-lg: 0 8px 32px rgba(230, 81, 0, 0.3);
+  /* ── Shadows — Subtle only ── */
+  --site-shadow-xs: 0 1px 2px rgba(0, 37, 26, 0.04);
+  --site-shadow-sm: 0 1px 3px rgba(0, 37, 26, 0.06);
+  --site-shadow-md: 0 4px 12px rgba(0, 37, 26, 0.08);
+  --site-shadow-lg: 0 8px 24px rgba(0, 37, 26, 0.1);
+  --site-shadow-hover: 0 8px 30px rgba(0, 37, 26, 0.12);
 
-  /* ── Card Elevation Levels ── */
-  --site-elevation-1: 0 2px 8px rgba(0, 37, 26, 0.08);
-  --site-elevation-2: 0 8px 24px rgba(0, 37, 26, 0.12);
-  --site-elevation-3: 0 12px 32px rgba(0, 37, 26, 0.16);
+  --ds-shadow-xs: 0 1px 2px rgba(0, 37, 26, 0.04);
+  --ds-shadow-sm: 0 1px 3px rgba(0, 37, 26, 0.06);
+  --ds-shadow-md: 0 4px 12px rgba(0, 37, 26, 0.08);
+  --ds-shadow-lg: 0 8px 24px rgba(0, 37, 26, 0.1);
+  --ds-shadow-xl: 0 12px 32px rgba(0, 37, 26, 0.12);
 }
 
 /* ── Scroll Reveal Animation ── */
 @keyframes site-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Skeleton Shimmer for site-light ── */

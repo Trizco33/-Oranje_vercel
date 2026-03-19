@@ -4,9 +4,10 @@ import { Instagram, Mail, Phone, MapPin } from "lucide-react";
 export default function SiteFooter() {
   const linkStyle: React.CSSProperties = {
     fontSize: "0.875rem",
-    color: "rgba(255,255,255,0.65)",
+    color: "rgba(255,255,255,0.6)",
     textDecoration: "none",
-    transition: "color 0.2s",
+    transition: "color 0.2s ease",
+    lineHeight: 1.8,
   };
 
   return (
@@ -17,14 +18,14 @@ export default function SiteFooter() {
         color: "#FFFFFF",
       }}
     >
-      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "3.5rem 1.5rem 2rem" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "64px 24px 32px" }}>
         {/* Top Section */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "2.5rem",
-            marginBottom: "3rem",
+            gap: "48px",
+            marginBottom: "48px",
           }}
         >
           {/* Brand */}
@@ -34,13 +35,13 @@ export default function SiteFooter() {
               <img
                 src="/logo.png"
                 alt="Oranje - Guia Cultural de Holambra"
-                style={{ height: "32px", width: "auto", marginBottom: "1rem", opacity: 0.9 }}
+                style={{ height: "28px", width: "auto", marginBottom: "16px", opacity: 0.9 }}
                 loading="lazy"
               />
             </picture>
             <p style={{
               fontSize: "0.875rem",
-              color: "rgba(255,255,255,0.55)",
+              color: "rgba(255,255,255,0.5)",
               lineHeight: 1.7,
               maxWidth: "280px",
             }}>
@@ -52,15 +53,15 @@ export default function SiteFooter() {
           <nav aria-label="Links de navegação do rodapé">
             <h4 style={{
               fontWeight: 600,
-              color: "rgba(255,255,255,0.4)",
-              marginBottom: "1rem",
+              color: "rgba(255,255,255,0.35)",
+              marginBottom: "16px",
               fontSize: "0.6875rem",
               textTransform: "uppercase" as const,
               letterSpacing: "0.1em",
             }}>
               Navegação
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {[
                 { label: "Início", to: "/" },
                 { label: "O que fazer", to: "/o-que-fazer-em-holambra" },
@@ -73,7 +74,7 @@ export default function SiteFooter() {
                     to={item.to}
                     style={linkStyle}
                     onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
+                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                   >
                     {item.label}
                   </Link>
@@ -86,15 +87,15 @@ export default function SiteFooter() {
           <nav aria-label="Links legais">
             <h4 style={{
               fontWeight: 600,
-              color: "rgba(255,255,255,0.4)",
-              marginBottom: "1rem",
+              color: "rgba(255,255,255,0.35)",
+              marginBottom: "16px",
               fontSize: "0.6875rem",
               textTransform: "uppercase" as const,
               letterSpacing: "0.1em",
             }}>
               Legal
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
               {[
                 { label: "Política de Privacidade", to: "/privacidade" },
                 { label: "Termos de Serviço", to: "/termos" },
@@ -105,7 +106,7 @@ export default function SiteFooter() {
                     to={item.to}
                     style={linkStyle}
                     onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
+                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                   >
                     {item.label}
                   </Link>
@@ -118,40 +119,40 @@ export default function SiteFooter() {
           <div>
             <h4 style={{
               fontWeight: 600,
-              color: "rgba(255,255,255,0.4)",
-              marginBottom: "1rem",
+              color: "rgba(255,255,255,0.35)",
+              marginBottom: "16px",
               fontSize: "0.6875rem",
               textTransform: "uppercase" as const,
               letterSpacing: "0.1em",
             }}>
               Contato
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <li style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                <Mail size={14} style={{ color: "#E65100", opacity: 0.7, flexShrink: 0 }} aria-hidden="true" />
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
+              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Mail size={14} style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }} aria-hidden="true" />
                 <a
                   href="mailto:contato@oranje.com.br"
                   style={linkStyle}
                   onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
+                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   contato@oranje.com.br
                 </a>
               </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                <Phone size={14} style={{ color: "#E65100", opacity: 0.7, flexShrink: 0 }} aria-hidden="true" />
+              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Phone size={14} style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }} aria-hidden="true" />
                 <a
                   href="tel:+551940000000"
                   style={linkStyle}
                   onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
+                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   (19) 4000-0000
                 </a>
               </li>
-              <li style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}>
-                <MapPin size={14} style={{ color: "#E65100", opacity: 0.7, marginTop: "2px", flexShrink: 0 }} aria-hidden="true" />
-                <span style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.55)" }}>Holambra, SP</span>
+              <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                <MapPin size={14} style={{ color: "rgba(255,255,255,0.3)", marginTop: "2px", flexShrink: 0 }} aria-hidden="true" />
+                <span style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.5)" }}>Holambra, SP</span>
               </li>
             </ul>
           </div>
@@ -160,27 +161,27 @@ export default function SiteFooter() {
         {/* Bottom bar */}
         <div
           style={{
-            borderTop: "1px solid rgba(255,255,255,0.08)",
-            paddingTop: "1.5rem",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            paddingTop: "24px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             flexWrap: "wrap",
-            gap: "1rem",
+            gap: "16px",
           }}
         >
-          <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>
+          <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.3)" }}>
             &copy; 2026 Oranje. Todos os direitos reservados.
           </p>
-          <div style={{ display: "flex", gap: "1rem" }} aria-label="Redes sociais">
+          <div style={{ display: "flex", gap: "16px" }} aria-label="Redes sociais">
             <a
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Seguir Oranje no Instagram"
-              style={{ color: "rgba(255,255,255,0.4)", transition: "color 0.2s" }}
+              style={{ color: "rgba(255,255,255,0.35)", transition: "color 0.2s ease" }}
               onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}
+              onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.35)")}
             >
               <Instagram size={18} />
             </a>

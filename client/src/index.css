@@ -294,6 +294,91 @@
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--ds-color-border-accent), transparent);
   }
+
+  /* ─── Site Light Card Styles ─── */
+  .site-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 37, 26, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 37, 26, 0.08);
+    overflow: hidden;
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .site-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 37, 26, 0.12);
+    transform: translateY(-2px) scale(1.02);
+    border-color: rgba(230, 81, 0, 0.2);
+  }
+
+  /* ─── Site CTA Button ─── */
+  .site-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #E65100;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    text-decoration: none;
+    line-height: 1;
+  }
+  .site-cta:hover {
+    background: #FF6D00;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(230, 81, 0, 0.3);
+  }
+  .site-cta:focus-visible {
+    outline: 2px solid #E65100;
+    outline-offset: 2px;
+  }
+  .site-cta-sm { height: 36px; padding: 0 16px; font-size: 0.8125rem; }
+  .site-cta-md { height: 44px; padding: 0 24px; font-size: 0.875rem; }
+  .site-cta-lg { height: 52px; padding: 0 32px; font-size: 1rem; }
+
+  /* ─── Site Secondary Button ─── */
+  .site-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    color: #00251A;
+    font-weight: 600;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    border: 1.5px solid rgba(0, 37, 26, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    text-decoration: none;
+    line-height: 1;
+  }
+  .site-btn-secondary:hover {
+    border-color: #E65100;
+    color: #E65100;
+    background: rgba(230, 81, 0, 0.04);
+  }
+
+  /* ─── Scroll reveal animation class ─── */
+  .site-reveal {
+    animation: site-reveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* ─── Site Section Spacing ─── */
+  .site-section {
+    padding: 64px 24px;
+  }
+  @media (min-width: 768px) {
+    .site-section {
+      padding: 96px 48px;
+    }
+  }
 }
 
 /* ═══ Animations ═══ */

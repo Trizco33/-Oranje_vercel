@@ -56,34 +56,90 @@ export function AdminFormModal({
 
   if (!isOpen) return null;
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 14px',
+    borderRadius: '8px',
+    border: '1px solid rgba(0, 37, 26, 0.1)',
+    background: '#FFFFFF',
+    color: '#1A1A1A',
+    fontSize: '0.875rem',
+    fontFamily: "'Montserrat', system-ui, sans-serif",
+    transition: 'border-color 200ms ease',
+    minHeight: '44px',
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div
-        className="rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
-        style={{ background: "#0F1B14", border: "1px solid rgba(216,138,61,0.2)" }}
-      >
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0, 0, 0, 0.4)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 50,
+      padding: '16px',
+      backdropFilter: 'blur(4px)',
+    }}>
+      <div style={{
+        borderRadius: '16px',
+        padding: '28px',
+        width: '100%',
+        maxWidth: '480px',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        background: '#FFFFFF',
+        border: '1px solid rgba(0, 37, 26, 0.08)',
+        boxShadow: '0 8px 32px rgba(0, 37, 26, 0.12)',
+        fontFamily: "'Montserrat', system-ui, sans-serif",
+      }}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold" style={{ color: "#E8E6E3" }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px',
+        }}>
+          <h2 style={{
+            fontSize: '1.125rem',
+            fontWeight: 700,
+            color: '#1A1A1A',
+          }}>
             {title}
           </h2>
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="p-2 rounded-lg transition-all disabled:opacity-50"
-            style={{ background: "rgba(216,138,61,0.1)" }}
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              border: '1px solid rgba(0, 37, 26, 0.08)',
+              background: 'transparent',
+              cursor: 'pointer',
+              opacity: isLoading ? 0.5 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 200ms ease',
+            }}
           >
-            <X size={16} style={{ color: "#D88A3D" }} />
+            <X size={16} style={{ color: '#718096' }} />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {fields.map((field) => (
             <div key={field.name}>
-              <label className="block text-sm font-medium mb-2" style={{ color: "#E8E6E3" }}>
+              <label style={{
+                display: 'block',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                marginBottom: '6px',
+                color: '#4A5568',
+              }}>
                 {field.label}
-                {field.required && <span style={{ color: "#FF6464" }}>*</span>}
+                {field.required && <span style={{ color: '#E65100', marginLeft: '2px' }}>*</span>}
               </label>
 
               {field.type === "textarea" ? (
@@ -94,11 +150,14 @@ export function AdminFormModal({
                   placeholder={field.placeholder}
                   required={field.required}
                   rows={4}
-                  className="w-full px-3 py-2 rounded-lg text-sm resize-none"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(216,138,61,0.2)",
-                    color: "#E8E6E3",
+                  style={{ ...inputStyle, resize: 'none' as const, minHeight: '100px' }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = '#E65100';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
               ) : field.type === "select" ? (
@@ -107,11 +166,14 @@ export function AdminFormModal({
                   value={formData[field.name] ?? ""}
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   required={field.required}
-                  className="w-full px-3 py-2 rounded-lg text-sm"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(216,138,61,0.2)",
-                    color: "#E8E6E3",
+                  style={inputStyle}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = '#E65100';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   <option value="">Selecione uma opção</option>
@@ -122,21 +184,23 @@ export function AdminFormModal({
                   ))}
                 </select>
               ) : field.type === "checkbox" ? (
-                <input
-                  type="checkbox"
-                  name={field.name}
-                  checked={formData[field.name] ?? false}
-                  onChange={(e) => handleChange(field.name, e.target.checked)}
-                  className="w-4 h-4 rounded"
-                  style={{ accentColor: "#D88A3D" }}
-                />
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    name={field.name}
+                    checked={formData[field.name] ?? false}
+                    onChange={(e) => handleChange(field.name, e.target.checked)}
+                    style={{ width: '18px', height: '18px', accentColor: '#E65100', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '0.875rem', color: '#4A5568' }}>Ativado</span>
+                </label>
               ) : field.type === "image" ? (
-                <div className="flex items-center gap-2">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {formData[field.name] && (
                     <img
                       src={formData[field.name]}
                       alt="preview"
-                      className="w-12 h-12 rounded object-cover"
+                      style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(0,37,26,0.08)' }}
                     />
                   )}
                   <ImageUpload
@@ -153,11 +217,14 @@ export function AdminFormModal({
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   placeholder={field.placeholder}
                   required={field.required}
-                  className="w-full px-3 py-2 rounded-lg text-sm"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(216,138,61,0.2)",
-                    color: "#E8E6E3",
+                  style={inputStyle}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = '#E65100';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
               )}
@@ -165,21 +232,21 @@ export function AdminFormModal({
           ))}
 
           {/* Buttons */}
-          <div className="flex gap-3 pt-4">
+          <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 rounded-lg font-medium transition-all disabled:opacity-50"
-              style={{ background: "rgba(216,138,61,0.1)", color: "#D88A3D" }}
+              className="admin-btn-secondary"
+              style={{ flex: 1, opacity: isLoading ? 0.5 : 1 }}
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-              style={{ backgroundColor: "#D88A3D", color: "#0F1B14" }}
+              className="admin-btn-primary"
+              style={{ flex: 1, opacity: isLoading ? 0.7 : 1 }}
             >
               {isLoading ? (
                 <>

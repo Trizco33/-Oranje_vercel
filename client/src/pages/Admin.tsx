@@ -2,9 +2,9 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   BarChart3, Bell, Building2, CalendarDays, ChevronRight, Edit, ImagePlus,
-  Loader2, LogOut, Map, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car
+  Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { OranjeLogoImg } from "@/components/OranjeLogoSVG";
@@ -21,18 +21,62 @@ import { AdminArticles } from "@/components/AdminArticles";
 
 type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles";
 
+const NAV_GROUPS = [
+  {
+    label: "Gestão",
+    items: [
+      { id: "places" as AdminTab, icon: Building2, label: "Lugares" },
+      { id: "events" as AdminTab, icon: CalendarDays, label: "Eventos" },
+      { id: "vouchers" as AdminTab, icon: Ticket, label: "Cupons" },
+    ],
+  },
+  {
+    label: "Conteúdo",
+    items: [
+      { id: "routes" as AdminTab, icon: Map, label: "Roteiros" },
+      { id: "articles" as AdminTab, icon: Edit, label: "Artigos" },
+      { id: "partners" as AdminTab, icon: Tag, label: "Parceiros" },
+    ],
+  },
+  {
+    label: "Sistema",
+    items: [
+      { id: "drivers" as AdminTab, icon: Car, label: "Motoristas" },
+      { id: "ads" as AdminTab, icon: Package, label: "Anúncios" },
+      { id: "categories" as AdminTab, icon: Tag, label: "Categorias" },
+      { id: "logs" as AdminTab, icon: Users, label: "Logs" },
+    ],
+  },
+];
+
 export default function Admin() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [activeTab]);
+
+  // Prevent body scroll when sidebar open on mobile
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen]);
 
   if (!user) {
     return (
-      <div className="oranje-app min-h-screen flex items-center justify-center">
-        <div className="text-center px-6">
-          <p className="text-4xl mb-4">🔒</p>
-          <p className="text-sm" style={{ color: "#C8C5C0" }}>Acesso restrito. Faça login como administrador.</p>
-          <button onClick={() => navigate("/")} className="btn-gold px-5 py-2.5 rounded-xl text-sm mt-4">
+      <div className="admin-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', padding: '24px' }}>
+          <p style={{ fontSize: '3rem', marginBottom: '16px' }}>🔒</p>
+          <p style={{ color: '#718096', fontSize: '0.875rem' }}>Acesso restrito. Faça login como administrador.</p>
+          <button onClick={() => navigate("/")} className="admin-btn-primary" style={{ marginTop: '16px' }}>
             Voltar ao início
           </button>
         </div>
@@ -42,12 +86,12 @@ export default function Admin() {
 
   if (user.role !== "admin") {
     return (
-      <div className="oranje-app min-h-screen flex items-center justify-center">
-        <div className="text-center px-6">
-          <p className="text-4xl mb-4">⛔</p>
-          <p className="text-sm font-medium mb-2" style={{ color: "#E8E6E3" }}>Acesso negado</p>
-          <p className="text-xs mb-4" style={{ color: "#C8C5C0" }}>Esta área é restrita a administradores.</p>
-          <button onClick={() => navigate("/")} className="btn-gold px-5 py-2.5 rounded-xl text-sm">
+      <div className="admin-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', padding: '24px' }}>
+          <p style={{ fontSize: '3rem', marginBottom: '16px' }}>⛔</p>
+          <p style={{ fontWeight: 600, color: '#1A1A1A', marginBottom: '8px' }}>Acesso negado</p>
+          <p style={{ color: '#718096', fontSize: '0.875rem', marginBottom: '16px' }}>Esta área é restrita a administradores.</p>
+          <button onClick={() => navigate("/")} className="admin-btn-primary">
             Voltar ao início
           </button>
         </div>
@@ -55,81 +99,214 @@ export default function Admin() {
     );
   }
 
-  const TABS = [
-    { id: "dashboard" as AdminTab, icon: BarChart3, label: "Dashboard" },
-    { id: "places" as AdminTab, icon: Building2, label: "Lugares" },
-    { id: "events" as AdminTab, icon: CalendarDays, label: "Eventos" },
-    { id: "vouchers" as AdminTab, icon: Ticket, label: "Vouchers" },
-    { id: "ads" as AdminTab, icon: Package, label: "Anúncios" },
-    { id: "partners" as AdminTab, icon: Tag, label: "Parceiros" },
-    { id: "drivers" as AdminTab, icon: Car, label: "Motoristas" },
-    { id: "routes" as AdminTab, icon: Map, label: "Roteiros" },
-    { id: "categories" as AdminTab, icon: Tag, label: "Categorias" },
-    { id: "articles" as AdminTab, icon: Edit, label: "Artigos" },
-    { id: "logs" as AdminTab, icon: Users, label: "Logs" },
-  ];
+  const activeLabel = activeTab === 'dashboard' ? 'Dashboard'
+    : NAV_GROUPS.flatMap(g => g.items).find(i => i.id === activeTab)?.label ?? 'Admin';
 
   return (
-    <div className="oranje-app min-h-screen flex flex-col">
-      {/* ── Admin Header ─────────────────────────────────────────────── */}
-      <header className="oranje-header px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/")} className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(216,138,61,0.1)" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D88A3D" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M19 12H5M12 5l-7 7 7 7" />
-            </svg>
+    <div className="admin-layout">
+      {/* ── Mobile sidebar overlay ── */}
+      <div
+        className={`admin-sidebar-overlay ${sidebarOpen ? 'active' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+
+      {/* ── Sidebar ── */}
+      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
+        {/* Sidebar header */}
+        <div style={{
+          padding: '20px 16px',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <OranjeLogoImg size={28} showText={false} />
+            <div>
+              <p style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', color: '#E65100' }}>
+                ADMIN
+              </p>
+              <p style={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.5)' }}>
+                Painel de Gestão
+              </p>
+            </div>
+          </div>
+          {/* Close button - mobile only */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            style={{
+              display: 'none',
+              padding: '8px',
+              borderRadius: '8px',
+              border: 'none',
+              background: 'rgba(255,255,255,0.08)',
+              cursor: 'pointer',
+              color: 'rgba(255,255,255,0.7)',
+            }}
+            className="admin-sidebar-close"
+          >
+            <X size={18} />
           </button>
-          <OranjeLogoImg size={28} showText={false} />
-          <div>
-            <p className="text-xs font-bold tracking-widest" style={{ color: "#D88A3D" }}>ADMIN</p>
-            <p className="text-xs" style={{ color: "#C8C5C0" }}>{user.name}</p>
+        </div>
+
+        {/* Navigation */}
+        <nav style={{ flex: 1, overflowY: 'auto', padding: '8px 12px' }}>
+          {/* Dashboard */}
+          <div style={{ padding: '4px 0' }}>
+            <button
+              className={`admin-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+              onClick={() => setActiveTab('dashboard')}
+            >
+              <BarChart3 size={18} />
+              Dashboard
+            </button>
+          </div>
+
+          {/* Grouped nav */}
+          {NAV_GROUPS.map(group => (
+            <div key={group.label}>
+              <div className="admin-nav-group-label">{group.label}</div>
+              {group.items.map(item => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    className={`admin-nav-item ${activeTab === item.id ? 'active' : ''}`}
+                    onClick={() => setActiveTab(item.id)}
+                  >
+                    <Icon size={18} />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        {/* Sidebar footer */}
+        <div style={{
+          padding: '16px',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '10px 12px',
+            borderRadius: '8px',
+            background: 'rgba(255,255,255,0.04)',
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              background: 'rgba(230, 81, 0, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#E65100',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+            }}>
+              {user.name?.charAt(0)?.toUpperCase() ?? 'A'}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                color: '#FFFFFF',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>{user.name}</p>
+              <p style={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.4)' }}>Administrador</p>
+            </div>
+            <button
+              onClick={() => { if (confirm('Deseja sair?')) { logout(); navigate("/"); } }}
+              style={{
+                padding: '6px',
+                borderRadius: '6px',
+                border: 'none',
+                background: 'rgba(255,255,255,0.06)',
+                cursor: 'pointer',
+                color: 'rgba(255,255,255,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              title="Sair"
+            >
+              <LogOut size={14} />
+            </button>
           </div>
         </div>
-        <button onClick={() => { logout(); navigate("/"); }}
-          className="w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: "rgba(216,138,61,0.1)" }}>
-          <LogOut size={16} style={{ color: "#D88A3D" }} />
-        </button>
-      </header>
+      </aside>
 
-      {/* ── Tab Navigation ───────────────────────────────────────────── */}
-      <div className="scroll-x flex gap-1 px-4 py-3 border-b" style={{ borderColor: "rgba(216,138,61,0.1)" }}>
-        {TABS.map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
+      {/* ── Main Content ── */}
+      <div className="admin-main">
+        {/* Top bar */}
+        <header className="admin-topbar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all"
+              onClick={() => setSidebarOpen(true)}
               style={{
-                background: isActive ? "rgba(216,138,61,0.15)" : "transparent",
-                color: isActive ? "#D88A3D" : "#6B7A8D",
-                border: isActive ? "1px solid rgba(216,138,61,0.3)" : "1px solid transparent",
+                padding: '8px',
+                borderRadius: '8px',
+                border: '1px solid rgba(0,37,26,0.08)',
+                background: 'transparent',
+                cursor: 'pointer',
+                display: 'none',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '40px',
+                minHeight: '40px',
               }}
+              className="admin-hamburger"
             >
-              <Icon size={13} />
-              {tab.label}
+              <Menu size={20} style={{ color: '#00251A' }} />
             </button>
-          );
-        })}
+            <div>
+              <h1 style={{
+                fontSize: '1.125rem',
+                fontWeight: 700,
+                color: '#00251A',
+                fontFamily: "'Montserrat', system-ui, sans-serif",
+              }}>
+                {activeLabel}
+              </h1>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate("/")}
+            className="admin-btn-secondary"
+            style={{ padding: '8px 16px', fontSize: '0.8125rem' }}
+          >
+            Ver Site
+          </button>
+        </header>
+
+        {/* Content area */}
+        <div className="admin-content">
+          {activeTab === "dashboard" && <AdminDashboard />}
+          {activeTab === "places" && <AdminPlaces />}
+          {activeTab === "events" && <AdminEvents />}
+          {activeTab === "vouchers" && <AdminVouchers />}
+          {activeTab === "ads" && <AdminAds />}
+          {activeTab === "partners" && <AdminPartners />}
+          {activeTab === "drivers" && <AdminDriversMarketplace />}
+          {activeTab === "routes" && <AdminRoutes />}
+          {activeTab === "categories" && <AdminCategories />}
+          {activeTab === "articles" && <AdminArticles />}
+          {activeTab === "logs" && <AdminLogs />}
+        </div>
       </div>
 
-      {/* ── Content ─────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
-        {activeTab === "dashboard" && <AdminDashboard />}
-        {activeTab === "places" && <AdminPlaces />}
-        {activeTab === "events" && <AdminEvents />}
-        {activeTab === "vouchers" && <AdminVouchers />}
-        {activeTab === "ads" && <AdminAds />}
-        {activeTab === "partners" && <AdminPartners />}
-        {activeTab === "drivers" && <AdminDriversMarketplace />}
-        {activeTab === "routes" && <AdminRoutes />}
-        {activeTab === "categories" && <AdminCategories />}
-        {activeTab === "articles" && <AdminArticles />}
-        {activeTab === "logs" && <AdminLogs />}
-      </div>
+      {/* Mobile-only styles via inline style tag */}
+      <style>{`
+        @media (max-width: 767px) {
+          .admin-hamburger { display: flex !important; }
+          .admin-sidebar-close { display: flex !important; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -139,39 +316,58 @@ function AdminDashboard() {
   const { data: stats } = trpc.admin.stats.useQuery();
 
   const cards = [
-    { label: "Lugares", value: stats?.places ?? 0, icon: Building2, color: "#D88A3D" },
-    { label: "Eventos", value: stats?.events ?? 0, icon: CalendarDays, color: "#5B8DD9" },
-    { label: "Parceiros", value: stats?.partners ?? 0, icon: Tag, color: "#5BD98A" },
-    { label: "Usuários", value: stats?.users ?? 0, icon: Users, color: "#D95B8D" },
+    { label: "Lugares", value: stats?.places ?? 0, icon: Building2, color: "#E65100" },
+    { label: "Eventos", value: stats?.events ?? 0, icon: CalendarDays, color: "#0D4A40" },
+    { label: "Parceiros", value: stats?.partners ?? 0, icon: Tag, color: "#004D40" },
+    { label: "Usuários", value: stats?.users ?? 0, icon: Users, color: "#7C3AED" },
   ];
 
   return (
     <div>
-      <h2 className="section-title text-lg mb-4">Visão Geral</h2>
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <h2 style={{
+        fontSize: '1.25rem',
+        fontWeight: 700,
+        color: '#00251A',
+        marginBottom: '20px',
+        fontFamily: "'Montserrat', system-ui, sans-serif",
+      }}>Visão Geral</h2>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: '16px',
+        marginBottom: '24px',
+      }}>
         {cards.map(card => {
           const Icon = card.icon;
           return (
-            <div key={card.label} className="glass-card p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: `${card.color}20` }}>
-                  <Icon size={16} style={{ color: card.color }} />
+            <div key={card.label} className="admin-stat-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: `${card.color}12`,
+                }}>
+                  <Icon size={18} style={{ color: card.color }} />
                 </div>
-                <span className="text-xs" style={{ color: "#C8C5C0" }}>{card.label}</span>
+                <span style={{ fontSize: '0.8125rem', color: '#718096', fontWeight: 500 }}>{card.label}</span>
               </div>
-              <p className="text-2xl font-bold" style={{ color: "#E8E6E3" }}>{card.value}</p>
+              <p style={{ fontSize: '2rem', fontWeight: 700, color: '#1A1A1A' }}>{card.value}</p>
             </div>
           );
         })}
       </div>
 
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles size={16} style={{ color: "#D88A3D" }} />
-          <h3 className="text-sm font-semibold" style={{ color: "#E8E6E3" }}>Ações Rápidas</h3>
+      <div className="admin-card" style={{ padding: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+          <Sparkles size={18} style={{ color: '#E65100' }} />
+          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#1A1A1A' }}>Ações Rápidas</h3>
         </div>
-        <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {[
             { label: "Adicionar novo lugar", icon: Building2 },
             { label: "Criar evento", icon: CalendarDays },
@@ -179,11 +375,22 @@ function AdminDashboard() {
           ].map(action => {
             const Icon = action.icon;
             return (
-              <div key={action.label} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer"
-                style={{ background: "rgba(216,138,61,0.06)" }}>
-                <Icon size={15} style={{ color: "#D88A3D" }} />
-                <span className="text-sm flex-1" style={{ color: "#E8E6E3" }}>{action.label}</span>
-                <ChevronRight size={14} style={{ color: "#D88A3D" }} />
+              <div key={action.label} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                transition: 'background 200ms ease',
+                border: '1px solid rgba(0,37,26,0.05)',
+              }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(230, 81, 0, 0.04)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <Icon size={16} style={{ color: '#E65100' }} />
+                <span style={{ flex: 1, fontSize: '0.875rem', color: '#1A1A1A', fontWeight: 500 }}>{action.label}</span>
+                <ChevronRight size={14} style={{ color: '#E65100' }} />
               </div>
             );
           })}
@@ -192,8 +399,6 @@ function AdminDashboard() {
     </div>
   );
 }
-
-// All admin components imported from separate files above
 
 // ─── Logs ─────────────────────────────────────────────────────────────────────
 function AdminLogs() {
@@ -210,39 +415,50 @@ function AdminLogs() {
 
   return (
     <div>
-      <h2 className="section-title text-base mb-4">Histórico de Ações</h2>
+      <h2 style={{
+        fontSize: '1.25rem',
+        fontWeight: 700,
+        color: '#00251A',
+        marginBottom: '20px',
+        fontFamily: "'Montserrat', system-ui, sans-serif",
+      }}>Histórico de Ações</h2>
       {isLoading ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 size={20} className="animate-spin" style={{ color: "#D88A3D" }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
+          <Loader2 size={24} className="animate-spin" style={{ color: '#E65100' }} />
         </div>
       ) : !logs || logs.length === 0 ? (
-        <div className="glass-card p-6 text-center">
-          <p style={{ color: "#C8C5C0" }}>Nenhuma ação registrada ainda.</p>
+        <div className="admin-card" style={{ padding: '48px 24px', textAlign: 'center' }}>
+          <p style={{ color: '#718096' }}>Nenhuma ação registrada ainda.</p>
         </div>
       ) : (
-        <div className="glass-card overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="admin-card" style={{ overflowX: 'auto' }}>
+          <table className="admin-table-responsive" style={{ width: '100%', fontSize: '0.875rem', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(216,138,61,0.2)" }}>
-                <th className="text-left px-4 py-3" style={{ color: "#D88A3D", fontWeight: 600 }}>Data</th>
-                <th className="text-left px-4 py-3" style={{ color: "#D88A3D", fontWeight: 600 }}>Admin</th>
-                <th className="text-left px-4 py-3" style={{ color: "#D88A3D", fontWeight: 600 }}>Ação</th>
-                <th className="text-left px-4 py-3" style={{ color: "#D88A3D", fontWeight: 600 }}>Tipo</th>
-                <th className="text-left px-4 py-3" style={{ color: "#D88A3D", fontWeight: 600 }}>ID</th>
+              <tr style={{ borderBottom: '1px solid rgba(0,37,26,0.08)' }}>
+                {['Data', 'Admin', 'Ação', 'Tipo', 'ID'].map(h => (
+                  <th key={h} style={{
+                    textAlign: 'left',
+                    padding: '12px 16px',
+                    color: '#718096',
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}>{h}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {logs.map((log: any) => {
                 const actionLabel = actionLabels[log.action] || log.action;
                 const createdAt = new Date(log.createdAt).toLocaleString("pt-BR");
-
                 return (
-                  <tr key={log.id} style={{ borderBottom: "1px solid rgba(216,138,61,0.1)" }}>
-                    <td className="px-4 py-3" style={{ color: "#C8C5C0" }}>{createdAt}</td>
-                    <td className="px-4 py-3" style={{ color: "#E8E6E3" }}>{log.userEmail}</td>
-                    <td className="px-4 py-3" style={{ color: "#E8E6E3" }}>{actionLabel}</td>
-                    <td className="px-4 py-3" style={{ color: "#C8C5C0" }}>{log.entityType}</td>
-                    <td className="px-4 py-3" style={{ color: "#C8C5C0" }}>#{log.entityId}</td>
+                  <tr key={log.id} style={{ borderBottom: '1px solid rgba(0,37,26,0.05)' }}>
+                    <td data-label="Data" style={{ padding: '14px 16px', color: '#718096' }}>{createdAt}</td>
+                    <td data-label="Admin" style={{ padding: '14px 16px', color: '#1A1A1A', fontWeight: 500 }}>{log.userEmail}</td>
+                    <td data-label="Ação" style={{ padding: '14px 16px', color: '#1A1A1A' }}>{actionLabel}</td>
+                    <td data-label="Tipo" style={{ padding: '14px 16px', color: '#718096' }}>{log.entityType}</td>
+                    <td data-label="ID" style={{ padding: '14px 16px', color: '#718096' }}>#{log.entityId}</td>
                   </tr>
                 );
               })}

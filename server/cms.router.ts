@@ -7,8 +7,17 @@ import { eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
 import { AuthService } from "./authService";
 
-const pool = mysql.createPool(ENV.databaseUrl);
-const db = drizzle(pool);
+let pool: ReturnType<typeof mysql.createPool> | null = null;
+let db: ReturnType<typeof drizzle> | null = null;
+
+if (ENV.databaseUrl) {
+  try {
+    pool = mysql.createPool(ENV.databaseUrl);
+    db = drizzle(pool);
+  } catch (e) {
+    console.warn("[CMS] Failed to connect to database:", e);
+  }
+}
 
 export const cmsRouter = router({
   // Login (public but validates credentials)
@@ -28,6 +37,7 @@ export const cmsRouter = router({
   getContent: publicProcedure
     .input(z.object({ section: z.string() }).optional())
     .query(async ({ input }) => {
+      if (!db) return [];
       const where = input?.section ? eq(siteContent.section, input.section) : undefined;
       return await db.select().from(siteContent).where(where);
     }),
@@ -42,6 +52,7 @@ export const cmsRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (!db) throw new Error("Database not available");
       await db
         .insert(siteContent)
         .values({
@@ -62,6 +73,7 @@ export const cmsRouter = router({
 
   // Get all pages
   getPages: publicProcedure.query(async () => {
+    if (!db) return [];
     return await db.select().from(sitePages);
   }),
 
@@ -69,6 +81,7 @@ export const cmsRouter = router({
   getPageBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
+      if (!db) return null;
       const result = await db
         .select()
         .from(sitePages)
@@ -93,6 +106,7 @@ export const cmsRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (!db) throw new Error("Database not available");
       if (input.id) {
         await db
           .update(sitePages)
@@ -117,6 +131,7 @@ export const cmsRouter = router({
   getSeo: publicProcedure
     .input(z.object({ page: z.string() }))
     .query(async ({ input }) => {
+      if (!db) return null;
       const result = await db
         .select()
         .from(siteSeo)
@@ -140,6 +155,7 @@ export const cmsRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (!db) throw new Error("Database not available");
       await db
         .insert(siteSeo)
         .values({

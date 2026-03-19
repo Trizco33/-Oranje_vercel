@@ -4,18 +4,20 @@ import { articles, places, events, routes } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
 
-const pool = mysql.createPool(ENV.databaseUrl);
-const db = drizzle(pool);
+let db: ReturnType<typeof drizzle> | null = null;
+if (ENV.databaseUrl) {
+  try { db = drizzle(mysql.createPool(ENV.databaseUrl)); } catch (e) { console.warn("[Sitemap] DB init failed:", e); }
+}
 
 export async function generateSitemap(baseUrl: string): Promise<string> {
-  const publishedArticles = await db
+  const publishedArticles = db ? await db
     .select()
     .from(articles)
-    .where(eq(articles.published, true));
+    .where(eq(articles.published, true)) : [];
 
-  const allPlaces = await db.select().from(places);
-  const allEvents = await db.select().from(events);
-  const allRoutes = await db.select().from(routes);
+  const allPlaces = db ? await db.select().from(places) : [];
+  const allEvents = db ? await db.select().from(events) : [];
+  const allRoutes = db ? await db.select().from(routes) : [];
 
   const urls: Array<{
     loc: string;

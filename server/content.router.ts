@@ -7,8 +7,11 @@ import { siteContent } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { ENV } from "./_core/env";
 
-const pool = mysql.createPool(ENV.databaseUrl);
-const db = drizzle(pool);
+let db: ReturnType<typeof drizzle> | null = null;
+if (ENV.databaseUrl) {
+  try { db = drizzle(mysql.createPool(ENV.databaseUrl)); } catch (e) { console.warn("[Content] DB init failed:", e); }
+}
+function getContentDb() { if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" }); return db; }
 
 // Schemas de validação
 const heroSchema = z.object({

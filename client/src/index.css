@@ -295,19 +295,19 @@
     background: linear-gradient(90deg, transparent, var(--ds-color-border-accent), transparent);
   }
 
-  /* ─── Site Light Card Styles ─── */
+  /* ─── Site Light Card Styles — Clean, Minimal ─── */
   .site-card {
     background: #FFFFFF;
-    border: 1px solid rgba(0, 37, 26, 0.08);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 37, 26, 0.08);
+    border: 1px solid rgba(0, 37, 26, 0.06);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 37, 26, 0.06);
     overflow: hidden;
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
   }
   .site-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 37, 26, 0.12);
-    transform: translateY(-2px) scale(1.02);
-    border-color: rgba(230, 81, 0, 0.2);
+    box-shadow: 0 8px 30px rgba(0, 37, 26, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(0, 37, 26, 0.1);
   }
 
   /* ─── Site CTA Button ─── */

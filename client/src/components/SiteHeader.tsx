@@ -33,7 +33,7 @@ export default function SiteHeader() {
   }, [location?.pathname]);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -50,24 +50,20 @@ export default function SiteHeader() {
           left: 0,
           right: 0,
           zIndex: 50,
-          background: scrolled ? "rgba(0, 37, 26, 0.95)" : "#00251A",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
-          boxShadow: scrolled ? "0 4px 30px rgba(0,0,0,0.15)" : "none",
-          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          background: "#00251A",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
+          transition: "border-color 0.3s ease",
         }}
       >
         <div
           style={{
-            maxWidth: "1280px",
+            maxWidth: "1200px",
             margin: "0 auto",
             padding: "0 24px",
-            height: scrolled ? "60px" : "68px",
+            height: "64px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            transition: "height 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           {/* Logo */}
@@ -85,14 +81,14 @@ export default function SiteHeader() {
           >
             <picture>
               <source srcSet="/logo.webp" type="image/webp" />
-              <img src="/logo.png" alt="Oranje" style={{ height: "36px", width: "auto" }} />
+              <img src="/logo.png" alt="Oranje" style={{ height: "28px", width: "auto" }} />
             </picture>
           </Link>
 
           {/* Desktop Navigation */}
           <nav
             aria-label="Navegação principal"
-            style={{ display: "flex", alignItems: "center", gap: "2px" }}
+            style={{ display: "flex", alignItems: "center", gap: "4px" }}
             className="hidden md:flex"
           >
             {navItems.map((item) => (
@@ -106,20 +102,20 @@ export default function SiteHeader() {
                   fontSize: "0.8125rem",
                   fontWeight: isActive(item.href) ? 600 : 500,
                   textDecoration: "none",
-                  transition: "all 0.2s ease",
-                  color: isActive(item.href) ? "#E65100" : "rgba(255,255,255,0.8)",
-                  background: isActive(item.href) ? "rgba(230, 81, 0, 0.12)" : "transparent",
+                  transition: "color 0.2s ease, background 0.2s ease",
+                  color: isActive(item.href) ? "#FFFFFF" : "rgba(255,255,255,0.7)",
+                  background: isActive(item.href) ? "rgba(255,255,255,0.08)" : "transparent",
                   letterSpacing: "0.01em",
                 }}
                 onMouseEnter={(e: any) => {
                   if (!isActive(item.href)) {
                     e.currentTarget.style.color = "#FFFFFF";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.06)";
                   }
                 }}
                 onMouseLeave={(e: any) => {
                   if (!isActive(item.href)) {
-                    e.currentTarget.style.color = "rgba(255,255,255,0.8)";
+                    e.currentTarget.style.color = "rgba(255,255,255,0.7)";
                     e.currentTarget.style.background = "transparent";
                   }
                 }}
@@ -133,8 +129,23 @@ export default function SiteHeader() {
           <div className="hidden md:block">
             <Link
               to="/app"
-              className="site-cta site-cta-sm"
-              style={{ textDecoration: "none" }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                height: "36px",
+                padding: "0 18px",
+                background: "#E65100",
+                color: "#FFFFFF",
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                borderRadius: "10px",
+                textDecoration: "none",
+                transition: "background 0.2s ease",
+                fontFamily: "'Montserrat', system-ui, sans-serif",
+              }}
+              onMouseEnter={(e: any) => (e.currentTarget.style.background = "#FF6D00")}
+              onMouseLeave={(e: any) => (e.currentTarget.style.background = "#E65100")}
             >
               Abrir o App
             </Link>
@@ -147,23 +158,23 @@ export default function SiteHeader() {
             style={{
               position: "relative",
               zIndex: 60,
-              width: 44,
-              height: 44,
+              width: 48,
+              height: 48,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: "10px",
-              background: isMenuOpen ? "rgba(230,81,0,0.15)" : "transparent",
+              borderRadius: "12px",
+              background: isMenuOpen ? "rgba(255,255,255,0.08)" : "transparent",
               border: "none",
               cursor: "pointer",
-              color: isMenuOpen ? "#E65100" : "#FFFFFF",
-              transition: "all 0.3s ease",
+              color: "#FFFFFF",
+              transition: "background 0.2s ease",
             }}
             aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-nav-panel"
           >
-            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </header>
@@ -175,11 +186,10 @@ export default function SiteHeader() {
           position: "fixed",
           inset: 0,
           zIndex: 45,
-          background: "rgba(0,0,0,0.5)",
-          backdropFilter: "blur(4px)",
+          background: "rgba(0,0,0,0.4)",
           opacity: isMenuOpen ? 1 : 0,
           pointerEvents: isMenuOpen ? "auto" : "none",
-          transition: "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          transition: "opacity 0.3s ease",
         }}
         aria-hidden="true"
       />
@@ -198,7 +208,6 @@ export default function SiteHeader() {
           width: "min(320px, 85vw)",
           background: "#00251A",
           borderLeft: "1px solid rgba(255,255,255,0.06)",
-          boxShadow: "-8px 0 40px rgba(0,0,0,0.3)",
           transform: isMenuOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
           display: "flex",
@@ -217,8 +226,7 @@ export default function SiteHeader() {
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase" as const,
-            color: "rgba(255,255,255,0.4)",
-            marginBottom: "0.25rem",
+            color: "rgba(255,255,255,0.35)",
           }}>
             Navegação
           </p>
@@ -226,7 +234,7 @@ export default function SiteHeader() {
 
         {/* Nav Links */}
         <div style={{ flex: 1, padding: "0.5rem 1rem" }}>
-          {navItems.map((item, index) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
             return (
@@ -240,17 +248,17 @@ export default function SiteHeader() {
                   alignItems: "center",
                   gap: "0.875rem",
                   padding: "0.875rem 1rem",
-                  marginBottom: "0.25rem",
+                  marginBottom: "2px",
                   borderRadius: "10px",
                   textDecoration: "none",
                   fontWeight: active ? 600 : 500,
                   fontSize: "0.9375rem",
-                  color: active ? "#FFFFFF" : "rgba(255,255,255,0.75)",
-                  background: active ? "rgba(230,81,0,0.15)" : "transparent",
+                  color: active ? "#FFFFFF" : "rgba(255,255,255,0.7)",
+                  background: active ? "rgba(255,255,255,0.08)" : "transparent",
                   transition: "all 0.2s ease",
                 }}
               >
-                <Icon size={18} style={{ color: active ? "#E65100" : "rgba(255,255,255,0.4)", flexShrink: 0 }} />
+                <Icon size={18} style={{ color: active ? "#E65100" : "rgba(255,255,255,0.35)", flexShrink: 0 }} />
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {active && <ArrowRight size={14} style={{ color: "#E65100", opacity: 0.7 }} />}
               </Link>
@@ -266,10 +274,20 @@ export default function SiteHeader() {
           <Link
             to="/app"
             onClick={closeMenu}
-            className="site-cta site-cta-md"
             style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
               width: "100%",
+              height: "48px",
+              background: "#E65100",
+              color: "#FFFFFF",
+              fontSize: "0.9375rem",
+              fontWeight: 600,
+              borderRadius: "12px",
               textDecoration: "none",
+              fontFamily: "'Montserrat', system-ui, sans-serif",
             }}
           >
             Abrir o App
@@ -278,7 +296,7 @@ export default function SiteHeader() {
           <p style={{
             textAlign: "center",
             fontSize: "0.6875rem",
-            color: "rgba(255,255,255,0.35)",
+            color: "rgba(255,255,255,0.3)",
             marginTop: "0.75rem",
           }}>
             Guia cultural de Holambra

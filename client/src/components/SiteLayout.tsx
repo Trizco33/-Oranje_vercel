@@ -25,7 +25,7 @@ export default function SiteLayout({ children, className = "" }: SiteLayoutProps
         Pular para o conteúdo principal
       </a>
       <SiteHeader />
-      <main id="main-content" className="flex-1" role="main" style={{ paddingTop: 68 }}>
+      <main id="main-content" className="flex-1" role="main" style={{ paddingTop: 64 }}>
         {children}
       </main>
       <SiteFooter />

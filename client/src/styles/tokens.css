@@ -164,6 +164,82 @@
   --ds-shadow-lg: 0 8px 32px rgba(0, 37, 26, 0.12);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   SITE LIGHT THEME — Premium White/Beige for public site pages
+   Applied via .site-light class on SiteLayout
+   ═══════════════════════════════════════════════════════════════ */
+.site-light {
+  /* ── Backgrounds ── */
+  --ds-color-bg-primary: #FFFFFF;
+  --ds-color-bg-secondary: #F5F5DC;
+  --ds-color-bg-elevated: #FFFFFF;
+  --ds-color-bg-surface: rgba(0, 37, 26, 0.03);
+  --ds-color-bg-surface-hover: rgba(0, 37, 26, 0.06);
+  --ds-color-bg-overlay: rgba(0, 37, 26, 0.6);
+  --ds-color-bg-glass: rgba(255, 255, 255, 0.85);
+
+  /* ── Text ── */
+  --ds-color-text-primary: #00251A;
+  --ds-color-text-secondary: #004D40;
+  --ds-color-text-muted: rgba(0, 37, 26, 0.55);
+  --ds-color-text-accent: #E65100;
+  --ds-color-text-inverse: #FFFFFF;
+  --ds-color-text-subtle: rgba(0, 37, 26, 0.35);
+
+  /* ── Borders ── */
+  --ds-color-border-default: rgba(0, 37, 26, 0.1);
+  --ds-color-border-accent: rgba(230, 81, 0, 0.25);
+  --ds-color-border-focus: rgba(230, 81, 0, 0.6);
+  --ds-color-border-subtle: rgba(0, 37, 26, 0.06);
+
+  /* ── Accent (unchanged) ── */
+  --ds-color-accent: #E65100;
+  --ds-color-accent-hover: #FF6D00;
+  --ds-color-accent-muted: rgba(230, 81, 0, 0.1);
+  --ds-color-accent-subtle: rgba(230, 81, 0, 0.05);
+
+  /* ── Shadows — Light, warm ── */
+  --ds-shadow-xs: 0 1px 3px rgba(0, 37, 26, 0.04);
+  --ds-shadow-sm: 0 2px 8px rgba(0, 37, 26, 0.08);
+  --ds-shadow-md: 0 4px 16px rgba(0, 37, 26, 0.1);
+  --ds-shadow-lg: 0 8px 24px rgba(0, 37, 26, 0.12);
+  --ds-shadow-xl: 0 12px 32px rgba(0, 37, 26, 0.16);
+  --ds-shadow-accent: 0 4px 16px rgba(230, 81, 0, 0.2);
+  --ds-shadow-accent-lg: 0 8px 32px rgba(230, 81, 0, 0.3);
+
+  /* ── Card Elevation Levels ── */
+  --site-elevation-1: 0 2px 8px rgba(0, 37, 26, 0.08);
+  --site-elevation-2: 0 8px 24px rgba(0, 37, 26, 0.12);
+  --site-elevation-3: 0 12px 32px rgba(0, 37, 26, 0.16);
+}
+
+/* ── Scroll Reveal Animation ── */
+@keyframes site-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Skeleton Shimmer for site-light ── */
+.site-light .shimmer,
+.site-skeleton {
+  background: linear-gradient(90deg, #e8e8e0 25%, #f2f2ea 50%, #e8e8e0 75%);
+  background-size: 200% 100%;
+  animation: ds-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ── Scroll indicator bounce ── */
+@keyframes site-scroll-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
 /* ── Premium Animations ── */
 @keyframes ds-fade-in {
   from { opacity: 0; }

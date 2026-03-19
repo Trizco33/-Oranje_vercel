@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass } from "lucide-react";
-import { DSButton } from "@/components/ds/Button";
 
 const navItems = [
-  { label: "In\u00edcio", href: "/", icon: Compass },
+  { label: "Início", href: "/", icon: Compass },
   { label: "O que fazer", href: "/o-que-fazer-em-holambra", icon: MapPin },
   { label: "Roteiros", href: "/roteiros", icon: Calendar },
   { label: "Mapa", href: "/mapa", icon: MapPin },
@@ -20,7 +19,6 @@ export default function SiteHeader() {
 
   const isActive = (href: string) => location?.pathname === href;
 
-  // Lock body scroll when menu is open
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -30,12 +28,10 @@ export default function SiteHeader() {
     return () => { document.body.style.overflow = ""; };
   }, [isMenuOpen]);
 
-  // Close menu on route change
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location?.pathname]);
 
-  // Track scroll for header appearance
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -54,19 +50,19 @@ export default function SiteHeader() {
           left: 0,
           right: 0,
           zIndex: 50,
-          background: scrolled ? "rgba(0, 37, 26, 0.95)" : "rgba(0, 37, 26, 0.85)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderBottom: scrolled ? "1px solid rgba(230, 81, 0, 0.12)" : "1px solid transparent",
-          boxShadow: scrolled ? "0 4px 30px rgba(0,0,0,0.25)" : "none",
+          background: scrolled ? "rgba(0, 37, 26, 0.95)" : "#00251A",
+          backdropFilter: scrolled ? "blur(12px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
+          boxShadow: scrolled ? "0 4px 30px rgba(0,0,0,0.15)" : "none",
           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
         <div
           style={{
-            maxWidth: "72rem",
+            maxWidth: "1280px",
             margin: "0 auto",
-            padding: "0 1rem",
+            padding: "0 24px",
             height: scrolled ? "60px" : "68px",
             display: "flex",
             alignItems: "center",
@@ -77,8 +73,15 @@ export default function SiteHeader() {
           {/* Logo */}
           <Link
             to="/"
-            style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none", position: "relative", zIndex: 60 }}
-            aria-label="Oranje - P\u00e1gina inicial"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              textDecoration: "none",
+              position: "relative",
+              zIndex: 60,
+            }}
+            aria-label="Oranje - Página inicial"
           >
             <picture>
               <source srcSet="/logo.webp" type="image/webp" />
@@ -88,54 +91,52 @@ export default function SiteHeader() {
 
           {/* Desktop Navigation */}
           <nav
-            aria-label="Navega\u00e7\u00e3o principal"
-            style={{ display: "flex", alignItems: "center", gap: "0.125rem" }}
+            aria-label="Navegação principal"
+            style={{ display: "flex", alignItems: "center", gap: "2px" }}
             className="hidden md:flex"
           >
-            {navItems.map((item: any) => (
+            {navItems.map((item) => (
               <Link
-                key={item?.href}
-                to={item?.href}
-                aria-current={isActive(item?.href) ? "page" : undefined}
+                key={item.href}
+                to={item.href}
+                aria-current={isActive(item.href) ? "page" : undefined}
                 style={{
-                  padding: "0.5rem 0.875rem",
-                  borderRadius: "0.5rem",
+                  padding: "8px 14px",
+                  borderRadius: "8px",
                   fontSize: "0.8125rem",
-                  fontWeight: isActive(item?.href) ? 600 : 500,
+                  fontWeight: isActive(item.href) ? 600 : 500,
                   textDecoration: "none",
                   transition: "all 0.2s ease",
-                  color: isActive(item?.href)
-                    ? "#E65100"
-                    : "rgba(232,230,227,0.7)",
-                  background: isActive(item?.href)
-                    ? "rgba(230, 81, 0, 0.1)"
-                    : "transparent",
+                  color: isActive(item.href) ? "#E65100" : "rgba(255,255,255,0.8)",
+                  background: isActive(item.href) ? "rgba(230, 81, 0, 0.12)" : "transparent",
                   letterSpacing: "0.01em",
                 }}
                 onMouseEnter={(e: any) => {
-                  if (!isActive(item?.href)) {
-                    e.currentTarget.style.color = "rgba(232,230,227,0.95)";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+                  if (!isActive(item.href)) {
+                    e.currentTarget.style.color = "#FFFFFF";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
                   }
                 }}
                 onMouseLeave={(e: any) => {
-                  if (!isActive(item?.href)) {
-                    e.currentTarget.style.color = "rgba(232,230,227,0.7)";
+                  if (!isActive(item.href)) {
+                    e.currentTarget.style.color = "rgba(255,255,255,0.8)";
                     e.currentTarget.style.background = "transparent";
                   }
                 }}
               >
-                {item?.label}
+                {item.label}
               </Link>
             ))}
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:block">
-            <Link to="/app" style={{ textDecoration: "none" }}>
-              <DSButton variant="primary" size="sm">
-                Abrir o App
-              </DSButton>
+            <Link
+              to="/app"
+              className="site-cta site-cta-sm"
+              style={{ textDecoration: "none" }}
+            >
+              Abrir o App
             </Link>
           </div>
 
@@ -151,11 +152,11 @@ export default function SiteHeader() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: "0.75rem",
+              borderRadius: "10px",
               background: isMenuOpen ? "rgba(230,81,0,0.15)" : "transparent",
               border: "none",
               cursor: "pointer",
-              color: isMenuOpen ? "#E65100" : "#E8E6E3",
+              color: isMenuOpen ? "#E65100" : "#FFFFFF",
               transition: "all 0.3s ease",
             }}
             aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
@@ -167,15 +168,14 @@ export default function SiteHeader() {
         </div>
       </header>
 
-      {/* Mobile Menu - Full screen slide panel */}
-      {/* Backdrop */}
+      {/* Mobile Menu - Backdrop */}
       <div
         onClick={closeMenu}
         style={{
           position: "fixed",
           inset: 0,
           zIndex: 45,
-          background: "rgba(0,0,0,0.6)",
+          background: "rgba(0,0,0,0.5)",
           backdropFilter: "blur(4px)",
           opacity: isMenuOpen ? 1 : 0,
           pointerEvents: isMenuOpen ? "auto" : "none",
@@ -184,10 +184,10 @@ export default function SiteHeader() {
         aria-hidden="true"
       />
 
-      {/* Slide Panel */}
+      {/* Mobile Menu - Slide Panel */}
       <nav
         id="mobile-nav-panel"
-        aria-label="Navega\u00e7\u00e3o mobile"
+        aria-label="Navegação mobile"
         className="md:hidden"
         style={{
           position: "fixed",
@@ -196,9 +196,9 @@ export default function SiteHeader() {
           bottom: 0,
           zIndex: 55,
           width: "min(320px, 85vw)",
-          background: "linear-gradient(180deg, #00251A 0%, #001A12 100%)",
-          borderLeft: "1px solid rgba(230,81,0,0.12)",
-          boxShadow: "-8px 0 40px rgba(0,0,0,0.4)",
+          background: "#00251A",
+          borderLeft: "1px solid rgba(255,255,255,0.06)",
+          boxShadow: "-8px 0 40px rgba(0,0,0,0.3)",
           transform: isMenuOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
           display: "flex",
@@ -210,29 +210,29 @@ export default function SiteHeader() {
         <div style={{
           padding: "1.25rem 1.5rem",
           paddingTop: "5rem",
-          borderBottom: "1px solid rgba(230,81,0,0.08)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}>
           <p style={{
             fontSize: "0.6875rem",
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase" as const,
-            color: "rgba(230,81,0,0.6)",
+            color: "rgba(255,255,255,0.4)",
             marginBottom: "0.25rem",
           }}>
-            Navega\u00e7\u00e3o
+            Navegação
           </p>
         </div>
 
         {/* Nav Links */}
         <div style={{ flex: 1, padding: "0.5rem 1rem" }}>
-          {navItems.map((item: any, index: number) => {
-            const Icon = item?.icon;
-            const active = isActive(item?.href);
+          {navItems.map((item, index) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
             return (
               <Link
-                key={item?.href}
-                to={item?.href}
+                key={item.href}
+                to={item.href}
                 onClick={closeMenu}
                 aria-current={active ? "page" : undefined}
                 style={{
@@ -241,18 +241,17 @@ export default function SiteHeader() {
                   gap: "0.875rem",
                   padding: "0.875rem 1rem",
                   marginBottom: "0.25rem",
-                  borderRadius: "0.75rem",
+                  borderRadius: "10px",
                   textDecoration: "none",
                   fontWeight: active ? 600 : 500,
                   fontSize: "0.9375rem",
-                  color: active ? "#FFFFFF" : "rgba(232,230,227,0.75)",
+                  color: active ? "#FFFFFF" : "rgba(255,255,255,0.75)",
                   background: active ? "rgba(230,81,0,0.15)" : "transparent",
                   transition: "all 0.2s ease",
-                  animationDelay: `${index * 0.04}s`,
                 }}
               >
-                {Icon && <Icon size={18} style={{ color: active ? "#E65100" : "rgba(232,230,227,0.4)", flexShrink: 0 }} />}
-                <span style={{ flex: 1 }}>{item?.label}</span>
+                <Icon size={18} style={{ color: active ? "#E65100" : "rgba(255,255,255,0.4)", flexShrink: 0 }} />
+                <span style={{ flex: 1 }}>{item.label}</span>
                 {active && <ArrowRight size={14} style={{ color: "#E65100", opacity: 0.7 }} />}
               </Link>
             );
@@ -262,27 +261,15 @@ export default function SiteHeader() {
         {/* CTA */}
         <div style={{
           padding: "1.25rem 1.5rem",
-          borderTop: "1px solid rgba(230,81,0,0.08)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
         }}>
           <Link
             to="/app"
             onClick={closeMenu}
+            className="site-cta site-cta-md"
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
               width: "100%",
-              padding: "0.875rem",
-              borderRadius: "0.75rem",
-              background: "#E65100",
-              color: "#FFFFFF",
-              fontWeight: 700,
-              fontSize: "0.9375rem",
               textDecoration: "none",
-              letterSpacing: "0.01em",
-              boxShadow: "0 4px 16px rgba(230,81,0,0.35)",
-              transition: "all 0.2s ease",
             }}
           >
             Abrir o App
@@ -291,7 +278,7 @@ export default function SiteHeader() {
           <p style={{
             textAlign: "center",
             fontSize: "0.6875rem",
-            color: "rgba(232,230,227,0.35)",
+            color: "rgba(255,255,255,0.35)",
             marginTop: "0.75rem",
           }}>
             Guia cultural de Holambra

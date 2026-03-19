@@ -2,16 +2,23 @@ import { Link } from "react-router-dom";
 import { Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 export default function SiteFooter() {
+  const linkStyle: React.CSSProperties = {
+    fontSize: "0.875rem",
+    color: "rgba(255,255,255,0.65)",
+    textDecoration: "none",
+    transition: "color 0.2s",
+  };
+
   return (
     <footer
       role="contentinfo"
       style={{
-        background: "linear-gradient(180deg, #001A12 0%, #00120C 100%)",
-        borderTop: "1px solid rgba(230, 81, 0, 0.08)",
+        background: "#00251A",
+        color: "#FFFFFF",
       }}
     >
-      <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "3.5rem 1.5rem 2rem" }}>
-        {/* Top Section - Brand + Nav */}
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "3.5rem 1.5rem 2rem" }}>
+        {/* Top Section */}
         <div
           style={{
             display: "grid",
@@ -32,48 +39,43 @@ export default function SiteFooter() {
               />
             </picture>
             <p style={{
-              fontSize: "0.8125rem",
-              color: "rgba(232,230,227,0.5)",
+              fontSize: "0.875rem",
+              color: "rgba(255,255,255,0.55)",
               lineHeight: 1.7,
               maxWidth: "280px",
             }}>
-              O guia definitivo de Holambra. Descubra os melhores lugares, eventos e experi\u00eancias da cidade das flores.
+              O guia definitivo de Holambra. Descubra os melhores lugares, eventos e experiências da cidade das flores.
             </p>
           </div>
 
           {/* Navigation */}
-          <nav aria-label="Links de navega\u00e7\u00e3o do rodap\u00e9">
+          <nav aria-label="Links de navegação do rodapé">
             <h4 style={{
               fontWeight: 600,
-              color: "rgba(232,230,227,0.4)",
+              color: "rgba(255,255,255,0.4)",
               marginBottom: "1rem",
               fontSize: "0.6875rem",
               textTransform: "uppercase" as const,
               letterSpacing: "0.1em",
             }}>
-              Navega\u00e7\u00e3o
+              Navegação
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.625rem" }}>
               {[
-                { label: "In\u00edcio", to: "/" },
+                { label: "Início", to: "/" },
                 { label: "O que fazer", to: "/o-que-fazer-em-holambra" },
                 { label: "Roteiros", to: "/roteiros" },
                 { label: "Blog", to: "/blog" },
                 { label: "Parceiros", to: "/parceiros" },
-              ].map((item: any) => (
-                <li key={item?.to}>
+              ].map((item) => (
+                <li key={item.to}>
                   <Link
-                    to={item?.to}
-                    style={{
-                      fontSize: "0.8125rem",
-                      color: "rgba(232,230,227,0.55)",
-                      textDecoration: "none",
-                      transition: "color 0.2s",
-                    }}
+                    to={item.to}
+                    style={linkStyle}
                     onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
+                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
                   >
-                    {item?.label}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -84,7 +86,7 @@ export default function SiteFooter() {
           <nav aria-label="Links legais">
             <h4 style={{
               fontWeight: 600,
-              color: "rgba(232,230,227,0.4)",
+              color: "rgba(255,255,255,0.4)",
               marginBottom: "1rem",
               fontSize: "0.6875rem",
               textTransform: "uppercase" as const,
@@ -92,25 +94,20 @@ export default function SiteFooter() {
             }}>
               Legal
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.625rem" }}>
               {[
-                { label: "Pol\u00edtica de Privacidade", to: "/privacidade" },
-                { label: "Termos de Servi\u00e7o", to: "/termos" },
+                { label: "Política de Privacidade", to: "/privacidade" },
+                { label: "Termos de Serviço", to: "/termos" },
                 { label: "Abrir App", to: "/app" },
-              ].map((item: any) => (
-                <li key={item?.to}>
+              ].map((item) => (
+                <li key={item.to}>
                   <Link
-                    to={item?.to}
-                    style={{
-                      fontSize: "0.8125rem",
-                      color: "rgba(232,230,227,0.55)",
-                      textDecoration: "none",
-                      transition: "color 0.2s",
-                    }}
+                    to={item.to}
+                    style={linkStyle}
                     onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
+                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
                   >
-                    {item?.label}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -121,7 +118,7 @@ export default function SiteFooter() {
           <div>
             <h4 style={{
               fontWeight: 600,
-              color: "rgba(232,230,227,0.4)",
+              color: "rgba(255,255,255,0.4)",
               marginBottom: "1rem",
               fontSize: "0.6875rem",
               textTransform: "uppercase" as const,
@@ -129,32 +126,32 @@ export default function SiteFooter() {
             }}>
               Contato
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.625rem" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               <li style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                <Mail size={14} style={{ color: "rgba(230,81,0,0.6)", flexShrink: 0 }} aria-hidden="true" />
+                <Mail size={14} style={{ color: "#E65100", opacity: 0.7, flexShrink: 0 }} aria-hidden="true" />
                 <a
                   href="mailto:contato@oranje.com.br"
-                  style={{ fontSize: "0.8125rem", color: "rgba(232,230,227,0.55)", textDecoration: "none", transition: "color 0.2s" }}
+                  style={linkStyle}
                   onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
+                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
                 >
                   contato@oranje.com.br
                 </a>
               </li>
               <li style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                <Phone size={14} style={{ color: "rgba(230,81,0,0.6)", flexShrink: 0 }} aria-hidden="true" />
+                <Phone size={14} style={{ color: "#E65100", opacity: 0.7, flexShrink: 0 }} aria-hidden="true" />
                 <a
                   href="tel:+551940000000"
-                  style={{ fontSize: "0.8125rem", color: "rgba(232,230,227,0.55)", textDecoration: "none", transition: "color 0.2s" }}
+                  style={linkStyle}
                   onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.55)")}
+                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.65)")}
                 >
                   (19) 4000-0000
                 </a>
               </li>
               <li style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}>
-                <MapPin size={14} style={{ color: "rgba(230,81,0,0.6)", marginTop: "2px", flexShrink: 0 }} aria-hidden="true" />
-                <span style={{ fontSize: "0.8125rem", color: "rgba(232,230,227,0.55)" }}>Holambra, SP</span>
+                <MapPin size={14} style={{ color: "#E65100", opacity: 0.7, marginTop: "2px", flexShrink: 0 }} aria-hidden="true" />
+                <span style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.55)" }}>Holambra, SP</span>
               </li>
             </ul>
           </div>
@@ -163,7 +160,7 @@ export default function SiteFooter() {
         {/* Bottom bar */}
         <div
           style={{
-            borderTop: "1px solid rgba(230, 81, 0, 0.06)",
+            borderTop: "1px solid rgba(255,255,255,0.08)",
             paddingTop: "1.5rem",
             display: "flex",
             alignItems: "center",
@@ -172,7 +169,7 @@ export default function SiteFooter() {
             gap: "1rem",
           }}
         >
-          <p style={{ fontSize: "0.75rem", color: "rgba(232,230,227,0.3)" }}>
+          <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>
             &copy; 2026 Oranje. Todos os direitos reservados.
           </p>
           <div style={{ display: "flex", gap: "1rem" }} aria-label="Redes sociais">
@@ -181,9 +178,9 @@ export default function SiteFooter() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Seguir Oranje no Instagram"
-              style={{ color: "rgba(232,230,227,0.35)", transition: "color 0.2s" }}
+              style={{ color: "rgba(255,255,255,0.4)", transition: "color 0.2s" }}
               onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(232,230,227,0.35)")}
+              onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}
             >
               <Instagram size={18} />
             </a>

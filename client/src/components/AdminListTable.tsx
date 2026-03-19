@@ -162,7 +162,6 @@ export function AdminListTable<T extends { id: number | string }>({
                           border: '1px solid var(--admin-border, rgba(0,37,26,0.08))',
                           background: 'transparent',
                           cursor: 'pointer',
-                          transition: 'all 200ms ease',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -170,14 +169,6 @@ export function AdminListTable<T extends { id: number | string }>({
                           minHeight: '36px',
                         }}
                         title="Editar"
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = 'rgba(230, 81, 0, 0.06)';
-                          e.currentTarget.style.borderColor = 'rgba(230, 81, 0, 0.2)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.borderColor = 'var(--admin-border, rgba(0,37,26,0.08))';
-                        }}
                       >
                         <Edit2 size={14} style={{ color: 'var(--admin-orange, #E65100)' }} />
                       </button>
@@ -190,7 +181,6 @@ export function AdminListTable<T extends { id: number | string }>({
                           border: '1px solid var(--admin-border, rgba(0,37,26,0.08))',
                           background: 'transparent',
                           cursor: 'pointer',
-                          transition: 'all 200ms ease',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -199,14 +189,6 @@ export function AdminListTable<T extends { id: number | string }>({
                           minHeight: '36px',
                         }}
                         title="Deletar"
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = 'rgba(248, 113, 113, 0.06)';
-                          e.currentTarget.style.borderColor = 'rgba(248, 113, 113, 0.2)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.borderColor = 'var(--admin-border, rgba(0,37,26,0.08))';
-                        }}
                       >
                         {deletingId === item.id ? (
                           <Loader2 size={14} className="animate-spin" style={{ color: '#F87171' }} />

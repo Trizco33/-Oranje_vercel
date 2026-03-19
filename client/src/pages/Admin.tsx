@@ -380,14 +380,10 @@ function AdminDashboard() {
                 alignItems: 'center',
                 gap: '12px',
                 padding: '12px 16px',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 cursor: 'pointer',
-                transition: 'background 200ms ease',
                 border: '1px solid rgba(0,37,26,0.05)',
-              }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(230, 81, 0, 0.04)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
+              }}>
                 <Icon size={16} style={{ color: '#E65100' }} />
                 <span style={{ flex: 1, fontSize: '0.875rem', color: '#1A1A1A', fontWeight: 500 }}>{action.label}</span>
                 <ChevronRight size={14} style={{ color: '#E65100' }} />

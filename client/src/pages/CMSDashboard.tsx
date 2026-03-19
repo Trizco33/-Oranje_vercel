@@ -126,15 +126,6 @@ export default function CMSDashboard() {
               fontSize: '0.8125rem',
               fontWeight: 500,
               fontFamily: "'Montserrat', system-ui, sans-serif",
-              transition: 'all 200ms ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(248, 113, 113, 0.1)';
-              e.currentTarget.style.color = '#F87171';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-              e.currentTarget.style.color = 'rgba(255,255,255,0.6)';
             }}
           >
             <LogOut size={16} />

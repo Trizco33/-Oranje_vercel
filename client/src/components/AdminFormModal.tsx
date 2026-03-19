@@ -65,8 +65,8 @@ export function AdminFormModal({
     color: '#1A1A1A',
     fontSize: '0.875rem',
     fontFamily: "'Montserrat', system-ui, sans-serif",
-    transition: 'border-color 200ms ease',
     minHeight: '44px',
+    outline: 'none',
   };
 
   return (
@@ -79,18 +79,17 @@ export function AdminFormModal({
       justifyContent: 'center',
       zIndex: 50,
       padding: '16px',
-      backdropFilter: 'blur(4px)',
     }}>
       <div style={{
-        borderRadius: '16px',
-        padding: '28px',
+        borderRadius: '12px',
+        padding: '24px',
         width: '100%',
         maxWidth: '480px',
         maxHeight: '90vh',
         overflowY: 'auto',
         background: '#FFFFFF',
         border: '1px solid rgba(0, 37, 26, 0.08)',
-        boxShadow: '0 8px 32px rgba(0, 37, 26, 0.12)',
+        boxShadow: '0 4px 16px rgba(0, 37, 26, 0.1)',
         fontFamily: "'Montserrat', system-ui, sans-serif",
       }}>
         {/* Header */}
@@ -120,7 +119,6 @@ export function AdminFormModal({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'background 200ms ease',
             }}
           >
             <X size={16} style={{ color: '#718096' }} />
@@ -151,14 +149,8 @@ export function AdminFormModal({
                   required={field.required}
                   rows={4}
                   style={{ ...inputStyle, resize: 'none' as const, minHeight: '100px' }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#E65100';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#E65100'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)'; }}
                 />
               ) : field.type === "select" ? (
                 <select
@@ -167,14 +159,8 @@ export function AdminFormModal({
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   required={field.required}
                   style={inputStyle}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#E65100';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#E65100'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)'; }}
                 >
                   <option value="">Selecione uma opção</option>
                   {field.options?.map((opt) => (
@@ -218,14 +204,8 @@ export function AdminFormModal({
                   placeholder={field.placeholder}
                   required={field.required}
                   style={inputStyle}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#E65100';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(230, 81, 0, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#E65100'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 37, 26, 0.1)'; }}
                 />
               )}
             </div>

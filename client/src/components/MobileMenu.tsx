@@ -36,11 +36,17 @@ export function MobileMenu() {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200"
         style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 40,
+          height: 40,
+          borderRadius: 12,
           background: isOpen ? "rgba(230, 81, 0, 0.2)" : "rgba(230, 81, 0, 0.1)",
           border: "1px solid rgba(230, 81, 0, 0.15)",
           cursor: "pointer",
+          transition: "background 0.2s ease",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(230, 81, 0, 0.25)")}
         onMouseLeave={(e) => (e.currentTarget.style.background = isOpen ? "rgba(230, 81, 0, 0.2)" : "rgba(230, 81, 0, 0.1)")}
@@ -57,9 +63,11 @@ export function MobileMenu() {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 md:hidden"
           onClick={close}
           style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 40,
             background: "rgba(0, 25, 18, 0.6)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
@@ -71,8 +79,12 @@ export function MobileMenu() {
       {/* Slide-out Panel */}
       {isOpen && (
         <div
-          className="fixed top-0 right-0 h-screen z-50 md:hidden"
           style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            height: "100vh",
+            zIndex: 50,
             width: "min(280px, 80vw)",
             background: "var(--ds-color-bg-secondary)",
             borderLeft: "1px solid rgba(230, 81, 0, 0.1)",

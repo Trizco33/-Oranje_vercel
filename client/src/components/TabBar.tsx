@@ -15,7 +15,6 @@ export function TabBar() {
 
   return (
     <nav
-      className="tab-bar"
       aria-label="Navegação principal do app"
       role="navigation"
       style={{
@@ -27,11 +26,20 @@ export function TabBar() {
         background: "rgba(0, 37, 26, 0.92)",
         backdropFilter: "blur(20px) saturate(180%)",
         WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        borderTop: "1px solid var(--ds-color-border-default)",
+        borderTop: "1px solid rgba(245, 245, 220, 0.08)",
         boxShadow: "0 -4px 24px rgba(0,0,0,0.3)",
       }}
     >
-      <div className="flex items-center justify-around px-1" role="tablist" style={{ paddingTop: 8, paddingBottom: "max(8px, env(safe-area-inset-bottom))" }}>
+      <div
+        role="tablist"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+          padding: "8px 4px",
+          paddingBottom: "max(8px, env(safe-area-inset-bottom))",
+        }}
+      >
         {tabs.map((tab) => {
           const isActive =
             tab.path === "/app"
@@ -43,29 +51,37 @@ export function TabBar() {
             <Link
               key={tab.path}
               to={tab.path}
-              className="flex-1"
+              style={{ flex: 1, textDecoration: "none" }}
               role="tab"
               aria-selected={isActive}
               aria-current={isActive ? "page" : undefined}
               aria-label={tab.label}
             >
               <div
-                className="flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all duration-300 w-full"
                 style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 2,
+                  padding: "6px 0",
+                  borderRadius: 12,
                   minHeight: 48,
-                  background: isActive
-                    ? "var(--ds-color-accent-muted)"
-                    : "transparent",
+                  justifyContent: "center",
+                  background: isActive ? "rgba(230, 81, 0, 0.18)" : "transparent",
                   transform: isActive ? "scale(1.05)" : "scale(1)",
+                  transition: "all 0.3s ease",
                 }}
               >
                 <div
-                  className="flex items-center justify-center transition-all duration-300"
                   style={{
                     width: 28,
                     height: 28,
                     borderRadius: 8,
-                    background: isActive ? "var(--ds-color-accent)" : "transparent",
+                    background: isActive ? "#E65100" : "transparent",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "all 0.3s ease",
                   }}
                 >
                   <Icon
@@ -73,21 +89,18 @@ export function TabBar() {
                     strokeWidth={isActive ? 2.5 : 1.8}
                     aria-hidden="true"
                     style={{
-                      color: isActive
-                        ? "var(--ds-color-text-inverse)"
-                        : "var(--ds-color-text-muted)",
+                      color: isActive ? "#FFFFFF" : "rgba(245, 245, 220, 0.55)",
                       transition: "color 0.3s ease",
                     }}
                   />
                 </div>
                 <span
-                  className="font-medium tracking-wide transition-all duration-300"
                   style={{
                     fontSize: 10,
-                    color: isActive
-                      ? "var(--ds-color-accent)"
-                      : "var(--ds-color-text-muted)",
                     fontWeight: isActive ? 700 : 500,
+                    color: isActive ? "#E65100" : "rgba(245, 245, 220, 0.55)",
+                    letterSpacing: "0.04em",
+                    transition: "all 0.3s ease",
                   }}
                 >
                   {tab.label}

@@ -1,7 +1,7 @@
 const CACHE_NAME = 'oranje-v1';
 const urlsToCache = [
   '/',
-  '/#/app',
+  '/app',
   '/manifest.webmanifest',
   '/index.html'
 ];

@@ -55,75 +55,79 @@ export default function Home() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
+    <div style={{ minHeight: "100vh", background: "#00251A" }}>
       <OranjeHeader showSearch hideThemeToggle />
 
       {/* ── Hero ── */}
       <section
-        className="relative overflow-hidden"
         style={{
-          minHeight: 380,
+          position: "relative",
+          minHeight: 340,
           backgroundImage: "url(/brand/moinho-povos-unidos.jpg)",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center 30%",
+          overflow: "hidden",
         }}
       >
         <div
-          className="absolute inset-0"
           style={{
-            background: "linear-gradient(to bottom, rgba(0,37,26,0.88) 0%, rgba(0,37,26,0.5) 50%, rgba(0,37,26,0.95) 100%)",
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to bottom, rgba(0,37,26,0.7) 0%, rgba(0,37,26,0.4) 40%, rgba(0,37,26,0.85) 100%)",
           }}
         />
-        <div className="relative z-10 px-5 pt-16 pb-10 flex flex-col justify-center h-full">
+        <div style={{ position: "relative", zIndex: 10, padding: "64px 20px 32px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <div style={{ animation: "ds-fade-up 0.6s ease-out" }}>
             <DSBadge variant="accent" size="sm" style={{ marginBottom: 12 }}>
               GUIA CULTURAL
             </DSBadge>
             <h1
               style={{
-                fontFamily: "var(--ds-font-display)",
-                fontSize: "clamp(2rem, 8vw, 2.8rem)",
+                fontFamily: "'Montserrat', system-ui, sans-serif",
+                fontSize: "clamp(1.75rem, 7vw, 2.5rem)",
                 fontWeight: 700,
                 lineHeight: 1.1,
-                color: "var(--ds-color-text-primary)",
+                color: "#FFFFFF",
                 marginBottom: 8,
                 letterSpacing: "-0.02em",
               }}
             >
               Descubra<br />
-              <span style={{ color: "var(--ds-color-accent)" }}>Holambra</span>
+              <span style={{ color: "#E65100" }}>Holambra</span>
             </h1>
-            <p
-              style={{
-                fontSize: 14,
-                color: "var(--ds-color-text-secondary)",
-                opacity: 0.85,
-                marginBottom: 24,
-              }}
-            >
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.8)", marginBottom: 24 }}>
               A cidade das flores espera por você
             </p>
 
             {/* Search Bar */}
             <form onSubmit={handleSearch}>
               <div
-                className="flex items-center gap-3"
                 style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
                   padding: "12px 16px",
-                  background: "rgba(0,37,26,0.6)",
-                  border: "1px solid var(--ds-color-border-accent)",
-                  borderRadius: "var(--ds-radius-xl)",
+                  background: "rgba(255,255,255,0.1)",
+                  border: "1px solid rgba(230,81,0,0.3)",
+                  borderRadius: 16,
                   backdropFilter: "blur(12px)",
                 }}
               >
-                <Search size={18} style={{ color: "var(--ds-color-accent)", flexShrink: 0 }} />
+                <Search size={18} style={{ color: "#E65100", flexShrink: 0 }} />
                 <input
                   type="text"
                   placeholder="Buscar restaurantes, eventos, lugares..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="flex-1 text-sm bg-transparent outline-none"
-                  style={{ color: "var(--ds-color-text-primary)" }}
+                  style={{
+                    flex: 1,
+                    fontSize: "0.875rem",
+                    background: "transparent",
+                    outline: "none",
+                    border: "none",
+                    color: "#FFFFFF",
+                    fontFamily: "'Montserrat', system-ui, sans-serif",
+                  }}
                 />
                 {searchQuery && (
                   <DSButton size="sm" onClick={() => {}}>
@@ -138,19 +142,21 @@ export default function Home() {
 
       {/* ── User Status ── */}
       {user && (
-        <section className="px-5 mt-6">
+        <section style={{ padding: "0 20px", marginTop: 24 }}>
           <div
-            className="flex items-center justify-between"
             style={{
               padding: 16,
-              borderRadius: "var(--ds-radius-xl)",
-              background: "var(--ds-color-bg-surface)",
-              border: "1px solid var(--ds-color-border-default)",
+              borderRadius: 18,
+              background: "rgba(13, 74, 64, 0.35)",
+              border: "1px solid rgba(245, 245, 220, 0.08)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
             <div>
-              <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>Bem-vindo</p>
-              <p className="text-sm font-medium" style={{ color: "var(--ds-color-text-primary)" }}>
+              <p style={{ fontSize: "0.6875rem", color: "rgba(245,245,220,0.55)" }}>Bem-vindo</p>
+              <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "#FFFFFF" }}>
                 {user.email || user.name || "Usuário"}
               </p>
             </div>
@@ -175,46 +181,38 @@ export default function Home() {
       )}
 
       {/* ── Categories ── */}
-      <section className="px-5 mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 style={{ fontFamily: "var(--ds-font-display)", fontSize: 18, fontWeight: 700, color: "var(--ds-color-text-primary)" }}>
+      <section style={{ padding: "0 20px", marginTop: 32 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <h2 style={{ fontFamily: "'Montserrat', system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#FFFFFF" }}>
             Explorar
           </h2>
-          <Link to="/app/explorar">
-            <span className="flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--ds-color-accent)" }}>
+          <Link to="/app/explorar" style={{ textDecoration: "none" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: "#E65100" }}>
               Ver tudo <ChevronRight size={14} />
             </span>
           </Link>
         </div>
 
-        <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-          {categories?.map(cat => (
-            <Link key={cat.id} to={`/app/explorar/${cat.slug}`}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, paddingBottom: 8 }}>
+          {categories?.slice(0, 8).map(cat => (
+            <Link key={cat.id} to={`/app/explorar/${cat.slug}`} style={{ textDecoration: "none" }}>
               <div
-                className="flex-shrink-0 flex flex-col items-center gap-2 transition-all duration-200"
                 style={{
-                  minWidth: 80,
-                  padding: "12px 8px",
-                  borderRadius: "var(--ds-radius-xl)",
-                  background: "var(--ds-color-bg-surface)",
-                  border: "1px solid var(--ds-color-border-default)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--ds-color-border-accent)";
-                  e.currentTarget.style.background = "var(--ds-color-accent-subtle)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--ds-color-border-default)";
-                  e.currentTarget.style.background = "var(--ds-color-bg-surface)";
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "14px 6px",
+                  borderRadius: 14,
+                  background: "rgba(13, 74, 64, 0.35)",
+                  border: "1px solid rgba(245, 245, 220, 0.08)",
+                  transition: "background 0.2s ease",
                 }}
               >
-                <div style={{ color: "var(--ds-color-accent)" }}>
+                <div style={{ color: "#E65100" }}>
                   {CATEGORY_ICONS[cat.slug] ?? <ChevronRight size={20} />}
                 </div>
-                <span
-                  className="text-center leading-tight font-medium"
-                  style={{ fontSize: 11, color: "var(--ds-color-text-secondary)" }}
-                >
+                <span style={{ textAlign: "center", lineHeight: 1.3, fontWeight: 500, fontSize: 10, color: "rgba(245,245,220,0.85)" }}>
                   {cat.name}
                 </span>
               </div>
@@ -224,67 +222,66 @@ export default function Home() {
       </section>
 
       {/* ── Featured Places ── */}
-        <section className="px-5 mt-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 style={{ fontFamily: "var(--ds-font-display)", fontSize: 18, fontWeight: 700, color: "var(--ds-color-text-primary)" }}>
-                Em Destaque
-              </h2>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="h-0.5 w-8 rounded" style={{ background: "linear-gradient(90deg, var(--ds-color-accent), transparent)" }} />
-                <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>Parceiros ORANJE</span>
-              </div>
+      <section style={{ padding: "0 20px", marginTop: 32 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div>
+            <h2 style={{ fontFamily: "'Montserrat', system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#FFFFFF" }}>
+              Em Destaque
+            </h2>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+              <div style={{ height: 2, width: 32, borderRadius: 1, background: "linear-gradient(90deg, #E65100, transparent)" }} />
+              <span style={{ fontSize: "0.75rem", color: "rgba(245,245,220,0.55)" }}>Parceiros ORANJE</span>
             </div>
           </div>
+        </div>
 
-          <div className="flex gap-4 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-            {featuredPlaces && featuredPlaces.length > 0 ? (
-              featuredPlaces.slice(0, 6).map((place: any) => (
-                <div key={place.id} className="flex-shrink-0" style={{ width: 220 }}>
-                  <PlaceCard
-                    place={place}
-                    isFavorite={favoriteIds.has(place.id)}
-                    onToggleFavorite={handleToggleFavorite}
-                  />
-                </div>
-              ))
-            ) : (
-              [1, 2, 3, 4].map(i => (
-                <div key={`skeleton-${i}`} className="flex-shrink-0" style={{ width: 220 }}>
-                  <PlaceCardSkeleton />
-                </div>
-              ))
-            )}
-          </div>
-        </section>
+        <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+          {featuredPlaces && featuredPlaces.length > 0 ? (
+            featuredPlaces.slice(0, 6).map((place: any) => (
+              <div key={place.id} style={{ flexShrink: 0, width: 220 }}>
+                <PlaceCard
+                  place={place}
+                  isFavorite={favoriteIds.has(place.id)}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              </div>
+            ))
+          ) : (
+            [1, 2, 3, 4].map(i => (
+              <div key={`skeleton-${i}`} style={{ flexShrink: 0, width: 220 }}>
+                <PlaceCardSkeleton />
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
       {/* ── Recommended Places ── */}
       {!recommendedPlaces || recommendedLoading ? (
-        <section className="px-5 mt-8">
-          <div className="grid grid-cols-2 gap-3">
+        <section style={{ padding: "0 20px", marginTop: 32 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
             {[1, 2, 3, 4].map(i => (
               <div
                 key={i}
-                className="rounded-2xl"
-                style={{ height: 200, background: "var(--ds-color-bg-surface)", animation: "ds-pulse-glow 2s ease-in-out infinite" }}
+                style={{ height: 200, borderRadius: 16, background: "rgba(13,74,64,0.35)", animation: "ds-pulse-glow 2s ease-in-out infinite" }}
               />
             ))}
           </div>
         </section>
       ) : recommendedPlaces.length > 0 && (
-        <section className="px-5 mt-8">
-          <div className="flex items-center justify-between mb-4">
+        <section style={{ padding: "0 20px", marginTop: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div>
-              <h2 style={{ fontFamily: "var(--ds-font-display)", fontSize: 18, fontWeight: 700, color: "var(--ds-color-text-primary)" }}>
+              <h2 style={{ fontFamily: "'Montserrat', system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#FFFFFF" }}>
                 Recomendados
               </h2>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="h-0.5 w-8 rounded" style={{ background: "linear-gradient(90deg, var(--ds-color-accent), transparent)" }} />
-                <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>Curadoria ORANJE</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                <div style={{ height: 2, width: 32, borderRadius: 1, background: "linear-gradient(90deg, #E65100, transparent)" }} />
+                <span style={{ fontSize: "0.75rem", color: "rgba(245,245,220,0.55)" }}>Curadoria ORANJE</span>
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
             {recommendedPlaces.slice(0, 6).map((place: any) => (
               <PlaceCard
                 key={place.id}
@@ -299,37 +296,41 @@ export default function Home() {
       )}
 
       {/* ── Transport CTA ── */}
-      <section className="px-5 mt-8">
-        <Link to="/app/transporte">
+      <section style={{ padding: "0 20px", marginTop: 32 }}>
+        <Link to="/app/transporte" style={{ textDecoration: "none" }}>
           <div
-            className="flex items-center justify-between cursor-pointer transition-all duration-200"
             style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
               padding: "20px 24px",
-              borderRadius: "var(--ds-radius-xl)",
-              background: "linear-gradient(135deg, var(--ds-color-bg-secondary), var(--ds-color-bg-elevated))",
-              border: "1px solid var(--ds-color-border-accent)",
+              borderRadius: 16,
+              background: "linear-gradient(135deg, rgba(13,74,64,0.4), rgba(11,49,41,0.5))",
+              border: "1px solid rgba(230,81,0,0.25)",
+              cursor: "pointer",
+              transition: "transform 0.2s ease",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "var(--ds-shadow-accent-sm)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--ds-color-text-primary)", fontFamily: "var(--ds-font-display)" }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Transporte & Transfers
               </h3>
-              <p className="text-xs mt-1" style={{ color: "var(--ds-color-text-muted)" }}>
+              <p style={{ fontSize: "0.75rem", marginTop: 4, color: "rgba(245,245,220,0.55)" }}>
                 Motoristas verificados e parceiros
               </p>
             </div>
             <div
-              className="flex items-center justify-center"
               style={{
                 width: 40,
                 height: 40,
-                borderRadius: "var(--ds-radius-lg)",
-                background: "var(--ds-color-accent-muted)",
+                borderRadius: 14,
+                background: "rgba(230,81,0,0.18)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <ChevronRight size={20} style={{ color: "var(--ds-color-accent)" }} />
+              <ChevronRight size={20} style={{ color: "#E65100" }} />
             </div>
           </div>
         </Link>

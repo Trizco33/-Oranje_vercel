@@ -25,6 +25,19 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
 
   const unreadCount = notifications?.filter(n => !n.isRead).length ?? 0;
 
+  const iconBtnStyle: React.CSSProperties = {
+    width: 40,
+    height: 40,
+    borderRadius: 9999,
+    background: "rgba(13, 74, 64, 0.35)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "none",
+    cursor: "pointer",
+    transition: "background 0.2s ease",
+  };
+
   return (
     <header
       role="banner"
@@ -32,32 +45,26 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
         position: "sticky",
         top: 0,
         zIndex: 40,
-        background: "rgba(0, 37, 26, 0.85)",
+        background: "rgba(0, 37, 26, 0.92)",
         backdropFilter: "blur(20px) saturate(180%)",
         WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        borderBottom: "1px solid var(--ds-color-border-default)",
+        borderBottom: "1px solid rgba(245, 245, 220, 0.08)",
         boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
       }}
     >
-      <div className="flex items-center justify-between px-4" style={{ height: 56 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>
         {/* Left */}
-        <div className="flex items-center gap-3">
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {showBack ? (
             <button
               onClick={onBack ?? (() => navigate(-1))}
               aria-label="Voltar para página anterior"
-              className="flex items-center justify-center transition-all duration-200"
               style={{
-                width: 40,
-                height: 40,
-                borderRadius: "var(--ds-radius-full)",
-                background: "var(--ds-color-accent-muted)",
-                cursor: "pointer",
+                ...iconBtnStyle,
+                background: "rgba(230, 81, 0, 0.18)",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-accent-subtle)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-accent-muted)")}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ds-color-accent)" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E65100" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M19 12H5M12 5l-7 7 7 7" />
               </svg>
             </button>
@@ -65,14 +72,17 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
             <Link
               to="/"
               aria-label="Oranje - Página inicial"
-              className="flex items-center transition-transform duration-200 hover:scale-[1.02]"
+              style={{ display: "flex", alignItems: "center" }}
             >
               <img
-                src="/brand/oranje-wordmark.png"
+                src="/logo-white.png"
                 alt="Oranje"
                 style={{
-                  height: "clamp(36px, 9vw, 44px)",
+                  height: "32px",
                   width: "auto",
+                  maxWidth: "120px",
+                  objectFit: "contain",
+                  display: "block",
                   filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))",
                 }}
               />
@@ -80,10 +90,11 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
           )}
           {title && (
             <h1
-              className="text-base font-semibold"
               style={{
-                color: "var(--ds-color-text-primary)",
-                fontFamily: "var(--ds-font-display)",
+                fontSize: "1rem",
+                fontWeight: 600,
+                color: "#FFFFFF",
+                fontFamily: "'Montserrat', system-ui, sans-serif",
                 letterSpacing: "-0.01em",
               }}
             >
@@ -93,24 +104,18 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
         </div>
 
         {/* Right */}
-        <nav className="flex items-center gap-1.5" aria-label="Ações do app">
+        <nav style={{ display: "flex", alignItems: "center", gap: 6 }} aria-label="Ações do app">
           <MobileMenu />
           {!hideThemeToggle && <ThemeToggle />}
           {showSearch && (
             <Link to="/app/busca" aria-label="Buscar">
               <button
-                className="flex items-center justify-center transition-all duration-200"
                 aria-label="Abrir busca"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "var(--ds-radius-full)",
-                  background: "var(--ds-color-bg-surface)",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
+                style={iconBtnStyle}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.55)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.35)")}
               >
-                <Search size={18} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
+                <Search size={18} style={{ color: "#E65100" }} aria-hidden="true" />
               </button>
             </Link>
           )}
@@ -118,31 +123,29 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
           {user && (
             <Link to="/app/notificacoes" aria-label={`Notificações${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}>
               <button
-                className="flex items-center justify-center relative transition-all duration-200"
                 aria-label={`Notificações${unreadCount > 0 ? ` - ${unreadCount} não lidas` : ''}`}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "var(--ds-radius-full)",
-                  background: "var(--ds-color-bg-surface)",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
+                style={{ ...iconBtnStyle, position: "relative" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.55)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.35)")}
               >
-                <Bell size={18} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
+                <Bell size={18} style={{ color: "#E65100" }} aria-hidden="true" />
                 {unreadCount > 0 && (
                   <span
-                    className="absolute flex items-center justify-center font-bold"
                     aria-hidden="true"
                     style={{
+                      position: "absolute",
                       top: -2,
                       right: -2,
                       width: 18,
                       height: 18,
-                      borderRadius: "var(--ds-radius-full)",
-                      background: "var(--ds-color-accent)",
-                      color: "var(--ds-color-text-inverse)",
+                      borderRadius: 9999,
+                      background: "#E65100",
+                      color: "#FFFFFF",
                       fontSize: 9,
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     {unreadCount > 9 ? "9+" : unreadCount}
@@ -155,18 +158,12 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
           {user?.role === "admin" && (
             <Link to="/app/admin" aria-label="Painel de administração">
               <button
-                className="flex items-center justify-center transition-all duration-200"
                 aria-label="Configurações de administrador"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "var(--ds-radius-full)",
-                  background: "var(--ds-color-bg-surface)",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface-hover)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "var(--ds-color-bg-surface)")}
+                style={iconBtnStyle}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.55)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.35)")}
               >
-                <Settings size={18} style={{ color: "var(--ds-color-accent)" }} aria-hidden="true" />
+                <Settings size={18} style={{ color: "#E65100" }} aria-hidden="true" />
               </button>
             </Link>
           )}

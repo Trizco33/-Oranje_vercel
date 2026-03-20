@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
+import "./index.css";
 
 
 // Registrar Service Worker para PWA

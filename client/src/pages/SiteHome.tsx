@@ -161,22 +161,22 @@ export default function SiteHome() {
           overflow: "hidden",
         }}
       >
-        {/* Background Image with 16:9-ish ratio feel */}
+        {/* Background Image — Holambra imagery */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&h=800&fit=crop&q=80')",
+            backgroundImage: "url('/brand/moinho-povos-unidos.jpg'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
-        {/* Gradient overlay - subtle */}
+        {/* Gradient overlay — stronger for text readability */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(to bottom, rgba(0,37,26,0.25) 0%, rgba(0,37,26,0.55) 100%)",
+            background: "linear-gradient(to bottom, rgba(0,37,26,0.45) 0%, rgba(0,37,26,0.65) 100%)",
           }}
         />
 
@@ -268,7 +268,7 @@ export default function SiteHome() {
                   fontFamily: "'Montserrat', system-ui, sans-serif",
                 }}
               >
-                Buscar restaurantes, eventos, roteiros...
+                Busque restaurantes, eventos ou roteiros em Holambra
               </span>
             </div>
           </div>
@@ -299,7 +299,7 @@ export default function SiteHome() {
               <ArrowRight size={16} />
             </a>
             <button
-              onClick={() => document.getElementById("roteiros")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -319,7 +319,7 @@ export default function SiteHome() {
               onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.6)"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
               onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.background = "transparent"; }}
             >
-              Ver Roteiros
+              Explorar agora
             </button>
           </div>
 
@@ -353,7 +353,7 @@ export default function SiteHome() {
       </section>
 
       {/* ═══ 2) CATEGORIAS — White background ═══ */}
-      <section className="site-section" style={{ background: "#FFFFFF" }}>
+      <section id="categorias" className="site-section" style={{ background: "#FFFFFF" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
             <SectionHeader
@@ -436,7 +436,7 @@ export default function SiteHome() {
 
           {/* Horizontal scroll on mobile, grid on desktop */}
           <div
-            className="scroll-x"
+            className="scroll-x site-featured-grid"
             style={{
               display: "flex",
               gap: 20,
@@ -445,7 +445,7 @@ export default function SiteHome() {
           >
             {placesLoading
               ? [1, 2, 3].map((i) => (
-                  <div key={i} className="site-card" style={{ minWidth: 300, flex: "0 0 auto" }}>
+                  <div key={i} className="site-card site-featured-item">
                     <div className="site-skeleton" style={{ height: 200, borderRadius: 0 }} />
                     <div style={{ padding: 20 }}>
                       <div className="site-skeleton" style={{ height: 18, width: "70%", marginBottom: 12 }} />
@@ -455,7 +455,7 @@ export default function SiteHome() {
                 ))
               : places.slice(0, 3).map((place: any, i: number) => (
                   <Reveal key={place.id} delay={i * 80}>
-                    <Link to={`/app/lugar/${place.id}`} style={{ textDecoration: "none", display: "block", minWidth: 300, flex: "0 0 auto" }}>
+                    <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block" }}>
                       <div className="site-card" style={{ background: "#FFFFFF" }}>
                         {/* 3:2 aspect ratio image */}
                         <div style={{ position: "relative", paddingBottom: "66.67%", overflow: "hidden" }}>

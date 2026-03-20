@@ -30,15 +30,12 @@ export default function SiteFooter() {
         >
           {/* Brand */}
           <div>
-            <picture>
-              <source srcSet="/logo.webp" type="image/webp" />
-              <img
-                src="/logo.png"
-                alt="Oranje - Guia Cultural de Holambra"
-                style={{ height: "28px", width: "auto", marginBottom: "16px", opacity: 0.9 }}
-                loading="lazy"
-              />
-            </picture>
+            <img
+              src="/logo-white.png"
+              alt="Oranje - Guia Cultural de Holambra"
+              style={{ height: "32px", width: "auto", maxWidth: "130px", marginBottom: "16px", opacity: 0.9, objectFit: "contain" }}
+              loading="lazy"
+            />
             <p style={{
               fontSize: "0.875rem",
               color: "rgba(255,255,255,0.5)",

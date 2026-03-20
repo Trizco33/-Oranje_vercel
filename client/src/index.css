@@ -2,6 +2,10 @@
 @import "tw-animate-css";
 @import "./styles/tokens.css";
 
+/* Explicitly tell Tailwind v4 where to scan for utility classes */
+@source "./**/*.{ts,tsx,js,jsx}";
+@source "../../shared/**/*.{ts,tsx,js,jsx}";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -379,6 +383,23 @@
       padding: 96px 48px;
     }
   }
+
+  /* ─── Featured Grid: scroll on mobile, grid on desktop ─── */
+  .site-featured-item {
+    min-width: 280px;
+    flex: 0 0 auto;
+  }
+  @media (min-width: 768px) {
+    .site-featured-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr);
+      overflow-x: visible;
+    }
+    .site-featured-item {
+      min-width: 0;
+      flex: initial;
+    }
+  }
 }
 
 /* ═══ Admin Component Styles ═══ */
@@ -643,6 +664,21 @@
   background: var(--ds-color-bg-surface);
   border: 1px solid var(--ds-color-border-default);
   border-radius: var(--ds-radius-xl);
+}
+
+/* ═══ Site Card — Desktop-only hover ═══ */
+@media (hover: hover) {
+  .site-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 37, 26, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(0, 37, 26, 0.1);
+  }
+}
+@media (hover: none) {
+  .site-card:hover {
+    box-shadow: 0 1px 3px rgba(0, 37, 26, 0.06);
+    transform: none;
+  }
 }
 
 /* ═══ Scrollbar — Brand Themed ═══ */

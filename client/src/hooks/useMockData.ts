@@ -1,127 +1,184 @@
 /**
- * Mock data hooks - Replace tRPC queries with local mock data
- * Ensures the app works 100% without a backend
+ * Real data hooks - Use tRPC to fetch from backend API
+ * Falls back to curated local data when API returns empty
  */
 import { useState, useCallback, useMemo } from "react";
-import {
-  mockCategories,
-  mockPlaces,
-  mockEvents,
-  mockRoutes,
-  mockPartners,
-  mockVouchers,
-  mockAds,
-  mockDrivers,
-  mockReviews,
-  mockNotifications,
-  mockArticles,
-  mockArticleCategories,
-  mockHeroContent,
-  mockAboutContent,
-  mockContactContent,
-  mockServicesContent,
-} from "@/data/mock";
-
-// Standard return type matching react-query patterns
-interface MockQueryResult<T> {
-  data: T | undefined;
-  isLoading: boolean;
-  error: null;
-  refetch: () => void;
-}
-
-function useMockQuery<T>(data: T): MockQueryResult<T> {
-  return { data, isLoading: false, error: null, refetch: () => {} };
-}
-
-function useMockQueryConditional<T>(data: T, enabled: boolean): MockQueryResult<T> {
-  return { data: enabled ? data : undefined, isLoading: false, error: null, refetch: () => {} };
-}
+import { trpc } from "@/lib/trpc";
+import { mockArticles, mockArticleCategories } from "@/data/mock/articles";
 
 // ─── Categories ───
 export function useCategoriesList() {
-  return useMockQuery(mockCategories);
+  const query = trpc.categories.list.useQuery(undefined, {
+    staleTime: 60_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useCategoryBySlug(slug: string) {
-  const category = mockCategories.find(c => c.slug === slug) || null;
-  return useMockQuery(category);
+  const query = trpc.categories.bySlug.useQuery({ slug }, {
+    enabled: !!slug,
+    staleTime: 60_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 // ─── Places ───
 export function usePlacesList(params?: { categoryId?: number; limit?: number; offset?: number }) {
-  const filtered = useMemo(() => {
-    let result = [...mockPlaces];
-    if (params?.categoryId) {
-      result = result.filter(p => p.categoryId === params.categoryId);
+  const query = trpc.places.list.useQuery(
+    {
+      categoryId: params?.categoryId,
+      limit: params?.limit ?? 50,
+      offset: params?.offset ?? 0,
+    },
+    {
+      staleTime: 30_000,
+      retry: 1,
     }
-    const offset = params?.offset || 0;
-    const limit = params?.limit || result.length;
-    return result.slice(offset, offset + limit);
-  }, [params?.categoryId, params?.limit, params?.offset]);
-  return useMockQuery(filtered);
+  );
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function usePlaceById(id: number) {
-  const place = mockPlaces.find(p => p.id === id) || null;
-  return useMockQuery(place);
+  const query = trpc.places.byId.useQuery({ id }, {
+    enabled: !!id,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 // ─── Events ───
-export function useEventsList(_params?: { upcoming?: boolean }) {
-  return useMockQuery(mockEvents);
+export function useEventsList(params?: { upcoming?: boolean }) {
+  const query = trpc.events.list.useQuery(
+    params ? { upcoming: params.upcoming } : undefined,
+    {
+      staleTime: 30_000,
+      retry: 1,
+    }
+  );
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useEventById(id: number) {
-  const event = mockEvents.find(e => e.id === id) || null;
-  return useMockQuery(event);
+  const query = trpc.events.byId.useQuery({ id }, {
+    enabled: !!id,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 // ─── Routes ───
 export function usePublicRoutes() {
-  return useMockQuery(mockRoutes.filter(r => r.isPublic));
+  const query = trpc.routes.public.useQuery(undefined, {
+    staleTime: 60_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useMyRoutes(enabled: boolean) {
-  // Mock: user has no custom routes
-  return useMockQueryConditional([] as typeof mockRoutes, enabled);
+  const query = trpc.routes.mine.useQuery(undefined, {
+    enabled,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useRouteById(id: number) {
-  const route = mockRoutes.find(r => r.id === id) || null;
-  // Enrich with places data
-  const enrichedRoute = route ? {
-    ...route,
-    places: route.placeIds
-      .map(pid => mockPlaces.find(p => p.id === pid))
-      .filter(Boolean),
-  } : null;
-  return useMockQuery(enrichedRoute);
+  const query = trpc.routes.byId.useQuery({ id }, {
+    enabled: !!id,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 // ─── Favorites ───
 export function useFavorites(enabled: boolean) {
-  const [favIds, setFavIds] = useState<Set<number>>(new Set());
+  const query = trpc.favorites.list.useQuery(undefined, {
+    enabled,
+    staleTime: 10_000,
+    retry: 1,
+  });
+  const addMutation = trpc.favorites.add.useMutation();
+  const removeMutation = trpc.favorites.remove.useMutation();
 
-  const data = enabled ? Array.from(favIds).map(placeId => ({ placeId })) : undefined;
+  const favoriteIds = useMemo(() => {
+    const ids = new Set<number>();
+    if (query.data) {
+      for (const fav of query.data as any[]) {
+        ids.add(fav.placeId);
+      }
+    }
+    return ids;
+  }, [query.data]);
 
   const addFavorite = useCallback((placeId: number) => {
-    setFavIds(prev => { const n = new Set(prev); n.add(placeId); return n; });
-  }, []);
+    addMutation.mutate({ placeId }, {
+      onSuccess: () => query.refetch(),
+    });
+  }, [addMutation, query]);
 
   const removeFavorite = useCallback((placeId: number) => {
-    setFavIds(prev => {
-      const next = new Set(prev);
-      next.delete(placeId);
-      return next;
+    removeMutation.mutate({ placeId }, {
+      onSuccess: () => query.refetch(),
     });
-  }, []);
+  }, [removeMutation, query]);
 
   return {
-    data,
-    isLoading: false,
-    error: null,
-    favoriteIds: favIds,
+    data: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
+    favoriteIds,
     addFavorite,
     removeFavorite,
   };
@@ -129,96 +186,236 @@ export function useFavorites(enabled: boolean) {
 
 // ─── Reviews ───
 export function useReviewsByPlace(placeId: number) {
-  const reviews = mockReviews.filter(r => r.placeId === placeId);
-  return useMockQuery(reviews);
+  const query = trpc.reviews.listByPlace.useQuery({ placeId }, {
+    enabled: !!placeId,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 // ─── Partners / Vouchers / Ads ───
 export function useVouchersList() {
-  return useMockQuery(mockVouchers);
+  const query = trpc.vouchers.list.useQuery(undefined, {
+    staleTime: 60_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
-export function usePartnersList(_params?: { status?: string }) {
-  return useMockQuery(mockPartners.filter(p => p.isActive));
+export function usePartnersList(params?: { status?: string }) {
+  const query = trpc.partners.list.useQuery(
+    params ? { status: params.status } : undefined,
+    {
+      staleTime: 60_000,
+      retry: 1,
+    }
+  );
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
-export function useAdsList(_params?: { placement?: string }) {
-  return useMockQuery(mockAds);
+export function useAdsList(params?: { placement?: string }) {
+  const query = trpc.ads.list.useQuery(
+    params ? { placement: params.placement } : undefined,
+    {
+      staleTime: 60_000,
+      retry: 1,
+    }
+  );
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 // ─── Drivers ───
 export function useDriversList() {
-  return useMockQuery(mockDrivers);
+  const query = trpc.drivers.listPublic.useQuery(undefined, {
+    staleTime: 60_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useDriversListPublic() {
-  return useMockQuery(mockDrivers);
+  return useDriversList();
 }
 
 // ─── Notifications ───
 export function useNotificationsList(enabled: boolean) {
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const query = trpc.notifications.list.useQuery(undefined, {
+    enabled,
+    staleTime: 10_000,
+    retry: 1,
+  });
+  const markReadMutation = trpc.notifications.markRead.useMutation();
 
   const markRead = useCallback((id: number) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
-  }, []);
+    markReadMutation.mutate({ id }, {
+      onSuccess: () => query.refetch(),
+    });
+  }, [markReadMutation, query]);
 
   return {
-    data: enabled ? notifications : undefined,
-    isLoading: false,
-    error: null,
+    data: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
     markRead,
   };
 }
 
-// ─── Articles ───
+// ─── Articles (with fallback to curated local content) ───
 export function useArticlesListPublished(params?: { category?: string; limit?: number }) {
-  const filtered = useMemo(() => {
-    let result = mockArticles.filter(a => a.isPublished);
-    if (params?.category) {
-      result = result.filter(a => a.category === params.category);
+  const query = trpc.articles.listPublished.useQuery(
+    {
+      category: params?.category,
+      limit: params?.limit ?? 10,
+    },
+    {
+      staleTime: 60_000,
+      retry: 1,
     }
-    if (params?.limit) {
-      result = result.slice(0, params.limit);
-    }
+  );
+
+  // Fallback to curated local articles when API returns empty
+  const data = useMemo(() => {
+    if (query.data && query.data.length > 0) return query.data;
+    // Use curated local articles as fallback
+    let result = mockArticles.filter((a) => a.isPublished);
+    if (params?.category) result = result.filter((a) => a.category === params.category);
+    if (params?.limit) result = result.slice(0, params.limit);
     return result;
-  }, [params?.category, params?.limit]);
-  return useMockQuery(filtered);
+  }, [query.data, params?.category, params?.limit]);
+
+  return {
+    data,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useArticleBySlug(slug: string) {
-  const article = mockArticles.find(a => a.slug === slug) || null;
-  return useMockQuery(article);
+  const query = trpc.articles.bySlug.useQuery({ slug }, {
+    enabled: !!slug,
+    staleTime: 60_000,
+    retry: 1,
+  });
+
+  const data = useMemo(() => {
+    if (query.data) return query.data;
+    // Fallback to curated local article
+    return mockArticles.find((a) => a.slug === slug) || null;
+  }, [query.data, slug]);
+
+  return {
+    data,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useArticleCategories() {
-  return useMockQuery(mockArticleCategories);
+  const query = trpc.articles.categories.useQuery(undefined, {
+    staleTime: 60_000,
+    retry: 1,
+  });
+
+  const data = useMemo(() => {
+    if (query.data && query.data.length > 0) return query.data;
+    return mockArticleCategories;
+  }, [query.data]);
+
+  return {
+    data,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 // ─── Content ───
 export function useHeroContent() {
-  return useMockQuery(mockHeroContent);
+  const query = trpc.content.getHero.useQuery(undefined, {
+    staleTime: 120_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? {},
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useAboutContent() {
-  return useMockQuery(mockAboutContent);
+  const query = trpc.content.getAbout.useQuery(undefined, {
+    staleTime: 120_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? {},
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useContactContent() {
-  return useMockQuery(mockContactContent);
+  const query = trpc.content.getContact.useQuery(undefined, {
+    staleTime: 120_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? {},
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useServicesContent() {
-  return useMockQuery(mockServicesContent);
+  const query = trpc.content.getServices.useQuery(undefined, {
+    staleTime: 120_000,
+    retry: 1,
+  });
+  return {
+    data: query.data ?? {},
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
-// ─── Mock mutation helpers ───
+// ─── Mock mutation helpers (still used for client-only actions) ───
 export function useMockMutation<TInput = unknown>() {
   const [isPending, setIsPending] = useState(false);
 
   const mutate = useCallback((_input: TInput, options?: { onSuccess?: () => void; onError?: () => void }) => {
     setIsPending(true);
-    // Simulate quick success
     setTimeout(() => {
       setIsPending(false);
       options?.onSuccess?.();

@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
-import { usePlacesList, useArticlesListPublished } from "@/hooks/useMockData";
+import { useState, useEffect, useRef, useMemo, lazy, Suspense } from "react";
+import { usePlacesList, useArticlesListPublished, useCategoriesList } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -119,7 +119,15 @@ export default function SiteHome() {
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
+  const { data: cats = [] } = useCategoriesList();
   const places = allPlaces.slice(0, 6);
+
+  // Build categoryId → name map for display
+  const catMap = useMemo(() => {
+    const m: Record<number, string> = {};
+    for (const c of cats as any[]) m[c.id] = c.name;
+    return m;
+  }, [cats]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -300,29 +308,59 @@ export default function SiteHome() {
               Abrir o App
               <ArrowRight size={16} />
             </Link>
-            <button
-              onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                height: 48,
-                padding: "0 28px",
-                background: "transparent",
-                color: "#FFFFFF",
-                fontSize: "0.9375rem",
-                fontWeight: 600,
-                borderRadius: 12,
-                border: "1.5px solid rgba(255,255,255,0.35)",
-                cursor: "pointer",
-                transition: "border-color 0.2s ease, background 0.2s ease",
-                fontFamily: "'Montserrat', system-ui, sans-serif",
-              }}
-              onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.6)"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
-              onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.background = "transparent"; }}
-            >
-              Explorar agora
-            </button>
+            {/* PWA Install Button — only visible when install prompt is available */}
+            {installPrompt && (
+              <button
+                onClick={handleInstall}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  height: 48,
+                  padding: "0 28px",
+                  background: "rgba(255,255,255,0.15)",
+                  color: "#FFFFFF",
+                  fontSize: "0.9375rem",
+                  fontWeight: 600,
+                  borderRadius: 12,
+                  border: "1.5px solid rgba(255,255,255,0.4)",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s ease, background 0.2s ease",
+                  fontFamily: "'Montserrat', system-ui, sans-serif",
+                  backdropFilter: "blur(4px)",
+                }}
+                onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)"; e.currentTarget.style.background = "rgba(255,255,255,0.25)"; }}
+                onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)"; e.currentTarget.style.background = "rgba(255,255,255,0.15)"; }}
+              >
+                <Download size={16} />
+                Instalar App
+              </button>
+            )}
+            {!installPrompt && (
+              <button
+                onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  height: 48,
+                  padding: "0 28px",
+                  background: "transparent",
+                  color: "#FFFFFF",
+                  fontSize: "0.9375rem",
+                  fontWeight: 600,
+                  borderRadius: 12,
+                  border: "1.5px solid rgba(255,255,255,0.35)",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s ease, background 0.2s ease",
+                  fontFamily: "'Montserrat', system-ui, sans-serif",
+                }}
+                onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.6)"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+                onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.background = "transparent"; }}
+              >
+                Explorar agora
+              </button>
+            )}
           </div>
 
           {/* Stats */}
@@ -482,7 +520,7 @@ export default function SiteHome() {
                             {place.name}
                           </h3>
                           <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", marginBottom: 12 }}>
-                            {place.category}
+                            {catMap[(place as any).categoryId] || "Holambra"}
                           </p>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>

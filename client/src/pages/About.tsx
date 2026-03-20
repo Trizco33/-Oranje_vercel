@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ChevronRight,
   Heart,
@@ -19,6 +19,7 @@ import { DSHeroSection } from "@/components/ds/HeroSection";
 import SiteLayout from "@/components/SiteLayout";
 
 export default function About() {
+  const navigate = useNavigate();
   return (
     <SiteLayout>
       {/* HERO */}
@@ -103,7 +104,7 @@ export default function About() {
                 em Holambra. Nosso time é apaixonado por tecnologia, turismo e pela cidade. Acreditamos que informação
                 de qualidade, acessível e bem organizada, pode transformar experiências.
               </p>
-              <DSButton variant="primary" onClick={() => window.location.href = "/app"}>
+              <DSButton variant="primary" onClick={() => navigate("/app")}>
                 Explorar o App
                 <ChevronRight size={16} />
               </DSButton>
@@ -333,7 +334,7 @@ export default function About() {
             <DSButton
               variant="secondary"
               size="lg"
-              onClick={() => window.location.href = "/app"}
+              onClick={() => navigate("/app")}
               style={{ background: "#FFFFFF", color: "var(--ds-color-accent)", borderColor: "#FFFFFF" }}
             >
               Abrir o App
@@ -342,7 +343,7 @@ export default function About() {
             <DSButton
               variant="secondary"
               size="lg"
-              onClick={() => window.location.href = "/contato"}
+              onClick={() => navigate("/contato")}
               style={{ borderColor: "rgba(255,255,255,0.5)", color: "#FFFFFF" }}
             >
               Fale Conosco

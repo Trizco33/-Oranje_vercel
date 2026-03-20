@@ -8,7 +8,7 @@ export function MobileMenu() {
 
   const menuItems = [
     { label: "Explorar", href: "/app/explorar", icon: Compass },
-    { label: "Buscar", href: "/app/buscar", icon: Search },
+    { label: "Buscar", href: "/app/busca", icon: Search },
     { label: "Eventos", href: "/app/eventos", icon: Calendar },
     { label: "Favoritos", href: "/app/favoritos", icon: Heart },
     { label: "Roteiros", href: "/app/roteiros", icon: Map },

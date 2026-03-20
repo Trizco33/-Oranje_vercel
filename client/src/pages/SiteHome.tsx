@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { usePlacesList, useArticlesListPublished } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   MapPin,
   Calendar,
@@ -115,6 +115,7 @@ function SectionHeader({
 }
 
 export default function SiteHome() {
+  const navigate = useNavigate();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
@@ -240,7 +241,8 @@ export default function SiteHome() {
             }}
           >
             <div
-              onClick={() => { window.location.href = "/app/busca"; }}
+              onClick={() => { navigate("/app/busca"); }}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") navigate("/app/busca"); }}
               role="button"
               tabIndex={0}
               aria-label="Buscar restaurantes, eventos, roteiros"
@@ -275,8 +277,8 @@ export default function SiteHome() {
 
           {/* CTA Buttons */}
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
-            <a
-              href="/app"
+            <Link
+              to="/app"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -297,7 +299,7 @@ export default function SiteHome() {
             >
               Abrir o App
               <ArrowRight size={16} />
-            </a>
+            </Link>
             <button
               onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
               style={{
@@ -626,8 +628,8 @@ export default function SiteHome() {
           </Reveal>
 
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-            <a
-              href="/mapa"
+            <Link
+              to="/mapa"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -648,7 +650,7 @@ export default function SiteHome() {
             >
               Abrir Mapa Completo
               <ArrowRight size={16} />
-            </a>
+            </Link>
             <Link
               to="/mapa"
               style={{
@@ -720,8 +722,8 @@ export default function SiteHome() {
 
           <Reveal>
             <div style={{ textAlign: "center" }}>
-              <a
-                href="/eventos-em-holambra"
+              <Link
+                to="/eventos-em-holambra"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -742,7 +744,7 @@ export default function SiteHome() {
               >
                 Ver Agenda Completa
                 <ArrowRight size={16} />
-              </a>
+              </Link>
             </div>
           </Reveal>
         </div>
@@ -844,8 +846,8 @@ export default function SiteHome() {
 
           <Reveal>
             <div style={{ textAlign: "center" }}>
-              <a
-                href="/seja-um-parceiro"
+              <Link
+                to="/seja-um-parceiro"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -866,7 +868,7 @@ export default function SiteHome() {
               >
                 Quero ser Parceiro
                 <ArrowRight size={16} />
-              </a>
+              </Link>
             </div>
           </Reveal>
         </div>

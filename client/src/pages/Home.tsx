@@ -51,7 +51,12 @@ export default function Home() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (searchQuery.trim()) navigate(`/app/busca?q=${encodeURIComponent(searchQuery.trim())}`);
+    const query = searchQuery.trim();
+    if (!query) {
+      // Don't navigate with empty search to prevent "Lugar não encontrado"
+      return;
+    }
+    navigate(`/app/busca?q=${encodeURIComponent(query)}`);
   }
 
   return (

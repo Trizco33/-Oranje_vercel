@@ -40,7 +40,7 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
   const tags: string[] = Array.isArray(place.tags) ? place.tags : [];
 
   return (
-    <Link to={`/app/lugar/${place.id}`}>
+    <Link to={`/app/lugar/${place.id}`} style={{ display: "block", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}>
       <div
         className="group overflow-hidden transition-all duration-300"
         style={{

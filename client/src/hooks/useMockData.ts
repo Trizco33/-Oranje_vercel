@@ -11,6 +11,7 @@ export function useCategoriesList() {
   const query = trpc.categories.list.useQuery(undefined, {
     staleTime: 60_000,
     retry: 1,
+    throwOnError: false,
   });
   return {
     data: query.data ?? [],
@@ -45,6 +46,7 @@ export function usePlacesList(params?: { categoryId?: number; limit?: number; of
     {
       staleTime: 30_000,
       retry: 1,
+      throwOnError: false,
     }
   );
   return {
@@ -148,6 +150,7 @@ export function useFavorites(enabled: boolean) {
     enabled,
     staleTime: 10_000,
     retry: 1,
+    throwOnError: false,
   });
   const addMutation = trpc.favorites.add.useMutation();
   const removeMutation = trpc.favorites.remove.useMutation();
@@ -162,17 +165,20 @@ export function useFavorites(enabled: boolean) {
     return ids;
   }, [query.data]);
 
+  // Use stable references: query.refetch is stable across renders in react-query
+  const refetch = query.refetch;
+
   const addFavorite = useCallback((placeId: number) => {
     addMutation.mutate({ placeId }, {
-      onSuccess: () => query.refetch(),
+      onSuccess: () => { refetch(); },
     });
-  }, [addMutation, query]);
+  }, [addMutation.mutate, refetch]);
 
   const removeFavorite = useCallback((placeId: number) => {
     removeMutation.mutate({ placeId }, {
-      onSuccess: () => query.refetch(),
+      onSuccess: () => { refetch(); },
     });
-  }, [removeMutation, query]);
+  }, [removeMutation.mutate, refetch]);
 
   return {
     data: query.data,
@@ -269,14 +275,16 @@ export function useNotificationsList(enabled: boolean) {
     enabled,
     staleTime: 10_000,
     retry: 1,
+    throwOnError: false,
   });
   const markReadMutation = trpc.notifications.markRead.useMutation();
+  const refetch = query.refetch;
 
   const markRead = useCallback((id: number) => {
     markReadMutation.mutate({ id }, {
-      onSuccess: () => query.refetch(),
+      onSuccess: () => { refetch(); },
     });
-  }, [markReadMutation, query]);
+  }, [markReadMutation.mutate, refetch]);
 
   return {
     data: query.data,

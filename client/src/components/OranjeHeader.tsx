@@ -20,6 +20,8 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
   const { data: notifications } = trpc.notifications.list.useQuery(undefined, {
     enabled: !!user,
     refetchInterval: 30000,
+    staleTime: 10_000,
+    retry: 1,
     throwOnError: false,
   });
 

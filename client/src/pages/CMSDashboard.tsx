@@ -32,7 +32,8 @@ export default function CMSDashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/cms/logout", { method: "POST" });
+      const apiBase = import.meta.env.VITE_API_URL || "";
+      await fetch(`${apiBase}/api/cms/logout`, { method: "POST" });
       window.location.href = "/admin/login";
     } catch (error) {
       toast.error("Erro ao desconectar");

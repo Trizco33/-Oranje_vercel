@@ -14,7 +14,8 @@ export default function CMSLogin() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/cms/login", {
+      const apiBase = import.meta.env.VITE_API_URL || "";
+      const response = await fetch(`${apiBase}/api/cms/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -43,10 +43,13 @@ queryClient.getMutationCache().subscribe(event => {
   }
 });
 
+// API base URL: use VITE_API_URL if set (for split frontend/backend deploys), otherwise relative
+const API_BASE = import.meta.env.VITE_API_URL || "";
+
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "/api/trpc",
+      url: `${API_BASE}/api/trpc`,
       transformer: superjson,
       fetch(input, init) {
         return globalThis.fetch(input, {

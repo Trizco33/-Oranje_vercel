@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
 import { usePlaceById, useFavorites, useReviewsByPlace, useMockMutation } from "@/hooks/useMockData";
-import { MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2, Star } from "lucide-react";
+import { MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2, Star, RefreshCw } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { ReviewCard } from "@/components/ReviewCard";
@@ -15,7 +15,7 @@ export default function PlaceDetail() {
   const { user } = useAuth();
   const placeId = Number(id) || 0;
 
-  const { data: placeData, isLoading } = usePlaceById(placeId);
+  const { data: placeData, isLoading, error, refetch } = usePlaceById(placeId);
 
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
@@ -75,6 +75,32 @@ export default function PlaceDetail() {
               <div className="animate-pulse rounded-lg" style={{ height: 16, background: "var(--ds-color-bg-secondary)" }} />
               <div className="animate-pulse rounded-lg" style={{ height: 16, width: "83%", background: "var(--ds-color-bg-secondary)" }} />
             </div>
+          </div>
+        </div>
+        <div style={{ height: 100 }} />
+        <TabBar />
+      </div>
+    );
+  }
+
+  // Network/API error - show retry option instead of "not found"
+  if (error && !place) {
+    return (
+      <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }} className="flex flex-col">
+        <OranjeHeader showBack title="Erro ao carregar" />
+        <div className="flex-1 px-4 flex flex-col items-center justify-center">
+          <RefreshCw size={48} style={{ color: "var(--ds-color-accent)" }} className="mb-4" />
+          <h2 className="text-xl font-bold text-center mb-2" style={{ color: "var(--ds-color-text-primary)" }}>
+            Erro ao carregar
+          </h2>
+          <p className="text-sm text-center mb-6" style={{ color: "var(--ds-color-text-secondary)" }}>
+            Não foi possível carregar este lugar. Verifique sua conexão e tente novamente.
+          </p>
+          <div className="flex gap-3">
+            <DSButton variant="primary" onClick={() => refetch()}>Tentar novamente</DSButton>
+            <Link to="/app">
+              <DSButton variant="secondary">Voltar à Home</DSButton>
+            </Link>
           </div>
         </div>
         <div style={{ height: 100 }} />

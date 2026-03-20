@@ -21,6 +21,14 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
   const normalizedSlug = normalizeSlug(slug);
   const isValid = isValidCategorySlug(normalizedSlug);
 
+  // IMPORTANT: All hooks must be called unconditionally (React rules of hooks).
+  // We use `enabled` flag to skip fetching when slug is invalid.
+  const { data: category } = useCategoryBySlug(isValid ? normalizedSlug : '');
+  const { data: places, isLoading: placesLoading } = usePlacesList(
+    isValid && category?.id ? { categoryId: category.id, limit: 50, offset: 0 } : { limit: 50, offset: 0 }
+  );
+  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
+
   if (!isValid) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
@@ -54,12 +62,6 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
       </div>
     );
   }
-
-  const { data: category } = useCategoryBySlug(normalizedSlug);
-  const { data: places, isLoading: placesLoading } = usePlacesList(
-    category?.id ? { categoryId: category.id, limit: 50, offset: 0 } : { limit: 50, offset: 0 }
-  );
-  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }

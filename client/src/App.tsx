@@ -1,11 +1,12 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router-dom";
 import { Suspense } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { lazy } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { usePageTracking } from "@/hooks/usePageTracking";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // Eagerly loaded - only the most critical first-paint page
 import SiteHome from "./pages/SiteHome";
@@ -69,11 +70,39 @@ function LoadingFallback() {
   );
 }
 
+/**
+ * Wrapper that forces PlaceDetail to fully remount when the :id param changes.
+ * Without this, React reuses the same component instance and stale state
+ * can persist across different place pages.
+ */
+function PlaceDetailWrapper() {
+  const { id } = useParams<{ id: string }>();
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PlaceDetail key={id} />
+    </Suspense>
+  );
+}
+
+/**
+ * Same wrapper for RouteDetail to force remount on :id change.
+ */
+function RouteDetailWrapper() {
+  const { id } = useParams<{ id: string }>();
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <RouteDetail key={id} />
+    </Suspense>
+  );
+}
+
 function Router() {
   // Automatic GA4 pageview tracking on route changes
   usePageTracking();
 
   return (
+      <>
+      <ScrollToTop />
       <Routes>
         {/* Site Pages - NO PWA, Splash, or Notifications */}
         <Route path="/" element={<SiteHome />} />
@@ -104,10 +133,10 @@ function Router() {
           <Route path="explorar/:slug" element={<Suspense fallback={<LoadingFallback />}><Explore /></Suspense>} />
           <Route path="explorar" element={<Suspense fallback={<LoadingFallback />}><Explore /></Suspense>} />
           <Route path="busca" element={<Suspense fallback={<LoadingFallback />}><SearchPage /></Suspense>} />
-          <Route path="lugar/:id" element={<Suspense fallback={<LoadingFallback />}><PlaceDetail /></Suspense>} />
+          <Route path="lugar/:id" element={<PlaceDetailWrapper />} />
           <Route path="favoritos" element={<Suspense fallback={<LoadingFallback />}><Favorites /></Suspense>} />
           <Route path="roteiros" element={<Suspense fallback={<LoadingFallback />}><RoutesPage /></Suspense>} />
-          <Route path="roteiro/:id" element={<Suspense fallback={<LoadingFallback />}><RouteDetail /></Suspense>} />
+          <Route path="roteiro/:id" element={<RouteDetailWrapper />} />
           <Route path="eventos" element={<Suspense fallback={<LoadingFallback />}><EventsList /></Suspense>} />
           <Route path="evento/:id" element={<Suspense fallback={<LoadingFallback />}><EventDetail /></Suspense>} />
           <Route path="ofertas" element={<Suspense fallback={<LoadingFallback />}><Offers /></Suspense>} />
@@ -136,6 +165,7 @@ function Router() {
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </>
   );
 }
 

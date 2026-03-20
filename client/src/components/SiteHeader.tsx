@@ -222,13 +222,14 @@ export default function SiteHeader() {
             background: "#00251A",
             borderLeft: "1px solid rgba(255,255,255,0.06)",
             transform: isMenuOpen ? "translateX(0)" : "translateX(100%)",
-            transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s",
-            display: "flex",
+            transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+            // CRITICAL FIX v2: Use display:none when closed to completely remove from hit-testing
+            // Previous fix (visibility+pointerEvents) failed because child divs still intercepted clicks
+            // Playwright error: "<div> from <nav> subtree intercepts pointer events"
+            // Solution: display:none removes element entirely from interaction tree
+            display: isMenuOpen ? "flex" : "none",
             flexDirection: "column",
             overflowY: "auto",
-            // CRITICAL: Prevent invisible panel from capturing touch events when closed
-            pointerEvents: isMenuOpen ? "auto" : "none",
-            visibility: isMenuOpen ? "visible" as const : "hidden" as const,
           }}
         >
           {/* Panel Header */}

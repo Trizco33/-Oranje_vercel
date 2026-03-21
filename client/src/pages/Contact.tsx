@@ -73,7 +73,7 @@ export default function Contact() {
               <h3 className="font-semibold text-lg mb-2" style={{ color: "#FFFFFF" }}>
                 Redes Sociais
               </h3>
-              <a href="#" style={{ color: "#E65100" }}>
+              <a href="https://www.instagram.com/oranjeholambra" target="_blank" rel="noopener noreferrer" style={{ color: "#E65100" }}>
                 @oranjeholambra
               </a>
             </div>

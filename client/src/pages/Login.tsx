@@ -17,7 +17,8 @@ export default function Login() {
     }
 
     setIsLoading(true);
-    // Mock magic link - simulate sending email
+    // TODO: Replace with real magic-link or OAuth flow
+    // Currently simulates sending a link (placeholder UX)
     await new Promise((resolve) => setTimeout(resolve, 1200));
     toast.success("Link enviado! Verifique seu email");
     setEmail("");

@@ -72,9 +72,9 @@ function LoadingFallback() {
 }
 
 /**
- * Wrapper that forces PlaceDetail to fully remount when the :id param changes.
+ * Wrapper that forces detail pages to fully remount when the param changes.
  * Without this, React reuses the same component instance and stale state
- * can persist across different place pages.
+ * can persist across different detail pages.
  */
 function PlaceDetailWrapper() {
   const { id } = useParams<{ id: string }>();
@@ -85,14 +85,47 @@ function PlaceDetailWrapper() {
   );
 }
 
-/**
- * Same wrapper for RouteDetail to force remount on :id change.
- */
 function RouteDetailWrapper() {
   const { id } = useParams<{ id: string }>();
   return (
     <Suspense fallback={<LoadingFallback />}>
       <RouteDetail key={id} />
+    </Suspense>
+  );
+}
+
+function EventDetailWrapper() {
+  const { id } = useParams<{ id: string }>();
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <EventDetail key={id} />
+    </Suspense>
+  );
+}
+
+function DriverDetailWrapper() {
+  const { id } = useParams<{ id: string }>();
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <DriverDetail key={id} />
+    </Suspense>
+  );
+}
+
+function GuideDetailWrapper() {
+  const { slug } = useParams<{ slug: string }>();
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <GuideDetail key={slug} />
+    </Suspense>
+  );
+}
+
+function BlogPostWrapper() {
+  const { slug } = useParams<{ slug: string }>();
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SiteBlogPost key={slug} />
     </Suspense>
   );
 }
@@ -123,7 +156,7 @@ function Router() {
         <Route path="/privacidade" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/termos" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/blog" element={<Suspense fallback={<LoadingFallback />}><SiteBlog /></Suspense>} />
-        <Route path="/blog/:slug" element={<Suspense fallback={<LoadingFallback />}><SiteBlogPost /></Suspense>} />
+        <Route path="/blog/:slug" element={<BlogPostWrapper />} />
         {/* Landing Page */}
         <Route path="/landing" element={<Suspense fallback={<LoadingFallback />}><Landing /></Suspense>} />
         {/* App Routes - WITH PWA, Splash, and Notifications */}
@@ -139,13 +172,13 @@ function Router() {
           <Route path="roteiros" element={<Suspense fallback={<LoadingFallback />}><RoutesPage /></Suspense>} />
           <Route path="roteiro/:id" element={<RouteDetailWrapper />} />
           <Route path="eventos" element={<Suspense fallback={<LoadingFallback />}><EventsList /></Suspense>} />
-          <Route path="evento/:id" element={<Suspense fallback={<LoadingFallback />}><EventDetail /></Suspense>} />
+          <Route path="evento/:id" element={<EventDetailWrapper />} />
           <Route path="ofertas" element={<Suspense fallback={<LoadingFallback />}><Offers /></Suspense>} />
           <Route path="notificacoes" element={<Suspense fallback={<LoadingFallback />}><Notifications /></Suspense>} />
           <Route path="transporte" element={<Suspense fallback={<LoadingFallback />}><TransportPage /></Suspense>} />
           <Route path="motoristas" element={<Suspense fallback={<LoadingFallback />}><Drivers /></Suspense>} />
           <Route path="cadastrar-motorista" element={<Suspense fallback={<LoadingFallback />}><RegisterDriver /></Suspense>} />
-          <Route path="motorista/:id" element={<Suspense fallback={<LoadingFallback />}><DriverDetail /></Suspense>} />
+          <Route path="motorista/:id" element={<DriverDetailWrapper />} />
           <Route index element={<Suspense fallback={<LoadingFallback />}>
             <ErrorBoundary FallbackComponent={() => null}><SplashScreen /></ErrorBoundary>
             <ErrorBoundary FallbackComponent={() => null}><PWAInstallPrompt /></ErrorBoundary>
@@ -154,7 +187,7 @@ function Router() {
           </Suspense>} />
         </Route>
         <Route path="/guia" element={<Suspense fallback={<LoadingFallback />}><Guide /></Suspense>} />
-        <Route path="/guia/:slug" element={<Suspense fallback={<LoadingFallback />}><GuideDetail /></Suspense>} />
+        <Route path="/guia/:slug" element={<GuideDetailWrapper />} />
         <Route path="/parcerias" element={<Suspense fallback={<LoadingFallback />}><Partnerships /></Suspense>} />
         <Route path="/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
         <Route path="/admin/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />

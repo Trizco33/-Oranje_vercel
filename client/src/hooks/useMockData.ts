@@ -1,8 +1,11 @@
 /**
- * Real data hooks - Use tRPC to fetch from backend API
- * Falls back to curated local data when API returns empty
+ * Data hooks — all use real tRPC API calls.
+ * 
+ * NOTE: The filename "useMockData" is legacy. Every hook here hits the
+ * live backend. The only fallback to local data is for articles/blog
+ * content when the articles table is empty (curated seed content).
  */
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { mockArticles, mockArticleCategories } from "@/data/mock/articles";
 
@@ -418,17 +421,4 @@ export function useServicesContent() {
   };
 }
 
-// ─── Mock mutation helpers (still used for client-only actions) ───
-export function useMockMutation<TInput = unknown>() {
-  const [isPending, setIsPending] = useState(false);
-
-  const mutate = useCallback((_input: TInput, options?: { onSuccess?: () => void; onError?: () => void }) => {
-    setIsPending(true);
-    setTimeout(() => {
-      setIsPending(false);
-      options?.onSuccess?.();
-    }, 300);
-  }, []);
-
-  return { mutate, isPending, isLoading: isPending };
-}
+// ─── (useMockMutation removed — was unused) ───

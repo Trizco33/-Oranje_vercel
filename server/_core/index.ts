@@ -620,14 +620,29 @@ self.addEventListener('fetch', (event) => {
       const adminEmail = email || 'admin@oranjeapp.com.br';
       const adminName = name || 'Admin Oranje';
 
-      // Check if admin already exists
-      const existing = await db.select().from(users).where(eq(users.email, adminEmail)).limit(1);
+      // Check if admin already exists by email or openId
+      const { or } = await import("drizzle-orm");
+      const existing = await db.select().from(users).where(
+        or(
+          eq(users.email, adminEmail),
+          eq(users.openId, 'admin-owner')
+        )
+      ).limit(1);
       
       if (existing.length > 0) {
+        // Update role to admin if not already
+        if (existing[0].role !== 'admin') {
+          await db.update(users).set({ role: 'admin' }).where(eq(users.id, existing[0].id));
+          return res.json({
+            success: true,
+            message: 'User promoted to admin',
+            user: { id: existing[0].id, email: existing[0].email, name: existing[0].name, role: 'admin' }
+          });
+        }
         return res.json({
           success: true,
           message: 'Admin user already exists',
-          user: { id: existing[0].id, email: existing[0].email, name: existing[0].name }
+          user: { id: existing[0].id, email: existing[0].email, name: existing[0].name, role: existing[0].role }
         });
       }
 

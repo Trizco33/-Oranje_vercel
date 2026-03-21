@@ -4,9 +4,9 @@
  */
 
 import express, { Router } from 'express';
-import { db } from './db.js';
+import { db } from './db';
 import { sql } from 'drizzle-orm';
-import { places } from '../drizzle/schema.js';
+import { places } from '../drizzle/schema';
 
 const router = express.Router();
 

@@ -200,7 +200,17 @@ export default function Home() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, paddingBottom: 8 }}>
           {categories?.slice(0, 8).map(cat => (
-            <Link key={cat.id} to={`/app/explorar/${cat.slug}`} style={{ textDecoration: "none" }}>
+            <Link
+              key={cat.id}
+              to={`/app/explorar/${cat.slug}`}
+              style={{
+                textDecoration: "none",
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "rgba(230, 81, 0, 0.15)",
+                cursor: "pointer",
+                display: "block",
+              }}
+            >
               <div
                 style={{
                   display: "flex",

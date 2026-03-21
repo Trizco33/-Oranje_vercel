@@ -60,6 +60,15 @@ export default function SearchPage() {
 
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
+  // Sync query state when URL search params change (e.g. navigating to Search with new ?q=)
+  useEffect(() => {
+    const urlQuery = new URLSearchParams(location.search).get("q") ?? "";
+    if (urlQuery !== query) {
+      setQuery(urlQuery);
+      setDebouncedQuery(urlQuery);
+    }
+  }, [location.search]);
+
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query), 350);
     return () => clearTimeout(t);

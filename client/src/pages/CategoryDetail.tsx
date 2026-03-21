@@ -24,9 +24,12 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
   // IMPORTANT: All hooks must be called unconditionally (React rules of hooks).
   // We use `enabled` flag to skip fetching when slug is invalid.
   const { data: category } = useCategoryBySlug(isValid ? normalizedSlug : '');
-  const { data: places, isLoading: placesLoading } = usePlacesList(
-    isValid && category?.id ? { categoryId: category.id, limit: 50, offset: 0 } : { limit: 50, offset: 0 }
+  // Wait for category to load before fetching places to avoid showing all places briefly
+  const { data: allPlaces, isLoading: placesLoading } = usePlacesList(
+    category?.id ? { categoryId: category.id, limit: 50, offset: 0 } : { limit: 0, offset: 0 }
   );
+  // When category hasn't loaded yet, show loading state instead of empty results
+  const places = category?.id ? allPlaces : [];
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
   if (!isValid) {
@@ -109,7 +112,7 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
       </div>
 
       <div className="px-5 mt-4">
-        {!places || placesLoading ? (
+        {!category?.id || placesLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[...Array(6)].map((_, i) => (
               <div

@@ -1,6 +1,7 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { usePublicRoutes, useMyRoutes, useMockMutation } from "@/hooks/useMockData";
+import { usePublicRoutes, useMyRoutes } from "@/hooks/useMockData";
+import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { ChevronRight, Clock, Map, Plus, Trash2, X } from "lucide-react";
@@ -16,9 +17,9 @@ export default function Routes() {
   const { user } = useAuth();
 
   const { data: publicRoutes } = usePublicRoutes();
-  const { data: myRoutes } = useMyRoutes(!!user);
-  const createRoute = useMockMutation();
-  const deleteRoute = useMockMutation();
+  const { data: myRoutes, refetch: refetchMyRoutes } = useMyRoutes(!!user);
+  const createRouteMutation = trpc.routes.create.useMutation();
+  const deleteRouteMutation = trpc.routes.delete.useMutation();
 
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -29,13 +30,14 @@ export default function Routes() {
 
   function handleCreate() {
     if (!newTitle.trim()) { toast.error("Informe um título para o roteiro."); return; }
-    createRoute.mutate(
+    createRouteMutation.mutate(
       { title: newTitle, description: newDesc, placeIds: [], theme: newTheme, duration: newDuration, isPublic },
       {
         onSuccess: () => {
           toast.success("Roteiro criado!");
           setShowCreate(false);
           setNewTitle(""); setNewDesc(""); setNewTheme(""); setNewDuration("");
+          refetchMyRoutes();
         },
         onError: () => toast.error("Erro ao criar roteiro."),
       }
@@ -43,8 +45,11 @@ export default function Routes() {
   }
 
   function handleDelete(_id: number) {
-    deleteRoute.mutate({ id: _id }, {
-      onSuccess: () => { toast.success("Roteiro removido."); },
+    deleteRouteMutation.mutate({ id: _id }, {
+      onSuccess: () => {
+        toast.success("Roteiro removido.");
+        refetchMyRoutes();
+      },
     });
   }
 
@@ -325,7 +330,7 @@ export default function Routes() {
               <DSButton
                 fullWidth
                 onClick={handleCreate}
-                loading={createRoute.isPending}
+                loading={createRouteMutation.isPending}
               >
                 Criar Roteiro
               </DSButton>

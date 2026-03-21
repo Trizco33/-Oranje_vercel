@@ -612,13 +612,40 @@ self.addEventListener('fetch', (event) => {
       const { AuthService } = await import("../authService");
       const result = await AuthService.login(email, password);
       
-      // Set session cookie (optional - could use JWT instead)
+      // Set CMS session cookie (legacy)
       res.cookie("cms_session", JSON.stringify(result), {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
+
+      // ALSO set the main app JWT session cookie so trpc auth.me works
+      // This bridges CMS login with the App Admin auth system
+      try {
+        const { sdk } = await import("./sdk");
+        const { COOKIE_NAME } = await import("@shared/const");
+        const { getSessionCookieOptions } = await import("./cookies");
+        const user = result.user;
+        if (user && user.id) {
+          // Find the user's openId from the database
+          const dbModule = await import("../db");
+          const dbUser = await dbModule.getUserByEmail(email);
+          if (dbUser && dbUser.openId) {
+            const sessionToken = await sdk.createSessionToken(dbUser.openId, {
+              name: dbUser.name || "Admin",
+            });
+            const cookieOptions = getSessionCookieOptions(req);
+            res.cookie(COOKIE_NAME, sessionToken, {
+              ...cookieOptions,
+              maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            });
+          }
+        }
+      } catch (sessionError) {
+        console.warn("[CMS Login] Could not set app session cookie:", sessionError);
+        // Continue — CMS session still works
+      }
       
       return res.json(result);
     } catch (error: any) {
@@ -629,7 +656,9 @@ self.addEventListener('fetch', (event) => {
   
   app.post("/api/cms/logout", (req, res) => {
     try {
+      const { COOKIE_NAME } = require("@shared/const");
       res.clearCookie("cms_session");
+      res.clearCookie(COOKIE_NAME, { path: "/" });
       return res.json({ success: true });
     } catch (error: any) {
       console.error("CMS logout error:", error);

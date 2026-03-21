@@ -2,7 +2,8 @@ import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { usePlaceById, useFavorites, useReviewsByPlace, useMockMutation } from "@/hooks/useMockData";
+import { usePlaceById, useFavorites, useReviewsByPlace } from "@/hooks/useMockData";
+import { trpc } from "@/lib/trpc";
 import { MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2, Star, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -165,10 +166,10 @@ export default function PlaceDetail() {
 
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
-  const { data: placeReviews = [] } = useReviewsByPlace(placeId);
+  const { data: placeReviews = [], refetch: refetchReviews } = useReviewsByPlace(placeId);
 
-  const createReview = useMockMutation();
-  const markHelpful = useMockMutation();
+  const createReviewMutation = trpc.reviews.create.useMutation();
+  const markHelpfulMutation = trpc.reviews.markHelpful.useMutation();
 
   const [, setReviewKey] = useState(0);
 
@@ -195,18 +196,23 @@ export default function PlaceDetail() {
 
   function handleReviewSubmit(rating: number, comment: string) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
-    createReview.mutate(
+    createReviewMutation.mutate(
       { placeId, rating, comment },
       {
         onSuccess: () => {
           setReviewKey(k => k + 1);
+          refetchReviews();
         },
       }
     );
   }
 
-  function handleMarkHelpful(_reviewId: number) {
-    markHelpful.mutate(_reviewId, {});
+  function handleMarkHelpful(reviewId: number) {
+    markHelpfulMutation.mutate(reviewId, {
+      onSuccess: () => {
+        refetchReviews();
+      },
+    });
   }
 
   if (isLoading) {

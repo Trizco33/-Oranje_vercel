@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { LogOut, FileText, Settings, BookOpen, Globe, Menu, X, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import CMSEditor from "./CMSEditor";
@@ -14,6 +15,7 @@ const CMS_NAV = [
 ];
 
 export default function CMSDashboard() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("content");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -33,8 +35,8 @@ export default function CMSDashboard() {
   const handleLogout = async () => {
     try {
       const apiBase = import.meta.env.VITE_API_URL || "";
-      await fetch(`${apiBase}/api/cms/logout`, { method: "POST" });
-      window.location.href = "/admin/login";
+      await fetch(`${apiBase}/api/cms/logout`, { method: "POST", credentials: "include" });
+      navigate("/admin/login");
     } catch (error) {
       toast.error("Erro ao desconectar");
     }
@@ -167,13 +169,13 @@ export default function CMSDashboard() {
               {activeLabel}
             </h1>
           </div>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="admin-btn-secondary"
             style={{ padding: '8px 16px', fontSize: '0.8125rem', textDecoration: 'none' }}
           >
             Ver Site
-          </a>
+          </Link>
         </header>
 
         {/* Content */}

@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 export default function CMSLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const utils = trpc.useUtils();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,11 +20,14 @@ export default function CMSLogin() {
       const response = await fetch(`${apiBase}/api/cms/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
         toast.success("Login realizado com sucesso!");
+        // Invalidate trpc auth cache
+        await utils.auth.me.invalidate();
         navigate("/admin");
       } else {
         toast.error("Email ou senha incorretos");

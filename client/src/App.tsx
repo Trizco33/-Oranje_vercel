@@ -34,6 +34,7 @@ const DriverDetail = lazy(() => import("./pages/DriverDetail"));
 const Guide = lazy(() => import("./pages/Guide"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 const Partnerships = lazy(() => import("./pages/Partnerships"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const CMSLogin = lazy(() => import("./pages/CMSLogin"));
 const CMSDashboard = lazy(() => import("./pages/CMSDashboard"));
 const CMSEditor = lazy(() => import("./pages/CMSEditor"));
@@ -155,14 +156,15 @@ function Router() {
         <Route path="/guia" element={<Suspense fallback={<LoadingFallback />}><Guide /></Suspense>} />
         <Route path="/guia/:slug" element={<Suspense fallback={<LoadingFallback />}><GuideDetail /></Suspense>} />
         <Route path="/parcerias" element={<Suspense fallback={<LoadingFallback />}><Partnerships /></Suspense>} />
-        <Route path="/admin/login" element={<Suspense fallback={<LoadingFallback />}><CMSLogin /></Suspense>} />
+        <Route path="/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
+        <Route path="/admin/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
         <Route path="/admin" element={<Suspense fallback={<LoadingFallback />}><CMSDashboard /></Suspense>} />
         <Route path="/admin/conteudo" element={<Suspense fallback={<LoadingFallback />}><CMSEditor /></Suspense>} />
         <Route path="/app/admin" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><Admin /></AdminGuard></Suspense>} />
         <Route path="/app/adm" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><Admin /></AdminGuard></Suspense>} />
         <Route path="/adm" element={<Suspense fallback={<LoadingFallback />}><CMSDashboard /></Suspense>} />
         <Route path="/adm/conteudo" element={<Suspense fallback={<LoadingFallback />}><CMSEditor /></Suspense>} />
-        <Route path="/adm/login" element={<Suspense fallback={<LoadingFallback />}><CMSLogin /></Suspense>} />
+        <Route path="/adm/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -157,8 +157,8 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
 
           {user?.role === "admin" && (
             <Link
-              to="/app/admin"
-              aria-label="Painel de administração"
+              to="/app/adm"
+              aria-label="Painel de administração do App"
               style={{ ...iconBtnStyle, textDecoration: "none" }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.55)")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(13, 74, 64, 0.35)")}

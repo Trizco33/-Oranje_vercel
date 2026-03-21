@@ -124,10 +124,10 @@ export default function Admin() {
             <OranjeLogoImg size={28} showText={false} />
             <div>
               <p style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', color: '#E65100' }}>
-                ADMIN
+                ADMIN DO APP
               </p>
               <p style={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.5)' }}>
-                Painel de Gestão
+                Lugares, Eventos, Roteiros
               </p>
             </div>
           </div>
@@ -275,18 +275,27 @@ export default function Admin() {
               </h1>
             </div>
           </div>
-          <button
-            onClick={() => navigate("/")}
-            className="admin-btn-secondary"
-            style={{ padding: '8px 16px', fontSize: '0.8125rem' }}
-          >
-            Ver Site
-          </button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => navigate("/app")}
+              className="admin-btn-secondary"
+              style={{ padding: '8px 16px', fontSize: '0.8125rem' }}
+            >
+              ← Voltar ao App
+            </button>
+            <button
+              onClick={() => navigate("/")}
+              className="admin-btn-secondary"
+              style={{ padding: '8px 16px', fontSize: '0.8125rem' }}
+            >
+              Ver Site
+            </button>
+          </div>
         </header>
 
         {/* Content area */}
         <div className="admin-content">
-          {activeTab === "dashboard" && <AdminDashboard />}
+          {activeTab === "dashboard" && <AdminDashboard onNavigate={setActiveTab} />}
           {activeTab === "places" && <AdminPlaces />}
           {activeTab === "events" && <AdminEvents />}
           {activeTab === "vouchers" && <AdminVouchers />}
@@ -312,14 +321,22 @@ export default function Admin() {
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-function AdminDashboard() {
+function AdminDashboard({ onNavigate }: { onNavigate?: (tab: AdminTab) => void }) {
   const { data: stats } = trpc.admin.stats.useQuery();
 
   const cards = [
-    { label: "Lugares", value: stats?.places ?? 0, icon: Building2, color: "#E65100" },
-    { label: "Eventos", value: stats?.events ?? 0, icon: CalendarDays, color: "#0D4A40" },
-    { label: "Parceiros", value: stats?.partners ?? 0, icon: Tag, color: "#004D40" },
-    { label: "Usuários", value: stats?.users ?? 0, icon: Users, color: "#7C3AED" },
+    { label: "Lugares", value: stats?.places ?? 0, icon: Building2, color: "#E65100", tab: "places" as AdminTab },
+    { label: "Eventos", value: stats?.events ?? 0, icon: CalendarDays, color: "#0D4A40", tab: "events" as AdminTab },
+    { label: "Parceiros", value: stats?.partners ?? 0, icon: Tag, color: "#004D40", tab: "partners" as AdminTab },
+    { label: "Usuários", value: stats?.users ?? 0, icon: Users, color: "#7C3AED", tab: "logs" as AdminTab },
+  ];
+
+  const quickActions = [
+    { label: "Gerenciar lugares", icon: Building2, tab: "places" as AdminTab },
+    { label: "Gerenciar eventos", icon: CalendarDays, tab: "events" as AdminTab },
+    { label: "Gerenciar roteiros", icon: Map, tab: "routes" as AdminTab },
+    { label: "Gerenciar categorias", icon: Tag, tab: "categories" as AdminTab },
+    { label: "Gerenciar artigos", icon: Edit, tab: "articles" as AdminTab },
   ];
 
   return (
@@ -328,9 +345,12 @@ function AdminDashboard() {
         fontSize: '1.25rem',
         fontWeight: 700,
         color: '#00251A',
-        marginBottom: '20px',
+        marginBottom: '8px',
         fontFamily: "'Montserrat', system-ui, sans-serif",
-      }}>Visão Geral</h2>
+      }}>Visão Geral — Admin do App</h2>
+      <p style={{ fontSize: '0.8125rem', color: '#718096', marginBottom: '20px' }}>
+        Gerencie lugares, eventos, roteiros, categorias e todo conteúdo do app Oranje.
+      </p>
 
       <div style={{
         display: 'grid',
@@ -341,7 +361,12 @@ function AdminDashboard() {
         {cards.map(card => {
           const Icon = card.icon;
           return (
-            <div key={card.label} className="admin-stat-card">
+            <div
+              key={card.label}
+              className="admin-stat-card"
+              style={{ cursor: 'pointer' }}
+              onClick={() => onNavigate?.(card.tab)}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                 <div style={{
                   width: '40px',
@@ -368,22 +393,22 @@ function AdminDashboard() {
           <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#1A1A1A' }}>Ações Rápidas</h3>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {[
-            { label: "Adicionar novo lugar", icon: Building2 },
-            { label: "Criar evento", icon: CalendarDays },
-            { label: "Gerar imagem com IA", icon: ImagePlus },
-          ].map(action => {
+          {quickActions.map(action => {
             const Icon = action.icon;
             return (
-              <div key={action.label} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                border: '1px solid rgba(0,37,26,0.05)',
-              }}>
+              <div
+                key={action.label}
+                onClick={() => onNavigate?.(action.tab)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  border: '1px solid rgba(0,37,26,0.05)',
+                }}
+              >
                 <Icon size={16} style={{ color: '#E65100' }} />
                 <span style={{ flex: 1, fontSize: '0.875rem', color: '#1A1A1A', fontWeight: 500 }}>{action.label}</span>
                 <ChevronRight size={14} style={{ color: '#E65100' }} />

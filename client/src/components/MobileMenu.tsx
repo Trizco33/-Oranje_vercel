@@ -1,18 +1,26 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { X, Menu, Compass, Calendar, Heart, Map, Search, Sparkles } from "lucide-react";
+import { X, Menu, Compass, Calendar, Heart, Map, Search, Sparkles, Settings } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
-  const menuItems = [
-    { label: "Explorar", href: "/app/explorar", icon: Compass },
-    { label: "Buscar", href: "/app/busca", icon: Search },
-    { label: "Eventos", href: "/app/eventos", icon: Calendar },
-    { label: "Favoritos", href: "/app/favoritos", icon: Heart },
-    { label: "Roteiros", href: "/app/roteiros", icon: Map },
-  ];
+  const menuItems = useMemo(() => {
+    const items = [
+      { label: "Explorar", href: "/app/explorar", icon: Compass },
+      { label: "Buscar", href: "/app/busca", icon: Search },
+      { label: "Eventos", href: "/app/eventos", icon: Calendar },
+      { label: "Favoritos", href: "/app/favoritos", icon: Heart },
+      { label: "Roteiros", href: "/app/roteiros", icon: Map },
+    ];
+    if (user?.role === "admin") {
+      items.push({ label: "⚙️ Admin do App", href: "/app/adm", icon: Settings });
+    }
+    return items;
+  }, [user?.role]);
 
   const close = useCallback(() => setIsOpen(false), []);
 

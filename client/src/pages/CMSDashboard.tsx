@@ -64,10 +64,10 @@ export default function CMSDashboard() {
             <img src="/logo.png" alt="Oranje" style={{ height: '28px', width: 'auto' }} />
             <div>
               <p style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', color: '#E65100' }}>
-                CMS
+                CMS DO SITE
               </p>
               <p style={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.5)' }}>
-                Gestão de Conteúdo
+                Blog, Páginas, SEO
               </p>
             </div>
           </div>

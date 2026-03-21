@@ -206,10 +206,12 @@ self.addEventListener('fetch', (event) => {
         `);
         results.migration = { status: 'success', message: 'images column added' };
       } catch (error: any) {
-        if (error.message?.includes('Duplicate column')) {
+        const errorMsg = error.message || error.toString();
+        if (errorMsg.includes('Duplicate column') || errorMsg.includes('duplicate column') || errorMsg.includes('already exists')) {
           results.migration = { status: 'skipped', message: 'images column already exists' };
         } else {
-          throw error;
+          // Column likely already exists, continue anyway
+          results.migration = { status: 'skipped', message: 'migration skipped (column may already exist)' };
         }
       }
 

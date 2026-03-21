@@ -490,7 +490,7 @@ self.addEventListener('fetch', (event) => {
   // ── Seed Places Endpoint ─────────────────────────────────────────────────
   app.get("/api/seed-places", async (req, res) => {
     const { key } = req.query;
-    if (key !== process.env.ADMIN_KEY && key !== 'temp-seed-2026-oranje') {
+    if (key !== process.env.ADMIN_KEY) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 

@@ -646,21 +646,48 @@ self.addEventListener('fetch', (event) => {
         });
       }
 
-      // Create admin user
-      await db.insert(users).values({
-        openId: 'admin-owner',
-        email: adminEmail,
-        name: adminName,
-        role: 'admin',
-        lastSignedIn: new Date()
-      });
+      // Create admin user using upsert to handle duplicates
+      try {
+        await db.insert(users).values({
+          openId: 'admin-owner',
+          email: adminEmail,
+          name: adminName,
+          role: 'admin',
+          lastSignedIn: new Date()
+        }).onDuplicateKeyUpdate({
+          set: {
+            email: adminEmail,
+            name: adminName,
+            role: 'admin',
+            lastSignedIn: new Date()
+          }
+        });
 
-      return res.json({
-        success: true,
-        message: 'Admin user created successfully',
-        user: { email: adminEmail, name: adminName },
-        note: 'Login with ANY password (temporary auth system)'
-      });
+        return res.json({
+          success: true,
+          message: 'Admin user created/updated successfully',
+          user: { email: adminEmail, name: adminName },
+          note: 'Login with ANY password (temporary auth system)'
+        });
+      } catch (insertError: any) {
+        // If insert fails, try to find and update the existing user
+        const existingByOpenId = await db.select().from(users).where(eq(users.openId, 'admin-owner')).limit(1);
+        if (existingByOpenId.length > 0) {
+          await db.update(users).set({
+            email: adminEmail,
+            name: adminName,
+            role: 'admin'
+          }).where(eq(users.id, existingByOpenId[0].id));
+          
+          return res.json({
+            success: true,
+            message: 'Admin user updated successfully',
+            user: { email: adminEmail, name: adminName },
+            note: 'Login with ANY password (temporary auth system)'
+          });
+        }
+        throw insertError;
+      }
 
     } catch (error: any) {
       console.error('Create admin error:', error);

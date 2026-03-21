@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useArticlesListPublished, useArticleCategories } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { DSButton } from "@/components/ds/Button";
 import { DSCard } from "@/components/ds/Card";
 import { DSBadge } from "@/components/ds/Badge";
 
 export default function SiteBlog() {
-  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
 
   const { data: articles = [] } = useArticlesListPublished({
@@ -92,7 +91,7 @@ export default function SiteBlog() {
               {articles.map((article) => {
                 if (!article) return null;
                 return (
-                  <div key={article.id} onClick={() => navigate(`/blog/${article.slug}`)} style={{ cursor: "pointer" }}>
+                  <Link key={article.id} to={`/blog/${article.slug}`} style={{ textDecoration: "none", display: "block" }}>
                     <DSCard
                       variant="elevated"
                       interactive
@@ -127,7 +126,7 @@ export default function SiteBlog() {
                         </DSButton>
                       </div>
                     </DSCard>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

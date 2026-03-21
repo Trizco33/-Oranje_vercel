@@ -150,6 +150,10 @@ self.addEventListener('fetch', (event) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
+  // Image migration endpoint (one-time use)
+  const migrateImagesRouter = await import("../migrate-images");
+  app.use("/api", migrateImagesRouter.default);
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   

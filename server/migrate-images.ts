@@ -4,7 +4,7 @@
  */
 
 import express, { Router } from 'express';
-import { db } from './db';
+import { getDb } from './db';
 import { sql } from 'drizzle-orm';
 import { places } from '../drizzle/schema';
 
@@ -19,6 +19,11 @@ router.get('/migrate-images', async (req, res) => {
   }
 
   try {
+    const db = await getDb();
+    if (!db) {
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+
     const results = {
       migration: { status: 'pending', message: '' },
       seed: { status: 'pending', updated: 0, details: [] }

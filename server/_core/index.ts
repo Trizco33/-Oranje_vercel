@@ -487,6 +487,115 @@ self.addEventListener('fetch', (event) => {
     }
   });
 
+  // ── Seed Places Endpoint ─────────────────────────────────────────────────
+  app.get("/api/seed-places", async (req, res) => {
+    const { key } = req.query;
+    if (key !== process.env.ADMIN_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const { getDb } = await import("../db");
+      const { categories, places } = await import("../../drizzle/schema");
+      const { sql, eq } = await import("drizzle-orm");
+
+      const db = await getDb();
+      if (!db) return res.status(500).json({ error: 'DB connection failed' });
+
+      // Get category map
+      const allCats = await db.select().from(categories);
+      const catMap: Record<string, number> = {};
+      for (const c of allCats) catMap[c.slug] = c.id;
+
+      const newPlaces = [
+        // PIZZARIAS
+        { name: "Pizzaria Serrana", slug: "pizzaria-serrana", categorySlug: "pizzarias", shortDesc: "Pizzas artesanais com ingredientes selecionados", address: "Rua das Flores, 120 - Holambra", rating: 4.6, coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/23/d8/7f/a1/caption.jpg?w=1100&h=1100&s=1", images: ["https://dynamic-media-cdn.tripadvisor.com/media/photo-o/23/d8/7f/a1/caption.jpg?w=1100&h=1100&s=1", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800", "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800"] },
+        { name: "Dr Pizza Holambra", slug: "dr-pizza-holambra", categorySlug: "pizzarias", shortDesc: "Pizzas tradicionais e especiais", address: "Av. dos Holandeses, 45 - Holambra", rating: 4.4, coverImage: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800", images: ["https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800", "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=800"] },
+        { name: "Forno & Massa", slug: "forno-e-massa", categorySlug: "pizzarias", shortDesc: "Forno a lenha e massas frescas", address: "Rua dos Cravos, 88 - Holambra", rating: 4.5, coverImage: "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800", images: ["https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800", "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=800"] },
+        // BARES
+        { name: "Seo Carneiro Bar", slug: "seo-carneiro-bar", categorySlug: "bares", shortDesc: "Bar tradicional com petiscos holandeses", address: "Rua Dória, 200 - Holambra", rating: 4.3, coverImage: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800", images: ["https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800", "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=800"] },
+        { name: "Deck 237", slug: "deck-237", categorySlug: "bares", shortDesc: "Bar e restaurante à beira do lago", address: "Rua do Lago, 237 - Holambra", rating: 4.5, coverImage: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800", images: ["https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800", "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?w=800"] },
+        { name: "Quintal Yah", slug: "quintal-yah", categorySlug: "bares", shortDesc: "Ambiente descontraído com música ao vivo", address: "Rua das Tulipas, 55 - Holambra", rating: 4.2, coverImage: "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800", images: ["https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800", "https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?w=800"] },
+        // HOTÉIS
+        { name: "Garden Hotel Holambra", slug: "garden-hotel-holambra", categorySlug: "hoteis", shortDesc: "Hotel com jardins holandeses e piscina", address: "Estrada Municipal, km 3 - Holambra", rating: 4.7, coverImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800", images: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800", "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800", "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800"] },
+        { name: "Villa de Holanda", slug: "villa-de-holanda", categorySlug: "hoteis", shortDesc: "Parque hotel com lazer completo", address: "Rod. SP-107, km 5 - Holambra", rating: 4.8, coverImage: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800", images: ["https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800", "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800"] },
+        { name: "Shellter Hotel", slug: "shellter-hotel", categorySlug: "hoteis", shortDesc: "Hotel boutique moderno", address: "Rua Principal, 300 - Holambra", rating: 4.5, coverImage: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800", images: ["https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800", "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800"] },
+        { name: "Pousada Rancho da Cachaça", slug: "pousada-rancho-cachaca", categorySlug: "hoteis", shortDesc: "Pousada rural com charme", address: "Estrada Rural, s/n - Holambra", rating: 4.4, coverImage: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800", images: ["https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800", "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800"] },
+        { name: "Parque Hotel Holambra", slug: "parque-hotel-holambra", categorySlug: "hoteis", shortDesc: "Hotel com área verde e lazer", address: "Av. das Flores, 500 - Holambra", rating: 4.6, coverImage: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800", images: ["https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800", "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800"] },
+        // PARQUES
+        { name: "Parque Van Gogh", slug: "parque-van-gogh", categorySlug: "parques", shortDesc: "Parque temático com jardins inspirados em Van Gogh", address: "Estrada Municipal, km 2 - Holambra", rating: 4.8, coverImage: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800", images: ["https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Van_Gogh_-_Paar_im_Park_von_Arles_-_Der_Garten_des_Dichters_III.jpeg/330px-Van_Gogh_-_Paar_im_Park_von_Arles_-_Der_Garten_des_Dichters_III.jpeg", "https://upload.wikimedia.org/wikipedia/commons/1/16/Vincent_van_Gogh_-_Garden_at_Arles_-_Google_Art_Project.jpg"] },
+        { name: "Parque Bloemen", slug: "parque-bloemen", categorySlug: "parques", shortDesc: "Jardim de rosas e flores holandesas", address: "Rua das Rosas, s/n - Holambra", rating: 4.7, coverImage: "https://i.pinimg.com/474x/d0/bf/50/d0bf5018f4760c95ad30366e19901e51.jpg", images: ["https://i.ytimg.com/vi/6HmU6PqRnsw/sddefault.jpg", "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800"] },
+        { name: "Cidade das Crianças", slug: "cidade-das-criancas", categorySlug: "parques", shortDesc: "Parque infantil com atividades educativas", address: "Av. da Juventude, 100 - Holambra", rating: 4.5, coverImage: "https://images.unsplash.com/photo-1596997000103-e597b3ca50df?w=800", images: ["https://images.unsplash.com/photo-1596997000103-e597b3ca50df?w=800", "https://i.ytimg.com/vi/Mib-dv72bn4/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCIT05EZ3sAV6nrIIWAWY9lv7vsuA"] },
+        { name: "Parque Vitória", slug: "parque-vitoria", categorySlug: "parques", shortDesc: "Área verde com trilhas e lago", address: "Estrada da Vitória, km 1 - Holambra", rating: 4.6, coverImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800", images: ["https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800", "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800"] },
+        { name: "Nossa Prainha", slug: "nossa-prainha", categorySlug: "parques", shortDesc: "Praia artificial com área de lazer", address: "Rua do Lago, 50 - Holambra", rating: 4.4, coverImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800", images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800", "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800"] },
+      ];
+
+      const results: any[] = [];
+
+      for (const p of newPlaces) {
+        const catId = catMap[p.categorySlug];
+        if (!catId) {
+          results.push({ name: p.name, status: 'skipped', reason: `category ${p.categorySlug} not found` });
+          continue;
+        }
+
+        // Check if place already exists
+        const existing = await db.select().from(places).where(sql`name = ${p.name} AND categoryId = ${catId}`);
+        if (existing.length > 0) {
+          // Update images
+          await db.update(places).set({
+            coverImage: p.coverImage,
+            images: JSON.stringify(p.images),
+          }).where(eq(places.id, existing[0].id));
+          results.push({ name: p.name, status: 'updated', id: existing[0].id });
+        } else {
+          const [inserted] = await db.insert(places).values({
+            name: p.name,
+            categoryId: catId,
+            shortDesc: p.shortDesc,
+            address: p.address,
+            rating: p.rating,
+            coverImage: p.coverImage,
+            images: JSON.stringify(p.images),
+            status: 'active',
+            isFeatured: false,
+            isRecommended: false,
+            isPartner: false,
+          });
+          results.push({ name: p.name, status: 'created', id: (inserted as any).insertId });
+        }
+      }
+
+      // Also update existing places with images
+      const existingUpdates = [
+        { id: 1, coverImage: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800", images: ["https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800", "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800", "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800"] },
+        { id: 2, coverImage: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800", images: ["https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800", "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800", "https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800"] },
+        { id: 3, coverImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800", images: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800", "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800"] },
+        { id: 4, coverImage: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800", images: ["https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800", "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=800"] },
+        { id: 5, coverImage: "https://images.unsplash.com/photo-1742845918430-c6093f93f740?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8NHwzMTcwOTl8fGVufDB8fHx8fA%3D%3D", images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGFuZHNjYXBlfGVufDB8fDB8fHww", "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800", "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dHJhdmVsJTIwbmF0dXJlfGVufDB8fDB8fHww"] },
+        { id: 6, coverImage: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800", images: ["https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800", "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800"] },
+        { id: 7, coverImage: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=800", images: ["https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=800", "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800"] },
+      ];
+
+      for (const u of existingUpdates) {
+        try {
+          await db.update(places).set({
+            coverImage: u.coverImage,
+            images: JSON.stringify(u.images),
+          }).where(eq(places.id, u.id));
+          results.push({ name: `existing-${u.id}`, status: 'images-updated' });
+        } catch (e: any) {
+          results.push({ name: `existing-${u.id}`, status: 'error', error: e.message });
+        }
+      }
+
+      return res.json({ success: true, results, totalProcessed: results.length });
+    } catch (error: any) {
+      console.error('Seed error:', error);
+      return res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   

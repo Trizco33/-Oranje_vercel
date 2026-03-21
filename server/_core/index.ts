@@ -150,6 +150,66 @@ self.addEventListener('fetch', (event) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
+  // Check and create categories endpoint
+  app.get("/api/check-categories", async (req, res) => {
+    const { key } = req.query;
+    
+    if (key !== process.env.ADMIN_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const { getDb } = await import("../db");
+      const { categories } = await import("../../drizzle/schema");
+      
+      const db = await getDb();
+      if (!db) {
+        return res.status(500).json({ error: 'Database connection failed' });
+      }
+
+      // Get all categories
+      const allCategories = await db.select().from(categories);
+      
+      // Required categories
+      const requiredCategories = [
+        { name: 'Restaurantes', slug: 'restaurantes', icon: '🍽️' },
+        { name: 'Pizzarias', slug: 'pizzarias', icon: '🍕' },
+        { name: 'Bares', slug: 'bares', icon: '🍺' },
+        { name: 'Cafés', slug: 'cafes', icon: '☕' },
+        { name: 'Hotéis', slug: 'hoteis', icon: '🏨' },
+        { name: 'Parques', slug: 'parques', icon: '🌳' },
+        { name: 'Pontos turísticos', slug: 'pontos-turisticos', icon: '📍' }
+      ];
+
+      const created = [];
+      const existing = [];
+
+      for (const cat of requiredCategories) {
+        const found = allCategories.find(c => c.slug === cat.slug);
+        if (!found) {
+          await db.insert(categories).values(cat);
+          created.push(cat.name);
+        } else {
+          existing.push(cat.name);
+        }
+      }
+
+      return res.json({
+        success: true,
+        categories: allCategories,
+        created,
+        existing,
+        total: allCategories.length + created.length
+      });
+    } catch (error: any) {
+      console.error('Category check error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+
   // Image migration endpoint (one-time use)
   app.get("/api/migrate-images", async (req, res) => {
     const { key } = req.query;

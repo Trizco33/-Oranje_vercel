@@ -12,8 +12,12 @@ export const CATEGORY_SLUGS = [
   "pizzarias",
   "bares",
   "cafes",
+  "hoteis",
+  "parques",
   "pontos-turisticos",
   "hospedagem",
+  "compras",
+  "bares-drinks",
   "eventos",
 ] as const;
 
@@ -27,8 +31,12 @@ export const CATEGORY_COVERS: Record<CategorySlug, string> = {
   pizzarias: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=200&fit=crop",
   bares: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=200&fit=crop",
   cafes: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=200&fit=crop",
-  "pontos-turisticos": "https://images.unsplash.com/photo-1490750967868-88df5691cc4c?w=400&h=200&fit=crop",
+  hoteis: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&h=200&fit=crop",
+  parques: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400&h=200&fit=crop",
+  "pontos-turisticos": "https://upload.wikimedia.org/wikipedia/commons/9/92/Times_Square_%28Tall%29.jpg",
   hospedagem: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=200&fit=crop",
+  compras: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=200&fit=crop",
+  "bares-drinks": "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&h=200&fit=crop",
   eventos: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=200&fit=crop",
 };
 
@@ -36,13 +44,17 @@ export const CATEGORY_COVERS: Record<CategorySlug, string> = {
  * Mapa único de ícones (emojis)
  */
 export const CATEGORY_ICONS: Record<CategorySlug, string> = {
-  restaurantes: "🍽️",
-  pizzarias: "🍕",
-  bares: "🍷",
-  cafes: "☕",
-  "pontos-turisticos": "🌷",
-  hospedagem: "🏨",
-  eventos: "🎪",
+  restaurantes: "\u{1F37D}\u{FE0F}",
+  pizzarias: "\u{1F355}",
+  bares: "\u{1F377}",
+  cafes: "\u2615",
+  hoteis: "\u{1F3E8}",
+  parques: "\u{1F333}",
+  "pontos-turisticos": "\u{1F337}",
+  hospedagem: "\u{1F3E8}",
+  compras: "\u{1F6CD}\u{FE0F}",
+  "bares-drinks": "\u{1F378}",
+  eventos: "\u{1F3AA}",
 };
 
 /**
@@ -103,9 +115,9 @@ export function getCategorycover(slug: string | null | undefined): string {
  * Obtém ícone para um slug (com fallback)
  */
 export function getCategoryIcon(slug: string | null | undefined): string {
-  if (!slug) return "📍";
+  if (!slug) return "\u{1F4CD}";
   const normalized = normalizeSlug(slug);
-  if (!normalized) return "📍";
+  if (!normalized) return "\u{1F4CD}";
   return CATEGORY_ICONS[normalized];
 }
 

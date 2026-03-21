@@ -599,6 +599,63 @@ self.addEventListener('fetch', (event) => {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   
+  // Create admin user endpoint (protected by ADMIN_KEY)
+  app.post("/api/create-admin", async (req, res) => {
+    const { key, email, name } = req.body;
+    
+    if (key !== process.env.ADMIN_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const { getDb } = await import("../db");
+      const { users } = await import("../../drizzle/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      const db = await getDb();
+      if (!db) {
+        return res.status(500).json({ error: 'Database connection failed' });
+      }
+
+      const adminEmail = email || 'admin@oranjeapp.com.br';
+      const adminName = name || 'Admin Oranje';
+
+      // Check if admin already exists
+      const existing = await db.select().from(users).where(eq(users.email, adminEmail)).limit(1);
+      
+      if (existing.length > 0) {
+        return res.json({
+          success: true,
+          message: 'Admin user already exists',
+          user: { id: existing[0].id, email: existing[0].email, name: existing[0].name }
+        });
+      }
+
+      // Create admin user
+      await db.insert(users).values({
+        openId: 'admin-owner',
+        email: adminEmail,
+        name: adminName,
+        role: 'admin',
+        lastSignedIn: new Date()
+      });
+
+      return res.json({
+        success: true,
+        message: 'Admin user created successfully',
+        user: { email: adminEmail, name: adminName },
+        note: 'Login with ANY password (temporary auth system)'
+      });
+
+    } catch (error: any) {
+      console.error('Create admin error:', error);
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+  
   // CMS REST endpoints
   app.post("/api/cms/login", async (req, res) => {
     try {

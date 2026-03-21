@@ -3,12 +3,12 @@
  * Call this endpoint once after deployment: GET /api/migrate-images?key=ADMIN_KEY
  */
 
-import { Router } from 'express';
-import { db } from './db';
+import express, { Router } from 'express';
+import { db } from './db.js';
 import { sql } from 'drizzle-orm';
-import { places } from '../drizzle/schema';
+import { places } from '../drizzle/schema.js';
 
-const router = Router();
+const router = express.Router();
 
 router.get('/migrate-images', async (req, res) => {
   const { key } = req.query;

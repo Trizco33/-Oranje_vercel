@@ -284,6 +284,16 @@
   }
   .scroll-x::-webkit-scrollbar { display: none; }
 
+  /* Hide scrollbar for image gallery */
+  .gallery-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .gallery-scroll::-webkit-scrollbar { display: none; }
+
   .shimmer {
     background: linear-gradient(90deg, rgba(245,245,220,0.02) 25%, rgba(245,245,220,0.06) 50%, rgba(245,245,220,0.02) 75%);
     background-size: 200% 100%;

@@ -1,15 +1,161 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
 import { usePlaceById, useFavorites, useReviewsByPlace, useMockMutation } from "@/hooks/useMockData";
-import { MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2, Star, RefreshCw } from "lucide-react";
+import { MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2, Star, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewForm } from "@/components/ReviewForm";
 import { DSButton, DSBadge } from "@/components/ds";
+import { getAllPlaceImages, getPlaceImage } from "@/components/PlaceCard";
+import { getCategoryFallbackImage } from "@/constants/placeImages";
 
+/* ─── Image Gallery Component ───────────────────────────────── */
+function ImageGallery({ images, placeName }: { images: string[]; placeName: string }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [imgErrors, setImgErrors] = useState<Set<number>>(new Set());
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const validImages = images.filter((_, i) => !imgErrors.has(i));
+  const showNavigation = validImages.length > 1;
+
+  function goTo(index: number) {
+    setCurrentIndex(index);
+    if (scrollRef.current) {
+      const child = scrollRef.current.children[index] as HTMLElement;
+      if (child) {
+        scrollRef.current.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
+      }
+    }
+  }
+
+  function handleScroll() {
+    if (!scrollRef.current) return;
+    const { scrollLeft, clientWidth } = scrollRef.current;
+    const newIndex = Math.round(scrollLeft / clientWidth);
+    if (newIndex !== currentIndex && newIndex >= 0 && newIndex < images.length) {
+      setCurrentIndex(newIndex);
+    }
+  }
+
+  function handleImageError(index: number) {
+    setImgErrors(prev => new Set(prev).add(index));
+  }
+
+  return (
+    <div className="relative w-full" style={{ height: 300 }}>
+      {/* Scrollable image strip */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="gallery-scroll"
+        style={{
+          display: "flex",
+          height: "100%",
+        }}
+      >
+        {images.map((src, i) => (
+          <div
+            key={i}
+            style={{
+              flex: "0 0 100%",
+              scrollSnapAlign: "start",
+              height: "100%",
+              display: imgErrors.has(i) ? "none" : "block",
+            }}
+          >
+            <img
+              src={src}
+              alt={`${placeName} - Foto ${i + 1}`}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              loading={i === 0 ? "eager" : "lazy"}
+              onError={() => handleImageError(i)}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Gradient overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(0,37,26,0.7), transparent 60%)" }}
+      />
+
+      {/* Navigation arrows (desktop) */}
+      {showNavigation && (
+        <>
+          <button
+            onClick={() => goTo(Math.max(0, currentIndex - 1))}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+            style={{
+              background: "rgba(0,37,26,0.6)",
+              backdropFilter: "blur(4px)",
+              opacity: currentIndex === 0 ? 0.3 : 0.9,
+              display: currentIndex === 0 ? "none" : "flex",
+            }}
+          >
+            <ChevronLeft size={16} color="#fff" />
+          </button>
+          <button
+            onClick={() => goTo(Math.min(validImages.length - 1, currentIndex + 1))}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+            style={{
+              background: "rgba(0,37,26,0.6)",
+              backdropFilter: "blur(4px)",
+              opacity: currentIndex >= validImages.length - 1 ? 0.3 : 0.9,
+              display: currentIndex >= validImages.length - 1 ? "none" : "flex",
+            }}
+          >
+            <ChevronRight size={16} color="#fff" />
+          </button>
+        </>
+      )}
+
+      {/* Dot indicators */}
+      {showNavigation && (
+        <div
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5"
+          style={{ zIndex: 2 }}
+        >
+          {validImages.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              style={{
+                width: i === currentIndex ? 16 : 6,
+                height: 6,
+                borderRadius: 3,
+                background: i === currentIndex ? "var(--ds-color-accent)" : "rgba(255,255,255,0.5)",
+                border: "none",
+                padding: 0,
+                transition: "all 0.2s ease",
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Image counter */}
+      {showNavigation && (
+        <div
+          className="absolute bottom-3 right-3 px-2 py-1 rounded-full text-xs font-medium"
+          style={{
+            background: "rgba(0,37,26,0.6)",
+            color: "#fff",
+            backdropFilter: "blur(4px)",
+            zIndex: 2,
+          }}
+        >
+          {currentIndex + 1}/{validImages.length}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Place Detail Page ─────────────────────────────────────── */
 export default function PlaceDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -68,7 +214,7 @@ export default function PlaceDetail() {
       <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
         <OranjeHeader showBack title="Carregando..." />
         <div style={{ paddingBottom: 80 }}>
-          <div className="w-full animate-pulse" style={{ height: 280, background: "var(--ds-color-bg-secondary)" }} />
+          <div className="w-full animate-pulse" style={{ height: 300, background: "var(--ds-color-bg-secondary)" }} />
           <div className="px-4 py-6 space-y-4">
             <div className="animate-pulse rounded-lg" style={{ height: 32, width: "75%", background: "var(--ds-color-bg-secondary)" }} />
             <div className="space-y-2">
@@ -83,7 +229,7 @@ export default function PlaceDetail() {
     );
   }
 
-  // Network/API error - show retry option instead of "not found"
+  // Network/API error
   if (error && !place) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }} className="flex flex-col">
@@ -131,7 +277,23 @@ export default function PlaceDetail() {
     );
   }
 
-  const imageUrl = place.coverImage || "https://placehold.co/1200x600/e2e8f0/1e293b?text=Holambra";
+  // Collect all images: DB photos + place_images constant
+  const allImages = getAllPlaceImages({
+    name: place.name,
+    coverImage: place.coverImage,
+    images: place.images,
+    categoryName: place.categoryName,
+  });
+
+  // Also add photos from the placePhotos relation if present
+  if (place.photos && Array.isArray(place.photos)) {
+    for (const photo of place.photos) {
+      if (photo.url && !allImages.includes(photo.url)) {
+        allImages.push(photo.url);
+      }
+    }
+  }
+
   const mapsUrl = place.lat && place.lng ? `https://www.google.com/maps/search/${place.lat},${place.lng}` : null;
   const whatsappUrl = place.whatsapp
     ? `https://wa.me/${place.whatsapp.replace(/\D/g, '')}?text=Olá%20${encodeURIComponent(place.name)}%2C%20gostaria%20de%20informações`
@@ -146,17 +308,16 @@ export default function PlaceDetail() {
       <OranjeHeader showBack title={place.name} />
 
       <div style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
-        {/* Hero Image */}
-        <div className="relative w-full" style={{ height: 280 }}>
-          <img src={imageUrl} alt={place.name} className="w-full h-full object-cover" loading="lazy" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,37,26,0.7), transparent 60%)" }} />
+        {/* Hero Image Gallery */}
+        <div className="relative">
+          <ImageGallery images={allImages} placeName={place.name} />
 
-          <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+          <div className="absolute top-4 left-4 flex flex-wrap gap-2" style={{ zIndex: 3 }}>
             {place.isFeatured && <DSBadge variant="accent">Destaque</DSBadge>}
             {place.isRecommended && !place.isFeatured && <DSBadge variant="success">★ ORANJE</DSBadge>}
           </div>
 
-          <div className="absolute top-4 right-4 flex gap-2">
+          <div className="absolute top-4 right-4 flex gap-2" style={{ zIndex: 3 }}>
             <button onClick={handleShare} className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(0,37,26,0.6)", backdropFilter: "blur(8px)" }}>
               <Share2 size={16} style={{ color: "var(--ds-color-text-primary)" }} />
             </button>
@@ -166,7 +327,7 @@ export default function PlaceDetail() {
           </div>
 
           {place.rating && place.rating > 0 && (
-            <div className="absolute bottom-4 right-4 px-3 py-2 rounded-xl flex items-center gap-1" style={{ background: "rgba(0,37,26,0.7)", backdropFilter: "blur(8px)" }}>
+            <div className="absolute bottom-10 right-4 px-3 py-2 rounded-xl flex items-center gap-1" style={{ background: "rgba(0,37,26,0.7)", backdropFilter: "blur(8px)", zIndex: 3 }}>
               <span className="text-lg font-bold" style={{ color: "var(--ds-color-accent)" }}>★</span>
               <span className="text-sm font-semibold" style={{ color: "var(--ds-color-text-primary)" }}>{place.rating.toFixed(1)}</span>
               {place.reviewCount && <span className="text-xs" style={{ color: "var(--ds-color-text-secondary)" }}>({place.reviewCount})</span>}

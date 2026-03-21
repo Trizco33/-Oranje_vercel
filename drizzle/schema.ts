@@ -78,6 +78,7 @@ export const places = mysqlTable("places", {
   lat: float("lat"),
   lng: float("lng"),
   coverImage: text("coverImage"),
+  images: json("images").$type<string[]>(),
   isRecommended: boolean("isRecommended").default(false).notNull(),
   isPartner: boolean("isPartner").default(false).notNull(),
   isFeatured: boolean("isFeatured").default(false).notNull(),

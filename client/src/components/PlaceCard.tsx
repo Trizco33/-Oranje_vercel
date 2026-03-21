@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Heart, MapPin, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DSBadge } from "@/components/ds";
+import { getPlaceImagesByName, getCategoryFallbackImage } from "@/constants/placeImages";
 
 interface PlaceCardProps {
   place: {
@@ -8,6 +10,7 @@ interface PlaceCardProps {
     name: string;
     shortDesc?: string | null;
     coverImage?: string | null;
+    images?: string[] | null;
     priceRange?: string | null;
     rating?: number | null;
     reviewCount?: number | null;
@@ -16,28 +19,74 @@ interface PlaceCardProps {
     isPartner?: boolean;
     isFeatured?: boolean;
     address?: string | null;
+    categoryName?: string | null;
   };
   isFavorite?: boolean;
   onToggleFavorite?: (id: number) => void;
   compact?: boolean;
 }
 
-const PLACEHOLDER_IMAGES = [
-  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=250&fit=crop",
-  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=250&fit=crop",
-];
+/**
+ * Resolves the best image for a place, with fallback chain:
+ * 1. place.coverImage (from DB)
+ * 2. First image from place.images array (from DB)
+ * 3. Match from PLACE_IMAGES constant (by name)
+ * 4. Category fallback image
+ */
+export function getPlaceImage(place: {
+  name: string;
+  coverImage?: string | null;
+  images?: string[] | null;
+  categoryName?: string | null;
+}): string {
+  if (place.coverImage) return place.coverImage;
+  if (place.images && place.images.length > 0) return place.images[0];
 
-export function getPlaceholderImage(id: number) {
-  return PLACEHOLDER_IMAGES[id % PLACEHOLDER_IMAGES.length];
+  const nameImages = getPlaceImagesByName(place.name);
+  if (nameImages.length > 0) return nameImages[0];
+
+  return getCategoryFallbackImage(place.categoryName);
+}
+
+/**
+ * Get all available images for a place (for gallery)
+ */
+export function getAllPlaceImages(place: {
+  name: string;
+  coverImage?: string | null;
+  images?: string[] | null;
+  categoryName?: string | null;
+}): string[] {
+  const images: string[] = [];
+
+  // DB images first
+  if (place.coverImage) images.push(place.coverImage);
+  if (place.images) {
+    for (const img of place.images) {
+      if (!images.includes(img)) images.push(img);
+    }
+  }
+
+  // Name-matched images
+  const nameImages = getPlaceImagesByName(place.name);
+  for (const img of nameImages) {
+    if (!images.includes(img)) images.push(img);
+  }
+
+  // If still empty, use category fallback
+  if (images.length === 0) {
+    images.push(getCategoryFallbackImage(place.categoryName));
+  }
+
+  return images;
 }
 
 export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false }: PlaceCardProps) {
-  const image = place.coverImage || getPlaceholderImage(place.id);
+  const image = getPlaceImage(place);
   const tags: string[] = Array.isArray(place.tags) ? place.tags : [];
+  const [imgError, setImgError] = useState(false);
+
+  const fallbackSrc = getCategoryFallbackImage(place.categoryName);
 
   return (
     <Link to={`/app/lugar/${place.id}`} style={{ display: "block", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}>
@@ -63,10 +112,13 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
         {/* Image */}
         <div className="relative overflow-hidden" style={{ height: compact ? 140 : 180 }}>
           <img
-            src={image}
+            src={imgError ? fallbackSrc : image}
             alt={place.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
+            onError={() => {
+              if (!imgError) setImgError(true);
+            }}
           />
           {/* Dark overlay */}
           <div

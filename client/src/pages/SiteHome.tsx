@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, lazy, Suspense } from "react";
 import { usePlacesList, useArticlesListPublished, useCategoriesList } from "@/hooks/useMockData";
+import { getPlaceImage } from "@/components/PlaceCard";
 import SiteLayout from "@/components/SiteLayout";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -500,7 +501,7 @@ export default function SiteHome() {
                         {/* 3:2 aspect ratio image */}
                         <div style={{ position: "relative", paddingBottom: "66.67%", overflow: "hidden" }}>
                           <img
-                            src={place.coverImage}
+                            src={getPlaceImage(place)}
                             alt={place.name}
                             loading="lazy"
                             style={{

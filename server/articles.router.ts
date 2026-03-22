@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { adminProcedure, cmsProcedure, publicProcedure, router } from "./_core/trpc";
-import { articles } from "../drizzle/schema";
+import { articles, articleBackups } from "../drizzle/schema";
 import { eq, and, desc, isNotNull } from "drizzle-orm";
 import * as db from "./db";
 
@@ -12,6 +12,74 @@ function generateSlug(title: string): string {
     .replace(/[^\w\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+}
+
+// ─── Backup helper ────────────────────────────────────────────────────────────
+async function createBackup(
+  articleData: {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt?: string | null;
+    content: string;
+    coverImageUrl?: string | null;
+    seoTitle?: string | null;
+    seoDescription?: string | null;
+    seoKeywords?: string | null;
+    category?: string | null;
+    published: boolean;
+    publishedAt?: Date | null;
+  },
+  reason: "create" | "update" | "manual"
+) {
+  try {
+    const database = await db.getDb();
+    if (!database) {
+      console.warn("[ArticleBackup] Database not available, skipping backup");
+      return;
+    }
+    await database.insert(articleBackups).values({
+      originalArticleId: articleData.id,
+      title: articleData.title,
+      slug: articleData.slug,
+      excerpt: articleData.excerpt ?? null,
+      content: articleData.content,
+      coverImageUrl: articleData.coverImageUrl ?? null,
+      seoTitle: articleData.seoTitle ?? null,
+      seoDescription: articleData.seoDescription ?? null,
+      seoKeywords: articleData.seoKeywords ?? null,
+      category: articleData.category ?? null,
+      published: articleData.published,
+      publishedAt: articleData.publishedAt ?? null,
+      backupReason: reason,
+    });
+    console.log(`[ArticleBackup] Backup created for article ${articleData.id} (${reason})`);
+  } catch (error) {
+    console.error("[ArticleBackup] Failed to create backup:", error);
+    // Don't throw — backup failure should not block the main operation
+  }
+}
+
+// ─── CSV helper ───────────────────────────────────────────────────────────────
+function escapeCsvField(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  const str = String(value);
+  if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+function articlesToCsv(data: any[]): string {
+  const headers = [
+    "id", "title", "slug", "excerpt", "content", "coverImageUrl",
+    "seoTitle", "seoDescription", "seoKeywords", "category",
+    "published", "publishedAt", "createdAt", "updatedAt",
+  ];
+  const rows = data.map((a) =>
+    headers.map((h) => escapeCsvField(a[h])).join(",")
+  );
+  return [headers.join(","), ...rows].join("\n");
 }
 
 export const articlesRouter = router({
@@ -188,7 +256,7 @@ export const articlesRouter = router({
         const database = await db.getDb();
         if (!database) throw new Error("Database connection failed");
         
-        await database.insert(articles).values({
+        const result = await database.insert(articles).values({
           title: input.title,
           slug,
           excerpt: input.excerpt,
@@ -201,6 +269,28 @@ export const articlesRouter = router({
           published: input.published,
           publishedAt: input.published ? new Date() : null,
         });
+
+        // Auto-backup on create
+        const insertId = (result as any)[0]?.insertId;
+        if (insertId) {
+          await createBackup(
+            {
+              id: Number(insertId),
+              title: input.title,
+              slug,
+              excerpt: input.excerpt,
+              content: input.content,
+              coverImageUrl: input.coverImageUrl,
+              seoTitle: input.seoTitle || input.title,
+              seoDescription: input.seoDescription,
+              seoKeywords: input.seoKeywords,
+              category: input.category,
+              published: input.published,
+              publishedAt: input.published ? new Date() : null,
+            },
+            "create"
+          );
+        }
 
         return { slug, success: true };
       } catch (error) {
@@ -250,6 +340,17 @@ export const articlesRouter = router({
         
         await database.update(articles).set(updateData).where(eq(articles.id, id));
 
+        // Auto-backup after update — fetch full article snapshot
+        const updated = await database
+          .select()
+          .from(articles)
+          .where(eq(articles.id, id))
+          .limit(1);
+
+        if (updated[0]) {
+          await createBackup(updated[0], "update");
+        }
+
         return { success: true };
       } catch (error) {
         console.error("[Articles] update error:", error);
@@ -293,4 +394,154 @@ export const articlesRouter = router({
         return null;
       }
     }),
+
+  // ─── Backup & Export endpoints ──────────────────────────────────────────────
+
+  // CMS: List backups for a specific article (or all)
+  listBackups: cmsProcedure
+    .input(
+      z
+        .object({
+          articleId: z.number().int().optional(),
+          limit: z.number().int().default(50),
+        })
+        .optional()
+    )
+    .query(async ({ input }) => {
+      try {
+        const database = await db.getDb();
+        if (!database) return [];
+
+        const where = input?.articleId
+          ? eq(articleBackups.originalArticleId, input.articleId)
+          : undefined;
+
+        const data = await database
+          .select()
+          .from(articleBackups)
+          .where(where)
+          .orderBy(desc(articleBackups.backupDate))
+          .limit(input?.limit || 50);
+
+        return data;
+      } catch (error) {
+        console.error("[Articles] listBackups error:", error);
+        return [];
+      }
+    }),
+
+  // CMS: Restore article from a backup
+  restoreFromBackup: cmsProcedure
+    .input(z.object({ backupId: z.number().int() }))
+    .mutation(async ({ input }) => {
+      try {
+        const database = await db.getDb();
+        if (!database) throw new Error("Database connection failed");
+
+        // Fetch backup
+        const backup = await database
+          .select()
+          .from(articleBackups)
+          .where(eq(articleBackups.id, input.backupId))
+          .limit(1);
+
+        if (!backup[0]) throw new Error("Backup não encontrado");
+
+        const b = backup[0];
+
+        // Check if original article still exists
+        const existing = await database
+          .select()
+          .from(articles)
+          .where(eq(articles.id, b.originalArticleId))
+          .limit(1);
+
+        if (existing[0]) {
+          // Create a backup of the current state before restoring
+          await createBackup(existing[0], "update");
+
+          // Restore over existing article
+          await database
+            .update(articles)
+            .set({
+              title: b.title,
+              slug: b.slug,
+              excerpt: b.excerpt,
+              content: b.content,
+              coverImageUrl: b.coverImageUrl,
+              seoTitle: b.seoTitle,
+              seoDescription: b.seoDescription,
+              seoKeywords: b.seoKeywords,
+              category: b.category,
+              published: b.published,
+              publishedAt: b.publishedAt,
+            })
+            .where(eq(articles.id, b.originalArticleId));
+        } else {
+          // Re-create the article
+          await database.insert(articles).values({
+            title: b.title,
+            slug: b.slug,
+            excerpt: b.excerpt,
+            content: b.content,
+            coverImageUrl: b.coverImageUrl,
+            seoTitle: b.seoTitle,
+            seoDescription: b.seoDescription,
+            seoKeywords: b.seoKeywords,
+            category: b.category,
+            published: b.published,
+            publishedAt: b.publishedAt,
+          });
+        }
+
+        return { success: true, restoredArticleId: b.originalArticleId };
+      } catch (error) {
+        console.error("[Articles] restoreFromBackup error:", error);
+        throw error;
+      }
+    }),
+
+  // CMS: Export all articles as JSON
+  exportJson: cmsProcedure.query(async () => {
+    try {
+      const database = await db.getDb();
+      if (!database) return { data: [], exportedAt: new Date().toISOString() };
+
+      const data = await database
+        .select()
+        .from(articles)
+        .orderBy(desc(articles.createdAt));
+
+      return {
+        exportedAt: new Date().toISOString(),
+        count: data.length,
+        articles: data,
+      };
+    } catch (error) {
+      console.error("[Articles] exportJson error:", error);
+      throw error;
+    }
+  }),
+
+  // CMS: Export all articles as CSV string
+  exportCsv: cmsProcedure.query(async () => {
+    try {
+      const database = await db.getDb();
+      if (!database) return { csv: "", exportedAt: new Date().toISOString() };
+
+      const data = await database
+        .select()
+        .from(articles)
+        .orderBy(desc(articles.createdAt));
+
+      return {
+        exportedAt: new Date().toISOString(),
+        count: data.length,
+        csv: articlesToCsv(data),
+      };
+    } catch (error) {
+      console.error("[Articles] exportCsv error:", error);
+      throw error;
+    }
+  }),
 });

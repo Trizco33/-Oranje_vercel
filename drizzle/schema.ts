@@ -304,6 +304,31 @@ export const articles = mysqlTable("articles", {
 export type Article = typeof articles.$inferSelect;
 export type InsertArticle = typeof articles.$inferInsert;
 
+// ─── Article Backups ──────────────────────────────────────────────────────────
+export const articleBackups = mysqlTable("article_backups", {
+  id: int("id").autoincrement().primaryKey(),
+  originalArticleId: int("originalArticleId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull(),
+  excerpt: text("excerpt"),
+  content: text("content").notNull(),
+  coverImageUrl: text("coverImageUrl"),
+  seoTitle: varchar("seoTitle", { length: 255 }),
+  seoDescription: varchar("seoDescription", { length: 255 }),
+  seoKeywords: varchar("seoKeywords", { length: 500 }),
+  category: varchar("category", { length: 100 }),
+  published: boolean("published").default(false).notNull(),
+  publishedAt: timestamp("publishedAt"),
+  backupReason: varchar("backupReason", { length: 50 }).notNull(), // "create", "update", "manual"
+  backupDate: timestamp("backupDate").defaultNow().notNull(),
+}, (table) => ({
+  originalArticleIdx: index("original_article_idx").on(table.originalArticleId),
+  backupDateIdx: index("backup_date_idx").on(table.backupDate),
+}));
+
+export type ArticleBackup = typeof articleBackups.$inferSelect;
+export type InsertArticleBackup = typeof articleBackups.$inferInsert;
+
 // ─── Site Content (CMS) ──────────────────────────────────────────────────────
 export const siteContent = mysqlTable("site_content", {
   id: int("id").autoincrement().primaryKey(),

@@ -18,6 +18,9 @@ import { placesRouter } from "./places.router";
 import { reviewsRouter } from "./reviews.router";
 import { generateSitemap } from "./sitemap";
 import * as db from "./db";
+import { getDb } from "./db";
+import fs from "fs";
+import path from "path";
 
 // ─── Admin Guard ──────────────────────────────────────────────────────────────
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -98,6 +101,55 @@ export const appRouter = router({
         path: "/",
       });
       return { success: true };
+    }),
+  }),
+
+  // ── Database Migrations ───────────────────────────────────────────────────
+  migrations: router({
+    runMigration0013: adminProcedure.mutation(async () => {
+      try {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({ 
+            code: "INTERNAL_SERVER_ERROR", 
+            message: "Database connection not available" 
+          });
+        }
+
+        // Read migration file
+        const migrationPath = path.join(process.cwd(), "drizzle", "0013_add_article_backups.sql");
+        
+        if (!fs.existsSync(migrationPath)) {
+          throw new TRPCError({ 
+            code: "NOT_FOUND", 
+            message: "Migration file not found" 
+          });
+        }
+
+        const migrationSQL = fs.readFileSync(migrationPath, "utf-8");
+        
+        // Split by semicolon and execute each statement
+        const statements = migrationSQL
+          .split(";")
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
+
+        for (const statement of statements) {
+          await database.execute(statement);
+        }
+
+        return { 
+          success: true, 
+          message: "Migration 0013 (article_backups table) executed successfully",
+          statementsExecuted: statements.length
+        };
+      } catch (error: any) {
+        console.error("Migration error:", error);
+        throw new TRPCError({ 
+          code: "INTERNAL_SERVER_ERROR", 
+          message: `Migration failed: ${error.message}` 
+        });
+      }
     }),
   }),
 

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { ImageUpload } from "./ImageUpload";
 
 const PAGES = [
   { id: "home", label: "Home" },
@@ -171,24 +172,13 @@ export default function CMSSEO() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2">OG Image (URL)</label>
-                      <Input
+                      <label className="block text-sm font-medium mb-2">OG Image</label>
+                      <ImageUpload
                         value={formData.ogImage}
-                        onChange={(e) => setFormData({ ...formData, ogImage: e.target.value })}
-                        placeholder="https://exemplo.com/imagem.jpg"
+                        onUpload={(url) => setFormData({ ...formData, ogImage: url })}
+                        label="Enviar imagem OG"
+                        showUrlInput={true}
                       />
-                      {formData.ogImage && (
-                        <div className="mt-4">
-                          <img
-                            src={formData.ogImage}
-                            alt="OG Preview"
-                            className="w-full h-40 object-cover rounded"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = "none";
-                            }}
-                          />
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

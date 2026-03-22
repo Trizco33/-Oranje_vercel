@@ -181,20 +181,13 @@ export function AdminFormModal({
                   <span style={{ fontSize: '0.875rem', color: '#4A5568' }}>Ativado</span>
                 </label>
               ) : field.type === "image" ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  {formData[field.name] && (
-                    <img
-                      src={formData[field.name]}
-                      alt="preview"
-                      style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(0,37,26,0.08)' }}
-                    />
-                  )}
-                  <ImageUpload
-                    onUpload={(url) => handleChange(field.name, url)}
-                    isLoading={isLoading}
-                    label="Upload"
-                  />
-                </div>
+                <ImageUpload
+                  onUpload={(url) => handleChange(field.name, url)}
+                  value={formData[field.name] || ""}
+                  isLoading={isLoading}
+                  label="Enviar imagem"
+                  showUrlInput={true}
+                />
               ) : (
                 <input
                   type={field.type}

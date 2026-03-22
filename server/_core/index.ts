@@ -596,6 +596,49 @@ self.addEventListener('fetch', (event) => {
     }
   });
 
+  // ── Image Upload (multipart) ────────────────────────────────────────────
+  {
+    const multer = (await import("multer")).default;
+    const { storagePut, getUploadDir } = await import("../storage");
+
+    // Serve uploaded files statically
+    app.use("/api/uploads", express.static(getUploadDir(), {
+      maxAge: "7d",
+      immutable: true,
+    }));
+
+    const upload = multer({
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+      fileFilter: (_req, file, cb) => {
+        const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+        if (allowed.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(new Error("Tipo de arquivo não permitido. Use: JPG, PNG ou WebP"));
+        }
+      },
+    });
+
+    app.post("/api/upload", upload.single("file"), async (req, res) => {
+      try {
+        if (!req.file) {
+          return res.status(400).json({ success: false, error: "Nenhum arquivo enviado" });
+        }
+        const safeName = req.file.originalname
+          .replace(/[^a-zA-Z0-9._-]/g, "_")
+          .substring(0, 80);
+        const randomSuffix = Math.random().toString(36).substring(2, 8);
+        const fileKey = `uploads/${Date.now()}-${randomSuffix}-${safeName}`;
+        const { url } = await storagePut(fileKey, req.file.buffer, req.file.mimetype);
+        return res.json({ success: true, url });
+      } catch (error: any) {
+        console.error("Upload error:", error);
+        return res.status(500).json({ success: false, error: error.message || "Erro ao fazer upload" });
+      }
+    });
+  }
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { ImageUpload } from "./ImageUpload";
 
 export default function CMSBlog() {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -224,11 +225,12 @@ export default function CMSBlog() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Imagem de Capa (URL)</label>
-              <Input
+              <label className="block text-sm font-medium mb-2">Imagem de Capa</label>
+              <ImageUpload
                 value={formData.coverImageUrl}
-                onChange={(e) => setFormData({ ...formData, coverImageUrl: e.target.value })}
-                placeholder="https://..."
+                onUpload={(url) => setFormData({ ...formData, coverImageUrl: url })}
+                label="Enviar imagem de capa"
+                showUrlInput={true}
               />
             </div>
 

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Plus, Eye, EyeOff } from "lucide-react";
+import { ImageUpload } from "./ImageUpload";
 import { toast } from "sonner";
 
 export function AdminArticles() {
@@ -262,13 +263,12 @@ export function AdminArticles() {
             </div>
 
             <div>
-              <label className="text-sm font-medium">URL da Imagem de Capa</label>
-              <Input
+              <label className="text-sm font-medium">Imagem de Capa</label>
+              <ImageUpload
                 value={formData.coverImageUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, coverImageUrl: e.target.value })
-                }
-                placeholder="https://..."
+                onUpload={(url) => setFormData({ ...formData, coverImageUrl: url })}
+                label="Enviar imagem de capa"
+                showUrlInput={true}
               />
             </div>
 

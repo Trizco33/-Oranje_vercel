@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -9,7 +9,10 @@ export default function CMSLogin() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const utils = trpc.useUtils();
+
+  const nextPath = searchParams.get("next") || "/admin";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +29,19 @@ export default function CMSLogin() {
 
       if (response.ok) {
         toast.success("Login realizado com sucesso!");
-        // Invalidate trpc auth cache
+        // Invalidate trpc auth cache so AdminGuard picks up the new session
         await utils.auth.me.invalidate();
-        navigate("/admin");
+        // Small delay to let cookie propagate
+        setTimeout(() => {
+          navigate(nextPath, { replace: true });
+        }, 300);
       } else {
-        toast.error("Email ou senha incorretos");
+        const data = await response.json().catch(() => ({}));
+        toast.error(data.error || "Email ou senha incorretos");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      toast.error("Erro ao conectar");
+      toast.error("Erro ao conectar com o servidor");
     } finally {
       setIsLoading(false);
     }
@@ -164,6 +171,30 @@ export default function CMSLogin() {
         <p style={{ textAlign: 'center', fontSize: '0.8125rem', color: '#718096', marginTop: '24px' }}>
           Acesso restrito a administradores
         </p>
+
+        <div style={{
+          textAlign: 'center',
+          marginTop: '16px',
+          paddingTop: '16px',
+          borderTop: '1px solid rgba(0, 37, 26, 0.08)',
+        }}>
+          <button
+            onClick={() => navigate("/")}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#00251A',
+              fontSize: '0.8125rem',
+              fontWeight: 500,
+              cursor: 'pointer',
+              fontFamily: "'Montserrat', system-ui, sans-serif",
+              textDecoration: 'underline',
+              textUnderlineOffset: '2px',
+            }}
+          >
+            ← Voltar ao site
+          </button>
+        </div>
       </div>
     </div>
   );

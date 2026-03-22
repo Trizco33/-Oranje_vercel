@@ -191,12 +191,12 @@ function Router() {
         <Route path="/parcerias" element={<Suspense fallback={<LoadingFallback />}><Partnerships /></Suspense>} />
         <Route path="/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
         <Route path="/admin/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
-        <Route path="/admin" element={<Suspense fallback={<LoadingFallback />}><CMSDashboard /></Suspense>} />
-        <Route path="/admin/conteudo" element={<Suspense fallback={<LoadingFallback />}><CMSEditor /></Suspense>} />
+        <Route path="/admin" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><CMSDashboard /></AdminGuard></Suspense>} />
+        <Route path="/admin/conteudo" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><CMSEditor /></AdminGuard></Suspense>} />
         <Route path="/app/admin" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><Admin /></AdminGuard></Suspense>} />
         <Route path="/app/adm" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><Admin /></AdminGuard></Suspense>} />
-        <Route path="/adm" element={<Suspense fallback={<LoadingFallback />}><CMSDashboard /></Suspense>} />
-        <Route path="/adm/conteudo" element={<Suspense fallback={<LoadingFallback />}><CMSEditor /></Suspense>} />
+        <Route path="/adm" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><CMSDashboard /></AdminGuard></Suspense>} />
+        <Route path="/adm/conteudo" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><CMSEditor /></AdminGuard></Suspense>} />
         <Route path="/adm/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />

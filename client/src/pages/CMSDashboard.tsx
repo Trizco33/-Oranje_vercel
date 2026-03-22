@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { LogOut, FileText, Settings, BookOpen, Globe, Menu, X, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import CMSEditor from "./CMSEditor";
 import CMSPages from "../components/CMSPages";
 import CMSBlog from "../components/CMSBlog";
@@ -16,6 +17,7 @@ const CMS_NAV = [
 
 export default function CMSDashboard() {
   const navigate = useNavigate();
+  const utils = trpc.useUtils();
   const [activeTab, setActiveTab] = useState("content");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -36,9 +38,13 @@ export default function CMSDashboard() {
     try {
       const apiBase = import.meta.env.VITE_API_URL || "";
       await fetch(`${apiBase}/api/cms/logout`, { method: "POST", credentials: "include" });
-      navigate("/admin/login");
+      // Invalidate tRPC auth cache so AdminGuard knows we're logged out
+      utils.auth.me.setData(undefined, null);
+      await utils.auth.me.invalidate();
+      navigate("/login", { replace: true });
     } catch (error) {
       toast.error("Erro ao desconectar");
+      navigate("/login", { replace: true });
     }
   };
 

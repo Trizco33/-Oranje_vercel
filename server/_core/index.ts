@@ -301,6 +301,57 @@ self.addEventListener('fetch', (event) => {
     }
   });
 
+  // Run migration 0013 (article_backups table)
+  app.get("/api/run-migration-0013", async (req, res) => {
+    const { key } = req.query;
+    
+    if (key !== process.env.ADMIN_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const { getDb } = await import("../db");
+      const fs = await import("fs");
+      const path = await import("path");
+      
+      const db = await getDb();
+      if (!db) {
+        return res.status(500).json({ error: 'Database connection failed' });
+      }
+
+      // Read migration file
+      const migrationPath = path.join(process.cwd(), "drizzle", "0013_add_article_backups.sql");
+      
+      if (!fs.existsSync(migrationPath)) {
+        return res.status(404).json({ error: 'Migration file not found' });
+      }
+
+      const migrationSQL = fs.readFileSync(migrationPath, "utf-8");
+      
+      // Split by semicolon and execute each statement
+      const statements = migrationSQL
+        .split(";")
+        .map((s: string) => s.trim())
+        .filter((s: string) => s.length > 0);
+
+      for (const statement of statements) {
+        await db.execute(statement);
+      }
+
+      return res.json({ 
+        success: true, 
+        message: "Migration 0013 (article_backups table) executed successfully",
+        statementsExecuted: statements.length
+      });
+    } catch (error: any) {
+      console.error("Migration error:", error);
+      return res.status(500).json({ 
+        error: 'Migration failed', 
+        details: error.message 
+      });
+    }
+  });
+
   // Check and create categories endpoint
   app.get("/api/check-categories", async (req, res) => {
     const { key } = req.query;

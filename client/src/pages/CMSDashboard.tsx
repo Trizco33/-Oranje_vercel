@@ -34,10 +34,15 @@ export default function CMSDashboard() {
     return () => { document.body.style.overflow = ''; };
   }, [sidebarOpen]);
 
+  const logoutMutation = trpc.auth.logout.useMutation();
+
   const handleLogout = async () => {
     try {
       const apiBase = import.meta.env.VITE_API_URL || "";
+      // Clear CMS session cookie via REST endpoint
       await fetch(`${apiBase}/api/cms/logout`, { method: "POST", credentials: "include" });
+      // Also clear app JWT session via tRPC
+      try { await logoutMutation.mutateAsync(); } catch (_) { /* ignore */ }
       // Invalidate tRPC auth cache so AdminGuard knows we're logged out
       utils.auth.me.setData(undefined, null);
       await utils.auth.me.invalidate();

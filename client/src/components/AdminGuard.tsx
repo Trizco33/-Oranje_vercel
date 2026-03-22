@@ -10,10 +10,23 @@ interface AdminGuardProps {
 export default function AdminGuard({ children }: AdminGuardProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: user, isLoading, error } = trpc.auth.me.useQuery(undefined, {
+  const { data: user, isLoading } = trpc.auth.me.useQuery(undefined, {
     retry: 1,
     throwOnError: false,
   });
+
+  // All hooks must be called unconditionally (React rules of hooks)
+  const logout = trpc.auth.logout.useMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logout.mutateAsync();
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      navigate("/");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -102,18 +115,6 @@ export default function AdminGuard({ children }: AdminGuardProps) {
   }
 
   if (user.role !== "admin") {
-    const logout = trpc.auth.logout.useMutation();
-
-    const handleLogout = async () => {
-      try {
-        await logout.mutateAsync();
-        navigate("/");
-      } catch (error) {
-        console.error("Erro ao fazer logout:", error);
-        navigate("/");
-      }
-    };
-
     return (
       <div style={{
         minHeight: "100vh",

@@ -24,8 +24,8 @@ export default function CMSBlog() {
     published: false,
   });
 
-  // Queries
-  const articlesQuery = trpc.articles.listAdmin.useQuery({ published: undefined });
+  // Queries — use listCms which accepts both JWT and CMS session cookie auth
+  const articlesQuery = trpc.articles.listCms.useQuery(undefined);
 
   // Mutations
   const createMutation = trpc.articles.create.useMutation({
@@ -298,6 +298,16 @@ export default function CMSBlog() {
         <h3 className="font-semibold text-lg">Artigos Existentes</h3>
         {articlesQuery.isLoading ? (
           <p className="text-gray-600">Carregando...</p>
+        ) : articlesQuery.isError ? (
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <p className="text-red-600 font-medium">Erro ao carregar artigos</p>
+              <p className="text-sm text-gray-500 mt-1">{articlesQuery.error?.message || "Verifique sua autenticação e tente novamente."}</p>
+              <Button onClick={() => articlesQuery.refetch()} variant="outline" className="mt-3">
+                Tentar novamente
+              </Button>
+            </CardContent>
+          </Card>
         ) : articlesQuery.data && articlesQuery.data.length > 0 ? (
           <div className="space-y-2">
             {articlesQuery.data.map((article: any) => (

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, publicProcedure, router } from "./_core/trpc";
+import { adminProcedure, cmsProcedure, publicProcedure, router } from "./_core/trpc";
 import { articles } from "../drizzle/schema";
 import { eq, and, desc, isNotNull } from "drizzle-orm";
 import * as db from "./db";
@@ -92,7 +92,7 @@ export const articlesRouter = router({
     }
   }),
 
-  // ADMIN: List all articles (published + drafts)
+  // ADMIN: List all articles (published + drafts) — requires app JWT auth
   listAdmin: adminProcedure
     .input(
       z
@@ -129,8 +129,45 @@ export const articlesRouter = router({
       }
     }),
 
-  // ADMIN: Create article
-  create: adminProcedure
+  // CMS: List all articles — accepts both JWT auth and CMS session cookie
+  listCms: cmsProcedure
+    .input(
+      z
+        .object({
+          published: z.boolean().optional(),
+          category: z.string().optional(),
+          limit: z.number().int().default(50),
+          offset: z.number().int().default(0),
+        })
+        .optional()
+    )
+    .query(async ({ input }) => {
+      const where =
+        input?.published !== undefined
+          ? eq(articles.published, input.published)
+          : undefined;
+
+      try {
+        const database = await db.getDb();
+        if (!database) return [];
+        
+        const data = await database
+          .select()
+          .from(articles)
+          .where(where)
+          .orderBy(desc(articles.createdAt))
+          .limit(input?.limit || 50)
+          .offset(input?.offset || 0);
+
+        return data;
+      } catch (error) {
+        console.error("[Articles] listCms error:", error);
+        return [];
+      }
+    }),
+
+  // ADMIN: Create article — accepts both JWT auth and CMS session cookie
+  create: cmsProcedure
     .input(
       z.object({
         title: z.string().min(1, "Título obrigatório"),
@@ -172,8 +209,8 @@ export const articlesRouter = router({
       }
     }),
 
-  // ADMIN: Update article
-  update: adminProcedure
+  // ADMIN: Update article — accepts both JWT auth and CMS session cookie
+  update: cmsProcedure
     .input(
       z.object({
         id: z.number().int(),
@@ -220,8 +257,8 @@ export const articlesRouter = router({
       }
     }),
 
-  // ADMIN: Delete article
-  delete: adminProcedure
+  // ADMIN: Delete article — accepts both JWT auth and CMS session cookie
+  delete: cmsProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
       try {

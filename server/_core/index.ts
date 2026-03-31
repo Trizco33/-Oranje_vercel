@@ -650,7 +650,7 @@ self.addEventListener('fetch', (event) => {
   // ── Image Upload (multipart) ────────────────────────────────────────────
   {
     const multer = (await import("multer")).default;
-    const { storagePut, getUploadDir } = await import("../storage");
+    const { getStorageMode, getUploadDir, storagePut } = await import("../storage");
 
     // Serve uploaded files statically
     app.use("/api/uploads", express.static(getUploadDir(), {
@@ -682,10 +682,19 @@ self.addEventListener('fetch', (event) => {
         const randomSuffix = Math.random().toString(36).substring(2, 8);
         const fileKey = `uploads/${Date.now()}-${randomSuffix}-${safeName}`;
         const { url } = await storagePut(fileKey, req.file.buffer, req.file.mimetype);
-        return res.json({ success: true, url });
+        return res.json({
+          success: true,
+          url,
+          storage: getStorageMode(),
+        });
       } catch (error: any) {
         console.error("Upload error:", error);
-        return res.status(500).json({ success: false, error: error.message || "Erro ao fazer upload" });
+        const status = error?.message === "PERSISTENT_STORAGE_REQUIRED_IN_PRODUCTION" ? 503 : 500;
+        return res.status(status).json({
+          success: false,
+          error: error.message || "Erro ao fazer upload",
+          storage: getStorageMode(),
+        });
       }
     });
   }

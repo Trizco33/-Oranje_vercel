@@ -138,14 +138,18 @@ export default function CMSEditor() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("/api/upload", {
+      const apiBase = import.meta.env.VITE_API_URL || "";
+      const response = await fetch(`${apiBase}/api/upload`, {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
       const data = await response.json();
-      if (data.url) {
+      if (response.ok && data.url) {
         setHero({ ...hero, imageUrl: data.url });
         alert("Imagem enviada com sucesso!");
+      } else {
+        alert("Erro ao enviar imagem: " + (data.error || "Falha no upload"));
       }
     } catch (error) {
       alert("Erro ao enviar imagem: " + error);

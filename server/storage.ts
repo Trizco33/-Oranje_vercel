@@ -1,5 +1,5 @@
-// Storage helpers — uses Forge proxy when configured, falls back to local disk
-// Local disk storage serves files via /api/uploads/:filename
+// Storage helpers — use persistent storage in production and allow
+// local-disk fallback only in development.
 
 import { ENV } from './_core/env';
 import path from 'path';
@@ -24,19 +24,31 @@ async function localPut(
   const filePath = path.join(UPLOAD_DIR, fileName);
   const buf = typeof data === 'string' ? Buffer.from(data) : Buffer.from(data);
   fs.writeFileSync(filePath, buf);
-  // Return relative URL — Express will serve this
-  const url = `/api/uploads/${fileName}`;
+  const relativeUrl = `/api/uploads/${fileName}`;
+  const url = ENV.publicAppUrl
+    ? new URL(relativeUrl, ENV.publicAppUrl).toString()
+    : relativeUrl;
   return { key: relKey, url };
 }
 
 // ── Forge proxy storage ─────────────────────────────────────────────────────
 type StorageConfig = { baseUrl: string; apiKey: string };
 
+export type StorageMode = 'persistent' | 'local-dev';
+
 function getForgeConfig(): StorageConfig | null {
   const baseUrl = ENV.forgeApiUrl;
   const apiKey = ENV.forgeApiKey;
   if (!baseUrl || !apiKey) return null;
   return { baseUrl: baseUrl.replace(/\/+$/, ''), apiKey };
+}
+
+export function getStorageMode(): StorageMode {
+  return getForgeConfig() ? 'persistent' : 'local-dev';
+}
+
+export function isPersistentStorageConfigured() {
+  return getStorageMode() === 'persistent';
 }
 
 function ensureTrailingSlash(value: string): string {
@@ -91,12 +103,15 @@ export async function storagePut(
 ): Promise<{ key: string; url: string }> {
   const forgeConfig = getForgeConfig();
   if (forgeConfig) {
-    try {
-      return await forgePut(relKey, data, contentType, forgeConfig);
-    } catch (err) {
-      console.warn('[Storage] Forge upload failed, falling back to local:', (err as Error).message);
-    }
+    return await forgePut(relKey, data, contentType, forgeConfig);
   }
+
+  if (ENV.isProduction) {
+    throw new Error(
+      'Persistent storage is required in production. Configure BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY.'
+    );
+  }
+
   return localPut(relKey, data, contentType);
 }
 
@@ -112,9 +127,20 @@ export async function storageGet(relKey: string): Promise<{ key: string; url: st
     });
     return { key, url: (await response.json()).url };
   }
-  // Local fallback
+
+  if (ENV.isProduction) {
+    throw new Error(
+      'Persistent storage is required in production. Configure BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY.'
+    );
+  }
+
+  // Local fallback for development only.
   const fileName = relKey.replace(/^uploads\//, '');
-  return { key: relKey, url: `/api/uploads/${fileName}` };
+  const relativeUrl = `/api/uploads/${fileName}`;
+  const url = ENV.publicAppUrl
+    ? new URL(relativeUrl, ENV.publicAppUrl).toString()
+    : relativeUrl;
+  return { key: relKey, url };
 }
 
 // ── Express static serve helper ─────────────────────────────────────────────

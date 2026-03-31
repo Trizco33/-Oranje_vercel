@@ -109,7 +109,7 @@ export default function Terms() {
                 7. Contato
               </h2>
               <p>
-                Se você tiver dúvidas sobre estes Termos de Serviço, entre em contato conosco em contato@oranje.app.
+                Se você tiver dúvidas sobre estes Termos de Serviço, entre em contato conosco em contato@oranje.com.br.
               </p>
             </section>
           </div>

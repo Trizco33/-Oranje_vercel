@@ -1,7 +1,7 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Routes, Route, useParams } from "react-router-dom";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { lazy } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -35,7 +35,6 @@ const Guide = lazy(() => import("./pages/Guide"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 const Partnerships = lazy(() => import("./pages/Partnerships"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
-const CMSLogin = lazy(() => import("./pages/CMSLogin"));
 const CMSDashboard = lazy(() => import("./pages/CMSDashboard"));
 const CMSEditor = lazy(() => import("./pages/CMSEditor"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -131,6 +130,18 @@ function BlogPostWrapper() {
   );
 }
 
+function LegacyPartnershipsRedirect() {
+  useEffect(() => {
+    window.history.replaceState(null, "", "/seja-um-parceiro");
+  }, []);
+
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SiteSecondaryPages />
+    </Suspense>
+  );
+}
+
 function Router() {
   // Automatic GA4 pageview tracking on route changes
   usePageTracking();
@@ -189,7 +200,7 @@ function Router() {
         </Route>
         <Route path="/guia" element={<Suspense fallback={<LoadingFallback />}><Guide /></Suspense>} />
         <Route path="/guia/:slug" element={<GuideDetailWrapper />} />
-        <Route path="/parcerias" element={<Suspense fallback={<LoadingFallback />}><Partnerships /></Suspense>} />
+        <Route path="/parcerias" element={<LegacyPartnershipsRedirect />} />
         <Route path="/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
         <Route path="/admin/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
         <Route path="/admin" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><CMSDashboard /></AdminGuard></Suspense>} />

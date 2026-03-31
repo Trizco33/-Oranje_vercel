@@ -87,7 +87,7 @@ export default function Privacy() {
               </h2>
               <p>
                 Você tem o direito de acessar, corrigir ou deletar seus dados pessoais. Para exercer esses direitos,
-                entre em contato conosco através de contato@oranje.app.
+                entre em contato conosco através de contato@oranje.com.br.
               </p>
             </section>
 
@@ -97,7 +97,7 @@ export default function Privacy() {
               </h2>
               <p>
                 Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato conosco em
-                contato@oranje.app.
+                contato@oranje.com.br.
               </p>
             </section>
           </div>

@@ -95,7 +95,7 @@ export default function LandingNew() {
   const hero = heroData || defaultHero;
   const services = servicesData?.items || defaultServices;
   const about = aboutData || { title: "Sobre Holambra", text: "Holambra é a cidade das flores, conhecida por sua beleza natural e atrações turísticas." };
-  const contact = contactData || { email: "contato@oranje.com", phone: "(19) 3802-1000", address: "Holambra, SP" };
+  const contact = contactData || { email: "contato@oranje.com.br", phone: "(19) 3802-1000", address: "Holambra, SP" };
 
   return (
     <div className="min-h-screen bg-white">

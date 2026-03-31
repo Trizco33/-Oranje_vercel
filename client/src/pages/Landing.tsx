@@ -142,7 +142,7 @@ export default function Landing() {
           <DSButton
             variant="secondary"
             size="lg"
-            onClick={() => navigate("/parcerias")}
+            onClick={() => navigate("/seja-um-parceiro")}
           >
             Quero ser parceiro
           </DSButton>
@@ -574,7 +574,7 @@ export default function Landing() {
             <DSButton
               variant="secondary"
               size="lg"
-              onClick={() => navigate("/parcerias")}
+              onClick={() => navigate("/seja-um-parceiro")}
             >
               Seja um parceiro
             </DSButton>
@@ -620,7 +620,7 @@ export default function Landing() {
                 {[
                   { label: "Guia", to: "/guia" },
                   { label: "Sobre", to: "/sobre" },
-                  { label: "Parcerias", to: "/parcerias" },
+                  { label: "Parcerias", to: "/seja-um-parceiro" },
                 ].map((link) => (
                   <li key={link.to}>
                     <Link

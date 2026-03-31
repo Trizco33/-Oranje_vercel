@@ -167,7 +167,7 @@ export default function SiteHome() {
     "Oranje é um guia local criado para conectar visitantes e moradores ao melhor de Holambra.";
 
   const contactEmail = contactContent.email || "contato@oranje.com.br";
-  const contactPhone = contactContent.phone || "(19) 4000-0000";
+  const contactPhone = contactContent.phone || "(19) 3802-1000";
   const contactAddress = contactContent.address || "Holambra, SP";
 
   useSeoMeta({

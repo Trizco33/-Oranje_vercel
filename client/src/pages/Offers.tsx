@@ -139,9 +139,7 @@ export default function Offers() {
             Aumente sua visibilidade em Holambra. Planos a partir de R$49/mês com destaque no app, vouchers exclusivos e selo de parceiro verificado.
           </p>
           <a
-            href="https://wa.me/5519999999999?text=Quero%20ser%20parceiro%20ORANJE"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="mailto:contato@oranje.com.br?subject=Quero%20ser%20parceiro%20ORANJE"
             className="px-6 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2"
             style={{ background: "var(--ds-color-accent)", color: "#fff" }}
           >

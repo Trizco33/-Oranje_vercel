@@ -64,8 +64,8 @@ export default function Contact() {
               <h3 className="font-semibold text-lg mb-2" style={{ color: "#FFFFFF" }}>
                 Email
               </h3>
-              <a href="mailto:contato@oranje.app" style={{ color: "#E65100" }}>
-                contato@oranje.app
+              <a href="mailto:contato@oranje.com.br" style={{ color: "#E65100" }}>
+                contato@oranje.com.br
               </a>
             </div>
             <div className="p-6 rounded-2xl" style={{ background: "rgba(230, 81, 0, 0.1)", border: "1px solid rgba(230, 81, 0, 0.2)" }}>

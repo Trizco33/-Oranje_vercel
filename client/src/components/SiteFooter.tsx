@@ -139,12 +139,12 @@ export default function SiteFooter() {
               <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <Phone size={14} style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }} aria-hidden="true" />
                 <a
-                  href="tel:+551940000000"
+                  href="tel:+551938021000"
                   style={linkStyle}
                   onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
                   onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
-                  (19) 4000-0000
+                  (19) 3802-1000
                 </a>
               </li>
               <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>

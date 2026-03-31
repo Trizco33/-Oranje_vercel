@@ -837,130 +837,6 @@
 .animate-fade-up  { animation: fade-up 0.4s ease forwards; }
 .animate-float    { animation: float 3s ease-in-out infinite; }
 
-@keyframes site-windmill-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes site-hero-breathe {
-  0%, 100% {
-    transform: scale(1.04);
-    filter: saturate(1) contrast(1);
-  }
-  50% {
-    transform: scale(1.065);
-    filter: saturate(1.05) contrast(1.02);
-  }
-}
-
-@keyframes site-caption-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-}
-
-.site-hero-media {
-  animation: site-hero-breathe 16s ease-in-out infinite;
-  transform-origin: center center;
-  will-change: transform, filter;
-}
-
-.site-windmill-scene {
-  position: absolute;
-  right: clamp(1rem, 4vw, 3rem);
-  bottom: clamp(1rem, 3.5vw, 2.5rem);
-  width: clamp(140px, 18vw, 230px);
-  aspect-ratio: 1 / 1;
-  pointer-events: none;
-  z-index: 2;
-  opacity: 0.9;
-}
-
-.site-windmill-halo {
-  position: absolute;
-  inset: 8% 8% 8% 8%;
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(230,81,0,0.12) 38%, transparent 72%);
-  filter: blur(10px);
-  opacity: 0.9;
-}
-
-.site-windmill-body {
-  position: absolute;
-  left: 50%;
-  bottom: 8%;
-  width: 30%;
-  height: 47%;
-  transform: translateX(-50%);
-  background: linear-gradient(180deg, rgba(245,245,220,0.95) 0%, rgba(226,216,188,0.86) 100%);
-  clip-path: polygon(30% 0%, 70% 0%, 94% 100%, 6% 100%);
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow:
-    0 18px 30px rgba(0,0,0,0.24),
-    inset 0 1px 0 rgba(255,255,255,0.55);
-}
-
-.site-windmill-cap {
-  position: absolute;
-  left: 50%;
-  bottom: 53%;
-  width: 34%;
-  height: 8%;
-  transform: translateX(-50%);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(0,37,26,0.95), rgba(0,77,64,0.85));
-  box-shadow: 0 10px 24px rgba(0,0,0,0.2);
-}
-
-.site-windmill-rotor {
-  position: absolute;
-  left: 50%;
-  bottom: 47%;
-  width: 72%;
-  height: 72%;
-  transform: translate(-50%, -50%);
-  animation: site-windmill-rotate 24s linear infinite;
-  transform-origin: 50% 50%;
-  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
-}
-
-.site-windmill-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, #FFF 0%, #E65100 42%, #8D2F00 100%);
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.16);
-}
-
-.site-windmill-blade {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 12px;
-  height: 48%;
-  transform-origin: 50% calc(100% - 12px);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(245,245,220,0.86) 70%, rgba(255,255,255,0) 100%);
-  border: 1px solid rgba(255,255,255,0.16);
-  clip-path: polygon(42% 0%, 58% 0%, 100% 86%, 50% 100%, 0% 86%);
-}
-
-.site-windmill-blade.blade-1 { transform: translate(-50%, -100%) rotate(0deg); }
-.site-windmill-blade.blade-2 { transform: translate(-50%, -100%) rotate(90deg); }
-.site-windmill-blade.blade-3 { transform: translate(-50%, -100%) rotate(180deg); }
-.site-windmill-blade.blade-4 { transform: translate(-50%, -100%) rotate(270deg); }
-
-.site-hero-showcase {
-  position: relative;
-}
-
-.site-hero-card-secondary {
-  animation: site-caption-float 8s ease-in-out infinite;
-}
-
 /* ═══ Legacy Utility Classes (Admin) ═══ */
 .btn-gold {
   background: linear-gradient(135deg, var(--ds-color-accent), #BF360C);
@@ -983,28 +859,15 @@
 /* ═══ Site Card — Desktop-only hover ═══ */
 @media (hover: hover) {
   .site-card:hover {
-    box-shadow:
-      0 24px 60px rgba(0, 37, 26, 0.14),
-      0 10px 30px rgba(230, 81, 0, 0.08);
-    transform: translateY(-5px);
-    border-color: rgba(230, 81, 0, 0.22);
+    box-shadow: 0 8px 30px rgba(0, 37, 26, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(0, 37, 26, 0.1);
   }
 }
 @media (hover: none) {
   .site-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 37, 26, 0.07);
+    box-shadow: 0 1px 3px rgba(0, 37, 26, 0.06);
     transform: none;
-  }
-
-  .site-windmill-scene {
-    width: 130px;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    opacity: 0.72;
-  }
-
-  .site-windmill-rotor {
-    animation-duration: 32s;
   }
 }
 

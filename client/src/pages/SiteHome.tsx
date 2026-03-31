@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef, useMemo, lazy, Suspense } from "react";
-import { usePlacesList, useArticlesListPublished, useCategoriesList } from "@/hooks/useMockData";
+import {
+  usePlacesList,
+  useArticlesListPublished,
+  useCategoriesList,
+  useHeroContent,
+  useServicesContent,
+  useAboutContent,
+  useContactContent,
+} from "@/hooks/useMockData";
 import { getPlaceImage } from "@/components/PlaceCard";
 import SiteLayout from "@/components/SiteLayout";
 import { Link, useNavigate } from "react-router-dom";
@@ -20,6 +28,8 @@ import {
   Users,
   Search,
   ChevronDown,
+  Mail,
+  Phone,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -121,7 +131,41 @@ export default function SiteHome() {
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
+  const { data: heroContent } = useHeroContent();
+  const { data: servicesContent } = useServicesContent();
+  const { data: aboutContent } = useAboutContent();
+  const { data: contactContent } = useContactContent();
   const places = allPlaces.slice(0, 6);
+
+  const heroTitle = heroContent.title || "Descubra Holambra";
+  const heroSubtitle =
+    heroContent.subtitle ||
+    "Roteiros, lugares, eventos e serviços locais — tudo em um só lugar.";
+  const heroButtonText = heroContent.buttonText || "Abrir o App";
+  const heroButtonUrl = heroContent.buttonUrl || "/app";
+  const heroImageUrl =
+    heroContent.imageUrl ||
+    "/brand/moinho-povos-unidos.jpg";
+
+  const serviceItems = servicesContent.items.length > 0
+    ? servicesContent.items
+    : [
+        { title: "Curadoria local", description: "Lugares, eventos e experiências selecionados para sua visita." },
+        { title: "Planejamento fácil", description: "Organize passeios, descubra rotas e encontre o que fazer com rapidez." },
+        { title: "Informações úteis", description: "Tenha contatos, horários e contexto local em um só lugar." },
+      ];
+  const servicesTitle = servicesContent.title || "Serviços do Oranje";
+  const servicesDescription =
+    servicesContent.description || "Conte com o Oranje para descobrir, planejar e aproveitar Holambra.";
+
+  const aboutTitle = aboutContent.title || "Sobre o Oranje";
+  const aboutText =
+    aboutContent.text ||
+    "Oranje é um guia local criado para conectar visitantes e moradores ao melhor de Holambra.";
+
+  const contactEmail = contactContent.email || "contato@oranje.com.br";
+  const contactPhone = contactContent.phone || "(19) 4000-0000";
+  const contactAddress = contactContent.address || "Holambra, SP";
 
   // Build categoryId → name map for display
   const catMap = useMemo(() => {
@@ -176,7 +220,7 @@ export default function SiteHome() {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: "url('/brand/moinho-povos-unidos.jpg'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')",
+            backgroundImage: `url('${heroImageUrl}'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -225,7 +269,7 @@ export default function SiteHome() {
               fontFamily: "'Montserrat', system-ui, sans-serif",
             }}
           >
-            Descubra Holambra
+            {heroTitle}
           </h1>
 
           <p
@@ -239,7 +283,7 @@ export default function SiteHome() {
               marginRight: "auto",
             }}
           >
-            Roteiros, lugares, eventos e serviços locais — tudo em um só lugar.
+            {heroSubtitle}
           </p>
 
           {/* Search Bar - Solid white, no glassmorphism */}
@@ -287,7 +331,7 @@ export default function SiteHome() {
           {/* CTA Buttons */}
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
             <Link
-              to="/app"
+              to={heroButtonUrl}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -306,7 +350,7 @@ export default function SiteHome() {
               onMouseEnter={(e: any) => { e.currentTarget.style.background = "#FF6D00"; }}
               onMouseLeave={(e: any) => { e.currentTarget.style.background = "#E65100"; }}
             >
-              Abrir o App
+              {heroButtonText}
               <ArrowRight size={16} />
             </Link>
             {/* PWA Install Button — only visible when install prompt is available */}
@@ -463,8 +507,43 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 3) DESTAQUES — Beige background, 3:2 cards ═══ */}
+      {/* ═══ 2.5) SERVIÇOS CMS — Beige background ═══ */}
       <section className="site-section" style={{ background: "#F5F5DC" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <Reveal>
+            <SectionHeader
+              label="Serviços"
+              labelColor="#00251A"
+              title={servicesTitle}
+              subtitle={servicesDescription}
+            />
+          </Reveal>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: 20,
+            }}
+          >
+            {serviceItems.map((service, i: number) => (
+              <Reveal key={`${service.title}-${i}`} delay={i * 60}>
+                <div className="site-card" style={{ padding: "28px 24px", background: "#FFFFFF" }}>
+                  <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#00251A", marginBottom: 10 }}>
+                    {service.title}
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.6)", lineHeight: 1.6 }}>
+                    {service.description}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ 3) DESTAQUES — Beige background, 3:2 cards ═══ */}
+      <section className="site-section" style={{ background: "#FFFFFF" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
             <SectionHeader
@@ -549,6 +628,35 @@ export default function SiteHome() {
                   </Reveal>
                 ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══ 3.5) SOBRE CMS — Beige background ═══ */}
+      <section className="site-section" style={{ background: "#F5F5DC" }}>
+        <div style={{ maxWidth: "960px", margin: "0 auto" }}>
+          <Reveal>
+            <SectionHeader
+              label="Sobre"
+              labelColor="#00251A"
+              title={aboutTitle}
+            />
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div className="site-card" style={{ padding: "32px 28px", background: "#FFFFFF" }}>
+              <p
+                style={{
+                  fontSize: "1rem",
+                  color: "rgba(0,37,26,0.7)",
+                  lineHeight: 1.8,
+                  margin: 0,
+                  whiteSpace: "pre-line",
+                }}
+              >
+                {aboutText}
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -1022,6 +1130,88 @@ export default function SiteHome() {
               </p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ═══ 10) CONTATO CMS — White background ═══ */}
+      <section className="site-section" style={{ background: "#FFFFFF" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <Reveal>
+            <SectionHeader
+              label="Contato"
+              title="Fale com o Oranje"
+              subtitle="Os dados abaixo sao gerenciados pelo CMS e refletem o conteudo publicado."
+            />
+          </Reveal>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: 20,
+            }}
+          >
+            {[
+              {
+                title: "Email",
+                value: contactEmail,
+                href: `mailto:${contactEmail}`,
+                icon: <Mail size={22} strokeWidth={1.75} />,
+              },
+              {
+                title: "Telefone",
+                value: contactPhone,
+                href: `tel:${contactPhone.replace(/\D/g, "")}`,
+                icon: <Phone size={22} strokeWidth={1.75} />,
+              },
+              {
+                title: "Endereço",
+                value: contactAddress,
+                href: undefined,
+                icon: <MapPin size={22} strokeWidth={1.75} />,
+              },
+            ].map((item, i) => (
+              <Reveal key={item.title} delay={i * 60}>
+                <div className="site-card" style={{ padding: "28px 24px", background: "#FFFFFF" }}>
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 14,
+                      background: "rgba(0,37,26,0.04)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#00251A",
+                      marginBottom: 16,
+                    }}
+                  >
+                    {item.icon}
+                  </div>
+                  <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 8 }}>
+                    {item.title}
+                  </h3>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      style={{
+                        color: "#E65100",
+                        fontSize: "0.95rem",
+                        textDecoration: "none",
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {item.value}
+                    </a>
+                  ) : (
+                    <p style={{ fontSize: "0.95rem", color: "rgba(0,37,26,0.65)", lineHeight: 1.6, margin: 0 }}>
+                      {item.value}
+                    </p>
+                  )}
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
     </SiteLayout>

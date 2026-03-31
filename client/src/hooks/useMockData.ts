@@ -368,14 +368,53 @@ export function useArticleCategories() {
   };
 }
 
-// ─── Content ───
+// ─── Content (normalized CMS payloads for the public site) ───
+export interface HeroContent {
+  title: string;
+  subtitle: string;
+  buttonText: string;
+  buttonUrl: string;
+  imageUrl: string;
+}
+
+export interface ServicesContentItem {
+  title: string;
+  description: string;
+}
+
+export interface ServicesContent {
+  title: string;
+  description: string;
+  items: ServicesContentItem[];
+}
+
+export interface AboutContent {
+  title: string;
+  text: string;
+}
+
+export interface ContactContent {
+  email: string;
+  phone: string;
+  address: string;
+}
+
 export function useHeroContent() {
   const query = trpc.content.getHero.useQuery(undefined, {
     staleTime: 120_000,
     retry: 1,
   });
+
+  const data = useMemo<HeroContent>(() => ({
+    title: query.data?.title || "",
+    subtitle: query.data?.subtitle || "",
+    buttonText: query.data?.buttonText || "",
+    buttonUrl: query.data?.buttonUrl || "",
+    imageUrl: query.data?.imageUrl || "",
+  }), [query.data]);
+
   return {
-    data: query.data ?? {},
+    data,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
@@ -387,8 +426,14 @@ export function useAboutContent() {
     staleTime: 120_000,
     retry: 1,
   });
+
+  const data = useMemo<AboutContent>(() => ({
+    title: query.data?.title || "",
+    text: query.data?.text || "",
+  }), [query.data]);
+
   return {
-    data: query.data ?? {},
+    data,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
@@ -400,8 +445,15 @@ export function useContactContent() {
     staleTime: 120_000,
     retry: 1,
   });
+
+  const data = useMemo<ContactContent>(() => ({
+    email: query.data?.email || "",
+    phone: query.data?.phone || "",
+    address: query.data?.address || "",
+  }), [query.data]);
+
   return {
-    data: query.data ?? {},
+    data,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
@@ -413,8 +465,30 @@ export function useServicesContent() {
     staleTime: 120_000,
     retry: 1,
   });
+
+  const data = useMemo<ServicesContent>(() => {
+    const rawList = Array.isArray((query.data as any)?.list)
+      ? (query.data as any).list
+      : Array.isArray((query.data as any)?.items)
+        ? (query.data as any).items
+        : [];
+
+    const items = rawList
+      .map((item: any) => ({
+        title: item?.name || item?.title || "",
+        description: item?.description || "",
+      }))
+      .filter((item: ServicesContentItem) => item.title || item.description);
+
+    return {
+      title: query.data?.title || "",
+      description: query.data?.description || "",
+      items,
+    };
+  }, [query.data]);
+
   return {
-    data: query.data ?? {},
+    data,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,

@@ -695,7 +695,7 @@ self.addEventListener('fetch', (event) => {
   
   // Create admin user endpoint (protected by ADMIN_KEY)
   app.post("/api/create-admin", async (req, res) => {
-    const { key, email, name } = req.body;
+    const { key, email, name, password } = req.body;
     
     if (key !== process.env.ADMIN_KEY) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -713,6 +713,14 @@ self.addEventListener('fetch', (event) => {
 
       const adminEmail = email || 'admin@oranjeapp.com.br';
       const adminName = name || 'Admin Oranje';
+      const adminPassword = typeof password === "string" ? password : "";
+
+      if (adminPassword.length < 8) {
+        return res.status(400).json({
+          success: false,
+          error: "Password must be at least 8 characters long",
+        });
+      }
 
       // Check if admin already exists by email or openId
       const { or } = await import("drizzle-orm");
@@ -727,16 +735,15 @@ self.addEventListener('fetch', (event) => {
         // Update role to admin if not already
         if (existing[0].role !== 'admin') {
           await db.update(users).set({ role: 'admin' }).where(eq(users.id, existing[0].id));
-          return res.json({
-            success: true,
-            message: 'User promoted to admin',
-            user: { id: existing[0].id, email: existing[0].email, name: existing[0].name, role: 'admin' }
-          });
         }
+
+        const authDb = await import("../db");
+        await authDb.setAdminPassword(existing[0].id, adminPassword);
+
         return res.json({
           success: true,
-          message: 'Admin user already exists',
-          user: { id: existing[0].id, email: existing[0].email, name: existing[0].name, role: existing[0].role }
+          message: existing[0].role !== 'admin' ? 'User promoted to admin and password updated' : 'Admin password updated successfully',
+          user: { id: existing[0].id, email: existing[0].email, name: existing[0].name, role: 'admin' }
         });
       }
 
@@ -757,11 +764,18 @@ self.addEventListener('fetch', (event) => {
           }
         });
 
+        const authDb = await import("../db");
+        const createdUser = await authDb.getUserByEmail(adminEmail);
+        if (!createdUser) {
+          throw new Error("Admin user created but could not be loaded for password setup");
+        }
+
+        await authDb.setAdminPassword(createdUser.id, adminPassword);
+
         return res.json({
           success: true,
           message: 'Admin user created/updated successfully',
-          user: { email: adminEmail, name: adminName },
-          note: 'Login with ANY password (temporary auth system)'
+          user: { email: adminEmail, name: adminName }
         });
       } catch (insertError: any) {
         // If insert fails, try to find and update the existing user
@@ -773,11 +787,13 @@ self.addEventListener('fetch', (event) => {
             role: 'admin'
           }).where(eq(users.id, existingByOpenId[0].id));
           
+          const authDb = await import("../db");
+          await authDb.setAdminPassword(existingByOpenId[0].id, adminPassword);
+
           return res.json({
             success: true,
             message: 'Admin user updated successfully',
-            user: { email: adminEmail, name: adminName },
-            note: 'Login with ANY password (temporary auth system)'
+            user: { email: adminEmail, name: adminName }
           });
         }
         throw insertError;
@@ -804,41 +820,40 @@ self.addEventListener('fetch', (event) => {
       // Use AuthService for REST authentication
       const { AuthService } = await import("../authService");
       const result = await AuthService.login(email, password);
-      
-      // Set CMS session cookie (legacy)
-      res.cookie("cms_session", JSON.stringify(result), {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+
+      const { sdk } = await import("./sdk");
+      const { COOKIE_NAME } = await import("@shared/const");
+      const { getSessionCookieOptions } = await import("./cookies");
+      const dbModule = await import("../db");
+      const dbUser = await dbModule.getUserByEmail(email);
+
+      if (!dbUser?.openId) {
+        throw new Error("ADMIN_SESSION_SETUP_FAILED");
+      }
+
+      const sessionToken = await sdk.createSessionToken(dbUser.openId, {
+        name: dbUser.name || "Admin",
+        expiresInMs: 7 * 24 * 60 * 60 * 1000,
+      });
+      const cookieOptions = getSessionCookieOptions(req);
+
+      res.cookie(COOKIE_NAME, sessionToken, {
+        ...cookieOptions,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      // ALSO set the main app JWT session cookie so trpc auth.me works
-      // This bridges CMS login with the App Admin auth system
-      try {
-        const { sdk } = await import("./sdk");
-        const { COOKIE_NAME } = await import("@shared/const");
-        const { getSessionCookieOptions } = await import("./cookies");
-        const user = result.user;
-        if (user && user.id) {
-          // Find the user's openId from the database
-          const dbModule = await import("../db");
-          const dbUser = await dbModule.getUserByEmail(email);
-          if (dbUser && dbUser.openId) {
-            const sessionToken = await sdk.createSessionToken(dbUser.openId, {
-              name: dbUser.name || "Admin",
-            });
-            const cookieOptions = getSessionCookieOptions(req);
-            res.cookie(COOKIE_NAME, sessionToken, {
-              ...cookieOptions,
-              maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-            });
-          }
-        }
-      } catch (sessionError) {
-        console.warn("[CMS Login] Could not set app session cookie:", sessionError);
-        // Continue — CMS session still works
-      }
+      // Legacy cookie kept only as an auxiliary marker for existing client flows.
+      // Authorization must come from the signed app session cookie.
+      res.cookie("cms_session", JSON.stringify({
+        success: true,
+        user: result.user,
+      }), {
+        httpOnly: true,
+        secure: cookieOptions.secure,
+        sameSite: cookieOptions.sameSite,
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
       
       return res.json(result);
     } catch (error: any) {

@@ -2,11 +2,12 @@ import { and, desc, eq, ilike, inArray, like, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, ads, adminLogs, categories, events, favorites, magicLinks, notifications,
-  partners, placePhotos, places, routes, users, vouchers, drivers,
+  partners, placePhotos, places, routes, users, vouchers, drivers, adminCredentials,
   type InsertAdminLog, type InsertCategory, type InsertEvent, type InsertMagicLink, type InsertPartner,
   type InsertPlace, type InsertRoute, type InsertVoucher, type MagicLink, type InsertDriver,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
+import { hashPassword, verifyPassword } from "./_core/password";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -61,6 +62,43 @@ export async function getUserByEmail(email: string) {
   if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAdminCredentialByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select()
+    .from(adminCredentials)
+    .where(eq(adminCredentials.userId, userId))
+    .limit(1);
+  return result[0];
+}
+
+export async function upsertAdminCredential(userId: number, passwordHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  await db
+    .insert(adminCredentials)
+    .values({
+      userId,
+      passwordHash,
+    })
+    .onDuplicateKeyUpdate({
+      set: {
+        passwordHash,
+      },
+    });
+}
+
+export async function setAdminPassword(userId: number, password: string) {
+  const passwordHash = await hashPassword(password);
+  await upsertAdminCredential(userId, passwordHash);
+}
+
+export async function verifyAdminPassword(userId: number, password: string) {
+  const credential = await getAdminCredentialByUserId(userId);
+  return verifyPassword(password, credential?.passwordHash);
 }
 
 // ─── Categories ───────────────────────────────────────────────────────────────

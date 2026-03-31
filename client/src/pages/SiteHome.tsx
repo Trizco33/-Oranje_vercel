@@ -39,6 +39,26 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+function HeroWindmillScene() {
+  return (
+    <div className="site-hero-windmill" aria-hidden="true">
+      <div className="site-hero-windmill-glow" />
+      <div className="site-hero-windmill-body">
+        <div className="site-hero-windmill-cap" />
+        <div className="site-hero-windmill-window window-top" />
+        <div className="site-hero-windmill-window window-bottom" />
+      </div>
+      <div className="site-hero-windmill-rotor">
+        <span className="blade blade-1" />
+        <span className="blade blade-2" />
+        <span className="blade blade-3" />
+        <span className="blade blade-4" />
+        <span className="hub" />
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    SITE HOME — Clean. Minimal. Premium. v2.0
    White/Beige alternating, Dark Green header/footer, Orange CTAs
@@ -261,6 +281,7 @@ export default function SiteHome() {
         />
         <div className="site-hero-overlay" />
         <div className="site-hero-noise" />
+        <HeroWindmillScene />
 
         <div className="site-hero-content">
           <div

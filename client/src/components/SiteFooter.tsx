@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 
 export default function SiteFooter() {
   const linkStyle: React.CSSProperties = {
@@ -16,8 +16,20 @@ export default function SiteFooter() {
       style={{
         background: "#00251A",
         color: "#FFFFFF",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "radial-gradient(circle at 18% 20%, rgba(230,81,0,0.12) 0%, transparent 34%), radial-gradient(circle at 78% 30%, rgba(245,245,220,0.08) 0%, transparent 28%)",
+          pointerEvents: "none",
+        }}
+      />
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "64px 24px 32px" }}>
         {/* Top Section */}
         <div
@@ -29,25 +41,59 @@ export default function SiteFooter() {
           }}
         >
           {/* Brand */}
-          <div>
+          <div style={{ position: "relative", zIndex: 1 }}>
             <img
               src="/logo-white.png"
               alt="Oranje - Guia Cultural de Holambra"
-              style={{ height: "32px", width: "auto", maxWidth: "130px", marginBottom: "16px", opacity: 0.9, objectFit: "contain" }}
+              style={{ height: "34px", width: "auto", maxWidth: "136px", marginBottom: "18px", opacity: 0.95, objectFit: "contain" }}
               loading="lazy"
             />
-            <p style={{
-              fontSize: "0.875rem",
-              color: "rgba(255,255,255,0.5)",
-              lineHeight: 1.7,
-              maxWidth: "280px",
-            }}>
-              O guia definitivo de Holambra. Descubra os melhores lugares, eventos e experiências da cidade das flores.
+            <p
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "7px 12px",
+                marginBottom: "16px",
+                borderRadius: "999px",
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                color: "rgba(245,245,220,0.66)",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+              }}
+            >
+              Curadoria editorial
             </p>
+            <p style={{
+              fontSize: "0.92rem",
+              color: "rgba(255,255,255,0.62)",
+              lineHeight: 1.8,
+              maxWidth: "320px",
+            }}>
+              Turismo, gastronomia e experiências com direção visual e curadoria local para quem quer viver Holambra com profundidade.
+            </p>
+            <Link
+              to="/seja-um-parceiro"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                marginTop: "20px",
+                textDecoration: "none",
+                color: "#F5F5DC",
+                fontSize: "0.82rem",
+                fontWeight: 600,
+              }}
+            >
+              Seja parceiro <ArrowRight size={14} style={{ color: "#E65100" }} />
+            </Link>
           </div>
 
           {/* Navigation */}
-          <nav aria-label="Links de navegação do rodapé">
+          <nav aria-label="Links de navegação do rodapé" style={{ position: "relative", zIndex: 1 }}>
             <h4 style={{
               fontWeight: 600,
               color: "rgba(255,255,255,0.35)",
@@ -81,7 +127,7 @@ export default function SiteFooter() {
           </nav>
 
           {/* Legal */}
-          <nav aria-label="Links legais">
+          <nav aria-label="Links legais" style={{ position: "relative", zIndex: 1 }}>
             <h4 style={{
               fontWeight: 600,
               color: "rgba(255,255,255,0.35)",
@@ -113,7 +159,7 @@ export default function SiteFooter() {
           </nav>
 
           {/* Contact */}
-          <div>
+          <div style={{ position: "relative", zIndex: 1 }}>
             <h4 style={{
               fontWeight: 600,
               color: "rgba(255,255,255,0.35)",
@@ -124,7 +170,7 @@ export default function SiteFooter() {
             }}>
               Contato
             </h4>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "14px" }}>
               <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <Mail size={14} style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }} aria-hidden="true" />
                 <a
@@ -170,9 +216,9 @@ export default function SiteFooter() {
           <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.3)" }}>
             &copy; 2026 Oranje. Todos os direitos reservados.
           </p>
-          <div style={{ display: "flex", gap: "16px" }} aria-label="Redes sociais">
+          <div style={{ display: "flex", gap: "16px", position: "relative", zIndex: 1 }} aria-label="Redes sociais">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/oranjeholambra"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Seguir Oranje no Instagram"

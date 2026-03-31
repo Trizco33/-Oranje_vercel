@@ -32,6 +32,11 @@ import {
   ChevronDown,
   Mail,
   Phone,
+  MoveRight,
+  Play,
+  Sparkles,
+  Compass,
+  ShieldCheck,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -77,6 +82,21 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
       {children}
     </div>
   );
+}
+
+function useParallax(rate = 0.08) {
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setOffset(window.scrollY * rate);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [rate]);
+
+  return offset;
 }
 
 // Section header component for consistency
@@ -130,6 +150,7 @@ function SectionHeader({
 export default function SiteHome() {
   const navigate = useNavigate();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const heroParallax = useParallax(0.12);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
@@ -216,239 +237,158 @@ export default function SiteHome() {
     { title: "Eventos", desc: "Agenda de atividades", icon: <Calendar size={24} strokeWidth={1.5} />, link: "/eventos-em-holambra" },
     { title: "Roteiros", desc: "Passeios planejados", icon: <Map size={24} strokeWidth={1.5} />, link: "/roteiros" },
   ];
+  const premiumSignals = [
+    { icon: <Compass size={18} />, label: "Curadoria local" },
+    { icon: <ShieldCheck size={18} />, label: "Experiências verificadas" },
+    { icon: <Sparkles size={18} />, label: "Turismo editorial premium" },
+  ];
+  const heroStats = [
+    { value: "100+", label: "Lugares autorais" },
+    { value: "50+", label: "Parceiros selecionados" },
+    { value: "30+", label: "Roteiros curados" },
+  ];
 
   return (
     <SiteLayout>
       {/* ═══ 1) HERO SECTION ═══ */}
-      <section
-        style={{
-          position: "relative",
-          minHeight: "min(85vh, 680px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-        }}
-      >
-        {/* Background Image — Holambra imagery */}
+      <section className="site-hero">
         <div
+          className="site-hero-media"
           style={{
-            position: "absolute",
-            inset: 0,
             backgroundImage: `url('${heroImageUrl}'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            transform: `translateY(${heroParallax * -0.35}px) scale(1.04)`,
           }}
         />
-        {/* Gradient overlay — stronger for text readability */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(to bottom, rgba(0,37,26,0.45) 0%, rgba(0,37,26,0.65) 100%)",
-          }}
-        />
+        <div className="site-hero-overlay" />
+        <div className="site-hero-noise" />
 
-        {/* Hero Content */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 2,
-            textAlign: "center",
-            padding: "0 24px",
-            maxWidth: "720px",
-            width: "100%",
-          }}
-        >
-          <p
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 500,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.7)",
-              marginBottom: 20,
-            }}
-          >
-            Curadoria local • Parceiros verificados
-          </p>
-
-          <h1
-            style={{
-              fontSize: "clamp(2.25rem, 7vw, 3.75rem)",
-              fontWeight: 700,
-              color: "#FFFFFF",
-              lineHeight: 1.1,
-              letterSpacing: "-0.03em",
-              marginBottom: 16,
-              fontFamily: "'Montserrat', system-ui, sans-serif",
-            }}
-          >
-            {heroTitle}
-          </h1>
-
-          <p
-            style={{
-              fontSize: "clamp(1rem, 2.5vw, 1.125rem)",
-              color: "rgba(255,255,255,0.85)",
-              lineHeight: 1.6,
-              marginBottom: 36,
-              maxWidth: "540px",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            {heroSubtitle}
-          </p>
-
-          {/* Search Bar - Solid white, no glassmorphism */}
+        <div className="site-hero-content">
           <div
+            className="site-hero-grid"
             style={{
-              maxWidth: "480px",
-              margin: "0 auto 36px",
+              maxWidth: "1320px",
+              margin: "0 auto",
+              padding: "0 clamp(1.25rem, 3vw, 2.5rem)",
             }}
           >
-            <div
-              onClick={() => { navigate("/app/busca"); }}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") navigate("/app/busca"); }}
-              role="button"
-              tabIndex={0}
-              aria-label="Buscar restaurantes, eventos, roteiros"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                background: "#FFFFFF",
-                borderRadius: 14,
-                padding: "0 20px",
-                height: 52,
-                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                cursor: "pointer",
-                transition: "box-shadow 0.3s ease",
-              }}
-              onMouseEnter={(e: any) => (e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.15)")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)")}
-            >
-              <Search size={18} style={{ color: "rgba(0,37,26,0.35)", flexShrink: 0 }} />
-              <span
-                style={{
-                  flex: 1,
-                  padding: "0 12px",
-                  fontSize: "0.9375rem",
-                  color: "rgba(0,37,26,0.4)",
-                  fontFamily: "'Montserrat', system-ui, sans-serif",
-                }}
-              >
-                Busque restaurantes, eventos ou roteiros em Holambra
-              </span>
+            <div className="site-hero-copy">
+              <Reveal delay={20}>
+                <div className="site-hero-badge">
+                  <Sparkles size={14} />
+                  Curadoria premium de Holambra
+                </div>
+              </Reveal>
+
+              <Reveal delay={80}>
+                <h1 className="site-hero-title">
+                  Uma nova forma de
+                  <span className="site-hero-title-accent"> descobrir Holambra</span>
+                </h1>
+              </Reveal>
+
+              <Reveal delay={140}>
+                <p className="site-hero-subtitle">
+                  {heroTitle !== "Descubra Holambra" ? heroTitle : heroSubtitle}
+                </p>
+              </Reveal>
+
+              <Reveal delay={190}>
+                <div className="site-hero-signal-row">
+                  {premiumSignals.map((signal) => (
+                    <div key={signal.label} className="site-hero-signal">
+                      {signal.icon}
+                      <span>{signal.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+
+              <Reveal delay={240}>
+                <div className="site-hero-search-shell">
+                  <button
+                    onClick={() => {
+                      navigate("/app/busca");
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") navigate("/app/busca");
+                    }}
+                    className="site-hero-search"
+                    type="button"
+                    aria-label="Buscar restaurantes, eventos, roteiros"
+                  >
+                    <Search size={18} />
+                    <span>Busque restaurantes, eventos ou roteiros em Holambra</span>
+                    <MoveRight size={18} />
+                  </button>
+                </div>
+              </Reveal>
+
+              <Reveal delay={300}>
+                <div className="site-hero-actions">
+                  <Link to={heroButtonUrl} className="site-cta site-cta-lg">
+                    {heroButtonText}
+                    <ArrowRight size={18} />
+                  </Link>
+
+                  {installPrompt ? (
+                    <button onClick={handleInstall} className="site-btn-secondary site-cta-lg">
+                      <Download size={18} />
+                      Instalar App
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
+                      className="site-btn-secondary site-cta-lg"
+                    >
+                      <Play size={16} />
+                      Explorar experiência
+                    </button>
+                  )}
+                </div>
+              </Reveal>
+
+              <Reveal delay={360}>
+                <div className="site-hero-stats">
+                  {heroStats.map((stat) => (
+                    <div key={stat.label} className="site-hero-stat">
+                      <span className="site-hero-stat-value">{stat.value}</span>
+                      <span className="site-hero-stat-label">{stat.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
             </div>
-          </div>
 
-          {/* CTA Buttons */}
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
-            <Link
-              to={heroButtonUrl}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                height: 48,
-                padding: "0 28px",
-                background: "#E65100",
-                color: "#FFFFFF",
-                fontSize: "0.9375rem",
-                fontWeight: 600,
-                borderRadius: 12,
-                textDecoration: "none",
-                transition: "background 0.2s ease, transform 0.2s ease",
-                fontFamily: "'Montserrat', system-ui, sans-serif",
-              }}
-              onMouseEnter={(e: any) => { e.currentTarget.style.background = "#FF6D00"; }}
-              onMouseLeave={(e: any) => { e.currentTarget.style.background = "#E65100"; }}
-            >
-              {heroButtonText}
-              <ArrowRight size={16} />
-            </Link>
-            {/* PWA Install Button — only visible when install prompt is available */}
-            {installPrompt && (
-              <button
-                onClick={handleInstall}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: 48,
-                  padding: "0 28px",
-                  background: "rgba(255,255,255,0.15)",
-                  color: "#FFFFFF",
-                  fontSize: "0.9375rem",
-                  fontWeight: 600,
-                  borderRadius: 12,
-                  border: "1.5px solid rgba(255,255,255,0.4)",
-                  cursor: "pointer",
-                  transition: "border-color 0.2s ease, background 0.2s ease",
-                  fontFamily: "'Montserrat', system-ui, sans-serif",
-                  backdropFilter: "blur(4px)",
-                }}
-                onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)"; e.currentTarget.style.background = "rgba(255,255,255,0.25)"; }}
-                onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)"; e.currentTarget.style.background = "rgba(255,255,255,0.15)"; }}
-              >
-                <Download size={16} />
-                Instalar App
-              </button>
-            )}
-            {!installPrompt && (
-              <button
-                onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: 48,
-                  padding: "0 28px",
-                  background: "transparent",
-                  color: "#FFFFFF",
-                  fontSize: "0.9375rem",
-                  fontWeight: 600,
-                  borderRadius: 12,
-                  border: "1.5px solid rgba(255,255,255,0.35)",
-                  cursor: "pointer",
-                  transition: "border-color 0.2s ease, background 0.2s ease",
-                  fontFamily: "'Montserrat', system-ui, sans-serif",
-                }}
-                onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.6)"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
-                onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.background = "transparent"; }}
-              >
-                Explorar agora
-              </button>
-            )}
-          </div>
+            <Reveal delay={220}>
+              <div className="site-hero-showcase">
+                <div className="site-hero-card site-hero-card-primary">
+                  <div className="site-hero-card-eyebrow">Editor&apos;s Selection</div>
+                  <h2 className="site-hero-card-title">Roteiros, lugares e experiências com curadoria real.</h2>
+                  <p className="site-hero-card-text">
+                    Oranje combina profundidade editorial, utilidade prática e uma leitura sofisticada do destino.
+                  </p>
+                  <div className="site-hero-card-divider" />
+                  <div className="site-hero-card-footer">
+                    <span>Turismo cultural</span>
+                    <span>Marca autoral</span>
+                    <span>Confiança local</span>
+                  </div>
+                </div>
 
-          {/* Stats */}
-          <div style={{ display: "flex", gap: 56, justifyContent: "center", flexWrap: "wrap" }}>
-            {[
-              { number: "100+", label: "Lugares" },
-              { number: "50+", label: "Parceiros" },
-              { number: "30+", label: "Roteiros" },
-            ].map((stat) => (
-              <div key={stat.label} style={{ textAlign: "center" }}>
-                <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "#FFFFFF", lineHeight: 1 }}>{stat.number}</p>
-                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.6)", marginTop: 4 }}>{stat.label}</p>
+                <div className="site-hero-card site-hero-card-secondary">
+                  <p className="site-hero-card-kicker">Experiência refinada</p>
+                  <p className="site-hero-card-caption">
+                    Visual editorial, navegação clara e uma sensação de produto vivo em cada interação.
+                  </p>
+                </div>
               </div>
-            ))}
+            </Reveal>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 24,
-            left: "50%",
-            transform: "translateX(-50%)",
-            animation: "site-scroll-bounce 2s ease-in-out infinite",
-          }}
-        >
-          <ChevronDown size={24} style={{ color: "rgba(255,255,255,0.5)" }} />
+        <div className="site-hero-scroll-indicator">
+          <ChevronDown size={20} />
+          <span>Role para descobrir</span>
         </div>
       </section>
 
@@ -458,8 +398,8 @@ export default function SiteHome() {
           <Reveal>
             <SectionHeader
               label="Categorias"
-              title="Explore por Categoria"
-              subtitle="Encontre exatamente o que você procura"
+              title="Explore Holambra por atmosfera"
+              subtitle="Cada trilha abre um universo de experiências com leitura editorial e descoberta prática."
             />
           </Reveal>
 
@@ -496,22 +436,13 @@ export default function SiteHome() {
                     >
                       {cat.icon}
                     </div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 6 }}>
+                    <h3 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "#00251A", marginBottom: 8 }}>
                       {cat.title}
                     </h3>
-                    <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", marginBottom: 20, lineHeight: 1.6 }}>
+                    <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.55)", marginBottom: 20, lineHeight: 1.65 }}>
                       {cat.desc}
                     </p>
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 4,
-                        fontSize: "0.8125rem",
-                        fontWeight: 600,
-                        color: "#E65100",
-                      }}
-                    >
+                    <span className="site-link-inline">
                       Explorar <ArrowRight size={14} />
                     </span>
                   </div>
@@ -543,11 +474,11 @@ export default function SiteHome() {
           >
             {serviceItems.map((service, i: number) => (
               <Reveal key={`${service.title}-${i}`} delay={i * 60}>
-                <div className="site-card" style={{ padding: "28px 24px", background: "#FFFFFF" }}>
+                <div className="site-card site-card-accent" style={{ padding: "30px 26px", background: "#FFFFFF" }}>
                   <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#00251A", marginBottom: 10 }}>
                     {service.title}
                   </h3>
-                  <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.6)", lineHeight: 1.6 }}>
+                  <p style={{ fontSize: "0.9375rem", color: "rgba(0,37,26,0.62)", lineHeight: 1.75 }}>
                     {service.description}
                   </p>
                 </div>
@@ -564,8 +495,8 @@ export default function SiteHome() {
             <SectionHeader
               label="Destaques"
               labelColor="#00251A"
-              title="Destaques da Semana"
-              subtitle="Lugares mais visitados e bem avaliados"
+              title="Destaques da curadoria Oranje"
+              subtitle="Uma seleção pensada para causar impacto, gerar desejo e orientar decisões com confiança."
             />
           </Reveal>
 
@@ -591,7 +522,7 @@ export default function SiteHome() {
               : places.slice(0, 3).map((place: any, i: number) => (
                   <Reveal key={place.id} delay={i * 80}>
                     <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block" }}>
-                      <div className="site-card" style={{ background: "#FFFFFF" }}>
+                      <div className="site-card site-card-featured" style={{ background: "#FFFFFF" }}>
                         {/* 3:2 aspect ratio image */}
                         <div style={{ position: "relative", paddingBottom: "66.67%", overflow: "hidden" }}>
                           <img
@@ -611,10 +542,10 @@ export default function SiteHome() {
                           />
                         </div>
                         <div style={{ padding: "16px 20px" }}>
-                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 4 }}>
+                          <h3 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "#00251A", marginBottom: 6 }}>
                             {place.name}
                           </h3>
-                          <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", marginBottom: 12 }}>
+                          <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.46)", marginBottom: 12 }}>
                             {catMap[(place as any).categoryId] || "Holambra"}
                           </p>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -624,16 +555,7 @@ export default function SiteHome() {
                                 {place.rating || "4.5"}
                               </span>
                             </div>
-                            <span
-                              style={{
-                                fontSize: "0.75rem",
-                                fontWeight: 600,
-                                color: "#E65100",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 4,
-                              }}
-                            >
+                            <span className="site-link-inline" style={{ fontSize: "0.75rem" }}>
                               Ver no app <ArrowRight size={12} />
                             </span>
                           </div>
@@ -654,16 +576,17 @@ export default function SiteHome() {
               label="Sobre"
               labelColor="#00251A"
               title={aboutTitle}
+              subtitle="Uma marca construída para transformar descoberta em memória, com linguagem editorial e utilidade real."
             />
           </Reveal>
 
           <Reveal delay={80}>
-            <div className="site-card" style={{ padding: "32px 28px", background: "#FFFFFF" }}>
+            <div className="site-card site-card-editorial" style={{ padding: "38px 34px", background: "#FFFFFF" }}>
               <p
                 style={{
                   fontSize: "1rem",
-                  color: "rgba(0,37,26,0.7)",
-                  lineHeight: 1.8,
+                  color: "rgba(0,37,26,0.68)",
+                  lineHeight: 1.95,
                   margin: 0,
                   whiteSpace: "pre-line",
                 }}
@@ -681,8 +604,8 @@ export default function SiteHome() {
           <Reveal>
             <SectionHeader
               label="Roteiros"
-              title="Roteiros Prontos"
-              subtitle="Passeios planejados para aproveitar Holambra"
+              title="Roteiros com leitura de experiência"
+              subtitle="Mais do que listas, uma direção clara para viver Holambra com intenção e repertório."
             />
           </Reveal>
 
@@ -716,7 +639,7 @@ export default function SiteHome() {
               <Reveal key={roteiro.title} delay={i * 80}>
                 <Link to={roteiro.link} style={{ textDecoration: "none", display: "block", height: "100%" }}>
                   <div
-                    className="site-card"
+                    className="site-card site-card-editorial"
                     style={{
                       padding: "28px 24px",
                       display: "flex",
@@ -728,7 +651,7 @@ export default function SiteHome() {
                     <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#00251A", marginBottom: 10 }}>
                       {roteiro.title}
                     </h3>
-                    <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6, flex: 1 }}>
+                    <p style={{ fontSize: "0.9375rem", color: "rgba(0,37,26,0.56)", lineHeight: 1.75, flex: 1 }}>
                       {roteiro.desc}
                     </p>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 20 }}>
@@ -736,16 +659,7 @@ export default function SiteHome() {
                         <Clock size={14} style={{ color: "#E65100" }} />
                         <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#E65100" }}>{roteiro.duration}</span>
                       </div>
-                      <span
-                        style={{
-                          fontSize: "0.8125rem",
-                          fontWeight: 600,
-                          color: "#E65100",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 4,
-                        }}
-                      >
+                      <span className="site-link-inline" style={{ fontSize: "0.8125rem" }}>
                         Abrir <ArrowRight size={12} />
                       </span>
                     </div>
@@ -763,8 +677,8 @@ export default function SiteHome() {
           <Reveal>
             <SectionHeader
               label="Mapa"
-              title="Navegue com Facilidade"
-              subtitle="Explore Holambra no mapa interativo com todos os pontos de interesse"
+              title="Navegue com profundidade e clareza"
+              subtitle="Uma camada visual mais madura para orientar visita, deslocamento e descoberta com fluidez."
             />
           </Reveal>
 
@@ -847,8 +761,8 @@ export default function SiteHome() {
           <Reveal>
             <SectionHeader
               label="Agenda"
-              title="Eventos & Agenda"
-              subtitle="Não perca o que está acontecendo em Holambra"
+              title="Agenda editorial e oportunidades de visita"
+              subtitle="Conteúdo com ritmo, contexto e utilidade para tornar cada visita mais memorável."
             />
           </Reveal>
 
@@ -857,7 +771,7 @@ export default function SiteHome() {
               <Reveal key={article.id} delay={i * 60}>
                 <Link to={`/blog/${article.slug}`} style={{ textDecoration: "none", display: "block" }}>
                   <div
-                    className="site-card"
+                    className="site-card site-card-editorial"
                     style={{
                       padding: "18px 24px",
                       display: "flex",
@@ -919,7 +833,8 @@ export default function SiteHome() {
             <SectionHeader
               label="Público"
               labelColor="#00251A"
-              title="Para Quem é o Oranje"
+              title="Para quem exige mais do destino"
+              subtitle="Um produto desenhado para quem valoriza contexto, curadoria e um acabamento de alto nível."
             />
           </Reveal>
 
@@ -936,7 +851,7 @@ export default function SiteHome() {
               { icon: <Users size={28} strokeWidth={1.5} />, title: "Experiências Locais Seguras", desc: "Quem busca autenticidade com confiança em parceiros verificados." },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 80}>
-                <div className="site-card" style={{ padding: "32px 28px", textAlign: "center", background: "#FFFFFF" }}>
+                <div className="site-card site-card-soft" style={{ padding: "34px 28px", textAlign: "center", background: "#FFFFFF" }}>
                   <div
                     style={{
                       width: 56,
@@ -971,8 +886,8 @@ export default function SiteHome() {
           <Reveal>
             <SectionHeader
               label="Parceiros"
-              title="Seja um Parceiro Oranje"
-              subtitle="Cresça seu negócio com a plataforma de curadoria local"
+              title="Uma vitrine premium para marcas locais"
+              subtitle="Posicione seu negócio dentro de uma experiência visualmente forte, editorialmente coerente e comercialmente relevante."
             />
           </Reveal>
 
@@ -991,7 +906,7 @@ export default function SiteHome() {
               { icon: <CheckCircle size={24} strokeWidth={1.5} />, title: "Verificado", desc: "Selo de confiança" },
             ].map((vantagem, i) => (
               <Reveal key={vantagem.title} delay={i * 60}>
-                <div className="site-card" style={{ padding: "24px 20px", textAlign: "center" }}>
+                <div className="site-card site-card-soft" style={{ padding: "24px 20px", textAlign: "center" }}>
                   <div style={{ color: "#E65100", margin: "0 auto 12px", display: "flex", justifyContent: "center" }}>
                     {vantagem.icon}
                   </div>
@@ -1154,8 +1069,8 @@ export default function SiteHome() {
           <Reveal>
             <SectionHeader
               label="Contato"
-              title="Fale com o Oranje"
-              subtitle="Os dados abaixo sao gerenciados pelo CMS e refletem o conteudo publicado."
+              title="Contato direto, percepção premium"
+              subtitle="Uma apresentação clara e coesa dos canais oficiais da marca, já refletindo o conteúdo publicado."
             />
           </Reveal>
 

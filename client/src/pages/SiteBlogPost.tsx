@@ -5,11 +5,38 @@ import { ArrowLeft, Calendar, Share2 } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
 import { DSBadge } from "@/components/ds/Badge";
 import { DSCard } from "@/components/ds/Card";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
+
+function getArticleSeoField(
+  article: unknown,
+  field: "seoTitle" | "seoDescription" | "seoKeywords"
+) {
+  if (!article || typeof article !== "object" || !(field in article)) {
+    return undefined;
+  }
+  const value = (article as Record<string, unknown>)[field];
+  return typeof value === "string" ? value : undefined;
+}
 
 export default function SiteBlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { data: article, isLoading } = useArticleBySlug(slug || "");
+  const seoTitle = getArticleSeoField(article, "seoTitle");
+  const seoDescription = getArticleSeoField(article, "seoDescription");
+  const seoKeywords = getArticleSeoField(article, "seoKeywords");
+
+  useSeoMeta({
+    title: seoTitle || article?.title || "Artigo",
+    description: seoDescription || article?.excerpt || undefined,
+    keywords: seoKeywords || undefined,
+    canonical: article ? `${window.location.origin}/blog/${article.slug}` : undefined,
+    ogTitle: seoTitle || article?.title || "Artigo",
+    ogDescription: seoDescription || article?.excerpt || undefined,
+    ogImage: article?.coverImageUrl || undefined,
+    ogType: "article",
+    ogUrl: article ? `${window.location.origin}/blog/${article.slug}` : undefined,
+  });
 
   if (isLoading) {
     return (

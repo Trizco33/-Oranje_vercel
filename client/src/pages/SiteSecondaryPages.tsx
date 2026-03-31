@@ -5,6 +5,8 @@ import { DSButton } from "@/components/ds/Button";
 import { DSCard } from "@/components/ds/Card";
 import { DSBadge } from "@/components/ds/Badge";
 import { DSInput } from "@/components/ds/Input";
+import { trpc } from "@/lib/trpc";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 const pages: Record<string, { title: string; subtitle: string; component: React.ReactNode }> = {
   roteiros: {
@@ -444,6 +446,34 @@ export default function SiteSecondaryPages() {
   const location = useLocation();
   const pageKey = location.pathname.replace(/^\//, "");
   const pageData = pages[pageKey || ""];
+  const { data: seoData } = trpc.cms.getSeo.useQuery(
+    { page: pageKey },
+    { enabled: !!pageData && ["parceiros", "sobre", "contato"].includes(pageKey) }
+  );
+
+  useSeoMeta(
+    pageData
+      ? {
+          title: seoData?.metaTitle || pageData.title,
+          description: seoData?.metaDescription || pageData.subtitle,
+          keywords: seoData?.metaKeywords || undefined,
+          canonical: seoData?.canonical || `${window.location.origin}${location.pathname}`,
+          index: seoData?.index ?? true,
+          ogTitle: seoData?.ogTitle || seoData?.metaTitle || pageData.title,
+          ogDescription: seoData?.ogDescription || seoData?.metaDescription || pageData.subtitle,
+          ogImage: seoData?.ogImage || undefined,
+          ogUrl: `${window.location.origin}${location.pathname}`,
+        }
+      : {
+          title: "Pagina nao encontrada",
+          description: "A pagina solicitada nao existe.",
+          canonical: `${window.location.origin}${location.pathname}`,
+          index: false,
+          ogTitle: "Pagina nao encontrada",
+          ogDescription: "A pagina solicitada nao existe.",
+          ogUrl: `${window.location.origin}${location.pathname}`,
+        }
+  );
 
   if (!pageData) {
     return (

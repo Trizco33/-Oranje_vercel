@@ -8,6 +8,8 @@ import {
   useAboutContent,
   useContactContent,
 } from "@/hooks/useMockData";
+import { trpc } from "@/lib/trpc";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 import { getPlaceImage } from "@/components/PlaceCard";
 import SiteLayout from "@/components/SiteLayout";
 import { Link, useNavigate } from "react-router-dom";
@@ -135,6 +137,7 @@ export default function SiteHome() {
   const { data: servicesContent } = useServicesContent();
   const { data: aboutContent } = useAboutContent();
   const { data: contactContent } = useContactContent();
+  const { data: seoData } = trpc.cms.getSeo.useQuery({ page: "home" });
   const places = allPlaces.slice(0, 6);
 
   const heroTitle = heroContent.title || "Descubra Holambra";
@@ -166,6 +169,18 @@ export default function SiteHome() {
   const contactEmail = contactContent.email || "contato@oranje.com.br";
   const contactPhone = contactContent.phone || "(19) 4000-0000";
   const contactAddress = contactContent.address || "Holambra, SP";
+
+  useSeoMeta({
+    title: seoData?.metaTitle || heroTitle,
+    description: seoData?.metaDescription || heroSubtitle,
+    keywords: seoData?.metaKeywords || undefined,
+    canonical: seoData?.canonical || undefined,
+    ogTitle: seoData?.ogTitle || seoData?.metaTitle || heroTitle,
+    ogDescription: seoData?.ogDescription || seoData?.metaDescription || heroSubtitle,
+    ogImage: seoData?.ogImage || heroImageUrl,
+    index: seoData?.index ?? true,
+    ogType: "website",
+  });
 
   // Build categoryId → name map for display
   const catMap = useMemo(() => {

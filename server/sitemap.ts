@@ -1,10 +1,11 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
-import { articles, places, events, routes } from "../drizzle/schema";
+import type { MySql2Database } from "drizzle-orm/mysql2";
+import { articles, places, events, routes, sitePages } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
 
-let db: ReturnType<typeof drizzle> | null = null;
+let db: MySql2Database | null = null;
 if (ENV.databaseUrl) {
   try { db = drizzle(mysql.createPool(ENV.databaseUrl)); } catch (e) { console.warn("[Sitemap] DB init failed:", e); }
 }
@@ -14,10 +15,26 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     .select()
     .from(articles)
     .where(eq(articles.published, true)) : [];
+  const publishedSitePages = db ? await db
+    .select()
+    .from(sitePages)
+    .where(eq(sitePages.published, true)) : [];
 
   const allPlaces = db ? await db.select().from(places) : [];
   const allEvents = db ? await db.select().from(events) : [];
   const allRoutes = db ? await db.select().from(routes) : [];
+  const staticSitePages = [
+    { path: "/blog", priority: 0.8, changefreq: "weekly" as const },
+    { path: "/roteiros", priority: 0.7, changefreq: "monthly" as const },
+    { path: "/mapa", priority: 0.7, changefreq: "monthly" as const },
+    { path: "/parceiros", priority: 0.7, changefreq: "monthly" as const },
+    { path: "/seja-um-parceiro", priority: 0.6, changefreq: "monthly" as const },
+    { path: "/sobre", priority: 0.6, changefreq: "monthly" as const },
+    { path: "/contato", priority: 0.6, changefreq: "monthly" as const },
+    { path: "/privacidade", priority: 0.4, changefreq: "yearly" as const },
+    { path: "/termos", priority: 0.4, changefreq: "yearly" as const },
+  ];
+  const today = new Date().toISOString().split("T")[0];
 
   const urls: Array<{
     loc: string;
@@ -28,40 +45,54 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     // Static pages
     {
       loc: baseUrl,
-      lastmod: new Date().toISOString().split("T")[0],
+      lastmod: today,
       priority: 1.0,
       changefreq: "weekly",
     },
     {
       loc: `${baseUrl}/guia`,
-      lastmod: new Date().toISOString().split("T")[0],
+      lastmod: today,
       priority: 0.8,
       changefreq: "weekly",
     },
     {
       loc: `${baseUrl}/app/explorar`,
-      lastmod: new Date().toISOString().split("T")[0],
+      lastmod: today,
       priority: 0.9,
       changefreq: "daily",
     },
     {
       loc: `${baseUrl}/app/eventos`,
-      lastmod: new Date().toISOString().split("T")[0],
+      lastmod: today,
       priority: 0.8,
       changefreq: "daily",
     },
     {
       loc: `${baseUrl}/app/roteiros`,
-      lastmod: new Date().toISOString().split("T")[0],
+      lastmod: today,
       priority: 0.8,
       changefreq: "weekly",
     },
+    ...staticSitePages.map((page) => ({
+      loc: `${baseUrl}${page.path}`,
+      lastmod: today,
+      priority: page.priority,
+      changefreq: page.changefreq,
+    })),
 
     // Articles
     ...publishedArticles.map((article) => ({
-      loc: `${baseUrl}/guia/${article.slug}`,
+      loc: `${baseUrl}/blog/${article.slug}`,
       lastmod: (article.updatedAt || article.createdAt).toISOString().split("T")[0],
       priority: 0.7,
+      changefreq: "monthly" as const,
+    })),
+
+    // CMS pages
+    ...publishedSitePages.map((page) => ({
+      loc: `${baseUrl}/pagina/${page.slug}`,
+      lastmod: (page.updatedAt || page.createdAt).toISOString().split("T")[0],
+      priority: 0.6,
       changefreq: "monthly" as const,
     })),
 

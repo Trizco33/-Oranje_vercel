@@ -5,9 +5,17 @@ import { Link } from "react-router-dom";
 import { DSButton } from "@/components/ds/Button";
 import { DSCard } from "@/components/ds/Card";
 import { DSBadge } from "@/components/ds/Badge";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function SiteBlog() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+  useSeoMeta({
+    title: "Blog Oranje",
+    description: "Dicas, histórias e guias sobre Holambra",
+    canonical: `${window.location.origin}/blog`,
+    ogType: "website",
+    ogUrl: `${window.location.origin}/blog`,
+  });
 
   const { data: articles = [] } = useArticlesListPublished({
     category: selectedCategory,

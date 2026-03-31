@@ -4,6 +4,7 @@ import SiteContentPage from "./SiteContentPage";
 import SiteLayout from "@/components/SiteLayout";
 import { trpc } from "@/lib/trpc";
 import { DSButton } from "@/components/ds/Button";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 function renderContent(content: string) {
   return (
@@ -42,6 +43,22 @@ export default function SiteCMSPage() {
     { slug: normalizedSlug },
     { enabled: !!normalizedSlug }
   );
+
+  useSeoMeta({
+    title: page?.metaTitle || page?.title || "Pagina do CMS",
+    description: page?.metaDescription || page?.subtitle || undefined,
+    keywords: page?.metaKeywords || undefined,
+    canonical: normalizedSlug
+      ? `${window.location.origin}/pagina/${normalizedSlug}`
+      : undefined,
+    ogTitle: page?.metaTitle || page?.title,
+    ogDescription: page?.metaDescription || page?.subtitle || undefined,
+    ogImage: page?.coverImageUrl || undefined,
+    ogType: "article",
+    ogUrl: normalizedSlug
+      ? `${window.location.origin}/pagina/${normalizedSlug}`
+      : undefined,
+  });
 
   if (isLoading) {
     return (

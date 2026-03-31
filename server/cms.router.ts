@@ -1,14 +1,15 @@
 import { router, adminProcedure, publicProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { drizzle } from "drizzle-orm/mysql2";
+import type { MySql2Database } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { siteContent, sitePages, siteSeo } from "../drizzle/schema";
 import { and, eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
 import { AuthService } from "./authService";
 
-let pool: ReturnType<typeof mysql.createPool> | null = null;
-let db: ReturnType<typeof drizzle> | null = null;
+let pool: mysql.Pool | null = null;
+let db: MySql2Database | null = null;
 
 if (ENV.databaseUrl) {
   try {

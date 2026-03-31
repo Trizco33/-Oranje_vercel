@@ -44,6 +44,7 @@ const SiteSEOPages = lazy(() => import("./pages/SiteSEOPages"));
 const SiteSecondaryPages = lazy(() => import("./pages/SiteSecondaryPages"));
 const SiteBlog = lazy(() => import("./pages/SiteBlog"));
 const SiteBlogPost = lazy(() => import("./pages/SiteBlogPost"));
+const SiteCMSPage = lazy(() => import("./pages/SiteCMSPage"));
 
 // Lazy loaded - heavy app shell components
 const PWAInstallPrompt = lazy(() => import("./components/PWAInstallPrompt").then(m => ({ default: m.PWAInstallPrompt })));
@@ -198,6 +199,7 @@ function Router() {
         <Route path="/adm" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><CMSDashboard /></AdminGuard></Suspense>} />
         <Route path="/adm/conteudo" element={<Suspense fallback={<LoadingFallback />}><AdminGuard><CMSEditor /></AdminGuard></Suspense>} />
         <Route path="/adm/login" element={<Suspense fallback={<LoadingFallback />}><AdminLogin /></Suspense>} />
+        <Route path="/pagina/:slug" element={<Suspense fallback={<LoadingFallback />}><SiteCMSPage /></Suspense>} />
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Edit, Plus } from "lucide-react";
+import { Edit, ExternalLink, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUpload } from "./ImageUpload";
 
@@ -27,6 +26,10 @@ export default function CMSPages() {
 
   // Queries
   const pagesQuery = trpc.cms.getPages.useQuery();
+  const publicBaseUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return window.location.origin;
+  }, []);
 
   // Mutations
   const savePageMutation = trpc.cms.savePage.useMutation({
@@ -108,6 +111,11 @@ export default function CMSPages() {
         <Card>
           <CardHeader>
             <CardTitle>{editingId ? "Editar Página" : "Criar Nova Página"}</CardTitle>
+            <CardDescription>
+              Páginas do CMS ficam acessíveis na URL publica <strong>/pagina/&lt;slug&gt;</strong> para evitar conflito com as rotas fixas do site.
+              Use slugs simples, em minusculas e com hifens, por exemplo:
+              <span className="font-mono"> sobre-nos</span>, <span className="font-mono">faq</span> ou <span className="font-mono">guia-local</span>.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -119,6 +127,9 @@ export default function CMSPages() {
                   placeholder="ex: sobre-nos"
                   disabled={!!editingId}
                 />
+                <p className="mt-2 text-xs text-gray-500">
+                  URL publica: {formData.slug ? `/pagina/${formData.slug}` : "/pagina/seu-slug"}
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Título</label>
@@ -233,7 +244,7 @@ export default function CMSPages() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <h4 className="font-semibold">{page.title}</h4>
-                      <p className="text-sm text-gray-600">/{page.slug}</p>
+                      <p className="text-sm text-gray-600">/pagina/{page.slug}</p>
                       <div className="flex gap-2 mt-2">
                         <span
                           className={`text-xs px-2 py-1 rounded ${
@@ -247,6 +258,23 @@ export default function CMSPages() {
                       </div>
                     </div>
                     <div className="flex gap-2">
+                      {page.published && (
+                        <Button
+                          asChild
+                          size="sm"
+                          variant="outline"
+                          className="flex items-center gap-1"
+                        >
+                          <a
+                            href={`${publicBaseUrl}/pagina/${page.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <ExternalLink size={16} />
+                            Abrir
+                          </a>
+                        </Button>
+                      )}
                       <Button
                         onClick={() => handleEdit(page)}
                         size="sm"

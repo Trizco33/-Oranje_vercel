@@ -3,7 +3,7 @@ import { z } from "zod";
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { siteContent, sitePages, siteSeo } from "../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
 import { AuthService } from "./authService";
 
@@ -85,7 +85,7 @@ export const cmsRouter = router({
       const result = await db
         .select()
         .from(sitePages)
-        .where(eq(sitePages.slug, input.slug));
+        .where(and(eq(sitePages.slug, input.slug), eq(sitePages.published, true)));
       return result[0] || null;
     }),
 
@@ -107,17 +107,43 @@ export const cmsRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       if (!db) throw new Error("Database not available");
+      const pageData = {
+        slug: input.slug,
+        title: input.title,
+        subtitle: input.subtitle,
+        content: input.content,
+        coverImageUrl: input.coverImageUrl,
+        metaTitle: input.metaTitle,
+        metaDescription: input.metaDescription,
+        metaKeywords: input.metaKeywords,
+        published: input.published,
+      };
+
       if (input.id) {
+        const existing = await db
+          .select({
+            published: sitePages.published,
+            publishedAt: sitePages.publishedAt,
+          })
+          .from(sitePages)
+          .where(eq(sitePages.id, input.id));
+
+        const previousPage = existing[0];
+        const nextPublishedAt = input.published
+          ? previousPage?.publishedAt ?? new Date()
+          : null;
+
         await db
           .update(sitePages)
           .set({
-            ...input,
+            ...pageData,
             updatedBy: ctx.user.id,
+            publishedAt: nextPublishedAt,
           })
           .where(eq(sitePages.id, input.id));
       } else {
         await db.insert(sitePages).values({
-          ...input,
+          ...pageData,
           createdBy: ctx.user.id,
           updatedBy: ctx.user.id,
           publishedAt: input.published ? new Date() : null,

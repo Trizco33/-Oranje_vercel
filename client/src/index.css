@@ -309,184 +309,19 @@
     background: linear-gradient(90deg, transparent, var(--ds-color-border-accent), transparent);
   }
 
-  /* ─── Site Premium Surface System ─── */
-  .site-shell {
-    background:
-      radial-gradient(circle at top left, rgba(230, 81, 0, 0.08), transparent 26rem),
-      radial-gradient(circle at top right, rgba(0, 77, 64, 0.12), transparent 30rem),
-      linear-gradient(180deg, #FAFAF4 0%, #F5F5DC 42%, #FFFFFF 100%);
-  }
-  .site-hero-shell {
-    position: relative;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 14% 18%, rgba(230, 81, 0, 0.18), transparent 20rem),
-      radial-gradient(circle at 82% 24%, rgba(255, 255, 255, 0.14), transparent 24rem),
-      linear-gradient(145deg, #001a12 0%, #00251A 48%, #004D40 100%);
-  }
-  .site-hero-shell::before,
-  .site-hero-shell::after {
-    content: "";
-    position: absolute;
-    inset: auto;
-    border-radius: 9999px;
-    filter: blur(64px);
-    pointer-events: none;
-  }
-  .site-hero-shell::before {
-    width: 24rem;
-    height: 24rem;
-    top: -8rem;
-    left: -5rem;
-    background: rgba(230, 81, 0, 0.22);
-    animation: site-orb-float 14s ease-in-out infinite;
-  }
-  .site-hero-shell::after {
-    width: 26rem;
-    height: 26rem;
-    right: -7rem;
-    bottom: -9rem;
-    background: rgba(255, 255, 255, 0.08);
-    animation: site-orb-float 18s ease-in-out infinite reverse;
-  }
-  .site-hero-grid {
-    display: grid;
-    gap: 2.5rem;
-  }
-  .site-hero-panel {
-    position: relative;
-    border-radius: 28px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow:
-      0 20px 80px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(22px) saturate(1.15);
-    -webkit-backdrop-filter: blur(22px) saturate(1.15);
-  }
-  .site-hero-panel::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 37, 26, 0.4) 100%);
-    pointer-events: none;
-  }
-  .site-hero-kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.55rem 0.95rem;
-    border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.07);
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-weight: 600;
-    backdrop-filter: blur(14px);
-  }
-  .site-hero-title {
-    font-size: clamp(2.65rem, 7.5vw, 5.4rem);
-    line-height: 0.96;
-    letter-spacing: -0.06em;
-    font-weight: 700;
-    text-wrap: balance;
-  }
-  .site-hero-subtitle {
-    font-size: clamp(1rem, 2vw, 1.18rem);
-    line-height: 1.75;
-    color: rgba(245, 245, 220, 0.78);
-    max-width: 42rem;
-  }
-  .site-hero-metrics {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.85rem;
-  }
-  .site-hero-metric {
-    padding: 1rem 1rem 0.95rem;
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(16px);
-  }
-  .site-floating-badge {
-    position: absolute;
-    z-index: 3;
-    border-radius: 18px;
-    padding: 0.8rem 0.95rem;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(0, 37, 26, 0.52);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(18px);
-    color: #FFFFFF;
-    animation: site-float-card 7s ease-in-out infinite;
-  }
-  .site-floating-badge.badge-left {
-    left: 1rem;
-    bottom: 1rem;
-  }
-  .site-floating-badge.badge-right {
-    right: 1rem;
-    top: 1rem;
-    animation-delay: 0.8s;
-  }
+  /* ─── Site Light Card Styles — Clean, Minimal ─── */
   .site-card {
-    position: relative;
-    background: rgba(255, 255, 255, 0.94);
-    border: 1px solid rgba(0, 37, 26, 0.07);
-    border-radius: 20px;
-    box-shadow:
-      0 8px 24px rgba(0, 37, 26, 0.07),
-      inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 37, 26, 0.06);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 37, 26, 0.06);
     overflow: hidden;
-    transition:
-      box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 300ms ease,
-      background 300ms ease;
-  }
-  .site-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent 42%, rgba(230,81,0,0.04) 100%);
-    opacity: 0;
-    transition: opacity 320ms ease;
-    pointer-events: none;
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
   }
   .site-card:hover {
-    box-shadow:
-      0 24px 60px rgba(0, 37, 26, 0.14),
-      0 10px 30px rgba(230, 81, 0, 0.08);
-    transform: translateY(-5px);
-    border-color: rgba(230, 81, 0, 0.22);
-    background: rgba(255, 255, 255, 0.98);
-  }
-  .site-card:hover::before {
-    opacity: 1;
-  }
-  .site-editorial-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(250,250,244,0.98) 100%);
-    border: 1px solid rgba(0, 37, 26, 0.08);
-    border-radius: 24px;
-    box-shadow: 0 18px 48px rgba(0, 37, 26, 0.1);
-  }
-  .site-section-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0.45rem 0.8rem;
-    border-radius: 9999px;
-    background: rgba(230, 81, 0, 0.08);
-    border: 1px solid rgba(230, 81, 0, 0.14);
-    color: #E65100;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    box-shadow: 0 8px 30px rgba(0, 37, 26, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(0, 37, 26, 0.1);
   }
 
   /* ─── Site CTA Button ─── */
@@ -495,35 +330,30 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: linear-gradient(135deg, #E65100 0%, #F76B1C 100%);
+    background: #E65100;
     color: #FFFFFF;
     font-weight: 600;
     font-family: 'Montserrat', system-ui, sans-serif;
     border: none;
-    border-radius: 16px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
     text-decoration: none;
     line-height: 1;
-    box-shadow:
-      0 12px 28px rgba(230, 81, 0, 0.24),
-      inset 0 1px 0 rgba(255, 255, 255, 0.16);
   }
   .site-cta:hover {
-    background: linear-gradient(135deg, #FF6D00 0%, #FF8F00 100%);
-    transform: translateY(-2px) scale(1.01);
-    box-shadow:
-      0 18px 36px rgba(230, 81, 0, 0.32),
-      0 8px 28px rgba(0, 37, 26, 0.12);
+    background: #FF6D00;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(230, 81, 0, 0.3);
   }
   .site-cta:focus-visible {
     outline: 2px solid #E65100;
     outline-offset: 2px;
   }
-  .site-cta-sm { height: 40px; padding: 0 18px; font-size: 0.8125rem; }
-  .site-cta-md { height: 48px; padding: 0 26px; font-size: 0.875rem; }
-  .site-cta-lg { height: 56px; padding: 0 34px; font-size: 0.98rem; }
+  .site-cta-sm { height: 36px; padding: 0 16px; font-size: 0.8125rem; }
+  .site-cta-md { height: 44px; padding: 0 24px; font-size: 0.875rem; }
+  .site-cta-lg { height: 52px; padding: 0 32px; font-size: 1rem; }
 
   /* ─── Site Secondary Button ─── */
   .site-btn-secondary {
@@ -531,47 +361,42 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.72);
+    background: transparent;
     color: #00251A;
     font-weight: 600;
     font-family: 'Montserrat', system-ui, sans-serif;
-    border: 1px solid rgba(0, 37, 26, 0.12);
-    border-radius: 16px;
+    border: 1.5px solid rgba(0, 37, 26, 0.2);
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
     text-decoration: none;
     line-height: 1;
-    box-shadow: 0 10px 28px rgba(0, 37, 26, 0.08);
-    backdrop-filter: blur(16px);
   }
   .site-btn-secondary:hover {
     border-color: #E65100;
     color: #E65100;
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-    box-shadow: 0 18px 36px rgba(0, 37, 26, 0.12);
+    background: rgba(230, 81, 0, 0.04);
   }
 
   /* ─── Scroll reveal animation class ─── */
   .site-reveal {
-    animation: site-reveal 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: site-reveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
   /* ─── Site Section Spacing ─── */
   .site-section {
-    position: relative;
-    padding: 84px 24px;
+    padding: 64px 24px;
   }
   @media (min-width: 768px) {
     .site-section {
-      padding: 112px 48px;
+      padding: 96px 48px;
     }
   }
 
   /* ─── Featured Grid: scroll on mobile, grid on desktop ─── */
   .site-featured-item {
-    min-width: 300px;
+    min-width: 280px;
     flex: 0 0 auto;
   }
   @media (min-width: 768px) {
@@ -584,11 +409,6 @@
       min-width: 0;
       flex: initial;
     }
-  }
-
-  .site-soft-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,37,26,0.12), transparent);
   }
 }
 

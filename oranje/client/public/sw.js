@@ -1,24 +1,19 @@
-const CACHE_NAME = 'oranje-v1';
+const CACHE_NAME = 'oranje-v2';
+
 const urlsToCache = [
   '/',
-  '/app',
   '/manifest.webmanifest',
-  '/index.html'
 ];
 
-// Install event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache).catch(() => {
-        console.log('Some resources could not be cached');
-      });
+      return cache.addAll(urlsToCache).catch(() => {});
     })
   );
   self.skipWaiting();
 });
 
-// Activate event
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -34,38 +29,31 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - Network first, fallback to cache
 self.addEventListener('fetch', (event) => {
-  // Skip API calls
-  if (event.request.url.includes('/api/')) {
-    return;
-  }
+  if (event.request.method !== 'GET') return;
 
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') {
+  const url = new URL(event.request.url);
+
+  if (url.pathname.includes('/api/')) return;
+
+  if (url.pathname.startsWith('/assets/')) {
     return;
   }
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Clone the response
-        const responseClone = response.clone();
-        
-        // Cache successful responses
         if (response.status === 200) {
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
+          const ct = response.headers.get('content-type') || '';
+          if (ct.includes('text/html') || ct.includes('application/manifest')) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
         }
-        
         return response;
       })
       .catch(() => {
-        // Fallback to cache if network fails
-        return caches.match(event.request).then((response) => {
-          return response || caches.match('/');
-        });
+        return caches.match(event.request).then((r) => r || caches.match('/'));
       })
   );
 });

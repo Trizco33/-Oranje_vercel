@@ -18,12 +18,15 @@ function getContentDb() {
 
 // ─── Schemas de validação ─────────────────────────────────────────────────────
 
+// buttonUrl e imageUrl aceitam tanto URLs absolutas (https://...) quanto rotas
+// internas (/app, /explorar, /images/hero.jpg) — validação intencional permissiva.
+// subtitle é opcional: aceita undefined, "" e qualquer string.
 const heroSchema = z.object({
   title: z.string().min(1),
   subtitle: z.string().optional(),
   buttonText: z.string().min(1),
-  buttonUrl: z.string().min(1),
-  imageUrl: z.string().min(1),
+  buttonUrl: z.string().min(1), // aceita rotas internas e URLs absolutas
+  imageUrl: z.string().min(1), // aceita caminhos relativos e URLs absolutas
 });
 
 const servicesSchema = z.object({
@@ -46,6 +49,7 @@ const contactSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(1),
   address: z.string().min(1),
+  instagram: z.string().optional(), // ex: https://instagram.com/oranjeholambra ou @handle
 });
 
 export const contentRouter = router({
@@ -242,6 +246,7 @@ export const contentRouter = router({
         { key: "contact_email", value: input.email },
         { key: "contact_phone", value: input.phone },
         { key: "contact_address", value: input.address },
+        { key: "contact_instagram", value: input.instagram ?? "" },
       ];
 
       for (const update of updates) {

@@ -7,36 +7,56 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
-function getFriendlyErrorMessage(error: { message: string; data?: any }): string {
-  const zodErrors = error.data?.zodError?.fieldErrors as Record<string, string[]> | undefined;
-  if (zodErrors) {
-    const fieldLabels: Record<string, string> = {
-      title: "Título",
-      subtitle: "Subtítulo",
-      buttonText: "Texto do Botão",
-      buttonUrl: "URL do Botão",
-      imageUrl: "URL da Imagem",
-      email: "Email",
-      phone: "Telefone",
-      address: "Endereço",
-      description: "Descrição",
-      text: "Texto",
-    };
-    const messages = Object.entries(zodErrors)
-      .flatMap(([field, errors]) =>
-        (errors ?? []).map(e => `${fieldLabels[field] ?? field}: ${e}`)
-      )
-      .join("; ");
-    if (messages) return `Dados inválidos — ${messages}`;
-    return "Dados inválidos. Verifique os campos e tente novamente.";
+interface ZodIssue {
+  path?: (string | number)[];
+  message?: string;
+}
+
+const FIELD_LABELS: Record<string, string> = {
+  title: "Título",
+  subtitle: "Subtítulo",
+  buttonText: "Texto do Botão",
+  buttonUrl: "URL do Botão",
+  imageUrl: "URL da Imagem",
+  email: "Email",
+  phone: "Telefone",
+  address: "Endereço",
+  description: "Descrição",
+  text: "Texto",
+};
+
+function getFriendlyErrorMessage(error: { message: string }): string {
+  const msg = error.message;
+
+  // tRPC surfaces Zod validation errors as a JSON array in the message
+  try {
+    const parsed: unknown = JSON.parse(msg);
+    if (Array.isArray(parsed)) {
+      const issues = parsed as ZodIssue[];
+      const formatted = issues
+        .flatMap((issue) => {
+          const field = String(issue.path?.[0] ?? "");
+          const label = FIELD_LABELS[field] ?? field;
+          const text = issue.message ?? "inválido";
+          return label ? [`${label}: ${text}`] : [text];
+        })
+        .join("; ");
+      return formatted
+        ? `Dados inválidos — ${formatted}`
+        : "Dados inválidos. Verifique os campos e tente novamente.";
+    }
+  } catch {
+    /* message is not JSON — use as-is below */
   }
-  if (error.message.includes("Database not available") || error.message.includes("database"))
+
+  if (msg.includes("Database not available") || msg.includes("ECONNREFUSED"))
     return "Banco de dados não disponível. Adicione DATABASE_URL (MySQL) nos Secrets.";
-  if (error.message.includes("UNAUTHORIZED") || error.message.includes("unauthorized"))
+  if (msg.includes("UNAUTHORIZED") || msg.includes("FORBIDDEN"))
     return "Sem permissão para realizar esta ação. Faça login novamente.";
-  if (error.message.includes("INTERNAL_SERVER_ERROR"))
+  if (msg.includes("INTERNAL_SERVER_ERROR"))
     return "Erro interno no servidor. Tente novamente mais tarde.";
-  return error.message || "Ocorreu um erro inesperado. Tente novamente.";
+
+  return msg || "Ocorreu um erro inesperado. Tente novamente.";
 }
 
 export default function CMSEditor() {
@@ -66,6 +86,7 @@ export default function CMSEditor() {
     email: "",
     phone: "",
     address: "",
+    instagram: "",
   });
 
   const heroQuery = trpc.content.getHero.useQuery();
@@ -150,6 +171,7 @@ export default function CMSEditor() {
         email: contactQuery.data.email || "",
         phone: contactQuery.data.phone || "",
         address: contactQuery.data.address || "",
+        instagram: contactQuery.data.instagram || "",
       });
     }
   }, [contactQuery.data]);
@@ -434,6 +456,15 @@ export default function CMSEditor() {
                   onChange={(e) => setContact({ ...contact, address: e.target.value })}
                   placeholder="Holambra, SP"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Instagram <span className="text-gray-400 text-xs">(opcional)</span></label>
+                <Input
+                  value={contact.instagram}
+                  onChange={(e) => setContact({ ...contact, instagram: e.target.value })}
+                  placeholder="https://instagram.com/oranjeholambra ou @handle"
+                />
+                <p className="text-xs text-gray-500 mt-1">Aceita URL completa ou apenas o @handle.</p>
               </div>
               <Button
                 onClick={() => updateContactMutation.mutate(contact)}

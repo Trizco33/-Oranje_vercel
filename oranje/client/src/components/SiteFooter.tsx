@@ -8,9 +8,10 @@ export default function SiteFooter() {
     retry: false,
   });
 
-  const email   = contact?.email   || "contato@oranje.com.br";
-  const phone   = contact?.phone   || "(19) 3802-1000";
-  const address = contact?.address || "Holambra, SP";
+  const email     = contact?.email     || "contato@oranje.com.br";
+  const phone     = contact?.phone     || "(19) 3802-1000";
+  const address   = contact?.address   || "Holambra, SP";
+  const instagram = contact?.instagram || "https://instagram.com/oranjeholambra";
 
   const linkStyle: React.CSSProperties = {
     fontSize: "0.875rem",
@@ -182,13 +183,13 @@ export default function SiteFooter() {
           </p>
           <div style={{ display: "flex", gap: "16px" }} aria-label="Redes sociais">
             <a
-              href="https://instagram.com"
+              href={instagram.startsWith("http") ? instagram : `https://instagram.com/${instagram.replace(/^@/, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Seguir Oranje no Instagram"
               style={{ color: "rgba(255,255,255,0.35)", transition: "color 0.2s ease" }}
-              onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.35)")}
+              onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.color = "#E65100")}
+              onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.color = "rgba(255,255,255,0.35)")}
             >
               <Instagram size={18} />
             </a>

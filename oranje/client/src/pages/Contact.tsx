@@ -17,7 +17,11 @@ export default function Contact() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const contactEmail = contactData?.email || "contato@oranje.com.br";
+  const contactEmail     = contactData?.email     || "contato@oranje.com.br";
+  const contactInstagram = contactData?.instagram  || "https://instagram.com/oranjeholambra";
+  const instagramDisplay = contactInstagram.startsWith("http")
+    ? "@" + contactInstagram.replace(/.*instagram\.com\//, "").replace(/\/$/, "")
+    : contactInstagram.replace(/^@/, "@");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,8 +83,13 @@ export default function Contact() {
               <h3 className="font-semibold text-lg mb-2" style={{ color: "#FFFFFF" }}>
                 Redes Sociais
               </h3>
-              <a href="https://www.instagram.com/oranjeholambra" target="_blank" rel="noopener noreferrer" style={{ color: "#E65100" }}>
-                @oranjeholambra
+              <a
+                href={contactInstagram.startsWith("http") ? contactInstagram : `https://instagram.com/${contactInstagram.replace(/^@/, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#E65100" }}
+              >
+                {instagramDisplay}
               </a>
             </div>
           </div>

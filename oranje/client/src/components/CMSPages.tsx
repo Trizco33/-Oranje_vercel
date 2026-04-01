@@ -9,7 +9,11 @@ import { Trash2, Edit, Plus, Info } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUpload } from "./ImageUpload";
 
-export default function CMSPages() {
+interface CMSPagesProps {
+  onNavigate?: (tab: string) => void;
+}
+
+export default function CMSPages({ onNavigate }: CMSPagesProps = {}) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
@@ -103,6 +107,66 @@ export default function CMSPages() {
           </Button>
         )}
       </div>
+
+      {/* Main public pages — managed by section editors, not this table */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-[#004D40]">Páginas Principais do Site</CardTitle>
+          <CardDescription>
+            Estas páginas são gerenciadas pelos editores de seção do CMS — não pelo módulo de páginas personalizadas.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[
+              {
+                route: "/",
+                label: "Home (Landing Page)",
+                description: "Hero, Serviços, Sobre e Contato",
+                tab: "content",
+                tabLabel: "Conteúdo",
+              },
+              {
+                route: "/contato",
+                label: "Página de Contato",
+                description: "Email, telefone, Instagram exibidos no formulário de contato",
+                tab: "content",
+                tabLabel: "Conteúdo → aba Contato",
+              },
+              {
+                route: "/blog/:slug",
+                label: "Posts do Blog",
+                description: "Conteúdo publicado dinamicamente via aba Blog",
+                tab: "blog",
+                tabLabel: "Blog",
+              },
+            ].map((page) => (
+              <div
+                key={page.route}
+                className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-gray-50/50"
+              >
+                <div>
+                  <p className="font-medium text-sm text-[#004D40]">{page.label}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    <span className="font-mono bg-gray-100 px-1 rounded">{page.route}</span>
+                    {" — "}{page.description}
+                  </p>
+                </div>
+                {onNavigate && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onNavigate(page.tab)}
+                    className="ml-4 shrink-0 text-xs"
+                  >
+                    Editar via {page.tabLabel}
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {isCreating || editingId ? (
         <Card>
@@ -287,17 +351,18 @@ export default function CMSPages() {
             <div>
               <p className="font-semibold text-green-700 mb-2">✅ Gerenciado pelo CMS</p>
               <ul className="space-y-1 text-gray-700">
-                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/</span> — Seções da landing (Hero, Serviços, Sobre, Contato)</li>
-                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/contato</span> — Email e dados de contato</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/</span> — Landing: Hero, Serviços, Sobre, Contato (aba Conteúdo)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/contato</span> — Email, telefone e Instagram (aba Conteúdo → Contato)</li>
+                <li>Cabeçalho — telefone do CMS (exibido no desktop)</li>
+                <li>Rodapé — email, telefone, endereço, Instagram</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/blog/:slug</span> — Posts do blog (aba Blog)</li>
-                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/pagina/:slug</span> — Páginas criadas aqui</li>
-                <li>Rodapé do site (email, telefone, endereço)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/pagina/:slug</span> — Páginas personalizadas (esta aba)</li>
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-orange-600 mb-2">⚙️ Gerado automaticamente</p>
+              <p className="font-semibold text-orange-600 mb-2">⚙️ Gerado do banco de dados</p>
               <ul className="space-y-1 text-gray-700">
-                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/app</span> — App de guia (dados do banco)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/app</span> — Guia de lugares (dados do BD)</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/app/lugar/:id</span> — Detalhe de lugar</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/roteiros</span> — Lista de roteiros</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/roteiro/:id</span> — Detalhe de roteiro</li>
@@ -306,9 +371,9 @@ export default function CMSPages() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-gray-600 mb-2">🔒 Estático (código)</p>
+              <p className="font-semibold text-gray-600 mb-2">🔒 Estrutural (navegação)</p>
               <ul className="space-y-1 text-gray-700">
-                <li>Navegação principal (header)</li>
+                <li>Links de navegação do cabeçalho</li>
                 <li>Categorias do app</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/login</span> — Login do CMS</li>
                 <li>SEO padrão por página (aba SEO)</li>

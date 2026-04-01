@@ -100,7 +100,7 @@ export default function CMSEditor() {
       heroQuery.refetch();
     },
     onError: (error) => {
-      toast.error(getFriendlyErrorMessage(error as any));
+      toast.error(getFriendlyErrorMessage({ message: error.message }));
     },
   });
 
@@ -110,7 +110,7 @@ export default function CMSEditor() {
       servicesQuery.refetch();
     },
     onError: (error) => {
-      toast.error(getFriendlyErrorMessage(error as any));
+      toast.error(getFriendlyErrorMessage({ message: error.message }));
     },
   });
 
@@ -120,7 +120,7 @@ export default function CMSEditor() {
       aboutQuery.refetch();
     },
     onError: (error) => {
-      toast.error(getFriendlyErrorMessage(error as any));
+      toast.error(getFriendlyErrorMessage({ message: error.message }));
     },
   });
 
@@ -130,7 +130,7 @@ export default function CMSEditor() {
       contactQuery.refetch();
     },
     onError: (error) => {
-      toast.error(getFriendlyErrorMessage(error as any));
+      toast.error(getFriendlyErrorMessage({ message: error.message }));
     },
   });
 

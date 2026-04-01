@@ -192,7 +192,7 @@ export default function CMSDashboard() {
         {/* Content */}
         <div className="admin-content">
           {activeTab === "content" && <CMSEditor />}
-          {activeTab === "pages" && <CMSPages />}
+          {activeTab === "pages" && <CMSPages onNavigate={setActiveTab} />}
           {activeTab === "blog" && <CMSBlog />}
           {activeTab === "seo" && <CMSSEO />}
         </div>

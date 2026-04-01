@@ -25,7 +25,10 @@ const heroSchema = z.object({
   title: z.string().min(1),
   subtitle: z.string().optional(),
   buttonText: z.string().min(1),
-  buttonUrl: z.string().min(1), // aceita rotas internas e URLs absolutas
+  buttonUrl: z.string().refine(
+    (v) => v.startsWith("/") || /^https?:\/\//.test(v),
+    { message: "URL do botão deve ser uma rota interna (/path) ou URL absoluta (https://...)" }
+  ),
   imageUrl: z.string().min(1), // aceita caminhos relativos e URLs absolutas
 });
 

@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass } from "lucide-react";
+import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass, Phone } from "lucide-react";
 import { useIsMobile } from "@/hooks/useMobile";
+import { trpc } from "@/lib/trpc";
 
 const navItems = [
   { label: "Início", href: "/", icon: Compass },
@@ -18,6 +19,13 @@ export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
+
+  // Read contact phone from CMS so the header reflects saved siteContent data
+  const { data: contact } = trpc.content.getContact.useQuery(undefined, {
+    staleTime: 10 * 60 * 1000,
+    retry: false,
+  });
+  const phone = contact?.phone || null;
 
   const isActive = (href: string) => location?.pathname === href;
 
@@ -138,29 +146,52 @@ export default function SiteHeader() {
 
           {/* Desktop CTA — Only on desktop */}
           {!isMobile && (
-            <Link
-              to="/app"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                height: "36px",
-                padding: "0 18px",
-                background: "#E65100",
-                color: "#FFFFFF",
-                fontSize: "0.8125rem",
-                fontWeight: 600,
-                borderRadius: "10px",
-                textDecoration: "none",
-                transition: "background 0.2s ease",
-                fontFamily: "'Montserrat', system-ui, sans-serif",
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e: any) => (e.currentTarget.style.background = "#FF6D00")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.background = "#E65100")}
-            >
-              Abrir o App
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+              {/* Phone from CMS — only shown when siteContent has a phone configured */}
+              {phone && (
+                <a
+                  href={`tel:${phone.replace(/\D/g, "")}`}
+                  aria-label={`Ligar para ${phone}`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "0.8125rem",
+                    color: "rgba(255,255,255,0.6)",
+                    textDecoration: "none",
+                    transition: "color 0.2s ease",
+                    fontFamily: "'Montserrat', system-ui, sans-serif",
+                  }}
+                  onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.color = "#FFFFFF")}
+                  onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                >
+                  <Phone size={13} />
+                  {phone}
+                </a>
+              )}
+              <Link
+                to="/app"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  height: "36px",
+                  padding: "0 18px",
+                  background: "#E65100",
+                  color: "#FFFFFF",
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  borderRadius: "10px",
+                  textDecoration: "none",
+                  transition: "background 0.2s ease",
+                  fontFamily: "'Montserrat', system-ui, sans-serif",
+                }}
+                onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.background = "#FF6D00")}
+                onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.background = "#E65100")}
+              >
+                Abrir o App
+              </Link>
+            </div>
           )}
 
           {/* Mobile Menu Toggle — Only on mobile */}

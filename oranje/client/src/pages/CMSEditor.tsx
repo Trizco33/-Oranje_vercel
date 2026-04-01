@@ -89,10 +89,22 @@ export default function CMSEditor() {
     instagram: "",
   });
 
+  const DEFAULT_NAV = [
+    { label: "Início", href: "/", visible: true, order: 0 },
+    { label: "O que fazer", href: "/o-que-fazer-em-holambra", visible: true, order: 1 },
+    { label: "Roteiros", href: "/roteiros", visible: true, order: 2 },
+    { label: "Mapa", href: "/mapa", visible: true, order: 3 },
+    { label: "Blog", href: "/blog", visible: true, order: 4 },
+    { label: "Parceiros", href: "/parceiros", visible: true, order: 5 },
+    { label: "Contato", href: "/contato", visible: true, order: 6 },
+  ];
+  const [navItems, setNavItems] = useState(DEFAULT_NAV);
+
   const heroQuery = trpc.content.getHero.useQuery();
   const servicesQuery = trpc.content.getServices.useQuery();
   const aboutQuery = trpc.content.getAbout.useQuery();
   const contactQuery = trpc.content.getContact.useQuery();
+  const navQuery = trpc.content.getNavItems.useQuery();
 
   const updateHeroMutation = trpc.content.updateHero.useMutation({
     onSuccess: () => {
@@ -130,6 +142,16 @@ export default function CMSEditor() {
     onSuccess: () => {
       toast.success("Dados de contato atualizados com sucesso!");
       contactQuery.refetch();
+    },
+    onError: (error) => {
+      toast.error(getFriendlyErrorMessage({ message: error.message }));
+    },
+  });
+
+  const updateNavMutation = trpc.content.updateNavItems.useMutation({
+    onSuccess: () => {
+      toast.success("Menu atualizado com sucesso!");
+      navQuery.refetch();
     },
     onError: (error) => {
       toast.error(getFriendlyErrorMessage({ message: error.message }));
@@ -179,6 +201,12 @@ export default function CMSEditor() {
       });
     }
   }, [contactQuery.data]);
+
+  useEffect(() => {
+    if (navQuery.data && Array.isArray(navQuery.data) && navQuery.data.length > 0) {
+      setNavItems(navQuery.data as typeof DEFAULT_NAV);
+    }
+  }, [navQuery.data]);
 
   const compressImageToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -255,11 +283,12 @@ export default function CMSEditor() {
       <h2 className="text-3xl font-bold text-[#004D40]">Editar Conteúdo</h2>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="services">Serviços</TabsTrigger>
           <TabsTrigger value="about">Sobre</TabsTrigger>
           <TabsTrigger value="contact">Contato</TabsTrigger>
+          <TabsTrigger value="nav">Menu</TabsTrigger>
         </TabsList>
 
         {/* Hero Tab */}
@@ -529,6 +558,133 @@ export default function CMSEditor() {
               >
                 {updateContactMutation.isPending ? "Salvando..." : "Salvar Contato"}
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Nav Tab */}
+        <TabsContent value="nav">
+          <Card>
+            <CardHeader>
+              <CardTitle>Menu de Navegação</CardTitle>
+              <CardDescription>
+                Configure os itens do menu hambúrguer e da barra de navegação do site. Reordene, oculte ou adicione links.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {navItems.sort((a, b) => a.order - b.order).map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 p-3 border rounded-lg bg-gray-50"
+                >
+                  {/* Visible toggle */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = navItems.map((n, i) =>
+                        i === index ? { ...n, visible: !n.visible } : n
+                      );
+                      setNavItems(updated);
+                    }}
+                    className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold border transition-colors ${
+                      item.visible
+                        ? "bg-green-100 text-green-700 border-green-300"
+                        : "bg-gray-200 text-gray-400 border-gray-300"
+                    }`}
+                    title={item.visible ? "Visível — clique para ocultar" : "Oculto — clique para mostrar"}
+                  >
+                    {item.visible ? "✓" : "—"}
+                  </button>
+
+                  {/* Label */}
+                  <Input
+                    value={item.label}
+                    onChange={(e) => {
+                      const updated = navItems.map((n, i) =>
+                        i === index ? { ...n, label: e.target.value } : n
+                      );
+                      setNavItems(updated);
+                    }}
+                    placeholder="Nome do item"
+                    className="flex-1 min-w-0"
+                  />
+
+                  {/* Href */}
+                  <Input
+                    value={item.href}
+                    onChange={(e) => {
+                      const updated = navItems.map((n, i) =>
+                        i === index ? { ...n, href: e.target.value } : n
+                      );
+                      setNavItems(updated);
+                    }}
+                    placeholder="/caminho"
+                    className="flex-1 min-w-0"
+                  />
+
+                  {/* Move up/down */}
+                  <div className="flex flex-col gap-1 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (index === 0) return;
+                        const updated = [...navItems];
+                        [updated[index - 1].order, updated[index].order] = [updated[index].order, updated[index - 1].order];
+                        setNavItems([...updated].sort((a, b) => a.order - b.order));
+                      }}
+                      disabled={index === 0}
+                      className="w-7 h-5 text-xs border rounded hover:bg-gray-100 disabled:opacity-30"
+                    >↑</button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const sorted = [...navItems].sort((a, b) => a.order - b.order);
+                        if (index === sorted.length - 1) return;
+                        [sorted[index + 1].order, sorted[index].order] = [sorted[index].order, sorted[index + 1].order];
+                        setNavItems([...sorted]);
+                      }}
+                      disabled={index === navItems.length - 1}
+                      className="w-7 h-5 text-xs border rounded hover:bg-gray-100 disabled:opacity-30"
+                    >↓</button>
+                  </div>
+
+                  {/* Remove */}
+                  <button
+                    type="button"
+                    onClick={() => setNavItems(navItems.filter((_, i) => i !== index))}
+                    className="flex-shrink-0 w-8 h-8 text-red-400 hover:text-red-600 rounded hover:bg-red-50 flex items-center justify-center text-lg"
+                    title="Remover item"
+                  >×</button>
+                </div>
+              ))}
+
+              {/* Add new item */}
+              <button
+                type="button"
+                onClick={() =>
+                  setNavItems([
+                    ...navItems,
+                    { label: "Novo item", href: "/", visible: true, order: navItems.length },
+                  ])
+                }
+                className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-colors"
+              >
+                + Adicionar item ao menu
+              </button>
+
+              <div className="pt-2">
+                <Button
+                  onClick={() =>
+                    updateNavMutation.mutate(
+                      navItems.map((n, i) => ({ ...n, order: i, icon: "Compass" }))
+                    )
+                  }
+                  disabled={updateNavMutation.isPending}
+                  className="bg-[#E65100] hover:bg-[#D84500]"
+                >
+                  {updateNavMutation.isPending ? "Salvando..." : "Salvar Menu"}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

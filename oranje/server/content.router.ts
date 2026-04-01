@@ -68,6 +68,14 @@ const contactSchema = z.object({
   instagram: z.string().optional(), // ex: https://instagram.com/oranjeholambra ou @handle
 });
 
+const navItemSchema = z.object({
+  label: z.string().min(1),
+  href: z.string().min(1),
+  visible: z.boolean().default(true),
+  order: z.number().int().default(0),
+});
+const navItemsSchema = z.array(navItemSchema);
+
 export const contentRouter = router({
   // ─── Hero Section ─────────────────────────────────────────────────────────
   getHero: publicProcedure.query(async () => {
@@ -273,6 +281,31 @@ export const contentRouter = router({
             },
           });
       }
+      return { success: true };
+    }),
+
+  // ─── Nav Items ────────────────────────────────────────────────────────────
+  getNavItems: publicProcedure.query(async () => {
+    if (!db) return null;
+    try {
+      const result = await db
+        .select()
+        .from(siteContent)
+        .where(eq(siteContent.key, "nav_items"));
+      if (result.length === 0) return null;
+      try { return JSON.parse(result[0].value); } catch { return null; }
+    } catch { return null; }
+  }),
+
+  updateNavItems: cmsProcedure
+    .input(navItemsSchema)
+    .mutation(async ({ input, ctx }) => {
+      const userId = getCmsUserId(ctx);
+      const db = getContentDb();
+      await db
+        .insert(siteContent)
+        .values({ key: "nav_items", value: JSON.stringify(input), section: "nav", updatedBy: userId })
+        .onDuplicateKeyUpdate({ set: { value: JSON.stringify(input), updatedBy: userId } });
       return { success: true };
     }),
 });

@@ -4,14 +4,18 @@ import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, 
 import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 
-const navItems = [
-  { label: "Início", href: "/", icon: Compass },
-  { label: "O que fazer", href: "/o-que-fazer-em-holambra", icon: MapPin },
-  { label: "Roteiros", href: "/roteiros", icon: Calendar },
-  { label: "Mapa", href: "/mapa", icon: MapPin },
-  { label: "Blog", href: "/blog", icon: BookOpen },
-  { label: "Parceiros", href: "/parceiros", icon: Users },
-  { label: "Contato", href: "/contato", icon: MessageCircle },
+const ICON_MAP: Record<string, React.ElementType> = {
+  Compass, MapPin, Calendar, BookOpen, Users, MessageCircle, Phone,
+};
+
+const DEFAULT_NAV_ITEMS = [
+  { label: "Início", href: "/", icon: "Compass", visible: true, order: 0 },
+  { label: "O que fazer", href: "/o-que-fazer-em-holambra", icon: "MapPin", visible: true, order: 1 },
+  { label: "Roteiros", href: "/roteiros", icon: "Calendar", visible: true, order: 2 },
+  { label: "Mapa", href: "/mapa", icon: "MapPin", visible: true, order: 3 },
+  { label: "Blog", href: "/blog", icon: "BookOpen", visible: true, order: 4 },
+  { label: "Parceiros", href: "/parceiros", icon: "Users", visible: true, order: 5 },
+  { label: "Contato", href: "/contato", icon: "MessageCircle", visible: true, order: 6 },
 ];
 
 export default function SiteHeader() {
@@ -26,6 +30,15 @@ export default function SiteHeader() {
     retry: false,
   });
   const phone = contact?.phone || null;
+
+  // Read nav items from CMS (falls back to DEFAULT_NAV_ITEMS if not set)
+  const { data: cmsNavItems } = trpc.content.getNavItems.useQuery(undefined, {
+    staleTime: 10 * 60 * 1000,
+    retry: false,
+  });
+  const navItems = ((cmsNavItems ?? DEFAULT_NAV_ITEMS) as typeof DEFAULT_NAV_ITEMS)
+    .filter((item) => item.visible !== false)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   const isActive = (href: string) => location?.pathname === href;
 
@@ -283,7 +296,7 @@ export default function SiteHeader() {
           {/* Nav Links */}
           <div style={{ flex: 1, padding: "0.5rem 1rem" }}>
             {navItems.map((item) => {
-              const Icon = item.icon;
+              const Icon = (typeof item.icon === "string" ? ICON_MAP[item.icon] : item.icon) ?? Compass;
               const active = isActive(item.href);
               return (
                 <Link

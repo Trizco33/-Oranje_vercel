@@ -292,7 +292,8 @@ export async function seedDatabase() {
 
       if (existing.length === 0) {
         const result = await db.insert(categories).values(cat);
-        const insertId = (result as unknown as [{ insertId: number }])[0]?.insertId ?? 0;
+        const r = result as any;
+        const insertId: number = r.insertId ?? r[0]?.insertId ?? 0;
         categoryIdMap[cat.slug] = insertId;
         console.log(`  ✅ Categoria: ${cat.name} (id=${insertId})`);
       } else {

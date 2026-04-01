@@ -365,7 +365,8 @@ async function seedHolambra() {
       console.log(`  ✓ ${cat.name} (já existe, id=${existing[0].id})`);
     } else {
       const result = await db.insert(categories).values(cat);
-      const insertId = (result as unknown as [{ insertId: number }])[0]?.insertId ?? 0;
+      const r = result as any;
+      const insertId: number = r.insertId ?? r[0]?.insertId ?? 0;
       categoryIdMap[cat.slug] = insertId;
       console.log(`  ✅ ${cat.name} criada (id=${insertId})`);
     }

@@ -1,4 +1,4 @@
-import { router, publicProcedure } from "./_core/trpc";
+import { router, publicProcedure, cmsProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { drizzle } from "drizzle-orm/mysql2";
@@ -14,6 +14,19 @@ if (ENV.databaseUrl) {
 function getContentDb() {
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
   return db;
+}
+
+function getCmsUserId(ctx: any): number {
+  if (ctx.user?.id) return ctx.user.id;
+  try {
+    const cookieHeader = ctx.req?.headers?.cookie || "";
+    const match = cookieHeader.match(/cms_session=([^;]+)/);
+    if (match) {
+      const session = JSON.parse(decodeURIComponent(match[1]));
+      if (session?.user?.id) return session.user.id;
+    }
+  } catch {}
+  return 1;
 }
 
 // ─── Schemas de validação ─────────────────────────────────────────────────────
@@ -76,12 +89,10 @@ export const contentRouter = router({
     }
   }),
 
-  updateHero: publicProcedure
+  updateHero: cmsProcedure
     .input(heroSchema)
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.user || ctx.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Acesso restrito a administradores" });
-      }
+      const userId = getCmsUserId(ctx);
       const db = getContentDb();
       const updates = [
         { key: "hero_title", value: input.title },
@@ -98,12 +109,12 @@ export const contentRouter = router({
             key: update.key,
             value: update.value,
             section: "hero",
-            updatedBy: ctx.user.id,
+            updatedBy: userId,
           })
           .onDuplicateKeyUpdate({
             set: {
               value: update.value,
-              updatedBy: ctx.user.id,
+              updatedBy: userId,
             },
           });
       }
@@ -135,12 +146,10 @@ export const contentRouter = router({
     }
   }),
 
-  updateServices: publicProcedure
+  updateServices: cmsProcedure
     .input(servicesSchema)
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.user || ctx.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Acesso restrito a administradores" });
-      }
+      const userId = getCmsUserId(ctx);
       const db = getContentDb();
       const updates = [
         { key: "services_title", value: input.title },
@@ -155,12 +164,12 @@ export const contentRouter = router({
             key: update.key,
             value: update.value,
             section: "services",
-            updatedBy: ctx.user.id,
+            updatedBy: userId,
           })
           .onDuplicateKeyUpdate({
             set: {
               value: update.value,
-              updatedBy: ctx.user.id,
+              updatedBy: userId,
             },
           });
       }
@@ -187,12 +196,10 @@ export const contentRouter = router({
     }
   }),
 
-  updateAbout: publicProcedure
+  updateAbout: cmsProcedure
     .input(aboutSchema)
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.user || ctx.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Acesso restrito a administradores" });
-      }
+      const userId = getCmsUserId(ctx);
       const db = getContentDb();
       const updates = [
         { key: "about_title", value: input.title },
@@ -206,12 +213,12 @@ export const contentRouter = router({
             key: update.key,
             value: update.value,
             section: "about",
-            updatedBy: ctx.user.id,
+            updatedBy: userId,
           })
           .onDuplicateKeyUpdate({
             set: {
               value: update.value,
-              updatedBy: ctx.user.id,
+              updatedBy: userId,
             },
           });
       }
@@ -238,12 +245,10 @@ export const contentRouter = router({
     }
   }),
 
-  updateContact: publicProcedure
+  updateContact: cmsProcedure
     .input(contactSchema)
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.user || ctx.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Acesso restrito a administradores" });
-      }
+      const userId = getCmsUserId(ctx);
       const db = getContentDb();
       const updates = [
         { key: "contact_email", value: input.email },
@@ -259,12 +264,12 @@ export const contentRouter = router({
             key: update.key,
             value: update.value,
             section: "contact",
-            updatedBy: ctx.user.id,
+            updatedBy: userId,
           })
           .onDuplicateKeyUpdate({
             set: {
               value: update.value,
-              updatedBy: ctx.user.id,
+              updatedBy: userId,
             },
           });
       }

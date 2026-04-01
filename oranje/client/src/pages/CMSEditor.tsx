@@ -289,11 +289,16 @@ export default function CMSEditor() {
                     <Input
                       value={hero.imageUrl}
                       onChange={(e) => setHero({ ...hero, imageUrl: e.target.value })}
-                      placeholder="https://exemplo.com/imagem.jpg"
+                      placeholder="https://i.imgur.com/sua-imagem.jpg"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      Cole aqui um link de imagem externa (Google Drive, Imgur, Cloudinary, etc.). Esta é a forma mais confiável — a imagem nunca some.
+                      Use uma URL que comece com <strong>https://</strong> (Imgur, Cloudinary, etc.). Caminhos locais como <code>/imagem.jpg</code> não funcionam — a URL deve ser de um servidor externo.
                     </p>
+                    {hero.imageUrl && !/^https?:\/\//.test(hero.imageUrl) && (
+                      <p className="text-xs text-red-500 mt-1 font-medium">
+                        ⚠️ URL inválida — deve começar com https://. Limpe o campo ou cole uma URL externa.
+                      </p>
+                    )}
                   </div>
                   <div className="border-t pt-3">
                     <label className="block text-xs font-medium text-gray-500 mb-1">

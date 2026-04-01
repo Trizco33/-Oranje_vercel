@@ -178,8 +178,8 @@ export default function SiteHome() {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: heroData?.imageUrl
-              ? `url('${heroData.imageUrl}')`
+            backgroundImage: (heroData?.imageUrl && /^https?:\/\//.test(heroData.imageUrl))
+              ? `url('${heroData.imageUrl}'), url('/brand/moinho-povos-unidos.jpg')`
               : "url('/brand/moinho-povos-unidos.jpg'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",

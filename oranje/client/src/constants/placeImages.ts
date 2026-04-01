@@ -200,6 +200,7 @@ export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   bares: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&h=400&fit=crop",
   cafes: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop",
   cafés: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop",
+  docerias: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&h=400&fit=crop",
   hoteis: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop",
   hotéis: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop",
   hospedagem: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop",

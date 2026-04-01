@@ -12,6 +12,7 @@ export const CATEGORY_SLUGS = [
   "pizzarias",
   "bares",
   "cafes",
+  "docerias",
   "hoteis",
   "parques",
   "pontos-turisticos",
@@ -31,6 +32,7 @@ export const CATEGORY_COVERS: Record<CategorySlug, string> = {
   pizzarias: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=200&fit=crop",
   bares: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=200&fit=crop",
   cafes: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=200&fit=crop",
+  docerias: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=200&fit=crop",
   hoteis: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&h=200&fit=crop",
   parques: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400&h=200&fit=crop",
   "pontos-turisticos": "https://upload.wikimedia.org/wikipedia/commons/9/92/Times_Square_%28Tall%29.jpg",
@@ -46,8 +48,9 @@ export const CATEGORY_COVERS: Record<CategorySlug, string> = {
 export const CATEGORY_ICONS: Record<CategorySlug, string> = {
   restaurantes: "\u{1F37D}\u{FE0F}",
   pizzarias: "\u{1F355}",
-  bares: "\u{1F377}",
+  bares: "\u{1F37A}",
   cafes: "\u2615",
+  docerias: "\u{1F370}",
   hoteis: "\u{1F3E8}",
   parques: "\u{1F333}",
   "pontos-turisticos": "\u{1F337}",
@@ -58,13 +61,27 @@ export const CATEGORY_ICONS: Record<CategorySlug, string> = {
 };
 
 /**
- * Aliases: mapeamento de slugs alternativos/antigos para o slug oficial
- * Exemplo: "turistico" -> "pontos-turisticos"
+ * Aliases: mapeamento de slugs alternativos/antigos para o slug oficial.
+ * Inclui slugs legados do banco de dados para compatibilidade retroativa.
  */
 export const CATEGORY_SLUG_ALIASES: Record<string, CategorySlug> = {
   turistico: "pontos-turisticos",
   "pontos-turisticos": "pontos-turisticos",
   turismo: "pontos-turisticos",
+  "bares-cafes": "bares",
+  "bares-cervejarias": "bares",
+  cervejarias: "bares",
+  "lazer-natureza": "parques",
+  "lazer-e-natureza": "parques",
+  "espacos-eventos": "eventos",
+  "espacos-de-eventos": "eventos",
+  "lojas-artesanato": "compras",
+  "lojas-e-artesanato": "compras",
+  floriculturas: "compras",
+  "cafes-confeitarias": "cafes",
+  confeitarias: "cafes",
+  "docerias-cafes": "docerias",
+  "cafes-docerias": "docerias",
 };
 
 /**
@@ -78,22 +95,17 @@ export const CATEGORY_SLUG_ALIASES: Record<string, CategorySlug> = {
 export function normalizeSlug(slug: string): CategorySlug | null {
   if (!slug) return null;
 
-  // Trim e lowercase
   let normalized = slug.trim().toLowerCase();
 
-  // Remover acentos
   normalized = normalized
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
-  // Substituir espaços por hífen
   normalized = normalized.replace(/\s+/g, "-");
 
-  // Aplicar alias
   const aliased = CATEGORY_SLUG_ALIASES[normalized];
   if (aliased) return aliased;
 
-  // Verificar se é um slug válido
   if (CATEGORY_SLUGS.includes(normalized as CategorySlug)) {
     return normalized as CategorySlug;
   }

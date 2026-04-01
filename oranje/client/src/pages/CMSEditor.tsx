@@ -100,7 +100,11 @@ export default function CMSEditor() {
   ];
   const [navItems, setNavItems] = useState(DEFAULT_NAV);
 
+  const [appHeroImage, setAppHeroImage] = useState("");
+  const [appHeroUploading, setAppHeroUploading] = useState(false);
+
   const heroQuery = trpc.content.getHero.useQuery();
+  const appHeroQuery = trpc.content.getAppHero.useQuery();
   const servicesQuery = trpc.content.getServices.useQuery();
   const aboutQuery = trpc.content.getAbout.useQuery();
   const contactQuery = trpc.content.getContact.useQuery();
@@ -158,6 +162,18 @@ export default function CMSEditor() {
     },
   });
 
+  const updateAppHeroMutation = trpc.content.updateAppHero.useMutation({
+    onSuccess: () => {
+      toast.success("Imagem do App salva com sucesso!");
+      setAppHeroUploading(false);
+      appHeroQuery.refetch();
+    },
+    onError: (error) => {
+      setAppHeroUploading(false);
+      toast.error("Erro ao salvar: " + getFriendlyErrorMessage({ message: error.message }));
+    },
+  });
+
   useEffect(() => {
     if (heroQuery.data) {
       const rawUrl = heroQuery.data.imageUrl || "";
@@ -171,6 +187,14 @@ export default function CMSEditor() {
       });
     }
   }, [heroQuery.data]);
+
+  useEffect(() => {
+    if (appHeroQuery.data) {
+      const url = appHeroQuery.data.imageUrl || "";
+      const isValid = url.startsWith("https://") || url.startsWith("data:image/");
+      setAppHeroImage(isValid ? url : "");
+    }
+  }, [appHeroQuery.data]);
 
   useEffect(() => {
     if (servicesQuery.data) {
@@ -240,6 +264,21 @@ export default function CMSEditor() {
       img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error("Falha ao carregar imagem")); };
       img.src = objectUrl;
     });
+  };
+
+  const handleAppHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAppHeroUploading(true);
+    e.target.value = "";
+    try {
+      const dataUrl = await compressImageToBase64(file);
+      setAppHeroImage(dataUrl);
+      updateAppHeroMutation.mutate({ imageUrl: dataUrl });
+    } catch {
+      toast.error("Erro ao processar imagem. Tente outro arquivo.");
+      setAppHeroUploading(false);
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -397,6 +436,71 @@ export default function CMSEditor() {
               >
                 {updateHeroMutation.isPending ? "Salvando..." : "Salvar Hero"}
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* App Hero Image */}
+          <Card className="mt-4 border-blue-100">
+            <CardHeader>
+              <CardTitle className="text-base">Imagem Hero do App <span className="text-xs font-normal text-gray-500">(/app)</span></CardTitle>
+              <CardDescription>
+                Troca a foto de fundo do hero na tela inicial do app (oranjeapp.com.br/app). Independente do hero do site.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                <p className="text-xs font-semibold text-blue-800 mb-2">📱 Foto do App Hero</p>
+                <p className="text-xs text-blue-700 mb-2">Selecione uma foto — ela será comprimida e salva automaticamente.</p>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handleAppHeroImageUpload}
+                  disabled={appHeroUploading || updateAppHeroMutation.isPending}
+                  className="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#E65100] file:text-white hover:file:bg-[#D84500] cursor-pointer"
+                />
+                {(appHeroUploading || updateAppHeroMutation.isPending) && (
+                  <p className="text-sm text-[#E65100] font-medium mt-2">⏳ Processando e salvando imagem...</p>
+                )}
+              </div>
+              {appHeroImage.startsWith("data:") && (
+                <div>
+                  <p className="text-xs text-green-700 font-medium mb-1">✅ Imagem personalizada ativa:</p>
+                  <img src={appHeroImage} alt="Hero do App atual" className="w-full h-36 object-cover rounded" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAppHeroImage("");
+                      updateAppHeroMutation.mutate({ imageUrl: "" });
+                    }}
+                    className="text-xs text-red-500 mt-1 hover:underline"
+                  >
+                    Remover foto (volta ao moinho padrão)
+                  </button>
+                </div>
+              )}
+              {!appHeroImage && (
+                <p className="text-xs text-gray-500">Sem imagem personalizada — mostrando imagem padrão do moinho.</p>
+              )}
+              <div className="border-t pt-3">
+                <label className="block text-xs font-medium text-gray-500 mb-1">Ou cole uma URL externa (https://)</label>
+                <Input
+                  value={appHeroImage.startsWith("data:") ? "" : appHeroImage}
+                  onChange={(e) => setAppHeroImage(e.target.value)}
+                  placeholder="https://i.imgur.com/sua-imagem.jpg"
+                />
+                {appHeroImage && !appHeroImage.startsWith("data:") && !/^https?:\/\//.test(appHeroImage) && (
+                  <p className="text-xs text-red-500 mt-1 font-medium">URL inválida — deve começar com https://</p>
+                )}
+                {appHeroImage && !appHeroImage.startsWith("data:") && /^https?:\/\//.test(appHeroImage) && (
+                  <Button
+                    className="mt-2 bg-[#E65100] hover:bg-[#D84500]"
+                    onClick={() => updateAppHeroMutation.mutate({ imageUrl: appHeroImage })}
+                    disabled={updateAppHeroMutation.isPending}
+                  >
+                    {updateAppHeroMutation.isPending ? "Salvando..." : "Salvar URL"}
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useCategoriesList, usePlacesList, useFavorites } from "@/hooks/useMockData";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useNearbyPlaces } from "@/hooks/useNearbyPlaces";
+import { trpc } from "@/lib/trpc";
 
 const NearbyMap = lazy(() => import("@/components/NearbyMap"));
 
@@ -46,6 +47,13 @@ export default function Home() {
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
   const { position: geoPosition, loading: geoLoading, denied: geoDenied } = useGeolocation();
   const { nearby: nearbyPlaces, isLoading: nearbyLoading } = useNearbyPlaces(geoPosition, 6);
+  const { data: appHeroData } = trpc.content.getAppHero.useQuery();
+
+  const heroImageUrl = (() => {
+    const url = appHeroData?.imageUrl ?? "";
+    if (url.startsWith("data:image/") || /^https?:\/\//.test(url)) return url;
+    return "/brand/moinho-povos-unidos.jpg";
+  })();
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
@@ -75,7 +83,7 @@ export default function Home() {
         style={{
           position: "relative",
           minHeight: 340,
-          backgroundImage: "url(/brand/moinho-povos-unidos.jpg)",
+          backgroundImage: `url(${heroImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
           overflow: "hidden",

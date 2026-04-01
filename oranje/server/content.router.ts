@@ -129,6 +129,37 @@ export const contentRouter = router({
       return { success: true };
     }),
 
+  // ─── App Hero Section (/app) ──────────────────────────────────────────────
+  getAppHero: publicProcedure.query(async () => {
+    if (!db) return { imageUrl: "" };
+    try {
+      const result = await db
+        .select()
+        .from(siteContent)
+        .where(eq(siteContent.section, "app_hero"));
+      const data: any = {};
+      result.forEach((item) => {
+        data[item.key.replace("app_hero_", "")] = item.value;
+      });
+      return { imageUrl: data.imageUrl ?? "" };
+    } catch (error) {
+      console.error("[Content] Error fetching app hero:", error);
+      return { imageUrl: "" };
+    }
+  }),
+
+  updateAppHero: cmsProcedure
+    .input(z.object({ imageUrl: z.string().default("") }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = getCmsUserId(ctx);
+      const db = getContentDb();
+      await db
+        .insert(siteContent)
+        .values({ key: "app_hero_imageUrl", value: input.imageUrl, section: "app_hero", updatedBy: userId })
+        .onDuplicateKeyUpdate({ set: { value: input.imageUrl, updatedBy: userId } });
+      return { success: true };
+    }),
+
   // ─── Services Section ─────────────────────────────────────────────────────
   getServices: publicProcedure.query(async () => {
     if (!db) return {};

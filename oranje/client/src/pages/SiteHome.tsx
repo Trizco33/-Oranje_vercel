@@ -171,21 +171,41 @@ export default function SiteHome() {
           alignItems: "center",
           justifyContent: "center",
           overflow: "hidden",
+          backgroundColor: "#00251A",
         }}
       >
-        {/* Background Image — CMS imageUrl when set, fallback to Holambra imagery */}
-        <div
+        {/* Background Image — static fallback sempre visível */}
+        <img
+          src="/brand/moinho-povos-unidos.jpg"
+          alt=""
+          aria-hidden="true"
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: (heroData?.imageUrl && /^https?:\/\//.test(heroData.imageUrl))
-              ? `url('${heroData.imageUrl}'), url('/brand/moinho-povos-unidos.jpg')`
-              : "url('/brand/moinho-povos-unidos.jpg'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
           }}
         />
-        {/* Gradient overlay — stronger for text readability */}
+        {/* Background Image — CMS override (só quando URL externa https:// válida) */}
+        {heroData?.imageUrl && /^https?:\/\//.test(heroData.imageUrl) && (
+          <img
+            src={heroData.imageUrl}
+            alt=""
+            aria-hidden="true"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+          />
+        )}
+        {/* Gradient overlay — legibilidade do texto */}
         <div
           style={{
             position: "absolute",

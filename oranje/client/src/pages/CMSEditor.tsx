@@ -176,30 +176,53 @@ export default function CMSEditor() {
     }
   }, [contactQuery.data]);
 
+  const compressImageToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        const MAX_W = 1200, MAX_H = 675;
+        let w = img.width, h = img.height;
+        if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+        if (h > MAX_H) { w = Math.round(w * MAX_H / h); h = MAX_H; }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, w, h);
+        const MAX_CHARS = 60000;
+        let q = 0.75;
+        let dataUrl = canvas.toDataURL("image/jpeg", q);
+        while (dataUrl.length > MAX_CHARS && q > 0.3) {
+          q = Math.round((q - 0.07) * 100) / 100;
+          dataUrl = canvas.toDataURL("image/jpeg", q);
+        }
+        if (dataUrl.length > MAX_CHARS) {
+          canvas.width = Math.round(w * 0.7);
+          canvas.height = Math.round(h * 0.7);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          dataUrl = canvas.toDataURL("image/jpeg", 0.5);
+        }
+        resolve(dataUrl);
+      };
+      img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error("Falha ao carregar imagem")); };
+      img.src = objectUrl;
+    });
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json();
-      if (data.url) {
-        setHero((prev) => ({ ...prev, imageUrl: data.url }));
-        toast.success("Imagem enviada com sucesso!");
-      } else {
-        toast.error("Falha no upload. Tente novamente.");
-      }
+      const dataUrl = await compressImageToBase64(file);
+      setHero((prev) => ({ ...prev, imageUrl: dataUrl }));
+      toast.success("Imagem processada! Clique em Salvar Hero para confirmar.");
     } catch {
-      toast.error("Erro ao enviar imagem. Verifique sua conexão e tente novamente.");
+      toast.error("Erro ao processar imagem. Tente outro arquivo.");
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -284,39 +307,50 @@ export default function CMSEditor() {
                 <div className="space-y-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                      URL da imagem <span className="text-[#E65100] font-semibold">(recomendado — persistente)</span>
-                    </label>
-                    <Input
-                      value={hero.imageUrl}
-                      onChange={(e) => setHero({ ...hero, imageUrl: e.target.value })}
-                      placeholder="https://i.imgur.com/sua-imagem.jpg"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Use uma URL que comece com <strong>https://</strong> (Imgur, Cloudinary, etc.). Caminhos locais como <code>/imagem.jpg</code> não funcionam — a URL deve ser de um servidor externo.
-                    </p>
-                    {hero.imageUrl && !/^https?:\/\//.test(hero.imageUrl) && (
-                      <p className="text-xs text-red-500 mt-1 font-medium">
-                        ⚠️ URL inválida — deve começar com https://. Limpe o campo ou cole uma URL externa.
-                      </p>
-                    )}
-                  </div>
-                  <div className="border-t pt-3">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
-                      Upload de arquivo <span className="text-amber-600">(temporário — some a cada novo deploy)</span>
+                      Selecionar foto do dispositivo
                     </label>
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
                       onChange={handleImageUpload}
                       disabled={uploading}
-                      className="block w-full text-sm text-gray-500"
+                      className="block w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#E65100] file:text-white hover:file:bg-[#D84500] cursor-pointer"
                     />
-                    {uploading && <p className="text-sm text-gray-500">Enviando imagem...</p>}
+                    <p className="text-xs text-gray-500 mt-1">
+                      JPG, PNG ou WebP. A foto é comprimida e salva no banco de dados — funciona em produção.
+                    </p>
+                    {uploading && <p className="text-sm text-[#E65100] font-medium mt-1">Processando imagem...</p>}
+                  </div>
+                  <div className="border-t pt-3">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                      Ou cole uma URL externa (https://)
+                    </label>
+                    <Input
+                      value={hero.imageUrl.startsWith("data:") ? "" : hero.imageUrl}
+                      onChange={(e) => setHero({ ...hero, imageUrl: e.target.value })}
+                      placeholder="https://i.imgur.com/sua-imagem.jpg"
+                    />
+                    {hero.imageUrl && !hero.imageUrl.startsWith("data:") && !/^https?:\/\//.test(hero.imageUrl) && (
+                      <p className="text-xs text-red-500 mt-1 font-medium">
+                        URL inválida — deve começar com https://
+                      </p>
+                    )}
                   </div>
                   {hero.imageUrl && (
                     <div className="mt-2">
-                      <p className="text-xs text-gray-500 mb-1">Pré-visualização:</p>
-                      <img src={hero.imageUrl} alt="Pré-visualização do conteúdo hero" className="w-full h-48 object-cover rounded" loading="lazy" />
+                      <p className="text-xs text-gray-500 mb-1">
+                        {hero.imageUrl.startsWith("data:") ? "Pré-visualização (foto processada — pronta para salvar):" : "Pré-visualização:"}
+                      </p>
+                      <img src={hero.imageUrl} alt="Pré-visualização do hero" className="w-full h-48 object-cover rounded" />
+                      {hero.imageUrl.startsWith("data:") && (
+                        <button
+                          type="button"
+                          onClick={() => setHero(prev => ({ ...prev, imageUrl: "" }))}
+                          className="text-xs text-red-500 mt-1 hover:underline"
+                        >
+                          Remover foto
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

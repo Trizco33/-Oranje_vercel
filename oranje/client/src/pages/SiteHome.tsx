@@ -188,8 +188,8 @@ export default function SiteHome() {
             objectPosition: "center",
           }}
         />
-        {/* Background Image — CMS override (só quando URL externa https:// válida) */}
-        {heroData?.imageUrl && /^https?:\/\//.test(heroData.imageUrl) && (
+        {/* Background Image — CMS override (https:// URL ou data:image/ base64) */}
+        {heroData?.imageUrl && (/^https?:\/\//.test(heroData.imageUrl) || heroData.imageUrl.startsWith("data:image/")) && (
           <img
             src={heroData.imageUrl}
             alt=""

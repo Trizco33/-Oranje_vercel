@@ -352,6 +352,7 @@ export default function CMSPages({ onNavigate }: CMSPagesProps = {}) {
               <p className="font-semibold text-green-700 mb-2">✅ Gerenciado pelo CMS</p>
               <ul className="space-y-1 text-gray-700">
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/</span> — Landing: Hero, Serviços, Sobre, Contato (aba Conteúdo)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/sobre</span> — Seção Sobre sincronizada com aba Conteúdo</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/contato</span> — Email, telefone e Instagram (aba Conteúdo → Contato)</li>
                 <li>Cabeçalho — telefone do CMS (exibido no desktop)</li>
                 <li>Rodapé — email, telefone, endereço, Instagram</li>
@@ -371,11 +372,14 @@ export default function CMSPages({ onNavigate }: CMSPagesProps = {}) {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-gray-600 mb-2">🔒 Estrutural (navegação)</p>
+              <p className="font-semibold text-gray-600 mb-2">🔒 Estrutural (código)</p>
               <ul className="space-y-1 text-gray-700">
                 <li>Links de navegação do cabeçalho</li>
                 <li>Categorias do app</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/login</span> — Login do CMS</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/seja-um-parceiro</span> — Formulário de parceria</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/privacidade</span> — Política de privacidade</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/termos</span> — Termos de uso</li>
                 <li>SEO padrão por página (aba SEO)</li>
               </ul>
             </div>

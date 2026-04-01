@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Mail, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 export default function Contact() {
   const navigate = useNavigate();
@@ -12,9 +13,14 @@ export default function Contact() {
     message: "",
   });
 
+  const { data: contactData } = trpc.content.getContact.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const contactEmail = contactData?.email || "contato@oranje.com.br";
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In production, this would send to a backend endpoint
     toast.success("Mensagem enviada! Entraremos em contato em breve.");
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
@@ -64,8 +70,8 @@ export default function Contact() {
               <h3 className="font-semibold text-lg mb-2" style={{ color: "#FFFFFF" }}>
                 Email
               </h3>
-              <a href="mailto:contato@oranje.app" style={{ color: "#E65100" }}>
-                contato@oranje.app
+              <a href={`mailto:${contactEmail}`} style={{ color: "#E65100" }}>
+                {contactEmail}
               </a>
             </div>
             <div className="p-6 rounded-2xl" style={{ background: "rgba(230, 81, 0, 0.1)", border: "1px solid rgba(230, 81, 0, 0.2)" }}>

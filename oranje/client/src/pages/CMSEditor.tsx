@@ -5,12 +5,44 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+
+function getFriendlyErrorMessage(error: { message: string; data?: any }): string {
+  const zodErrors = error.data?.zodError?.fieldErrors as Record<string, string[]> | undefined;
+  if (zodErrors) {
+    const fieldLabels: Record<string, string> = {
+      title: "Título",
+      subtitle: "Subtítulo",
+      buttonText: "Texto do Botão",
+      buttonUrl: "URL do Botão",
+      imageUrl: "URL da Imagem",
+      email: "Email",
+      phone: "Telefone",
+      address: "Endereço",
+      description: "Descrição",
+      text: "Texto",
+    };
+    const messages = Object.entries(zodErrors)
+      .flatMap(([field, errors]) =>
+        (errors ?? []).map(e => `${fieldLabels[field] ?? field}: ${e}`)
+      )
+      .join("; ");
+    if (messages) return `Dados inválidos — ${messages}`;
+    return "Dados inválidos. Verifique os campos e tente novamente.";
+  }
+  if (error.message.includes("Database not available") || error.message.includes("database"))
+    return "Banco de dados não disponível. Adicione DATABASE_URL (MySQL) nos Secrets.";
+  if (error.message.includes("UNAUTHORIZED") || error.message.includes("unauthorized"))
+    return "Sem permissão para realizar esta ação. Faça login novamente.";
+  if (error.message.includes("INTERNAL_SERVER_ERROR"))
+    return "Erro interno no servidor. Tente novamente mais tarde.";
+  return error.message || "Ocorreu um erro inesperado. Tente novamente.";
+}
 
 export default function CMSEditor() {
   const [activeTab, setActiveTab] = useState("hero");
   const [uploading, setUploading] = useState(false);
 
-  // Hero State
   const [hero, setHero] = useState({
     title: "",
     subtitle: "",
@@ -19,74 +51,68 @@ export default function CMSEditor() {
     imageUrl: "",
   });
 
-  // Services State
   const [services, setServices] = useState({
     title: "",
     description: "",
     items: [{ title: "", description: "" }],
   });
 
-  // About State
   const [about, setAbout] = useState({
     title: "",
     text: "",
   });
 
-  // Contact State
   const [contact, setContact] = useState({
     email: "",
     phone: "",
     address: "",
   });
 
-  // Queries
   const heroQuery = trpc.content.getHero.useQuery();
   const servicesQuery = trpc.content.getServices.useQuery();
   const aboutQuery = trpc.content.getAbout.useQuery();
   const contactQuery = trpc.content.getContact.useQuery();
 
-  // Mutations
   const updateHeroMutation = trpc.content.updateHero.useMutation({
     onSuccess: () => {
-      alert("Hero atualizado com sucesso!");
+      toast.success("Hero atualizado com sucesso!");
       heroQuery.refetch();
     },
     onError: (error) => {
-      alert("Erro: " + error.message);
+      toast.error(getFriendlyErrorMessage(error as any));
     },
   });
 
   const updateServicesMutation = trpc.content.updateServices.useMutation({
     onSuccess: () => {
-      alert("Serviços atualizados com sucesso!");
+      toast.success("Serviços atualizados com sucesso!");
       servicesQuery.refetch();
     },
     onError: (error) => {
-      alert("Erro: " + error.message);
+      toast.error(getFriendlyErrorMessage(error as any));
     },
   });
 
   const updateAboutMutation = trpc.content.updateAbout.useMutation({
     onSuccess: () => {
-      alert("Sobre atualizado com sucesso!");
+      toast.success("Seção 'Sobre' atualizada com sucesso!");
       aboutQuery.refetch();
     },
     onError: (error) => {
-      alert("Erro: " + error.message);
+      toast.error(getFriendlyErrorMessage(error as any));
     },
   });
 
   const updateContactMutation = trpc.content.updateContact.useMutation({
     onSuccess: () => {
-      alert("Contato atualizado com sucesso!");
+      toast.success("Dados de contato atualizados com sucesso!");
       contactQuery.refetch();
     },
     onError: (error) => {
-      alert("Erro: " + error.message);
+      toast.error(getFriendlyErrorMessage(error as any));
     },
   });
 
-  // Load data from queries
   useEffect(() => {
     if (heroQuery.data) {
       setHero({
@@ -128,7 +154,6 @@ export default function CMSEditor() {
     }
   }, [contactQuery.data]);
 
-  // Image upload handler
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -144,17 +169,18 @@ export default function CMSEditor() {
       });
       const data = await response.json();
       if (data.url) {
-        setHero({ ...hero, imageUrl: data.url });
-        alert("Imagem enviada com sucesso!");
+        setHero((prev) => ({ ...prev, imageUrl: data.url }));
+        toast.success("Imagem enviada com sucesso!");
+      } else {
+        toast.error("Falha no upload. Tente novamente.");
       }
-    } catch (error) {
-      alert("Erro ao enviar imagem: " + error);
+    } catch {
+      toast.error("Erro ao enviar imagem. Verifique sua conexão e tente novamente.");
     } finally {
       setUploading(false);
     }
   };
 
-  // Handlers
   const handleServiceItemChange = (index: number, field: string, value: string) => {
     const newItems = [...services.items];
     newItems[index] = { ...newItems[index], [field]: value };
@@ -192,32 +218,44 @@ export default function CMSEditor() {
           <Card>
             <CardHeader>
               <CardTitle>Editar Hero</CardTitle>
-              <CardDescription>Configure a seção principal da landing page</CardDescription>
+              <CardDescription>
+                Configure a seção principal da landing page. O subtítulo é opcional.
+                URL do botão aceita rotas internas (ex: <code>/app</code>) ou links externos (ex: <code>https://...</code>).
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Título</label>
+                <label className="block text-sm font-medium mb-2">Título *</label>
                 <Input
                   value={hero.title}
                   onChange={(e) => setHero({ ...hero, title: e.target.value })}
-                  placeholder="Digite o título do hero"
+                  placeholder="Ex: Descubra Holambra"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Subtítulo</label>
+                <label className="block text-sm font-medium mb-2">Subtítulo <span className="text-gray-400 text-xs">(opcional)</span></label>
                 <Textarea
                   value={hero.subtitle}
                   onChange={(e) => setHero({ ...hero, subtitle: e.target.value })}
-                  placeholder="Digite o subtítulo"
+                  placeholder="Ex: O roteiro definitivo de uma cidade única"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Texto do Botão</label>
+                <label className="block text-sm font-medium mb-2">Texto do Botão *</label>
                 <Input
                   value={hero.buttonText}
                   onChange={(e) => setHero({ ...hero, buttonText: e.target.value })}
                   placeholder="Ex: Explorar Agora"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">URL do Botão *</label>
+                <Input
+                  value={hero.buttonUrl}
+                  onChange={(e) => setHero({ ...hero, buttonUrl: e.target.value })}
+                  placeholder="Ex: /app ou https://exemplo.com"
+                />
+                <p className="text-xs text-gray-500 mt-1">Aceita rotas internas (/app, /explorar) ou URLs absolutas.</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Imagem do Hero</label>
@@ -229,7 +267,15 @@ export default function CMSEditor() {
                     disabled={uploading}
                     className="block w-full text-sm text-gray-500"
                   />
-                  {uploading && <p className="text-sm text-gray-500">Enviando...</p>}
+                  {uploading && <p className="text-sm text-gray-500">Enviando imagem...</p>}
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Ou cole uma URL de imagem:</label>
+                    <Input
+                      value={hero.imageUrl}
+                      onChange={(e) => setHero({ ...hero, imageUrl: e.target.value })}
+                      placeholder="/images/hero.jpg ou https://..."
+                    />
+                  </div>
                   {hero.imageUrl && (
                     <div className="mt-4">
                       <img src={hero.imageUrl} alt="Pré-visualização do conteúdo hero" className="w-full h-48 object-cover rounded" loading="lazy" />
@@ -253,7 +299,7 @@ export default function CMSEditor() {
           <Card>
             <CardHeader>
               <CardTitle>Editar Serviços</CardTitle>
-              <CardDescription>Configure a seção de serviços</CardDescription>
+              <CardDescription>Configure a seção de serviços da landing page</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -274,7 +320,7 @@ export default function CMSEditor() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold">Serviços</h3>
+                <h3 className="font-semibold">Itens de Serviço</h3>
                 {services.items.map((item, idx) => (
                   <div key={idx} className="border p-4 rounded space-y-2">
                     <Input
@@ -323,7 +369,7 @@ export default function CMSEditor() {
           <Card>
             <CardHeader>
               <CardTitle>Editar Sobre</CardTitle>
-              <CardDescription>Configure a seção sobre</CardDescription>
+              <CardDescription>Configure a seção "Sobre" da landing page</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -359,7 +405,9 @@ export default function CMSEditor() {
           <Card>
             <CardHeader>
               <CardTitle>Editar Contato</CardTitle>
-              <CardDescription>Configure as informações de contato</CardDescription>
+              <CardDescription>
+                Esses dados aparecem no rodapé e na página de contato do site público.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -368,11 +416,11 @@ export default function CMSEditor() {
                   type="email"
                   value={contact.email}
                   onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                  placeholder="email@example.com"
+                  placeholder="contato@oranje.com.br"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Telefone</label>
+                <label className="block text-sm font-medium mb-2">Telefone / WhatsApp</label>
                 <Input
                   value={contact.phone}
                   onChange={(e) => setContact({ ...contact, phone: e.target.value })}
@@ -380,7 +428,7 @@ export default function CMSEditor() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Endereço</label>
+                <label className="block text-sm font-medium mb-2">Endereço / Cidade</label>
                 <Input
                   value={contact.address}
                   onChange={(e) => setContact({ ...contact, address: e.target.value })}

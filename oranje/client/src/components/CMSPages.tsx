@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Edit, Plus } from "lucide-react";
+import { Trash2, Edit, Plus, Info } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUpload } from "./ImageUpload";
 
@@ -270,6 +270,53 @@ export default function CMSPages() {
           </Card>
         )}
       </div>
+
+      {/* Page Coverage Documentation */}
+      <Card className="border-blue-100 bg-blue-50/50">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base text-blue-800">
+            <Info size={18} />
+            Cobertura do CMS — O que é gerenciado aqui?
+          </CardTitle>
+          <CardDescription className="text-blue-700">
+            Referência rápida sobre quais páginas e seções são controladas pelo CMS.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div>
+              <p className="font-semibold text-green-700 mb-2">✅ Gerenciado pelo CMS</p>
+              <ul className="space-y-1 text-gray-700">
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/</span> — Seções da landing (Hero, Serviços, Sobre, Contato)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/contato</span> — Email e dados de contato</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/blog/:slug</span> — Posts do blog (aba Blog)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/pagina/:slug</span> — Páginas criadas aqui</li>
+                <li>Rodapé do site (email, telefone, endereço)</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold text-orange-600 mb-2">⚙️ Gerado automaticamente</p>
+              <ul className="space-y-1 text-gray-700">
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/app</span> — App de guia (dados do banco)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/app/lugar/:id</span> — Detalhe de lugar</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/roteiros</span> — Lista de roteiros</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/roteiro/:id</span> — Detalhe de roteiro</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/mapa</span> — Mapa interativo</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/parceiros</span> — Parceiros comerciais</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold text-gray-600 mb-2">🔒 Estático (código)</p>
+              <ul className="space-y-1 text-gray-700">
+                <li>Navegação principal (header)</li>
+                <li>Categorias do app</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/login</span> — Login do CMS</li>
+                <li>SEO padrão por página (aba SEO)</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

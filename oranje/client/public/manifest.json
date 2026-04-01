@@ -1,0 +1,26 @@
+{
+  "name": "ORANJE — Guia de Holambra",
+  "short_name": "ORANJE",
+  "description": "Guia cultural e gastronômico de Holambra, SP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E1A26",
+  "theme_color": "#D88A3D",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["travel", "lifestyle", "food"],
+  "lang": "pt-BR"
+}

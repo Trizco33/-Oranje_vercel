@@ -2,95 +2,97 @@
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+Este workspace contém duas coisas:
+1. **Template pnpm monorepo** (pasta raiz) — template de infra gerado pelo Replit, não usado pelo produto
+2. **Projeto Oranje** (pasta `oranje/`) — o código real do produto, importado do GitHub `Trizco33/-Oranje_vercel`
 
-## Stack
+## Projeto Oranje
 
-- **Monorepo tool**: pnpm workspaces
-- **Node.js version**: 24
-- **Package manager**: pnpm
-- **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+O Oranje é um guia cultural e gastronômico de Holambra, SP, com site público, app/PWA, CMS/admin e blog.
 
-## Structure
+### Stack do Oranje
+
+- **Package manager**: npm (isolado do pnpm workspace)
+- **Frontend**: React 19 + Vite 7 + Tailwind CSS 4 + Radix UI
+- **Backend**: Express 4 + tRPC 11 + tsx (dev) / esbuild (prod)
+- **Database**: MySQL via Drizzle ORM + mysql2
+- **Auth**: JWT + Magic Link (via Resend)
+- **Router**: React Router DOM 7
+
+### Estrutura do Oranje
 
 ```text
-artifacts-monorepo/
-├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
-├── lib/                    # Shared libraries
-│   ├── api-spec/           # OpenAPI spec + Orval codegen config
-│   ├── api-client-react/   # Generated React Query hooks
-│   ├── api-zod/            # Generated Zod schemas from OpenAPI
-│   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
+oranje/
+├── client/                  # Frontend React
+│   └── src/
+│       ├── App.tsx           # Router principal (/, /app, /admin, etc.)
+│       ├── pages/            # Todas as páginas (SiteHome, Admin, CMSDashboard, etc.)
+│       └── hooks/useMockData.ts  # ⚠️ Dados fictícios ainda em uso (a remover)
+├── server/                  # Backend Express + tRPC
+│   ├── _core/               # Entry, contexto tRPC, OAuth, Vite middleware
+│   ├── routers.ts            # AppRouter principal (agrega todos os sub-routers)
+│   ├── db.ts                 # Conexão MySQL com Drizzle
+│   ├── content.router.ts     # Hero, header, footer, about, contact (CMS)
+│   ├── cms.router.ts         # Páginas, SEO (CMS)
+│   ├── places.router.ts      # Lugares/parceiros
+│   ├── categories.router.ts  # Categorias
+│   └── seed.ts               # Seed inicial do banco
+├── drizzle/                  # Schema MySQL + migrations (0000 a 0013)
+│   └── schema.ts             # Tabelas: places, categories, users, events, etc.
+├── vite.config.ts            # Config Vite (root em client/)
+├── drizzle.config.ts         # Config Drizzle Kit (MySQL)
+├── .env                      # Variáveis de ambiente locais (DATABASE_URL vazio)
+└── package.json              # Scripts: dev, build, start, db:push
 ```
 
-## TypeScript & Composite Projects
+### Scripts do Oranje
 
-Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references. This means:
+- `cd oranje && npm run dev` — inicia backend + Vite dev server na porta 3000
+- `cd oranje && npm run build` — build frontend (vite) + bundle backend (esbuild)
+- `cd oranje && npm run start` — inicia produção (requer build prévio)
+- `cd oranje && npm run db:push` — gera e aplica migrations MySQL
 
-- **Always typecheck from the root** — run `pnpm run typecheck` (which runs `tsc --build --emitDeclarationOnly`). This builds the full dependency graph so that cross-package imports resolve correctly. Running `tsc` inside a single package will fail if its dependencies haven't been built yet.
-- **`emitDeclarationOnly`** — we only emit `.d.ts` files during typecheck; actual JS bundling is handled by esbuild/tsx/vite...etc, not `tsc`.
-- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array. `tsc --build` uses this to determine build order and skip up-to-date packages.
+### Variáveis de Ambiente do Oranje
 
-## Root Scripts
+| Variável | Status | Descrição |
+|---|---|---|
+| `DATABASE_URL` | ❌ BLOQUEADOR | MySQL URL (`mysql://user:pass@host:port/db`). Sem isso, todas as features de dados retornam vazio. Replit tem PostgreSQL (incompatível). |
+| `OAUTH_SERVER_URL` | ❌ Bloqueador para auth | URL do servidor OAuth para login de usuários |
+| `JWT_SECRET` | ⚠️ Placeholder | Segredo para assinar tokens JWT. Usar valor real em produção. |
+| `VITE_APP_ID` | ✅ Configurado | `oranje-standalone` |
+| `OWNER_OPEN_ID` | ✅ Configurado | `admin-owner` (padrão) |
+| `ADMIN_KEY` | ⚠️ Placeholder | Chave para login no CMS admin |
+| `RESEND_API_KEY` | Opcional | Para envio de magic links por email |
 
-- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
-- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
+### Workflow Ativo
 
-## Packages
+- **"Oranje Dev Server"** — roda em `localhost:3000`, serve frontend + API
+  - Comando: `cd /home/runner/workspace/oranje && DATABASE_URL='' npm run dev`
+  - DATABASE_URL é forçado vazio para evitar erro de conexão MySQL com a URL PostgreSQL do Replit
 
-### `artifacts/api-server` (`@workspace/api-server`)
+### Rotas Públicas
 
-Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
+| Rota | Descrição |
+|---|---|
+| `/` | Site público (SiteHome) |
+| `/app` | App/PWA (dashboard com dados) |
+| `/app/explorar` | Explorar lugares por categoria |
+| `/admin` | CMS/Admin (requer login) |
+| `/api/trpc/*` | API tRPC |
 
-- Entry: `src/index.ts` — reads `PORT`, starts Express
-- App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
-- Depends on: `@workspace/db`, `@workspace/api-zod`
-- `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
+### Problemas Conhecidos (aguardando Tarefas #2 e #3)
 
-### `lib/db` (`@workspace/db`)
+1. **Hero do CMS** — validação muito rígida (`subtitle` obrigatório, `buttonUrl`/`imageUrl` exigem URL absoluta)
+2. **Mock data** — páginas de Explorar, Categorias, PlaceDetail usam `useMockData.ts` em vez de tRPC real
+3. **Sem banco MySQL** — todas as features dinâmicas retornam vazio sem DATABASE_URL MySQL
 
-Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
+---
 
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
+## Template pnpm Monorepo (pasta raiz — não usar para Oranje)
 
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
+O template original existe na raiz do workspace mas não é o produto Oranje. Possui:
+- `artifacts/api-server` — Express com apenas `/api/healthz`
+- `artifacts/mockup-sandbox` — sandbox de componentes UI
+- `lib/` — libs geradas (OpenAPI, Zod, Drizzle schema vazio)
 
-### `lib/api-spec` (`@workspace/api-spec`)
-
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
-
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
-
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
-
-### `lib/api-zod` (`@workspace/api-zod`)
-
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
-
-### `lib/api-client-react` (`@workspace/api-client-react`)
-
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
-
-### `scripts` (`@workspace/scripts`)
-
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+Não mexer nesta estrutura a menos que seja para fins de infra Replit.

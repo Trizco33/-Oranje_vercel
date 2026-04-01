@@ -1,0 +1,311 @@
+/* ═══════════════════════════════════════════════════════════════
+   ORANJE DESIGN SYSTEM — Premium Tokens v4.0
+   Clean. Minimal. Premium.
+   Brand: Verde Escuro #00251A · Laranja #E65100 · Bege #F5F5DC · Branco #FFFFFF
+   Typography: Montserrat (300–700)
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Palette ── */
+  --oranje-green-deep: #0D4A40;
+  --oranje-green-dark: #00251A;
+  --oranje-green-medium: #0A3D34;
+  --oranje-green-light: #145C50;
+  --oranje-orange: #E65100;
+  --oranje-orange-light: #FF6D00;
+  --oranje-orange-warm: #FF8F00;
+  --oranje-beige: #F5F5DC;
+  --oranje-white: #FFFFFF;
+  --oranje-cream: #FAFAF0;
+
+  /* ── Typography ── */
+  --ds-font-display: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --ds-font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --ds-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --ds-font-light: 300;
+  --ds-font-regular: 400;
+  --ds-font-medium: 500;
+  --ds-font-semibold: 600;
+  --ds-font-bold: 700;
+
+  --ds-text-xs: 0.6875rem;
+  --ds-text-sm: 0.8125rem;
+  --ds-text-base: 0.9375rem;
+  --ds-text-lg: 1.0625rem;
+  --ds-text-xl: 1.25rem;
+  --ds-text-2xl: 1.5rem;
+  --ds-text-3xl: 1.875rem;
+  --ds-text-4xl: 2.25rem;
+  --ds-text-5xl: 3rem;
+  --ds-text-6xl: 3.75rem;
+
+  --ds-leading-none: 1;
+  --ds-leading-tight: 1.15;
+  --ds-leading-snug: 1.3;
+  --ds-leading-normal: 1.5;
+  --ds-leading-relaxed: 1.65;
+
+  --ds-tracking-tight: -0.025em;
+  --ds-tracking-normal: 0;
+  --ds-tracking-wide: 0.04em;
+  --ds-tracking-wider: 0.08em;
+
+  /* ── Colors (Dark First — Brand DNA) ── */
+  --ds-color-bg-primary: var(--oranje-green-dark);
+  --ds-color-bg-secondary: var(--oranje-green-deep);
+  --ds-color-bg-elevated: #0B3129;
+  --ds-color-bg-surface: rgba(13, 74, 64, 0.35);
+  --ds-color-bg-surface-hover: rgba(13, 74, 64, 0.55);
+  --ds-color-bg-overlay: rgba(0, 37, 26, 0.85);
+  --ds-color-bg-glass: rgba(13, 74, 64, 0.2);
+
+  --ds-color-accent: var(--oranje-orange);
+  --ds-color-accent-hover: var(--oranje-orange-light);
+  --ds-color-accent-muted: rgba(230, 81, 0, 0.18);
+  --ds-color-accent-subtle: rgba(230, 81, 0, 0.08);
+
+  --ds-color-text-primary: var(--oranje-white);
+  --ds-color-text-secondary: var(--oranje-beige);
+  --ds-color-text-muted: rgba(245, 245, 220, 0.55);
+  --ds-color-text-accent: var(--oranje-orange);
+  --ds-color-text-inverse: var(--oranje-green-dark);
+
+  --ds-color-border-default: rgba(245, 245, 220, 0.08);
+  --ds-color-border-accent: rgba(230, 81, 0, 0.35);
+  --ds-color-border-focus: rgba(230, 81, 0, 0.6);
+  --ds-color-border-subtle: rgba(245, 245, 220, 0.04);
+
+  --ds-color-success: #34D399;
+  --ds-color-warning: #FBBF24;
+  --ds-color-error: #F87171;
+  --ds-color-info: #60A5FA;
+
+  /* ── Spacing (4px base) ── */
+  --ds-space-0: 0;
+  --ds-space-px: 1px;
+  --ds-space-0\.5: 0.125rem;
+  --ds-space-1: 0.25rem;
+  --ds-space-1\.5: 0.375rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  --ds-space-8: 2rem;
+  --ds-space-10: 2.5rem;
+  --ds-space-12: 3rem;
+  --ds-space-16: 4rem;
+  --ds-space-20: 5rem;
+  --ds-space-24: 6rem;
+  --ds-space-32: 8rem;
+
+  /* ── Radii ── */
+  --ds-radius-none: 0;
+  --ds-radius-sm: 6px;
+  --ds-radius-md: 10px;
+  --ds-radius-lg: 14px;
+  --ds-radius-xl: 18px;
+  --ds-radius-2xl: 24px;
+  --ds-radius-3xl: 32px;
+  --ds-radius-full: 9999px;
+
+  /* ── Shadows — Warm Accent Tinted ── */
+  --ds-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --ds-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --ds-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --ds-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --ds-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.35);
+  --ds-shadow-accent: 0 4px 24px rgba(230, 81, 0, 0.25);
+  --ds-shadow-accent-lg: 0 8px 40px rgba(230, 81, 0, 0.35);
+  --ds-shadow-glow: 0 0 20px rgba(230, 81, 0, 0.15);
+  --ds-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+
+  /* ── Transitions ── */
+  --ds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ds-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ds-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ds-duration-fast: 150ms;
+  --ds-duration-normal: 250ms;
+  --ds-duration-slow: 400ms;
+  --ds-duration-slower: 600ms;
+
+  /* ── Z-Index ── */
+  --ds-z-base: 0;
+  --ds-z-above: 10;
+  --ds-z-header: 100;
+  --ds-z-modal: 200;
+  --ds-z-overlay: 300;
+  --ds-z-toast: 400;
+}
+
+/* ── Light Mode Overrides ── */
+.light {
+  --ds-color-bg-primary: var(--oranje-cream);
+  --ds-color-bg-secondary: var(--oranje-white);
+  --ds-color-bg-elevated: #FFFFFF;
+  --ds-color-bg-surface: rgba(13, 74, 64, 0.05);
+  --ds-color-bg-surface-hover: rgba(13, 74, 64, 0.1);
+  --ds-color-bg-overlay: rgba(0, 37, 26, 0.6);
+  --ds-color-bg-glass: rgba(255, 255, 255, 0.7);
+
+  --ds-color-text-primary: var(--oranje-green-dark);
+  --ds-color-text-secondary: var(--oranje-green-deep);
+  --ds-color-text-muted: rgba(0, 37, 26, 0.5);
+  --ds-color-text-inverse: var(--oranje-white);
+
+  --ds-color-border-default: rgba(0, 37, 26, 0.1);
+  --ds-color-border-accent: rgba(230, 81, 0, 0.3);
+  --ds-color-border-focus: rgba(230, 81, 0, 0.5);
+  --ds-color-border-subtle: rgba(0, 37, 26, 0.05);
+
+  --ds-shadow-sm: 0 2px 8px rgba(0, 37, 26, 0.08);
+  --ds-shadow-md: 0 4px 16px rgba(0, 37, 26, 0.1);
+  --ds-shadow-lg: 0 8px 32px rgba(0, 37, 26, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SITE LIGHT THEME — Clean, Minimal, Premium
+   Applied via .site-light class on SiteLayout
+   No glassmorphism. Solid colors. Generous spacing.
+   ═══════════════════════════════════════════════════════════════ */
+.site-light {
+  /* ── Backgrounds ── */
+  --ds-color-bg-primary: #FFFFFF;
+  --ds-color-bg-secondary: #F5F5DC;
+  --ds-color-bg-elevated: #FFFFFF;
+  --ds-color-bg-surface: rgba(0, 37, 26, 0.03);
+  --ds-color-bg-surface-hover: rgba(0, 37, 26, 0.06);
+  --ds-color-bg-overlay: rgba(0, 37, 26, 0.6);
+
+  /* ── Text ── */
+  --ds-color-text-primary: #00251A;
+  --ds-color-text-secondary: #004D40;
+  --ds-color-text-muted: rgba(0, 37, 26, 0.55);
+  --ds-color-text-accent: #E65100;
+  --ds-color-text-inverse: #FFFFFF;
+  --ds-color-text-subtle: rgba(0, 37, 26, 0.35);
+
+  /* ── Borders ── */
+  --ds-color-border-default: rgba(0, 37, 26, 0.1);
+  --ds-color-border-accent: rgba(230, 81, 0, 0.25);
+  --ds-color-border-focus: rgba(230, 81, 0, 0.6);
+  --ds-color-border-subtle: rgba(0, 37, 26, 0.06);
+
+  /* ── Accent ── */
+  --ds-color-accent: #E65100;
+  --ds-color-accent-hover: #FF6D00;
+  --ds-color-accent-muted: rgba(230, 81, 0, 0.1);
+  --ds-color-accent-subtle: rgba(230, 81, 0, 0.05);
+
+  /* ── Shadows — Subtle only ── */
+  --site-shadow-xs: 0 1px 2px rgba(0, 37, 26, 0.04);
+  --site-shadow-sm: 0 1px 3px rgba(0, 37, 26, 0.06);
+  --site-shadow-md: 0 4px 12px rgba(0, 37, 26, 0.08);
+  --site-shadow-lg: 0 8px 24px rgba(0, 37, 26, 0.1);
+  --site-shadow-hover: 0 8px 30px rgba(0, 37, 26, 0.12);
+
+  --ds-shadow-xs: 0 1px 2px rgba(0, 37, 26, 0.04);
+  --ds-shadow-sm: 0 1px 3px rgba(0, 37, 26, 0.06);
+  --ds-shadow-md: 0 4px 12px rgba(0, 37, 26, 0.08);
+  --ds-shadow-lg: 0 8px 24px rgba(0, 37, 26, 0.1);
+  --ds-shadow-xl: 0 12px 32px rgba(0, 37, 26, 0.12);
+}
+
+/* ── Scroll Reveal Animation ── */
+@keyframes site-reveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Skeleton Shimmer for site-light ── */
+.site-light .shimmer,
+.site-skeleton {
+  background: linear-gradient(90deg, #e8e8e0 25%, #f2f2ea 50%, #e8e8e0 75%);
+  background-size: 200% 100%;
+  animation: ds-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN THEME — Clean, Minimal, Unified
+   Applied via .admin-layout class
+   White backgrounds, dark green sidebar, orange CTAs
+   ═══════════════════════════════════════════════════════════════ */
+.admin-layout {
+  --admin-bg: #F7F7F2;
+  --admin-bg-white: #FFFFFF;
+  --admin-bg-beige: #F5F5DC;
+  --admin-sidebar: #00251A;
+  --admin-sidebar-hover: #003D2E;
+  --admin-sidebar-active: rgba(230, 81, 0, 0.12);
+  --admin-text-primary: #1A1A1A;
+  --admin-text-secondary: #4A5568;
+  --admin-text-muted: #718096;
+  --admin-text-sidebar: rgba(255, 255, 255, 0.7);
+  --admin-text-sidebar-active: #FFFFFF;
+  --admin-orange: #E65100;
+  --admin-orange-hover: #FF6D00;
+  --admin-green: #00251A;
+  --admin-green-light: #004D40;
+  --admin-border: rgba(0, 37, 26, 0.08);
+  --admin-border-light: rgba(0, 37, 26, 0.05);
+  --admin-shadow-sm: 0 1px 3px rgba(0, 37, 26, 0.06);
+  --admin-shadow-md: 0 2px 8px rgba(0, 37, 26, 0.06);
+  --admin-shadow-lg: 0 4px 16px rgba(0, 37, 26, 0.08);
+  --admin-radius: 12px;
+  --admin-radius-sm: 8px;
+  --admin-radius-lg: 16px;
+  --admin-sidebar-width: 260px;
+  --admin-header-height: 64px;
+  --admin-transition: 150ms ease;
+}
+
+/* ── Scroll indicator bounce ── */
+@keyframes site-scroll-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+/* ── Premium Animations ── */
+@keyframes ds-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ds-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ds-slide-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ds-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ds-pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes ds-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes ds-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes ds-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

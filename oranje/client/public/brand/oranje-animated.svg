@@ -1,0 +1,16 @@
+<svg viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg" width="900" height="700">
+  <!-- Anel (O) -->
+  <g id="ring">
+    <circle cx="280" cy="400" r="140" fill="none" stroke="#F28C28" stroke-width="50" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Folha -->
+  <g id="leaf">
+    <path d="M 350 250 Q 380 280 370 320 Q 360 340 340 330 Q 350 290 350 250" fill="none" stroke="#F2F2F2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Texto "ranje" -->
+  <g id="text">
+    <text x="480" y="480" font-family="Montserrat, sans-serif" font-size="120" font-weight="600" fill="#C0C0C0" letter-spacing="8">ranje</text>
+  </g>
+</svg>

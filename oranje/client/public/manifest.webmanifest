@@ -1,0 +1,73 @@
+{
+  "name": "Oranje — Guia Cultural de Holambra",
+  "short_name": "Oranje",
+  "description": "Curadoria de lugares, transporte confiável e eventos atualizados — tudo em um só lugar.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#00251A",
+  "prefer_related_applications": false,
+  "theme_color": "#00251A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png?v=9",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png?v=9",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663387178677/8rzdsSWs85gXVtjhEeBpLG/oranje-pwa-icon-512_a5f99cb7.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["travel", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Explorar",
+      "short_name": "Explorar",
+      "description": "Explorar lugares em Holambra",
+      "url": "/app/explorar",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png?v=9",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Favoritos",
+      "short_name": "Favoritos",
+      "description": "Meus lugares favoritos",
+      "url": "/app/favoritos",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png?v=9",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

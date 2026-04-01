@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Página Principal -->
+  <url>
+    <loc>https://oranjeapp.com.br/</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- SEO Pages -->
+  <url>
+    <loc>https://oranjeapp.com.br/o-que-fazer-em-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/melhores-restaurantes-de-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/melhores-cafes-de-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/bares-e-drinks-em-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/roteiro-1-dia-em-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/onde-tirar-fotos-em-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/eventos-em-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- Secondary Pages -->
+  <url>
+    <loc>https://oranjeapp.com.br/roteiros</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/mapa</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/blog</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/sobre</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/contato</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/parceiros</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/seja-um-parceiro</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/privacidade</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/termos</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
+  <!-- Blog Articles -->
+  <url>
+    <loc>https://oranjeapp.com.br/blog/historia-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/blog/expoflora-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://oranjeapp.com.br/blog/gastronomia-holambra</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+</urlset>

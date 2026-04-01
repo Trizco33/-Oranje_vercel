@@ -24,13 +24,19 @@ function ContatoSection() {
   const phone = contact?.phone || "";
   const address = contact?.address || "Holambra, SP";
   const instagramHref = resolveInstagramHref(contact?.instagram || undefined);
-  const instagramLabel = contact?.instagram
-    ? contact.instagram.startsWith("http")
-      ? new URL(contact.instagram).pathname.replace("/", "@")
-      : contact.instagram.startsWith("@")
-        ? contact.instagram
-        : `@${contact.instagram}`
-    : null;
+  const instagramLabel = (() => {
+    const raw = contact?.instagram;
+    if (!raw) return null;
+    if (raw.startsWith("http://") || raw.startsWith("https://")) {
+      try {
+        const pathname = new URL(raw).pathname.replace(/^\//, "");
+        return pathname ? `@${pathname}` : raw;
+      } catch {
+        return raw;
+      }
+    }
+    return raw.startsWith("@") ? raw : `@${raw}`;
+  })();
 
   const channels: { icon: React.ReactNode; title: string; info: string; href: string }[] = [
     { icon: <Mail size={28} />, title: "Email", info: email, href: `mailto:${email}` },

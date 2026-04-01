@@ -131,10 +131,10 @@ export default function LandingNew() {
             </div>
           </div>
 
-          {hero.image && (
+          {(hero.imageUrl || hero.image) && (
             <div className="mt-16">
               <img 
-                src={hero.image} 
+                src={hero.imageUrl || hero.image} 
                 alt="Holambra" 
                 className="w-full h-96 object-cover rounded-lg shadow-2xl"
               />

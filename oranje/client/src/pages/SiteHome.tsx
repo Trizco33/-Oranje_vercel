@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, lazy, Suspense } from "react";
 import { usePlacesList, useArticlesListPublished, useCategoriesList } from "@/hooks/useMockData";
+import { trpc } from "@/lib/trpc";
 import { getPlaceImage } from "@/components/PlaceCard";
 import SiteLayout from "@/components/SiteLayout";
 import { Link, useNavigate } from "react-router-dom";
@@ -121,6 +122,7 @@ export default function SiteHome() {
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
+  const { data: heroData } = trpc.content.getHero.useQuery();
   const places = allPlaces.slice(0, 6);
 
   // Build categoryId → name map for display
@@ -171,12 +173,14 @@ export default function SiteHome() {
           overflow: "hidden",
         }}
       >
-        {/* Background Image — Holambra imagery */}
+        {/* Background Image — CMS imageUrl when set, fallback to Holambra imagery */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: "url('/brand/moinho-povos-unidos.jpg'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')",
+            backgroundImage: heroData?.imageUrl
+              ? `url('${heroData.imageUrl}')`
+              : "url('/brand/moinho-povos-unidos.jpg'), url('https://comerciosaopaulo.com.br/wp-content/uploads/2026/02/Guia-Turistico-de-Holambra-SP-2026.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

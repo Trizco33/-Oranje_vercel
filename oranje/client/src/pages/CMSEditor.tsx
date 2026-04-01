@@ -281,25 +281,36 @@ export default function CMSEditor() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Imagem do Hero</label>
-                <div className="space-y-2">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="block w-full text-sm text-gray-500"
-                  />
-                  {uploading && <p className="text-sm text-gray-500">Enviando imagem...</p>}
+                <div className="space-y-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Ou cole uma URL de imagem:</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      URL da imagem <span className="text-[#E65100] font-semibold">(recomendado — persistente)</span>
+                    </label>
                     <Input
                       value={hero.imageUrl}
                       onChange={(e) => setHero({ ...hero, imageUrl: e.target.value })}
-                      placeholder="/images/hero.jpg ou https://..."
+                      placeholder="https://exemplo.com/imagem.jpg"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Cole aqui um link de imagem externa (Google Drive, Imgur, Cloudinary, etc.). Esta é a forma mais confiável — a imagem nunca some.
+                    </p>
+                  </div>
+                  <div className="border-t pt-3">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                      Upload de arquivo <span className="text-amber-600">(temporário — some a cada novo deploy)</span>
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="block w-full text-sm text-gray-500"
+                    />
+                    {uploading && <p className="text-sm text-gray-500">Enviando imagem...</p>}
                   </div>
                   {hero.imageUrl && (
-                    <div className="mt-4">
+                    <div className="mt-2">
+                      <p className="text-xs text-gray-500 mb-1">Pré-visualização:</p>
                       <img src={hero.imageUrl} alt="Pré-visualização do conteúdo hero" className="w-full h-48 object-cover rounded" loading="lazy" />
                     </div>
                   )}

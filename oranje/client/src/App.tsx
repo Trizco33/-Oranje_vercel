@@ -1,17 +1,15 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
 import { Routes, Route, useParams } from "react-router-dom";
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { lazy } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
-// Eagerly loaded - only the most critical first-paint page
-import SiteHome from "./pages/SiteHome";
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
-// Lazy loaded - all other pages loaded on demand for better code splitting
+// All pages lazy-loaded for optimal code splitting
+const SiteHome = lazy(() => import("./pages/SiteHome"));
 const Landing = lazy(() => import("./pages/Landing"));
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -51,7 +49,19 @@ const SplashScreen = lazy(() => import("./components/SplashScreen").then(m => ({
 const NotificationCenter = lazy(() => import("./components/NotificationCenter").then(m => ({ default: m.NotificationCenter })));
 const AdminGuard = lazy(() => import("./components/AdminGuard"));
 
-// Loading fallback component with accessible markup
+// Loading fallback — dark green matches SiteHome bg so no white flash
+function SiteHomeFallback() {
+  return (
+    <div
+      style={{ minHeight: "100vh", background: "#00251A" }}
+      role="status"
+      aria-live="polite"
+      aria-label="Carregando"
+    />
+  );
+}
+
+// Generic fallback for app pages
 function LoadingFallback() {
   return (
     <div
@@ -139,7 +149,7 @@ function Router() {
       <ScrollToTop />
       <Routes>
         {/* Site Pages - NO PWA, Splash, or Notifications */}
-        <Route path="/" element={<SiteHome />} />
+        <Route path="/" element={<Suspense fallback={<SiteHomeFallback />}><SiteHome /></Suspense>} />
         <Route path="/o-que-fazer-em-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteWhatToDo /></Suspense>} />
         <Route path="/melhores-cafes-de-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
         <Route path="/melhores-restaurantes-de-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />

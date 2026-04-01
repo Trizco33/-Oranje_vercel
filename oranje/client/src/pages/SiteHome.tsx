@@ -176,7 +176,7 @@ export default function SiteHome() {
           backgroundColor: "#00251A",
         }}
       >
-        {/* Background Image — static fallback sempre visível */}
+        {/* Background Image — Ken Burns slow pan/zoom */}
         <img
           src="/brand/moinho-povos-unidos.jpg"
           alt=""
@@ -188,9 +188,11 @@ export default function SiteHome() {
             height: "100%",
             objectFit: "cover",
             objectPosition: "center",
+            animation: "hero-ken-burns 24s ease-in-out infinite alternate",
+            transformOrigin: "center center",
           }}
         />
-        {/* Background Image — CMS override (https:// URL ou data:image/ base64) */}
+        {/* Background Image — CMS override */}
         {heroData?.imageUrl && (/^https?:\/\//.test(heroData.imageUrl) || heroData.imageUrl.startsWith("data:image/")) && (
           <img
             src={heroData.imageUrl}
@@ -204,10 +206,12 @@ export default function SiteHome() {
               height: "100%",
               objectFit: "cover",
               objectPosition: "center",
+              animation: "hero-ken-burns 24s ease-in-out infinite alternate",
+              transformOrigin: "center center",
             }}
           />
         )}
-        {/* Gradient overlay — legibilidade do texto */}
+        {/* Gradient overlay — legibilidade */}
         <div
           style={{
             position: "absolute",
@@ -215,6 +219,27 @@ export default function SiteHome() {
             background: "linear-gradient(to bottom, rgba(0,37,26,0.45) 0%, rgba(0,37,26,0.65) 100%)",
           }}
         />
+        {/* Floating orbs — continuous ambient motion */}
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{
+            position: "absolute", top: "15%", right: "12%",
+            width: 220, height: 220, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(230,81,0,0.22) 0%, transparent 70%)",
+            animation: "hero-orb-1 14s ease-in-out infinite",
+          }} />
+          <div style={{
+            position: "absolute", bottom: "20%", left: "8%",
+            width: 180, height: 180, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(0,77,64,0.35) 0%, transparent 70%)",
+            animation: "hero-orb-2 18s ease-in-out infinite",
+          }} />
+          <div style={{
+            position: "absolute", top: "55%", right: "30%",
+            width: 120, height: 120, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(230,81,0,0.12) 0%, transparent 70%)",
+            animation: "hero-orb-3 10s ease-in-out infinite",
+          }} />
+        </div>
 
         {/* Hero Content */}
         <div
@@ -227,19 +252,30 @@ export default function SiteHome() {
             width: "100%",
           }}
         >
-          <p
+          <div
             className="hero-enter hero-enter-d1"
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 500,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.7)",
-              marginBottom: 20,
-            }}
+            style={{ marginBottom: 20, display: "inline-block" }}
           >
-            Curadoria local • Parceiros verificados
-          </p>
+            <span
+              style={{
+                display: "inline-block",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                padding: "5px 14px",
+                borderRadius: 20,
+                border: "1px solid rgba(255,255,255,0.18)",
+                background: "linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%)",
+                backgroundSize: "200% auto",
+                color: "rgba(255,255,255,0.85)",
+                animation: "hero-badge-shimmer 4s linear infinite",
+                backdropFilter: "blur(4px)",
+              }}
+            >
+              Curadoria local • Parceiros verificados
+            </span>
+          </div>
 
           <h1
             className="hero-enter hero-enter-d2"
@@ -330,6 +366,7 @@ export default function SiteHome() {
                 borderRadius: 12,
                 textDecoration: "none",
                 fontFamily: "'Montserrat', system-ui, sans-serif",
+                animation: "hero-cta-breathe 3s ease-in-out infinite",
               }}
             >
               Abrir o App

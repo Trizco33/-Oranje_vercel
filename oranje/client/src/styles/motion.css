@@ -180,6 +180,30 @@
   transform: scale(1);
 }
 
+/* ─── Respect reduced motion preference ─────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter,
+  .reveal,
+  .card-press,
+  .btn-press,
+  .card-img-zoom,
+  .page-enter,
+  .shimmer,
+  .img-blur-up {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Keep Ken Burns and orbs off for users who prefer reduced motion */
+  img[style*="hero-ken-burns"],
+  [style*="hero-orb"],
+  [style*="hero-cta-breathe"],
+  [style*="hero-badge-shimmer"] {
+    animation: none !important;
+  }
+}
+
 /* ─── Header scroll transition ───────────────────────────────────────────── */
 
 .header-transparent {

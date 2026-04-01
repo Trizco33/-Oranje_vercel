@@ -189,6 +189,21 @@ export default defineConfig({
   },
   server: {
     host: true,
+    // When running as standalone Vite (dev:client script), read port from env.
+    // Ignored when Vite runs as Express middleware (combined dev workflow).
+    port: process.env.PORT ? parseInt(process.env.PORT, 10) : undefined,
+    // Proxy API and upload calls to the Express backend in standalone mode.
+    // Ignored when running in combined mode (middleware).
+    proxy: {
+      "/api": {
+        target: `http://localhost:${process.env.BACKEND_PORT ?? 3001}`,
+        changeOrigin: true,
+      },
+      "/uploads": {
+        target: `http://localhost:${process.env.BACKEND_PORT ?? 3001}`,
+        changeOrigin: true,
+      },
+    },
     allowedHosts: [
       ".manuspre.computer",
       ".manus.computer",

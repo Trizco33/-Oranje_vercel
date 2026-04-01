@@ -60,9 +60,11 @@ async function startServer() {
   // This must be done BEFORE any routes (app.get, app.post, etc.)
   // ============================================================================
   console.log(`[Server] NODE_ENV: ${process.env.NODE_ENV}`);
-  if (process.env.NODE_ENV === "development") {
-    console.log("[Server] Using Vite dev server");
+  if (process.env.NODE_ENV === "development" && process.env.SKIP_VITE !== "true") {
+    console.log("[Server] Using Vite dev server (combined mode)");
     await setupVite(app, server);
+  } else if (process.env.NODE_ENV === "development" && process.env.SKIP_VITE === "true") {
+    console.log("[Server] API-only mode (SKIP_VITE=true) — Vite runs separately on its own port");
   } else {
     console.log("[Server] Using static files from dist/public");
     serveStatic(app);

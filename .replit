@@ -26,6 +26,14 @@ author = "agent"
 task = "workflow.run"
 args = "Oranje Dev Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Oranje Backend (API only)"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Oranje Frontend (Vite)"
+
 [[workflows.workflow]]
 name = "Oranje Dev Server"
 author = "agent"
@@ -35,8 +43,26 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd /home/runner/workspace/oranje && PORT=3000 DATABASE_URL='' npm run dev"
+args = "cd /home/runner/workspace/oranje && PORT=3000 npm run dev"
 waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Oranje Backend (API only)"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace/oranje && PORT=3001 npm run dev:server"
+waitForPort = 3001
+
+[[workflows.workflow]]
+name = "Oranje Frontend (Vite)"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace/oranje && PORT=3002 BACKEND_PORT=3001 npm run dev:client"
+waitForPort = 3002
 
 [agent]
 stack = "PNPM_WORKSPACE"

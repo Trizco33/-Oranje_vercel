@@ -99,7 +99,7 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
+    <div className="page-enter" style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
       <OranjeHeader
         title={category?.name ?? "Categoria"}
         showBack

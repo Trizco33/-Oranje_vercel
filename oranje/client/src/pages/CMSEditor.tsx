@@ -96,11 +96,13 @@ export default function CMSEditor() {
 
   const updateHeroMutation = trpc.content.updateHero.useMutation({
     onSuccess: () => {
-      toast.success("Hero atualizado com sucesso!");
+      toast.success("Imagem salva com sucesso!");
+      setUploading(false);
       heroQuery.refetch();
     },
     onError: (error) => {
-      toast.error(getFriendlyErrorMessage({ message: error.message }));
+      setUploading(false);
+      toast.error("Erro ao salvar: " + getFriendlyErrorMessage({ message: error.message }));
     },
   });
 
@@ -136,12 +138,14 @@ export default function CMSEditor() {
 
   useEffect(() => {
     if (heroQuery.data) {
+      const rawUrl = heroQuery.data.imageUrl || "";
+      const isValidUrl = rawUrl.startsWith("https://") || rawUrl.startsWith("data:image/");
       setHero({
         title: heroQuery.data.title || "",
         subtitle: heroQuery.data.subtitle || "",
         buttonText: heroQuery.data.buttonText || "",
         buttonUrl: heroQuery.data.buttonUrl || "",
-        imageUrl: heroQuery.data.imageUrl || "",
+        imageUrl: isValidUrl ? rawUrl : "",
       });
     }
   }, [heroQuery.data]);
@@ -214,15 +218,15 @@ export default function CMSEditor() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    e.target.value = "";
     try {
       const dataUrl = await compressImageToBase64(file);
-      setHero((prev) => ({ ...prev, imageUrl: dataUrl }));
-      toast.success("Imagem processada! Clique em Salvar Hero para confirmar.");
+      const updatedHero = { ...hero, imageUrl: dataUrl };
+      setHero(updatedHero);
+      updateHeroMutation.mutate(updatedHero);
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
-    } finally {
       setUploading(false);
-      e.target.value = "";
     }
   };
 
@@ -305,22 +309,41 @@ export default function CMSEditor() {
               <div>
                 <label className="block text-sm font-medium mb-2">Imagem do Hero</label>
                 <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Selecionar foto do dispositivo
-                    </label>
+                  <div className="bg-amber-50 border border-amber-200 rounded p-3">
+                    <p className="text-xs font-semibold text-amber-800 mb-2">📸 Trocar imagem de fundo</p>
+                    <p className="text-xs text-amber-700 mb-2">
+                      Selecione uma foto — ela é comprimida e <strong>salva automaticamente</strong> no banco.
+                    </p>
                     <input
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       onChange={handleImageUpload}
-                      disabled={uploading}
-                      className="block w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#E65100] file:text-white hover:file:bg-[#D84500] cursor-pointer"
+                      disabled={uploading || updateHeroMutation.isPending}
+                      className="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#E65100] file:text-white hover:file:bg-[#D84500] cursor-pointer"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
-                      JPG, PNG ou WebP. A foto é comprimida e salva no banco de dados — funciona em produção.
-                    </p>
-                    {uploading && <p className="text-sm text-[#E65100] font-medium mt-1">Processando imagem...</p>}
+                    {uploading && (
+                      <p className="text-sm text-[#E65100] font-medium mt-2">⏳ Processando e salvando imagem...</p>
+                    )}
+                    {updateHeroMutation.isPending && !uploading && (
+                      <p className="text-sm text-[#E65100] font-medium mt-2">⏳ Salvando no banco de dados...</p>
+                    )}
                   </div>
+                  {hero.imageUrl.startsWith("data:") && (
+                    <div className="mt-2">
+                      <p className="text-xs text-green-700 font-medium mb-1">✅ Imagem personalizada ativa:</p>
+                      <img src={hero.imageUrl} alt="Imagem atual do hero" className="w-full h-48 object-cover rounded" />
+                      <button
+                        type="button"
+                        onClick={() => setHero(prev => ({ ...prev, imageUrl: "" }))}
+                        className="text-xs text-red-500 mt-1 hover:underline"
+                      >
+                        Remover foto (volta ao moinho padrão)
+                      </button>
+                    </div>
+                  )}
+                  {!hero.imageUrl && (
+                    <p className="text-xs text-gray-500">Sem imagem personalizada — mostrando imagem padrão do moinho.</p>
+                  )}
                   <div className="border-t pt-3">
                     <label className="block text-xs font-medium text-gray-500 mb-1">
                       Ou cole uma URL externa (https://)
@@ -336,23 +359,6 @@ export default function CMSEditor() {
                       </p>
                     )}
                   </div>
-                  {hero.imageUrl && (
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500 mb-1">
-                        {hero.imageUrl.startsWith("data:") ? "Pré-visualização (foto processada — pronta para salvar):" : "Pré-visualização:"}
-                      </p>
-                      <img src={hero.imageUrl} alt="Pré-visualização do hero" className="w-full h-48 object-cover rounded" />
-                      {hero.imageUrl.startsWith("data:") && (
-                        <button
-                          type="button"
-                          onClick={() => setHero(prev => ({ ...prev, imageUrl: "" }))}
-                          className="text-xs text-red-500 mt-1 hover:underline"
-                        >
-                          Remover foto
-                        </button>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
               <Button

@@ -46,7 +46,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Culinária variada em ambiente familiar no centro de Holambra",
     longDesc: "Restaurante tradicional de Holambra com cardápio variado, servindo pratos executivos e à la carte. Ambiente acolhedor e familiar, frequentado por moradores e turistas.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6391, lng: -47.0614,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -59,7 +59,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Gastronomia com vista para campos de flores",
     longDesc: "Restaurante com culinária regional e internacional, conhecido pelo ambiente tranquilo e vista privilegiada para os campos floridos de Holambra.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6352, lng: -47.0588,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: true, isPartner: false,
@@ -72,7 +72,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "bares",
     shortDesc: "Cervejaria artesanal com rótulos próprios e culinária de boteco",
     longDesc: "A Holambier é a principal cervejaria artesanal de Holambra, produzindo cervejas com identidade local. Serve petiscos e pratos de boteco em ambiente animado com música ao vivo.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6381, lng: -47.0607,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: true, isPartner: false,
@@ -85,7 +85,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "cafes",
     shortDesc: "Café especialidade com ambiente minimalista e bolos artesanais",
     longDesc: "Cafeteria com foco em café de especialidade, bolos artesanais e tortas. Ambiente tranquilo e aconchegante, perfeito para uma pausa no dia. Produtos frescos preparados diariamente.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6385, lng: -47.0598,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -98,7 +98,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "docerias",
     shortDesc: "Doceria com chocolates e doces com tema floral",
     longDesc: "Doceria especializada em chocolates finos, trufas e doces com temática floral, perfeitos como lembrança de Holambra. Produtos artesanais com embalagem especial para presente.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6395, lng: -47.0620,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -111,7 +111,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "cafes",
     shortDesc: "Confeitaria artesanal com doces finos e café da manhã caprichado",
     longDesc: "Confeitaria com produção artesanal de doces finos, tortas, pães e café da manhã completo. Ambiente charmoso com produtos frescos preparados diariamente.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6378, lng: -47.0610,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -139,7 +139,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "hoteis",
     shortDesc: "Hotel boutique com jardins e café da manhã holandês",
     longDesc: "Hotel boutique com jardins bem cuidados, quartos confortáveis e café da manhã com inspiração holandesa. Localização privilegiada próxima ao centro de Holambra.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6362, lng: -47.0625,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -152,7 +152,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "parques",
     shortDesc: "Parque de flores e atrações com eventos temáticos holandeses",
     longDesc: "O Bloemen Park é um dos principais parques turísticos de Holambra, com campos de flores, moinhos decorativos, área de lazer infantil e eventos temáticos com cultura holandesa ao longo do ano. Atração paga.",
-    address: null, lat: null, lng: null,
+    address: "Av. dos Imigrantes, Holambra – SP", lat: -22.6348, lng: -47.0652,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: true, isPartner: false,
@@ -165,7 +165,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "parques",
     shortDesc: "Parque público com jardins floridos de entrada gratuita",
     longDesc: "O Parque Van Gogh é um espaço público de Holambra com jardins floridos, área de descanso e espaços para piquenique. Inspirado no pintor Vincent van Gogh, tem entrada gratuita e é muito frequentado por famílias e turistas.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6432, lng: -47.0580,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "gratuito", isFree: true,
     isRecommended: true, isFeatured: true, isPartner: false,
@@ -178,7 +178,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "parques",
     shortDesc: "Floricultural e parque de flores aberto para visitação",
     longDesc: "Floricultural e espaço de atrações florais com campos de tulipas, girassóis e outras flores sazonais. Popular para visitação e fotos, com venda de flores e plantas para levar para casa.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6405, lng: -47.0608,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -193,7 +193,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Restaurante ao ar livre com jardim e culinária variada",
     longDesc: "Restaurante em ambiente de jardim, ideal para almoços em família. Cardápio com pratos regionais e opções internacionais em espaço amplo e verde.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6418, lng: -47.0572,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -206,7 +206,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Culinária temática da imigração holandesa em ambiente de jardim",
     longDesc: "Restaurante com temática da imigração holandesa, servindo pratos inspirados na culinária dos imigrantes holandeses que fundaram Holambra. Ambiente charmoso com decoração típica e jardim.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6360, lng: -47.0615,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -219,7 +219,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "pizzarias",
     shortDesc: "Pizzaria artesanal com massas preparadas artesanalmente",
     longDesc: "Pizzaria com massa artesanal fermentada, molhos caseiros e ingredientes selecionados. O nome une a tradição italiana da pizza com o espírito holandês da padaria (bakker).",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6388, lng: -47.0635,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -232,7 +232,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "docerias",
     shortDesc: "Doceria e café com especialidades italianas e brasileiras",
     longDesc: "Doceria e café com cardápio de inspiração italiana e brasileira: cannoli, panna cotta, brigadeiros gourmet e cafés especiais. Ambiente sofisticado e aconchegante.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6377, lng: -47.0600,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -245,7 +245,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "docerias",
     shortDesc: "Loja da famosa chocolateria brasileira Kopenhagen",
     longDesc: "Unidade da Kopenhagen, uma das mais renomadas marcas de chocolates do Brasil, com linha completa de bombons, trufas, paçocas e presentes especiais para todas as ocasiões.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6393, lng: -47.0595,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -258,7 +258,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Comida italiana em formato box e pratos executivos",
     longDesc: "Restaurante italiano com opções práticas em formato de box. Pratos rápidos e saborosos com massas, risottos e especialidades da cozinha italiana para comer no local ou levar.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6401, lng: -47.0578,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -271,7 +271,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Praça de alimentação com diversas opções gastronômicas ao ar livre",
     longDesc: "Espaço de alimentação com múltiplas opções culinárias ao ar livre. Ambiente de food park com diferentes boxes gastronômicos, ideal para grupos com diferentes preferências.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6425, lng: -47.0560,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -284,7 +284,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Hamburgueria artesanal com blend especial de carne",
     longDesc: "Hamburgueria com foco em hambúrgueres artesanais de blend especial, batata frita crocante e sucos naturais. Ambiente descontraído, ideal para uma refeição rápida e saborosa.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6358, lng: -47.0618,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -297,7 +297,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "bares",
     shortDesc: "Gastrobar com petiscos elaborados e ambiente nostálgico",
     longDesc: "Gastrobar com conceito de quintal de interior paulista, servindo petiscos elaborados, coquetéis autorais e boa seleção de cervejas em ambiente aconchegante com decoração nostálgica.",
-    address: null, lat: null, lng: null,
+    address: "Holambra – SP", lat: -22.6420, lng: -47.0644,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -310,7 +310,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "bares",
     shortDesc: "Bar lounge sofisticado com coquetéis e música ao vivo",
     longDesc: "Bar lounge com ambiente sofisticado, coquetéis autorais, carta de vinhos e eventos com música ao vivo. Ponto de encontro noturno em Holambra, ideal para ocasiões especiais.",
-    address: null, lat: null, lng: null,
+    address: "Centro, Holambra – SP", lat: -22.6375, lng: -47.0622,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -320,7 +320,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 ];
 
 // ─── Runner ───────────────────────────────────────────────────────────────────
-async function seedHolambra() {
+export async function seedHolambra() {
   console.log("🌷 Iniciando seed dos 21 lugares reais de Holambra...\n");
 
   const db = await getDb();
@@ -421,7 +421,9 @@ async function seedHolambra() {
   console.log(`\n🎉 Seed concluído! ${upserted} lugar(es) inseridos/atualizados via upsert.`);
 }
 
-seedHolambra().catch((err) => {
-  console.error("Erro fatal:", err);
-  process.exit(1);
-});
+if (process.argv[1] && (process.argv[1].endsWith("seed-holambra.ts") || process.argv[1].endsWith("seed-holambra.js"))) {
+  seedHolambra().catch((err) => {
+    console.error("Erro fatal:", err);
+    process.exit(1);
+  });
+}

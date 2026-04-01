@@ -1,5 +1,5 @@
 import { getLoginUrl } from "@/const";
-import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
@@ -11,6 +11,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { DSButton, DSBadge } from "@/components/ds";
 import { toast } from "sonner";
 import { useCategoriesList, usePlacesList, useFavorites } from "@/hooks/useMockData";
+import { useGeolocation } from "@/hooks/useGeolocation";
+import { useNearbyPlaces } from "@/hooks/useNearbyPlaces";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   restaurantes: <UtensilsCrossed size={20} />,
@@ -39,6 +41,8 @@ export default function Home() {
   const { data: recommendedPlaces, isLoading: recommendedLoading } = usePlacesList({ limit: 6, offset: 6 });
 
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
+  const { position: geoPosition, loading: geoLoading, denied: geoDenied } = useGeolocation();
+  const { nearby: nearbyPlaces, isLoading: nearbyLoading } = useNearbyPlaces(geoPosition, 6);
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
@@ -61,7 +65,7 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#00251A" }}>
-      <OranjeHeader showSearch hideThemeToggle />
+      <OranjeHeader showSearch hideThemeToggle transparentUntilScroll />
 
       {/* ── Hero ── */}
       <section
@@ -233,6 +237,70 @@ export default function Home() {
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ── Perto de Você ── */}
+      <section style={{ marginTop: 32 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", marginBottom: 16 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <Navigation size={16} style={{ color: "#E65100" }} />
+              <h2 style={{ fontFamily: "'Montserrat', system-ui, sans-serif", fontSize: 18, fontWeight: 700, color: "#FFFFFF" }}>
+                Perto de Você
+              </h2>
+            </div>
+            {geoDenied && !geoLoading && (
+              <p style={{ fontSize: "0.7rem", color: "rgba(245,245,220,0.45)" }}>
+                Usando centro de Holambra
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "0 20px 8px", scrollbarWidth: "none" }}>
+          {geoLoading || nearbyLoading ? (
+            [1, 2, 3].map(i => (
+              <div key={i} style={{ flexShrink: 0, width: 200 }}>
+                <PlaceCardSkeleton compact />
+              </div>
+            ))
+          ) : nearbyPlaces.length === 0 ? (
+            <p style={{ fontSize: "0.875rem", color: "rgba(245,245,220,0.5)", padding: "8px 0" }}>
+              Nenhum lugar com localização disponível.
+            </p>
+          ) : (
+            nearbyPlaces.map((place) => (
+              <div key={place.id} style={{ flexShrink: 0, width: 200, position: "relative" }}>
+                <PlaceCard
+                  place={place as any}
+                  compact
+                  isFavorite={favoriteIds.has(place.id)}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 48,
+                    left: 10,
+                    background: "rgba(0,37,26,0.85)",
+                    backdropFilter: "blur(8px)",
+                    borderRadius: 20,
+                    padding: "3px 10px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    border: "1px solid rgba(230,81,0,0.35)",
+                  }}
+                >
+                  <MapPin size={10} style={{ color: "#E65100", flexShrink: 0 }} />
+                  <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "#FFFFFF" }}>
+                    {place.distanceFormatted}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 

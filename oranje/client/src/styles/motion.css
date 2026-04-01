@@ -143,3 +143,65 @@
 .page-enter {
   animation: oranje-fade-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
+
+/* ─── Shimmer skeleton ───────────────────────────────────────────────────── */
+
+@keyframes oranje-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--ds-color-bg-secondary) 25%,
+    color-mix(in srgb, var(--ds-color-bg-secondary) 60%, var(--ds-color-bg-elevated)) 50%,
+    var(--ds-color-bg-secondary) 75%
+  );
+  background-size: 800px 100%;
+  animation: oranje-shimmer 1.4s ease-in-out infinite;
+}
+
+/* ─── Image blur-up (progressive loading) ────────────────────────────────── */
+
+.img-blur-up {
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(1.04);
+  transition:
+    opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.img-blur-up.loaded {
+  opacity: 1;
+  filter: blur(0px);
+  transform: scale(1);
+}
+
+/* ─── Header scroll transition ───────────────────────────────────────────── */
+
+.header-transparent {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.header-scrolled {
+  background: rgba(0, 37, 26, 0.92) !important;
+  border-bottom: 1px solid rgba(245, 245, 220, 0.08) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+.header-transition {
+  transition:
+    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -87,6 +87,7 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
   const [imgError, setImgError] = useState(false);
 
   const fallbackSrc = getCategoryFallbackImage(place.categoryName);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <Link to={`/app/lugar/${place.id}`} style={{ display: "block", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}>
@@ -100,14 +101,15 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
         }}
       >
         {/* Image */}
-        <div className="relative overflow-hidden" style={{ height: compact ? 140 : 180 }}>
+        <div className="relative overflow-hidden" style={{ height: compact ? 140 : 180, background: "var(--ds-color-bg-secondary)" }}>
           <img
             src={imgError ? fallbackSrc : image}
             alt={place.name}
-            className="card-img-zoom w-full h-full object-cover"
+            className={`card-img-zoom img-blur-up w-full h-full object-cover${imgLoaded ? " loaded" : ""}`}
             loading="lazy"
+            onLoad={() => setImgLoaded(true)}
             onError={() => {
-              if (!imgError) setImgError(true);
+              if (!imgError) { setImgError(true); setImgLoaded(true); }
             }}
           />
           {/* Dark overlay */}

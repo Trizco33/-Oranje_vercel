@@ -1,14 +1,21 @@
-export function PlaceCardSkeleton() {
+export function PlaceCardSkeleton({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(230,81,0,0.06)", border: "1px solid rgba(230,81,0,0.12)" }}>
-      <div className="w-full animate-pulse" style={{ height: 192, background: "var(--ds-color-bg-secondary)" }} />
-      <div className="p-4 space-y-3">
-        <div className="animate-pulse rounded-lg" style={{ height: 20, width: "75%", background: "var(--ds-color-bg-secondary)" }} />
-        <div className="animate-pulse rounded-lg" style={{ height: 16, background: "var(--ds-color-bg-secondary)" }} />
-        <div className="animate-pulse rounded-lg" style={{ height: 16, width: "66%", background: "var(--ds-color-bg-secondary)" }} />
-        <div className="flex justify-between items-center pt-2">
-          <div className="animate-pulse rounded-lg" style={{ height: 16, width: "25%", background: "var(--ds-color-bg-secondary)" }} />
-          <div className="animate-pulse rounded-full" style={{ height: 32, width: 32, background: "var(--ds-color-bg-secondary)" }} />
+    <div
+      className="overflow-hidden"
+      style={{
+        borderRadius: "var(--ds-radius-xl)",
+        background: "var(--ds-color-bg-elevated)",
+        border: "1px solid var(--ds-color-border-default)",
+      }}
+    >
+      <div className="shimmer" style={{ height: compact ? 140 : 180 }} />
+      <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div className="shimmer" style={{ height: 18, width: "72%", borderRadius: 8 }} />
+        <div className="shimmer" style={{ height: 13, width: "100%", borderRadius: 6 }} />
+        <div className="shimmer" style={{ height: 13, width: "55%", borderRadius: 6 }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
+          <div className="shimmer" style={{ height: 22, width: 64, borderRadius: 20 }} />
+          <div className="shimmer" style={{ height: 32, width: 32, borderRadius: 9999 }} />
         </div>
       </div>
     </div>

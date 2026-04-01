@@ -1,5 +1,6 @@
 import { Bell, Search, Settings } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { MobileMenu } from "./MobileMenu";
@@ -12,11 +13,21 @@ interface OranjeHeaderProps {
   onBack?: () => void;
   hideIcons?: boolean;
   hideThemeToggle?: boolean;
+  transparentUntilScroll?: boolean;
 }
 
-export function OranjeHeader({ title, showSearch = false, showBack = false, onBack, hideIcons = false, hideThemeToggle = false }: OranjeHeaderProps) {
+export function OranjeHeader({ title, showSearch = false, showBack = false, onBack, hideIcons = false, hideThemeToggle = false, transparentUntilScroll = false }: OranjeHeaderProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!transparentUntilScroll) return;
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [transparentUntilScroll]);
+
   const { data: notifications } = trpc.notifications.list.useQuery(undefined, {
     enabled: !!user,
     refetchInterval: 30000,
@@ -40,18 +51,16 @@ export function OranjeHeader({ title, showSearch = false, showBack = false, onBa
     transition: "background 0.2s ease",
   };
 
+  const isTransparent = transparentUntilScroll && !scrolled;
+
   return (
     <header
       role="banner"
+      className={`header-transition ${isTransparent ? "header-transparent" : "header-scrolled"}`}
       style={{
         position: "sticky",
         top: 0,
         zIndex: 40,
-        background: "rgba(0, 37, 26, 0.92)",
-        backdropFilter: "blur(20px) saturate(180%)",
-        WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        borderBottom: "1px solid rgba(245, 245, 220, 0.08)",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>

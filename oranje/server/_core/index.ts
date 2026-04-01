@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite, setupSPAFallback } from "./vite";
 import { seedDatabase } from "../seed";
+import { seedHolambra } from "../seed-holambra";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -54,6 +55,8 @@ async function startServer() {
   
   // Seed database with default content on startup
   await seedDatabase();
+  // Seed real Holambra places (idempotent upsert — safe to run on every startup)
+  await seedHolambra();
   
   // ============================================================================
   // CRITICAL: Register static file serving FIRST

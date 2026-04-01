@@ -29,8 +29,9 @@ import {
    Mobile-first, WCAG AAA, No glassmorphism, Generous spacing
    ═══════════════════════════════════════════════════════════════════════════ */
 
-// Lazy load the map component
+// Lazy load the map components
 const SiteMapView = lazy(() => import("@/components/SiteMapView"));
+const NearbyMap = lazy(() => import("@/components/NearbyMap"));
 
 // Scroll reveal hook
 function useScrollReveal() {
@@ -119,6 +120,7 @@ function SectionHeader({
 export default function SiteHome() {
   const navigate = useNavigate();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [showNearbyMap, setShowNearbyMap] = useState(false);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
@@ -707,8 +709,8 @@ export default function SiteHome() {
               Abrir Mapa Completo
               <ArrowRight size={16} />
             </Link>
-            <Link
-              to="/mapa"
+            <button
+              onClick={() => setShowNearbyMap(true)}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -720,8 +722,8 @@ export default function SiteHome() {
                 fontSize: "0.875rem",
                 fontWeight: 600,
                 borderRadius: 11,
-                textDecoration: "none",
                 border: "1.5px solid rgba(0,37,26,0.15)",
+                cursor: "pointer",
                 transition: "border-color 0.2s ease",
                 fontFamily: "'Montserrat', system-ui, sans-serif",
               }}
@@ -730,7 +732,7 @@ export default function SiteHome() {
             >
               <MapPin size={16} />
               Perto de mim
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -1041,6 +1043,11 @@ export default function SiteHome() {
           )}
         </div>
       </section>
+      {showNearbyMap && (
+        <Suspense fallback={null}>
+          <NearbyMap onClose={() => setShowNearbyMap(false)} />
+        </Suspense>
+      )}
     </SiteLayout>
   );
 }

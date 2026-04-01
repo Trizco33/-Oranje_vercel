@@ -1,6 +1,6 @@
 import { getLoginUrl } from "@/const";
-import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation } from "lucide-react";
-import { useState, useEffect } from "react";
+import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map } from "lucide-react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { PlaceCard } from "@/components/PlaceCard";
@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import { useCategoriesList, usePlacesList, useFavorites } from "@/hooks/useMockData";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useNearbyPlaces } from "@/hooks/useNearbyPlaces";
+
+const NearbyMap = lazy(() => import("@/components/NearbyMap"));
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   restaurantes: <UtensilsCrossed size={20} />,
@@ -28,6 +30,7 @@ export default function Home() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showNearbyMap, setShowNearbyMap] = useState(false);
 
   useEffect(() => {
     const onboardingCompleted = localStorage.getItem("onboarding_completed");
@@ -256,6 +259,19 @@ export default function Home() {
               </p>
             )}
           </div>
+          <button
+            onClick={() => setShowNearbyMap(true)}
+            style={{
+              display: "flex", alignItems: "center", gap: 5,
+              background: "rgba(230,81,0,0.12)", border: "1px solid rgba(230,81,0,0.25)",
+              borderRadius: 20, padding: "6px 12px",
+              color: "#E65100", fontSize: "0.75rem", fontWeight: 600,
+              cursor: "pointer", fontFamily: "'Montserrat', system-ui, sans-serif",
+            }}
+          >
+            <Map size={13} />
+            Ver no mapa
+          </button>
         </div>
 
         <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "0 20px 8px", scrollbarWidth: "none" }}>
@@ -421,6 +437,12 @@ export default function Home() {
 
       <div style={{ height: 100 }} />
       <TabBar />
+
+      {showNearbyMap && (
+        <Suspense fallback={null}>
+          <NearbyMap onClose={() => setShowNearbyMap(false)} />
+        </Suspense>
+      )}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { ENV } from "./_core/env";
 
 let db: ReturnType<typeof drizzle> | null = null;
 if (ENV.databaseUrl) {
-  try { db = drizzle(mysql.createPool(ENV.databaseUrl)); } catch (e) { console.warn("[Sitemap] DB init failed:", e); }
+  try { db = drizzle(mysql.createPool(ENV.databaseUrl) as any); } catch (e) { console.warn("[Sitemap] DB init failed:", e); }
 }
 
 export async function generateSitemap(baseUrl: string): Promise<string> {

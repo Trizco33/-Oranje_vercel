@@ -9,7 +9,7 @@ import { ENV } from "./_core/env";
 
 let db: ReturnType<typeof drizzle> | null = null;
 if (ENV.databaseUrl) {
-  try { db = drizzle(mysql.createPool(ENV.databaseUrl)); } catch (e) { console.warn("[Content] DB init failed:", e); }
+  try { db = drizzle(mysql.createPool(ENV.databaseUrl) as any); } catch (e) { console.warn("[Content] DB init failed:", e); }
 }
 function getContentDb() {
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

@@ -265,7 +265,7 @@ self.addEventListener('fetch', (event) => {
             .update(places)
             .set({
               coverImage: update.coverImage,
-              images: JSON.stringify(update.images)
+              images: update.images
             })
             .where(sql`name LIKE ${`%${update.name}%`} AND status = 'active'`);
           
@@ -502,7 +502,7 @@ self.addEventListener('fetch', (event) => {
             .update(places)
             .set({
               coverImage: update.coverImage,
-              images: JSON.stringify(update.images)
+              images: update.images
             })
             .where(sql`name LIKE ${`%${update.name}%`} AND status = 'active'`);
           
@@ -596,7 +596,7 @@ self.addEventListener('fetch', (event) => {
           // Update images
           await db.update(places).set({
             coverImage: p.coverImage,
-            images: JSON.stringify(p.images),
+            images: p.images,
           }).where(eq(places.id, existing[0].id));
           results.push({ name: p.name, status: 'updated', id: existing[0].id });
         } else {
@@ -607,7 +607,7 @@ self.addEventListener('fetch', (event) => {
             address: p.address,
             rating: p.rating,
             coverImage: p.coverImage,
-            images: JSON.stringify(p.images),
+            images: p.images,
             status: 'active',
             isFeatured: false,
             isRecommended: false,
@@ -632,7 +632,7 @@ self.addEventListener('fetch', (event) => {
         try {
           await db.update(places).set({
             coverImage: u.coverImage,
-            images: JSON.stringify(u.images),
+            images: u.images,
           }).where(eq(places.id, u.id));
           results.push({ name: `existing-${u.id}`, status: 'images-updated' });
         } catch (e: any) {

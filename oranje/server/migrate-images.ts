@@ -26,7 +26,7 @@ router.get('/migrate-images', async (req, res) => {
 
     const results = {
       migration: { status: 'pending', message: '' },
-      seed: { status: 'pending', updated: 0, details: [] }
+      seed: { status: 'pending', updated: 0, details: [] as any[] }
     };
 
     // Step 1: Add images column if it doesn't exist
@@ -95,7 +95,7 @@ router.get('/migrate-images', async (req, res) => {
           .update(places)
           .set({
             coverImage: update.coverImage,
-            images: JSON.stringify(update.images)
+            images: update.images
           })
           .where(sql`name LIKE ${`%${update.name}%`} AND status = 'active'`);
         

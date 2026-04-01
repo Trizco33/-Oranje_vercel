@@ -37,7 +37,7 @@ export default function TransportPage() {
 
   const createMutation = trpc.drivers.create.useMutation();
 
-  const sortedDrivers = [...(drivers as Driver[])].sort((a, b) => {
+  const sortedDrivers = [...(drivers as unknown as Driver[])].sort((a, b) => {
     const now = new Date();
     const aIsValidPartner = a.isPartner && a.partnerUntil && new Date(a.partnerUntil) > now;
     const bIsValidPartner = b.isPartner && b.partnerUntil && new Date(b.partnerUntil) > now;

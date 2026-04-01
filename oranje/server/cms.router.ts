@@ -8,7 +8,7 @@ import { ENV } from "./_core/env";
 import { AuthService } from "./authService";
 
 let pool: ReturnType<typeof mysql.createPool> | null = null;
-let db: ReturnType<typeof drizzle> | null = null;
+let db: any = null;
 
 if (ENV.databaseUrl) {
   try {

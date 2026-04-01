@@ -59,17 +59,17 @@ export function EventsList() {
                       }}
                     >
                       <span className="text-lg font-bold" style={{ color: "var(--ds-color-accent)" }}>
-                        {new Date(event.date).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                        {new Date(event.startsAt).toLocaleDateString("pt-BR", { day: "2-digit" })}
                       </span>
                       <span className="text-[10px] uppercase font-medium" style={{ color: "var(--ds-color-text-muted)" }}>
-                        {new Date(event.date).toLocaleDateString("pt-BR", { month: "short" })}
+                        {new Date(event.startsAt).toLocaleDateString("pt-BR", { month: "short" })}
                       </span>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       {event.isFeatured && <DSBadge variant="accent" size="sm">Destaque</DSBadge>}
-                      {event.isCancelled && <DSBadge variant="error" size="sm">Cancelado</DSBadge>}
+                      {event.status === 'cancelled' && <DSBadge variant="error" size="sm">Cancelado</DSBadge>}
                     </div>
                     <h3 className="text-sm font-semibold line-clamp-1" style={{ color: "var(--ds-color-text-primary)" }}>
                       {event.title}
@@ -84,7 +84,7 @@ export function EventsList() {
                       <div className="flex items-center gap-1">
                         <Clock size={10} style={{ color: "var(--ds-color-text-muted)" }} />
                         <span className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
-                          {event.time}
+                          {new Date(event.startsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       </div>
                       {event.price && (
@@ -171,11 +171,11 @@ export function EventDetail() {
             <CalendarDays size={16} style={{ color: "var(--ds-color-accent)" }} />
             <div>
               <p className="text-sm font-medium" style={{ color: "var(--ds-color-text-primary)" }}>
-                {new Date(event.date).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
+                {new Date(event.startsAt).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
               </p>
               <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
-                às {event.time}
-                {event.endDate && ` — até ${new Date(event.endDate).toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}`}
+                às {new Date(event.startsAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                {event.endsAt && ` — até ${new Date(event.endsAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long" })}`}
               </p>
             </div>
           </div>
@@ -201,7 +201,7 @@ export function EventDetail() {
           </div>
         )}
 
-        <DSBadge variant="default" size="sm">{event.category}</DSBadge>
+        {event.tags && Array.isArray(event.tags) && event.tags.length > 0 && <DSBadge variant="default" size="sm">{(event.tags as string[])[0]}</DSBadge>}
       </div>
 
       <div style={{ height: 100 }} />

@@ -1,0 +1,128 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "np_ppdNt3UjmSSnXmYXDB"
+uri = "file://oranje/client/public/places/casa-bela-restaurante.png"
+type = "image"
+title = "casa bela restaurante"
+
+[[generated]]
+id = "IflljNGAI7tVhs_RAFOtn"
+uri = "file://oranje/client/public/places/villa-girassol.png"
+type = "image"
+title = "villa girassol restaurante"
+
+[[generated]]
+id = "RKgbpFsx4AbwEoVM_jLO8"
+uri = "file://oranje/client/public/places/holambier.png"
+type = "image"
+title = "holambier cervejaria"
+
+[[generated]]
+id = "98DsGYI-GeYPuisXbLRXh"
+uri = "file://oranje/client/public/places/lotus-cafe.png"
+type = "image"
+title = "lotus cafe"
+
+[[generated]]
+id = "rFf2K3CmIMp87yzp2rzW0"
+uri = "file://oranje/client/public/places/dolce-flor.png"
+type = "image"
+title = "dolce flor doceria"
+
+[[generated]]
+id = "BzmyuR35D2FgzIXOEQ-vN"
+uri = "file://oranje/client/public/places/kendi-confeitaria.png"
+type = "image"
+title = "kendi confeitaria"
+
+[[generated]]
+id = "JEOSmjIYCgqeRLvQklruD"
+uri = "file://oranje/client/public/places/royal-tulip-holambra.png"
+type = "image"
+title = "royal tulip hotel"
+
+[[generated]]
+id = "E6XgGrORnwMN94iO3Ono9"
+uri = "file://oranje/client/public/places/holambra-garden-hotel.png"
+type = "image"
+title = "holambra garden hotel"
+
+[[generated]]
+id = "GZsgBJwdwINVVE6mSGeKq"
+uri = "file://oranje/client/public/places/bloemen-park.png"
+type = "image"
+title = "bloemen park flores"
+
+[[generated]]
+id = "AMn4iGYQQ6HYhfasnRdlm"
+uri = "file://oranje/client/public/places/parque-van-gogh.png"
+type = "image"
+title = "parque van gogh"
+
+[[generated]]
+id = "Fg06PZxMleACTO1YIFun3"
+uri = "file://oranje/client/public/places/macena-flores.png"
+type = "image"
+title = "macena flores"
+
+[[generated]]
+id = "WzMmPCwtoX7udSf5HyzV-"
+uri = "file://oranje/client/public/places/garden-restaurante.png"
+type = "image"
+title = "garden restaurante"
+
+[[generated]]
+id = "A5tnA2ZNFAErIz1wDP78R"
+uri = "file://oranje/client/public/places/de-immigrant-garden.png"
+type = "image"
+title = "de immigrant garden"
+
+[[generated]]
+id = "bOlnj2cjFeo_7waLMLF8w"
+uri = "file://oranje/client/public/places/de-pizza-bakker.png"
+type = "image"
+title = "de pizza bakker"
+
+[[generated]]
+id = "N-oPmznNJR_6OkK23GFvI"
+uri = "file://oranje/client/public/places/amarena-doceria.png"
+type = "image"
+title = "amarena doceria"
+
+[[generated]]
+id = "KK2V37fvMu7S1DeLe4vML"
+uri = "file://oranje/client/public/places/kopenhagen.png"
+type = "image"
+title = "kopenhagen chocolates"
+
+[[generated]]
+id = "BDPIz0kGWu8CO8bnCzEL7"
+uri = "file://oranje/client/public/places/italia-no-box.png"
+type = "image"
+title = "italia no box"
+
+[[generated]]
+id = "ghRXWDnDOSHSoWCwXQi1d"
+uri = "file://oranje/client/public/places/food-garden.png"
+type = "image"
+title = "food garden"
+
+[[generated]]
+id = "2ClJ3yGMzHy7Wyxhxddh3"
+uri = "file://oranje/client/public/places/cowburguer.png"
+type = "image"
+title = "cowburguer"
+
+[[generated]]
+id = "7NNjHOGYqJlb693J6sU2_"
+uri = "file://oranje/client/public/places/quintal-dos-avos.png"
+type = "image"
+title = "quintal dos avos"
+
+[[generated]]
+id = "0plDjTZ26XLtaaGib_RzY"
+uri = "file://oranje/client/public/places/tulipas-lounge.png"
+type = "image"
+title = "tulipas lounge"

@@ -91,22 +91,12 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
   return (
     <Link to={`/app/lugar/${place.id}`} style={{ display: "block", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}>
       <div
-        className="group overflow-hidden transition-all duration-300"
+        className="card-press overflow-hidden"
         style={{
           borderRadius: "var(--ds-radius-xl)",
           background: "var(--ds-color-bg-elevated)",
           border: "1px solid var(--ds-color-border-default)",
           boxShadow: "var(--ds-shadow-sm)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-2px)";
-          e.currentTarget.style.boxShadow = "var(--ds-shadow-lg)";
-          e.currentTarget.style.borderColor = "var(--ds-color-border-accent)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = "var(--ds-shadow-sm)";
-          e.currentTarget.style.borderColor = "var(--ds-color-border-default)";
         }}
       >
         {/* Image */}
@@ -114,7 +104,7 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
           <img
             src={imgError ? fallbackSrc : image}
             alt={place.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="card-img-zoom w-full h-full object-cover"
             loading="lazy"
             onError={() => {
               if (!imgError) setImgError(true);

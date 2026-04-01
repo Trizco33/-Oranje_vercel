@@ -202,6 +202,7 @@ export default function SiteHome() {
           }}
         >
           <p
+            className="hero-enter hero-enter-d1"
             style={{
               fontSize: "0.75rem",
               fontWeight: 500,
@@ -215,6 +216,7 @@ export default function SiteHome() {
           </p>
 
           <h1
+            className="hero-enter hero-enter-d2"
             style={{
               fontSize: "clamp(2.25rem, 7vw, 3.75rem)",
               fontWeight: 700,
@@ -229,6 +231,7 @@ export default function SiteHome() {
           </h1>
 
           <p
+            className="hero-enter hero-enter-d3"
             style={{
               fontSize: "clamp(1rem, 2.5vw, 1.125rem)",
               color: "rgba(255,255,255,0.85)",
@@ -242,14 +245,16 @@ export default function SiteHome() {
             Roteiros, lugares, eventos e serviços locais — tudo em um só lugar.
           </p>
 
-          {/* Search Bar - Solid white, no glassmorphism */}
+          {/* Search Bar */}
           <div
+            className="hero-enter hero-enter-d4"
             style={{
               maxWidth: "480px",
               margin: "0 auto 36px",
             }}
           >
             <div
+              className="btn-press"
               onClick={() => { navigate("/app/busca"); }}
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") navigate("/app/busca"); }}
               role="button"
@@ -264,10 +269,7 @@ export default function SiteHome() {
                 height: 52,
                 boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
                 cursor: "pointer",
-                transition: "box-shadow 0.3s ease",
               }}
-              onMouseEnter={(e: any) => (e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.15)")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)")}
             >
               <Search size={18} style={{ color: "rgba(0,37,26,0.35)", flexShrink: 0 }} />
               <span
@@ -285,9 +287,10 @@ export default function SiteHome() {
           </div>
 
           {/* CTA Buttons */}
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
+          <div className="hero-enter hero-enter-d5" style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
             <Link
               to="/app"
+              className="btn-press"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -300,18 +303,15 @@ export default function SiteHome() {
                 fontWeight: 600,
                 borderRadius: 12,
                 textDecoration: "none",
-                transition: "background 0.2s ease, transform 0.2s ease",
                 fontFamily: "'Montserrat', system-ui, sans-serif",
               }}
-              onMouseEnter={(e: any) => { e.currentTarget.style.background = "#FF6D00"; }}
-              onMouseLeave={(e: any) => { e.currentTarget.style.background = "#E65100"; }}
             >
               Abrir o App
               <ArrowRight size={16} />
             </Link>
-            {/* PWA Install Button — only visible when install prompt is available */}
             {installPrompt && (
               <button
+                className="btn-press"
                 onClick={handleInstall}
                 style={{
                   display: "inline-flex",
@@ -326,12 +326,9 @@ export default function SiteHome() {
                   borderRadius: 12,
                   border: "1.5px solid rgba(255,255,255,0.4)",
                   cursor: "pointer",
-                  transition: "border-color 0.2s ease, background 0.2s ease",
                   fontFamily: "'Montserrat', system-ui, sans-serif",
                   backdropFilter: "blur(4px)",
                 }}
-                onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)"; e.currentTarget.style.background = "rgba(255,255,255,0.25)"; }}
-                onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)"; e.currentTarget.style.background = "rgba(255,255,255,0.15)"; }}
               >
                 <Download size={16} />
                 Instalar App
@@ -339,6 +336,7 @@ export default function SiteHome() {
             )}
             {!installPrompt && (
               <button
+                className="btn-press"
                 onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
                 style={{
                   display: "inline-flex",
@@ -353,11 +351,8 @@ export default function SiteHome() {
                   borderRadius: 12,
                   border: "1.5px solid rgba(255,255,255,0.35)",
                   cursor: "pointer",
-                  transition: "border-color 0.2s ease, background 0.2s ease",
                   fontFamily: "'Montserrat', system-ui, sans-serif",
                 }}
-                onMouseEnter={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.6)"; e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
-                onMouseLeave={(e: any) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.background = "transparent"; }}
               >
                 Explorar agora
               </button>
@@ -497,23 +492,21 @@ export default function SiteHome() {
               : places.slice(0, 3).map((place: any, i: number) => (
                   <Reveal key={place.id} delay={i * 80}>
                     <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block" }}>
-                      <div className="site-card" style={{ background: "#FFFFFF" }}>
+                      <div className="card-press site-card" style={{ background: "#FFFFFF" }}>
                         {/* 3:2 aspect ratio image */}
                         <div style={{ position: "relative", paddingBottom: "66.67%", overflow: "hidden" }}>
                           <img
                             src={getPlaceImage(place)}
                             alt={place.name}
                             loading="lazy"
+                            className="card-img-zoom"
                             style={{
                               position: "absolute",
                               inset: 0,
                               width: "100%",
                               height: "100%",
                               objectFit: "cover",
-                              transition: "transform 0.4s ease",
                             }}
-                            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                           />
                         </div>
                         <div style={{ padding: "16px 20px" }}>

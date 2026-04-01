@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./styles/tokens.css";
+@import "./styles/motion.css";
 
 /* Explicitly tell Tailwind v4 where to scan for utility classes */
 @source "./**/*.{ts,tsx,js,jsx}";

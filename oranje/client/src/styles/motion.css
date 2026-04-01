@@ -1,0 +1,145 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ORANJE — Motion Design System
+   Tactile feedback, hero entrance, scroll reveal, page transitions
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Keyframes ─────────────────────────────────────────────────────────── */
+
+@keyframes oranje-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes oranje-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes oranje-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── Hero Entrance ──────────────────────────────────────────────────────── */
+
+.hero-enter {
+  animation: oranje-fade-up 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.hero-enter-d1 { animation-delay: 80ms; }
+.hero-enter-d2 { animation-delay: 200ms; }
+.hero-enter-d3 { animation-delay: 340ms; }
+.hero-enter-d4 { animation-delay: 460ms; }
+.hero-enter-d5 { animation-delay: 560ms; }
+
+/* ─── Scroll Reveal ──────────────────────────────────────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays for grid children */
+.reveal-stagger > *:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger > *:nth-child(2) { transition-delay: 60ms; }
+.reveal-stagger > *:nth-child(3) { transition-delay: 120ms; }
+.reveal-stagger > *:nth-child(4) { transition-delay: 180ms; }
+.reveal-stagger > *:nth-child(5) { transition-delay: 240ms; }
+.reveal-stagger > *:nth-child(6) { transition-delay: 300ms; }
+
+/* ─── Card Tactile Feedback ──────────────────────────────────────────────── */
+
+.card-press {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  will-change: transform;
+  transition:
+    transform 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 140ms cubic-bezier(0.4, 0, 0.2, 1),
+    filter 140ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active/pressed state — fires on touch AND click */
+.card-press:active {
+  transform: scale(0.975);
+  filter: brightness(0.94);
+  box-shadow: var(--ds-shadow-xs) !important;
+}
+
+/* Desktop hover — only on pointer devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  .card-press:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ds-shadow-lg) !important;
+    border-color: var(--ds-color-border-accent) !important;
+  }
+
+  .card-press:active {
+    transform: scale(0.975) translateY(0px);
+  }
+}
+
+/* ─── Button Tactile Feedback ────────────────────────────────────────────── */
+
+.btn-press {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    transform 120ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 120ms cubic-bezier(0.4, 0, 0.2, 1),
+    filter 120ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-press:active {
+  transform: scale(0.96);
+  filter: brightness(0.92);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-press:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+  }
+
+  .btn-press:active {
+    transform: scale(0.97);
+  }
+}
+
+/* ─── Image zoom on card hover ───────────────────────────────────────────── */
+
+.card-img-zoom {
+  transition: transform 480ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-press:hover .card-img-zoom {
+    transform: scale(1.06);
+  }
+}
+
+/* ─── Page transition ────────────────────────────────────────────────────── */
+
+.page-enter {
+  animation: oranje-fade-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}

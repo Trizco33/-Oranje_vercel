@@ -15,7 +15,7 @@ export default function CategoryList() {
   const { data: categories } = useCategoriesList();
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
+    <div className="page-enter" style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
       <OranjeHeader title="Explorar" showSearch />
 
       <div className="px-5 pt-5 pb-2">
@@ -30,27 +30,18 @@ export default function CategoryList() {
           return (
             <Link key={cat.id} to={`/app/explorar/${normalizedSlug}`}>
               <div
-                className="relative overflow-hidden cursor-pointer group transition-all duration-300"
+                className="card-press relative overflow-hidden cursor-pointer"
                 style={{
                   height: 120,
                   borderRadius: "var(--ds-radius-xl)",
                   border: "1px solid var(--ds-color-border-default)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--ds-color-border-accent)";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "var(--ds-shadow-lg)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--ds-color-border-default)";
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
+                  boxShadow: "var(--ds-shadow-sm)",
                 }}
               >
                 <img
                   src={CARD_COVER_OVERRIDE[cat.slug] || cat.coverImage || getCategorycover(cat.slug)}
                   alt={cat.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="card-img-zoom w-full h-full object-cover"
                   loading="lazy"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).src = getCategorycover('restaurantes');

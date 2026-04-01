@@ -338,11 +338,15 @@ async function seedHolambra() {
     console.log("  ✅ Unique index criado.");
   } catch (err: any) {
     const msg: string = err?.message ?? "";
-    if (
+    const causeMsg: string = err?.cause?.message ?? "";
+    const causeCode: string = err?.cause?.code ?? "";
+    const isDup =
       msg.includes("Duplicate key name") ||
       msg.includes("already exists") ||
-      msg.includes("ER_DUP_KEYNAME")
-    ) {
+      msg.includes("ER_DUP_KEYNAME") ||
+      causeMsg.includes("Duplicate key name") ||
+      causeCode === "ER_DUP_KEYNAME";
+    if (isDup) {
       console.log("  ✓ Unique index já existia.");
     } else {
       throw err;

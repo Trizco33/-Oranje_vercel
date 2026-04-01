@@ -1,10 +1,126 @@
 import { useLocation, Link } from "react-router-dom";
 import SiteLayout from "@/components/SiteLayout";
-import { Mail, Phone, MapPin, MessageCircle, ArrowRight, CheckCircle } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, ArrowRight, CheckCircle, Instagram } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
 import { DSCard } from "@/components/ds/Card";
 import { DSBadge } from "@/components/ds/Badge";
 import { DSInput } from "@/components/ds/Input";
+import { trpc } from "@/lib/trpc";
+
+function resolveInstagramHref(value: string | undefined): string | null {
+  if (!value) return null;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const handle = value.replace(/^@/, "");
+  return `https://instagram.com/${handle}`;
+}
+
+function ContatoSection() {
+  const { data: contact } = trpc.content.getContact.useQuery(undefined, {
+    staleTime: 10 * 60 * 1000,
+    retry: false,
+  });
+
+  const email = contact?.email || "contato@oranje.com.br";
+  const phone = contact?.phone || "";
+  const address = contact?.address || "Holambra, SP";
+  const instagramHref = resolveInstagramHref(contact?.instagram || undefined);
+  const instagramLabel = contact?.instagram
+    ? contact.instagram.startsWith("http")
+      ? new URL(contact.instagram).pathname.replace("/", "@")
+      : contact.instagram.startsWith("@")
+        ? contact.instagram
+        : `@${contact.instagram}`
+    : null;
+
+  const channels: { icon: React.ReactNode; title: string; info: string; href: string }[] = [
+    { icon: <Mail size={28} />, title: "Email", info: email, href: `mailto:${email}` },
+    ...(phone ? [{ icon: <Phone size={28} />, title: "Telefone", info: phone, href: `tel:${phone.replace(/\D/g, "")}` }] : []),
+    { icon: <MapPin size={28} />, title: "Localização", info: address, href: "" },
+    ...(instagramHref && instagramLabel
+      ? [{ icon: <Instagram size={28} />, title: "Instagram", info: instagramLabel, href: instagramHref }]
+      : []),
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-8)" }}>
+      <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)" }}>
+        Tem dúvidas, sugestões ou quer reportar um problema? Entre em contato conosco através dos canais abaixo.
+      </p>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: "var(--ds-space-4)",
+        }}
+      >
+        {channels.map((ch) => (
+          <DSCard key={ch.title} variant="glass" interactive padding="md">
+            <div style={{ color: "var(--ds-color-accent)", marginBottom: "var(--ds-space-3)" }}>{ch.icon}</div>
+            <h3 style={{ fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-1)" }}>
+              {ch.title}
+            </h3>
+            {ch.href ? (
+              <a
+                href={ch.href}
+                style={{ color: "var(--ds-color-accent)", textDecoration: "none", fontSize: "var(--ds-text-sm)" }}
+                target={ch.href.startsWith("http") ? "_blank" : undefined}
+                rel={ch.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              >
+                {ch.info}
+              </a>
+            ) : (
+              <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)" }}>{ch.info}</p>
+            )}
+          </DSCard>
+        ))}
+      </div>
+
+      <DSCard variant="elevated" padding="lg">
+        <h3 style={{ fontSize: "var(--ds-text-xl)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-6)" }}>
+          Formulário de Contato
+        </h3>
+        <form style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)" }}>
+          <DSInput label="Nome" />
+          <DSInput label="Email" />
+          <div>
+            <label
+              style={{
+                display: "block",
+                fontSize: "var(--ds-text-sm)",
+                fontWeight: "var(--ds-font-medium)",
+                color: "var(--ds-color-text-primary)",
+                marginBottom: "var(--ds-space-1)",
+              }}
+            >
+              Mensagem
+            </label>
+            <textarea
+              style={{
+                width: "100%",
+                minHeight: "8rem",
+                padding: "var(--ds-space-3)",
+                borderRadius: "var(--ds-radius-lg)",
+                border: "1px solid var(--ds-color-border)",
+                background: "var(--ds-color-bg-primary)",
+                color: "var(--ds-color-text-primary)",
+                fontSize: "var(--ds-text-base)",
+                resize: "vertical",
+                outline: "none",
+                transition: "border-color 0.2s",
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--ds-color-accent)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--ds-color-border)")}
+            />
+          </div>
+          <DSButton variant="primary" size="lg" fullWidth>
+            Enviar Mensagem
+          </DSButton>
+        </form>
+      </DSCard>
+    </div>
+  );
+}
 
 const pages: Record<string, { title: string; subtitle: string; component: React.ReactNode }> = {
   roteiros: {
@@ -270,90 +386,7 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
   contato: {
     title: "Entre em Contato",
     subtitle: "Estamos aqui para ajudar",
-    component: (
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-8)" }}>
-        <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)" }}>
-          Tem dúvidas, sugestões ou quer reportar um problema? Entre em contato conosco através dos canais abaixo.
-        </p>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "var(--ds-space-4)",
-          }}
-        >
-          {[
-            { icon: <Mail size={28} />, title: "Email", info: "contato@oranje.com.br", href: "mailto:contato@oranje.com.br" },
-            { icon: <Phone size={28} />, title: "Telefone", info: "(19) 4000-0000", href: "tel:+551940000000" },
-            { icon: <MapPin size={28} />, title: "Localização", info: "Holambra, SP", href: "" },
-            { icon: <MessageCircle size={28} />, title: "WhatsApp", info: "(19) 99999-9999", href: "https://wa.me/5519999999999" },
-          ].map((ch) => (
-            <DSCard key={ch.title} variant="glass" interactive padding="md">
-              <div style={{ color: "var(--ds-color-accent)", marginBottom: "var(--ds-space-3)" }}>{ch.icon}</div>
-              <h3 style={{ fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-1)" }}>
-                {ch.title}
-              </h3>
-              {ch.href ? (
-                <a
-                  href={ch.href}
-                  style={{ color: "var(--ds-color-accent)", textDecoration: "none", fontSize: "var(--ds-text-sm)" }}
-                  target={ch.href.startsWith("http") ? "_blank" : undefined}
-                  rel={ch.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                >
-                  {ch.info}
-                </a>
-              ) : (
-                <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)" }}>{ch.info}</p>
-              )}
-            </DSCard>
-          ))}
-        </div>
-
-        <DSCard variant="elevated" padding="lg">
-          <h3 style={{ fontSize: "var(--ds-text-xl)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-6)" }}>
-            Formulário de Contato
-          </h3>
-          <form style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)" }}>
-            <DSInput label="Nome" />
-            <DSInput label="Email" />
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "var(--ds-text-sm)",
-                  fontWeight: "var(--ds-font-medium)",
-                  color: "var(--ds-color-text-primary)",
-                  marginBottom: "var(--ds-space-1)",
-                }}
-              >
-                Mensagem
-              </label>
-              <textarea
-                style={{
-                  width: "100%",
-                  minHeight: "8rem",
-                  padding: "var(--ds-space-3)",
-                  borderRadius: "var(--ds-radius-lg)",
-                  border: "1px solid var(--ds-color-border)",
-                  background: "var(--ds-color-bg-primary)",
-                  color: "var(--ds-color-text-primary)",
-                  fontSize: "var(--ds-text-base)",
-                  resize: "vertical",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "var(--ds-color-accent)")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "var(--ds-color-border)")}
-              />
-            </div>
-            <DSButton variant="primary" size="lg" fullWidth>
-              Enviar Mensagem
-            </DSButton>
-          </form>
-        </DSCard>
-      </div>
-    ),
+    component: <ContatoSection />,
   },
   privacidade: {
     title: "Política de Privacidade",

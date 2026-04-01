@@ -113,6 +113,7 @@ export const placesRouter = router({
       isRecommended: z.boolean().optional(),
       isPartner: z.boolean().optional(),
       isFeatured: z.boolean().optional(),
+      dataPending: z.boolean().optional(),
     }))
     .mutation(async ({ input }) => {
       return db.createPlace(input as any);
@@ -145,6 +146,7 @@ export const placesRouter = router({
       isRecommended: z.boolean().optional(),
       isPartner: z.boolean().optional(),
       isFeatured: z.boolean().optional(),
+      dataPending: z.boolean().optional(),
     }))
     .mutation(async ({ input: { id, ...data } }) => {
       await db.updatePlace(id, data as any);

@@ -6,7 +6,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { getCategoryIcon, getCategorycover, normalizeSlug, isValidCategorySlug } from "@/constants/categories";
 import { DSButton, DSBadge } from "@/components/ds";
-import { useCategoryBySlug, usePlacesList, useFavorites } from "@/hooks/useMockData";
+import { trpc } from "@/lib/trpc";
 
 interface CategoryDetailProps {
   slug: string;
@@ -23,14 +23,37 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
 
   // IMPORTANT: All hooks must be called unconditionally (React rules of hooks).
   // We use `enabled` flag to skip fetching when slug is invalid.
-  const { data: category } = useCategoryBySlug(isValid ? normalizedSlug : '');
-  // Wait for category to load before fetching places to avoid showing all places briefly
-  const { data: allPlaces, isLoading: placesLoading } = usePlacesList(
-    category?.id ? { categoryId: category.id, limit: 50, offset: 0 } : { limit: 0, offset: 0 }
+  const categoryQuery = trpc.categories.bySlug.useQuery(
+    { slug: isValid ? (normalizedSlug ?? '') : '' },
+    { enabled: !!isValid && !!normalizedSlug, staleTime: 60_000, retry: 1 }
   );
+  const category = categoryQuery.data ?? null;
+
+  // Wait for category to load before fetching places to avoid showing all places briefly
+  const placesQuery = trpc.places.list.useQuery(
+    { categoryId: category?.id, limit: 50, offset: 0 },
+    { enabled: !!category?.id, staleTime: 30_000, retry: 1, throwOnError: false }
+  );
+  const allPlaces = placesQuery.data ?? [];
+  const placesLoading = placesQuery.isLoading;
+
   // When category hasn't loaded yet, show loading state instead of empty results
   const places = category?.id ? allPlaces : [];
-  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
+
+  const favoritesQuery = trpc.favorites.list.useQuery(undefined, {
+    enabled: !!user,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const favoriteIds = new Set(
+    (favoritesQuery.data ?? []).map((f: { placeId: number }) => f.placeId)
+  );
+  const addFavoriteMutation = trpc.favorites.add.useMutation({
+    onSuccess: () => favoritesQuery.refetch(),
+  });
+  const removeFavoriteMutation = trpc.favorites.remove.useMutation({
+    onSuccess: () => favoritesQuery.refetch(),
+  });
 
   if (!isValid) {
     return (
@@ -69,9 +92,9 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
     if (favoriteIds.has(placeId)) {
-      removeFavorite(placeId);
+      removeFavoriteMutation.mutate({ placeId });
     } else {
-      addFavorite(placeId);
+      addFavoriteMutation.mutate({ placeId });
     }
   }
 

@@ -2,23 +2,24 @@
  * seed-holambra.ts
  *
  * Script idempotente para inserir os 21 lugares reais confirmados de Holambra, SP.
- * Pode ser executado múltiplas vezes sem duplicar dados (upsert por nome+cidade).
+ * Pode ser executado múltiplas vezes sem duplicar dados (true upsert por nome+cidade).
  *
  * Uso:
  *   DATABASE_URL=mysql://... npx tsx server/seed-holambra.ts
  *
  * Regras:
  * - Apenas dados publicamente confirmáveis são inseridos
- * - Campos sem informação pública ficam null (endereço, lat/lng, telefone, etc.)
+ * - Campos sem informação pública confirmável ficam null
+ * - dataPending=true indica que há campos ainda não confirmados publicamente
  * - Categorias são criadas se ainda não existirem no banco
+ * - Upsert via unique index em (name, city) + ON DUPLICATE KEY UPDATE
  */
 
 import { getDb } from "./db";
-import { eq, and } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { categories, places, type InsertCategory, type InsertPlace } from "../drizzle/schema";
 
 // ─── Categorias necessárias para os 21 lugares ────────────────────────────────
-// Slugs alinhados com CATEGORY_SLUGS do frontend (client/src/constants/categories.ts)
 const HOLAMBRA_CATEGORIES: InsertCategory[] = [
   { name: "Restaurantes",          slug: "restaurantes", icon: "🍽️", description: "Restaurantes, lanchonetes e culinária local", isActive: true },
   { name: "Bares & Cervejarias",   slug: "bares",        icon: "🍺", description: "Bares, cervejarias e pubs", isActive: true },
@@ -30,9 +31,11 @@ const HOLAMBRA_CATEGORIES: InsertCategory[] = [
 ];
 
 // ─── 21 Lugares reais de Holambra ─────────────────────────────────────────────
-// Campos null = informação pública não confirmável
+// dataPending=true  → campos como endereço, lat/lng ou horários não foram confirmados publicamente
+// dataPending=false → todos os dados essenciais do lugar são publicamente verificáveis
 interface PlaceWithCategorySlug extends Omit<InsertPlace, "categoryId"> {
   _categorySlug: string;
+  dataPending: boolean;
 }
 
 const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
@@ -48,6 +51,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
     tags: ["almoço", "família", "executivo"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -60,6 +64,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["regional", "almoço", "natureza"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -72,6 +77,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["cerveja artesanal", "petiscos", "boteco", "música ao vivo"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -84,6 +90,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
     tags: ["café especial", "bolos", "tortas"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -96,6 +103,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
     tags: ["chocolates", "trufas", "flores", "presentes"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -108,6 +116,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
     tags: ["confeitaria", "doces finos", "café da manhã", "tortas"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -122,6 +131,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     isRecommended: true, isFeatured: true, isPartner: false,
     website: "https://www.royaltulipholambra.com.br",
     tags: ["hotel 4 estrelas", "spa", "piscina", "luxo"], status: "active",
+    dataPending: false,
   },
 
   {
@@ -134,6 +144,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
     tags: ["hotel boutique", "jardins", "café da manhã", "holandês"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -146,6 +157,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["flores", "família", "eventos", "holandês", "turismo"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -158,6 +170,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "gratuito", isFree: true,
     isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["gratuito", "flores", "família", "piquenique", "fotos"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -170,6 +183,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
     tags: ["flores", "tulipas", "girassóis", "fotos", "floricultura"], status: "active",
+    dataPending: true,
   },
 
   // ── Média prioridade ──────────────────────────────────────────────────────
@@ -184,6 +198,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["jardim", "almoço", "família", "ao ar livre"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -196,6 +211,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
     tags: ["holandês", "imigração", "jardim", "temático"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -208,6 +224,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["pizza artesanal", "massa fermentada", "italiana"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -220,6 +237,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["italiano", "cannoli", "brigadeiro", "café gourmet"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -232,6 +250,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["chocolates", "bombons", "trufas", "presentes", "kopenhagen"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -244,6 +263,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["italiano", "massas", "rápido", "delivery"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -256,6 +276,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["food park", "variado", "ao ar livre", "grupos"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -268,6 +289,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["hambúrguer", "artesanal", "lanche", "rápido"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -280,6 +302,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["gastrobar", "petiscos", "coquetéis", "nostalgia"], status: "active",
+    dataPending: true,
   },
 
   {
@@ -292,6 +315,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["lounge", "coquetéis", "vinhos", "música ao vivo", "noturno"], status: "active",
+    dataPending: true,
   },
 ];
 
@@ -305,8 +329,28 @@ async function seedHolambra() {
     process.exit(1);
   }
 
-  // 1. Garantir que as categorias necessárias existam
-  console.log("🏷️  Garantindo categorias...");
+  // 0. Garantir unique index em (name, city) para que o upsert funcione
+  console.log("🔑 Garantindo unique index places_name_city_idx...");
+  try {
+    await db.execute(sql`
+      CREATE UNIQUE INDEX places_name_city_idx ON places (name, city)
+    `);
+    console.log("  ✅ Unique index criado.");
+  } catch (err: any) {
+    const msg: string = err?.message ?? "";
+    if (
+      msg.includes("Duplicate key name") ||
+      msg.includes("already exists") ||
+      msg.includes("ER_DUP_KEYNAME")
+    ) {
+      console.log("  ✓ Unique index já existia.");
+    } else {
+      throw err;
+    }
+  }
+
+  // 1. Garantir que as categorias necessárias existam (upsert por slug)
+  console.log("\n🏷️  Garantindo categorias...");
   const categoryIdMap: Record<string, number> = {};
 
   for (const cat of HOLAMBRA_CATEGORIES) {
@@ -327,40 +371,46 @@ async function seedHolambra() {
     }
   }
 
-  // 2. Inserir / pular lugares (idempotente por nome+cidade)
-  console.log("\n📍 Inserindo lugares...");
-  let inserted = 0;
-  let skipped = 0;
+  // 2. Upsert dos 21 lugares via ON DUPLICATE KEY UPDATE (keyed on name+city)
+  console.log("\n📍 Realizando upsert dos lugares...");
+  let upserted = 0;
 
   for (const placeData of HOLAMBRA_PLACES) {
     const { _categorySlug, ...placeFields } = placeData;
+    const categoryId = categoryIdMap[_categorySlug] ?? null;
 
-    const existing = await db
-      .select()
-      .from(places)
-      .where(
-        and(
-          eq(places.name, placeFields.name),
-          eq(places.city, placeFields.city ?? "Holambra")
-        )
-      )
-      .limit(1);
-
-    if (existing.length > 0) {
-      console.log(`  ↩  ${placeFields.name} (já existe)`);
-      skipped++;
-      continue;
-    }
-
-    await db.insert(places).values({
+    const insertValues: InsertPlace = {
       ...placeFields,
-      categoryId: categoryIdMap[_categorySlug] ?? null,
-    });
-    console.log(`  ✅ ${placeFields.name}`);
-    inserted++;
+      categoryId,
+    };
+
+    await db
+      .insert(places)
+      .values(insertValues)
+      .onDuplicateKeyUpdate({
+        set: {
+          shortDesc: insertValues.shortDesc ?? undefined,
+          longDesc: insertValues.longDesc ?? undefined,
+          categoryId: insertValues.categoryId ?? undefined,
+          priceRange: insertValues.priceRange ?? undefined,
+          isFree: insertValues.isFree,
+          isRecommended: insertValues.isRecommended,
+          isFeatured: insertValues.isFeatured,
+          tags: insertValues.tags ?? undefined,
+          website: insertValues.website ?? undefined,
+          lat: insertValues.lat ?? undefined,
+          lng: insertValues.lng ?? undefined,
+          address: insertValues.address ?? undefined,
+          dataPending: insertValues.dataPending,
+          updatedAt: new Date(),
+        },
+      });
+
+    console.log(`  ✅ ${placeFields.name} (dataPending=${placeFields.dataPending})`);
+    upserted++;
   }
 
-  console.log(`\n🎉 Seed concluído! ${inserted} lugar(es) inserido(s), ${skipped} já existiam.`);
+  console.log(`\n🎉 Seed concluído! ${upserted} lugar(es) inseridos/atualizados via upsert.`);
 }
 
 seedHolambra().catch((err) => {

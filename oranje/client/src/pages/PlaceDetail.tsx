@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { usePlaceById, useFavorites, useReviewsByPlace } from "@/hooks/useMockData";
 import { trpc } from "@/lib/trpc";
 import { MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2, Star, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -162,11 +161,32 @@ export default function PlaceDetail() {
   const { user } = useAuth();
   const placeId = Number(id) || 0;
 
-  const { data: placeData, isLoading, error, refetch } = usePlaceById(placeId);
+  const { data: placeData, isLoading, error, refetch } = trpc.places.byId.useQuery(
+    { id: placeId },
+    { enabled: !!placeId, staleTime: 30_000, retry: 1 }
+  );
 
-  const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
+  const favoritesQuery = trpc.favorites.list.useQuery(undefined, {
+    enabled: !!user,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  const favoriteIds = new Set(
+    (favoritesQuery.data ?? []).map((f: { placeId: number }) => f.placeId)
+  );
+  const addFavoriteMutation = trpc.favorites.add.useMutation({
+    onSuccess: () => favoritesQuery.refetch(),
+  });
+  const removeFavoriteMutation = trpc.favorites.remove.useMutation({
+    onSuccess: () => favoritesQuery.refetch(),
+  });
 
-  const { data: placeReviews = [], refetch: refetchReviews } = useReviewsByPlace(placeId);
+  const reviewsQuery = trpc.reviews.listByPlace.useQuery(
+    { placeId },
+    { enabled: !!placeId, staleTime: 30_000, retry: 1 }
+  );
+  const placeReviews = reviewsQuery.data ?? [];
+  const refetchReviews = reviewsQuery.refetch;
 
   const createReviewMutation = trpc.reviews.create.useMutation();
   const markHelpfulMutation = trpc.reviews.markHelpful.useMutation();
@@ -179,9 +199,9 @@ export default function PlaceDetail() {
   function handleToggleFavorite() {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }
     if (isFavorite) {
-      removeFavorite(placeId);
+      removeFavoriteMutation.mutate({ placeId });
     } else {
-      addFavorite(placeId);
+      addFavoriteMutation.mutate({ placeId });
     }
   }
 

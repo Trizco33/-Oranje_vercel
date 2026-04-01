@@ -9,6 +9,7 @@ import {
   varchar,
   float,
   index,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
@@ -86,12 +87,15 @@ export const places = mysqlTable("places", {
   isRecommended: boolean("isRecommended").default(false).notNull(),
   isPartner: boolean("isPartner").default(false).notNull(),
   isFeatured: boolean("isFeatured").default(false).notNull(),
+  dataPending: boolean("dataPending").default(false).notNull(),
   status: mysqlEnum("status", ["active", "inactive"]).default("active").notNull(),
   rating: float("rating").default(0),
   reviewCount: int("reviewCount").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  nameCityIdx: uniqueIndex("places_name_city_idx").on(table.name, table.city),
+}));
 
 export type Place = typeof places.$inferSelect;
 export type InsertPlace = typeof places.$inferInsert;

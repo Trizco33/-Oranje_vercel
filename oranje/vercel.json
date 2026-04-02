@@ -19,6 +19,14 @@
       "destination": "https://oranjevercel-production.up.railway.app/robots.txt"
     },
     {
+      "source": "/app/sw.js",
+      "destination": "https://oranjevercel-production.up.railway.app/app/sw.js"
+    },
+    {
+      "source": "/app/manifest.webmanifest",
+      "destination": "https://oranjevercel-production.up.railway.app/app/manifest.webmanifest"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

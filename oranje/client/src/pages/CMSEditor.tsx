@@ -266,6 +266,30 @@ export default function CMSEditor() {
     });
   };
 
+  const saveImageViaRest = async (endpoint: string, imageUrl: string, onSuccess: () => void) => {
+    const apiBase = (import.meta.env.VITE_API_URL as string) || "";
+    const stored = localStorage.getItem("cms_token") || "";
+    try {
+      const res = await fetch(`${apiBase}${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(stored ? { "x-cms-token": stored } : {}),
+        },
+        credentials: "include",
+        body: JSON.stringify({ imageUrl }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        onSuccess();
+      } else {
+        toast.error("Erro ao salvar: " + (data.error || "Tente fazer logout e login novamente."));
+      }
+    } catch {
+      toast.error("Erro de conexão. Verifique a internet e tente novamente.");
+    }
+  };
+
   const handleAppHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -274,7 +298,10 @@ export default function CMSEditor() {
     try {
       const dataUrl = await compressImageToBase64(file);
       setAppHeroImage(dataUrl);
-      updateAppHeroMutation.mutate({ imageUrl: dataUrl });
+      await saveImageViaRest("/api/cms/app-hero-image", dataUrl, () => {
+        toast.success("Imagem do App salva com sucesso!");
+        appHeroQuery.refetch();
+      });
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
       setAppHeroUploading(false);
@@ -288,11 +315,14 @@ export default function CMSEditor() {
     e.target.value = "";
     try {
       const dataUrl = await compressImageToBase64(file);
-      const newHero = { ...hero, imageUrl: dataUrl };
-      setHero(newHero);
-      updateHeroMutation.mutate(newHero);
+      setHero(prev => ({ ...prev, imageUrl: dataUrl }));
+      await saveImageViaRest("/api/cms/hero-image", dataUrl, () => {
+        toast.success("Imagem salva com sucesso!");
+        heroQuery.refetch();
+      });
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
+    } finally {
       setUploading(false);
     }
   };
@@ -386,14 +416,11 @@ export default function CMSEditor() {
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/webp"
                       onChange={handleImageUpload}
-                      disabled={uploading || updateHeroMutation.isPending}
+                      disabled={uploading}
                       className="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#E65100] file:text-white hover:file:bg-[#D84500] cursor-pointer"
                     />
                     {uploading && (
                       <p className="text-sm text-[#E65100] font-medium mt-2">⏳ Processando e salvando imagem...</p>
-                    )}
-                    {updateHeroMutation.isPending && !uploading && (
-                      <p className="text-sm text-[#E65100] font-medium mt-2">⏳ Salvando no banco de dados...</p>
                     )}
                   </div>
                   {hero.imageUrl.startsWith("data:") && (
@@ -402,12 +429,16 @@ export default function CMSEditor() {
                       <img src={hero.imageUrl} alt="Imagem atual do hero" className="w-full h-48 object-cover rounded" />
                       <button
                         type="button"
-                        onClick={() => {
-                          const newHero = { ...hero, imageUrl: "" };
-                          setHero(newHero);
-                          updateHeroMutation.mutate(newHero);
+                        onClick={async () => {
+                          setHero(prev => ({ ...prev, imageUrl: "" }));
+                          setUploading(true);
+                          await saveImageViaRest("/api/cms/hero-image", "", () => {
+                            toast.success("Foto removida.");
+                            heroQuery.refetch();
+                          });
+                          setUploading(false);
                         }}
-                        disabled={updateHeroMutation.isPending}
+                        disabled={uploading}
                         className="text-xs text-red-500 mt-1 hover:underline disabled:opacity-50"
                       >
                         Remover foto (volta ao moinho padrão)
@@ -460,10 +491,10 @@ export default function CMSEditor() {
                   type="file"
                   accept="image/jpeg,image/jpg,image/png,image/webp"
                   onChange={handleAppHeroImageUpload}
-                  disabled={appHeroUploading || updateAppHeroMutation.isPending}
+                  disabled={appHeroUploading}
                   className="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#E65100] file:text-white hover:file:bg-[#D84500] cursor-pointer"
                 />
-                {(appHeroUploading || updateAppHeroMutation.isPending) && (
+                {appHeroUploading && (
                   <p className="text-sm text-[#E65100] font-medium mt-2">⏳ Processando e salvando imagem...</p>
                 )}
               </div>
@@ -473,11 +504,17 @@ export default function CMSEditor() {
                   <img src={appHeroImage} alt="Hero do App atual" className="w-full h-36 object-cover rounded" />
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       setAppHeroImage("");
-                      updateAppHeroMutation.mutate({ imageUrl: "" });
+                      setAppHeroUploading(true);
+                      await saveImageViaRest("/api/cms/app-hero-image", "", () => {
+                        toast.success("Foto do App removida.");
+                        appHeroQuery.refetch();
+                      });
+                      setAppHeroUploading(false);
                     }}
-                    className="text-xs text-red-500 mt-1 hover:underline"
+                    disabled={appHeroUploading}
+                    className="text-xs text-red-500 mt-1 hover:underline disabled:opacity-50"
                   >
                     Remover foto (volta ao moinho padrão)
                   </button>

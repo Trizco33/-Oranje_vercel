@@ -5,7 +5,7 @@
     "buildCommand": "cd oranje && npm install --legacy-peer-deps && npm run build"
   },
   "deploy": {
-    "startCommand": "cd oranje && npm start",
+    "startCommand": "NODE_ENV=production node oranje/dist/index.js",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 30,
     "restartPolicyType": "on_failure",

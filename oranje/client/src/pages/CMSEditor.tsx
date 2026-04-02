@@ -175,8 +175,8 @@ export default function CMSEditor() {
   });
 
   const updateAppHeroMutation = trpc.content.updateAppHero.useMutation({
-    onSuccess: () => {
-      toast.success("Imagem do App salva com sucesso!");
+    onSuccess: (_data, variables) => {
+      toast.success(variables.imageUrl ? "Imagem do App salva!" : "Foto do App removida.");
       setAppHeroUploading(false);
       appHeroQuery.refetch();
     },
@@ -336,10 +336,7 @@ export default function CMSEditor() {
     try {
       const dataUrl = await compressImageToBase64(file);
       setAppHeroImage(dataUrl);
-      await saveImageViaRest("app_hero", dataUrl, () => {
-        toast.success("Imagem do App salva com sucesso!");
-        appHeroQuery.refetch();
-      });
+      updateAppHeroMutation.mutate({ imageUrl: dataUrl });
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
       setAppHeroUploading(false);
@@ -640,14 +637,10 @@ export default function CMSEditor() {
                   <img src={appHeroImage} alt="Hero do App atual" className="w-full h-36 object-cover rounded" />
                   <button
                     type="button"
-                    onClick={async () => {
+                    onClick={() => {
                       setAppHeroImage("");
                       setAppHeroUploading(true);
-                      await saveImageViaRest("app_hero", "", () => {
-                        toast.success("Foto do App removida.");
-                        appHeroQuery.refetch();
-                      });
-                      setAppHeroUploading(false);
+                      updateAppHeroMutation.mutate({ imageUrl: "" });
                     }}
                     disabled={appHeroUploading}
                     className="text-xs text-red-500 mt-1 hover:underline disabled:opacity-50"

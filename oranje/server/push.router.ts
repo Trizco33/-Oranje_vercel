@@ -129,10 +129,14 @@ export const pushRouter = router({
       return { sent, failed, staleRemoved: stale.length, total: subs.length };
     }),
 
-  subscriberCount: adminProcedure.query(async () => {
-    const db = await getDb();
-    if (!db) return { count: 0 };
-    const subs = await db.select({ id: pushSubscriptions.id }).from(pushSubscriptions);
-    return { count: subs.length };
+  subscriberCount: publicProcedure.query(async () => {
+    try {
+      const db = await getDb();
+      if (!db) return { count: 0 };
+      const subs = await db.select({ id: pushSubscriptions.id }).from(pushSubscriptions);
+      return { count: subs.length };
+    } catch {
+      return { count: 0 };
+    }
   }),
 });

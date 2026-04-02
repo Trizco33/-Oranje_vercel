@@ -1,6 +1,6 @@
 import { z } from "zod";
 import webpush from "web-push";
-import { router, protectedProcedure, publicProcedure, adminProcedure } from "./_core/trpc";
+import { router, protectedProcedure, publicProcedure, adminProcedure, cmsProcedure } from "./_core/trpc";
 import { getDb } from "./db";
 import { pushSubscriptions } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -77,7 +77,7 @@ export const pushRouter = router({
       return { success: true };
     }),
 
-  sendAll: adminProcedure
+  sendAll: cmsProcedure
     .input(z.object({
       title: z.string().min(1).max(100),
       body: z.string().min(1).max(300),

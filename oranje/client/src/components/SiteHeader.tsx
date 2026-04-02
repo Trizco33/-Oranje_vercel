@@ -67,6 +67,7 @@ export default function SiteHeader() {
     <>
       <header
         role="banner"
+        className={`header-transition${scrolled ? " header-scrolled" : ""}`}
         style={{
           position: "fixed",
           top: 0,
@@ -75,7 +76,6 @@ export default function SiteHeader() {
           zIndex: 100,
           background: "#00251A",
           borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
-          transition: "border-color 0.3s ease",
         }}
       >
         <div

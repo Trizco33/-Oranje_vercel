@@ -493,7 +493,7 @@ export default function SiteHome() {
               <Reveal key={cat.title} delay={i * 60}>
                 <Link to={cat.link} style={{ textDecoration: "none", display: "block" }}>
                   <div
-                    className="site-card"
+                    className="site-card card-press"
                     style={{
                       padding: "28px 24px",
                       textAlign: "center",
@@ -669,7 +669,7 @@ export default function SiteHome() {
               <Reveal key={roteiro.title} delay={i * 80}>
                 <Link to={roteiro.link} style={{ textDecoration: "none", display: "block", height: "100%" }}>
                   <div
-                    className="site-card"
+                    className="site-card card-press"
                     style={{
                       padding: "28px 24px",
                       display: "flex",
@@ -810,7 +810,7 @@ export default function SiteHome() {
               <Reveal key={article.id} delay={i * 60}>
                 <Link to={`/blog/${article.slug}`} style={{ textDecoration: "none", display: "block" }}>
                   <div
-                    className="site-card"
+                    className="site-card card-press"
                     style={{
                       padding: "18px 24px",
                       display: "flex",

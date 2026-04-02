@@ -8,7 +8,7 @@
 @keyframes oranje-fade-up {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -24,7 +24,7 @@
 @keyframes oranje-scale-in {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
   to {
     opacity: 1;
@@ -35,22 +35,22 @@
 /* ─── Hero Entrance ──────────────────────────────────────────────────────── */
 
 .hero-enter {
-  animation: oranje-fade-up 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: oranje-fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.hero-enter-d1 { animation-delay: 80ms; }
-.hero-enter-d2 { animation-delay: 200ms; }
-.hero-enter-d3 { animation-delay: 340ms; }
+.hero-enter-d1 { animation-delay: 60ms; }
+.hero-enter-d2 { animation-delay: 180ms; }
+.hero-enter-d3 { animation-delay: 320ms; }
 .hero-enter-d4 { animation-delay: 460ms; }
-.hero-enter-d5 { animation-delay: 560ms; }
+.hero-enter-d5 { animation-delay: 580ms; }
 
 /* ─── Scroll Reveal ──────────────────────────────────────────────────────── */
 
 .reveal {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(14px);
   transition:
-    opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reveal.visible {
@@ -60,11 +60,11 @@
 
 /* Stagger delays for grid children */
 .reveal-stagger > *:nth-child(1) { transition-delay: 0ms; }
-.reveal-stagger > *:nth-child(2) { transition-delay: 60ms; }
-.reveal-stagger > *:nth-child(3) { transition-delay: 120ms; }
-.reveal-stagger > *:nth-child(4) { transition-delay: 180ms; }
-.reveal-stagger > *:nth-child(5) { transition-delay: 240ms; }
-.reveal-stagger > *:nth-child(6) { transition-delay: 300ms; }
+.reveal-stagger > *:nth-child(2) { transition-delay: 70ms; }
+.reveal-stagger > *:nth-child(3) { transition-delay: 140ms; }
+.reveal-stagger > *:nth-child(4) { transition-delay: 210ms; }
+.reveal-stagger > *:nth-child(5) { transition-delay: 280ms; }
+.reveal-stagger > *:nth-child(6) { transition-delay: 350ms; }
 
 /* ─── Card Tactile Feedback ──────────────────────────────────────────────── */
 
@@ -72,26 +72,27 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   will-change: transform;
+  cursor: pointer;
   transition:
-    transform 140ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 140ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 140ms cubic-bezier(0.4, 0, 0.2, 1),
-    filter 140ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 160ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Active/pressed state — fires on touch AND click */
 .card-press:active {
-  transform: scale(0.975);
-  filter: brightness(0.94);
-  box-shadow: var(--ds-shadow-xs) !important;
+  transform: scale(0.972);
+  filter: brightness(0.93);
+  box-shadow: 0 1px 4px rgba(0,37,26,0.06) !important;
 }
 
 /* Desktop hover — only on pointer devices that support hover */
 @media (hover: hover) and (pointer: fine) {
   .card-press:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--ds-shadow-lg) !important;
-    border-color: var(--ds-color-border-accent) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 32px rgba(0,37,26,0.13) !important;
+    border-color: rgba(0,37,26,0.12) !important;
   }
 
   .card-press:active {
@@ -105,43 +106,43 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   transition:
-    transform 120ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 120ms cubic-bezier(0.4, 0, 0.2, 1),
-    filter 120ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform 130ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 130ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 130ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btn-press:active {
-  transform: scale(0.96);
-  filter: brightness(0.92);
+  transform: scale(0.955);
+  filter: brightness(0.90);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn-press:hover {
     transform: translateY(-1px);
-    filter: brightness(1.06);
+    filter: brightness(1.08);
   }
 
   .btn-press:active {
-    transform: scale(0.97);
+    transform: scale(0.965);
   }
 }
 
 /* ─── Image zoom on card hover ───────────────────────────────────────────── */
 
 .card-img-zoom {
-  transition: transform 480ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .card-press:hover .card-img-zoom {
-    transform: scale(1.06);
+    transform: scale(1.05);
   }
 }
 
 /* ─── Page transition ────────────────────────────────────────────────────── */
 
 .page-enter {
-  animation: oranje-fade-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: oranje-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* ─── Shimmer skeleton ───────────────────────────────────────────────────── */
@@ -169,9 +170,9 @@
   filter: blur(8px);
   transform: scale(1.04);
   transition:
-    opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .img-blur-up.loaded {
@@ -215,17 +216,27 @@
 }
 
 .header-scrolled {
-  background: rgba(0, 37, 26, 0.92) !important;
-  border-bottom: 1px solid rgba(245, 245, 220, 0.08) !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.2) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  background: rgba(0, 37, 26, 0.96) !important;
+  border-bottom: 1px solid rgba(245, 245, 220, 0.07) !important;
+  box-shadow: 0 2px 28px rgba(0,0,0,0.22) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
 }
 
 .header-transition {
   transition:
-    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    backdrop-filter 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Site card — mobile active press (touch feedback) ──────────────────── */
+
+@media (hover: none) {
+  .site-card:active {
+    transform: scale(0.972);
+    filter: brightness(0.94);
+    transition: transform 100ms ease, filter 100ms ease;
+  }
 }

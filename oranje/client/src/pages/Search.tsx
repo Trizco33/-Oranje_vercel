@@ -88,15 +88,37 @@ export default function SearchPage() {
   }
 
   const filteredPlaces = places?.filter((p: any) => {
+    if (debouncedQuery.trim().length > 0) {
+      const q = debouncedQuery.toLowerCase().trim();
+      const name = (p.name ?? "").toLowerCase();
+      const desc = (p.description ?? "").toLowerCase();
+      const addr = (p.address ?? "").toLowerCase();
+      const catName = (categories?.find((c: any) => c.id === p.categoryId)?.name ?? "").toLowerCase();
+      const neighborhood = (p.neighborhood ?? p.bairro ?? "").toLowerCase();
+      if (
+        !name.includes(q) &&
+        !desc.includes(q) &&
+        !addr.includes(q) &&
+        !catName.includes(q) &&
+        !neighborhood.includes(q)
+      ) return false;
+    }
     if (selectedTags.length > 0) {
       const placeTags: string[] = Array.isArray(p.tags) ? p.tags : [];
       if (!selectedTags.some(t => placeTags.includes(t))) return false;
     }
-    if (selectedLocation) return true;
     return true;
   }).sort((a: any, b: any) => {
     if (sortBy === "avaliacao") return (b.rating ?? 0) - (a.rating ?? 0);
     if (sortBy === "recente") return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
+    if (sortBy === "relevancia" && debouncedQuery.trim().length > 0) {
+      const q = debouncedQuery.toLowerCase().trim();
+      const aName = (a.name ?? "").toLowerCase();
+      const bName = (b.name ?? "").toLowerCase();
+      const aStarts = aName.startsWith(q) ? 0 : 1;
+      const bStarts = bName.startsWith(q) ? 0 : 1;
+      return aStarts - bStarts;
+    }
     return 0;
   });
 
@@ -205,9 +227,9 @@ export default function SearchPage() {
           <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
             {isLoading ? "Buscando..." : `${filteredPlaces?.length ?? 0} resultados`}
           </p>
-          {(selectedTags.length > 0 || selectedCategory || selectedPriceRange || selectedLocation || sortBy !== "relevancia") && (
+          {(selectedTags.length > 0 || selectedCategory || selectedPriceRange || selectedLocation || sortBy !== "relevancia" || debouncedQuery) && (
             <button
-              onClick={() => { setSelectedTags([]); setSelectedCategory(undefined); setSelectedPriceRange(undefined); setSelectedLocation(undefined); setSortBy("relevancia"); }}
+              onClick={() => { setSelectedTags([]); setSelectedCategory(undefined); setSelectedPriceRange(undefined); setSelectedLocation(undefined); setSortBy("relevancia"); setQuery(""); setDebouncedQuery(""); }}
               className="text-xs flex items-center gap-1"
               style={{ color: "var(--ds-color-accent)" }}
             >

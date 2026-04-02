@@ -56,7 +56,7 @@ export default function Home() {
         ? url
         : "/brand/moinho-povos-unidos.jpg";
     // eslint-disable-next-line no-console
-    console.log("[AppHero] imageUrl do CMS:", url || "(vazio)", "| url final:", resolved);
+    console.log("[AppHero] url final:", resolved, "| CMS raw:", url || "(vazio)");
     return resolved;
   })();
 

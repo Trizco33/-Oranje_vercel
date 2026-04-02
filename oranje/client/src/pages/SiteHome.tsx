@@ -184,7 +184,7 @@ export default function SiteHome() {
               ? raw
               : "/brand/moinho-povos-unidos.jpg";
           // eslint-disable-next-line no-console
-          console.log("[SiteHero] imageUrl do CMS:", raw || "(vazio)", "| url final:", src);
+          console.log("[SiteHero] url final:", src, "| CMS raw:", raw || "(vazio)");
           return (
             <img
               src={src}

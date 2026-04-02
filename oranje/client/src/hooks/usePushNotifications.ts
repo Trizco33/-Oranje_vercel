@@ -11,14 +11,17 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 async function getOrRegisterSW(): Promise<ServiceWorkerRegistration> {
-  // Prefer the existing /app/sw.js registration
+  // Register if not already present
   const existing = await navigator.serviceWorker.getRegistration("/app/");
-  if (existing) return existing;
-  // Register if not present
-  return await navigator.serviceWorker.register("/app/sw.js", { scope: "/app/" });
+  if (!existing) {
+    await navigator.serviceWorker.register("/app/sw.js", { scope: "/app/" });
+  }
+  // Wait until active (required for pushManager.subscribe)
+  return await navigator.serviceWorker.ready;
 }
 
 export type PushState = "unsupported" | "denied" | "subscribed" | "unsubscribed" | "loading";
+export let lastPushError = "";
 
 export function usePushNotifications() {
   const [state, setState] = useState<PushState>("loading");
@@ -89,8 +92,9 @@ export function usePushNotifications() {
         auth: (json.keys as any)?.auth ?? "",
       });
     } catch (err: any) {
-      console.error("[push] subscribe error:", err);
-      // If permission was denied during the flow
+      const msg = err?.message || String(err);
+      console.error("[push] subscribe error:", msg);
+      lastPushError = msg;
       if (Notification.permission === "denied") {
         setState("denied");
       } else {

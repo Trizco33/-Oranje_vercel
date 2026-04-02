@@ -4,7 +4,7 @@ import { useNotificationsList } from "@/hooks/useMockData";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Bell, BellOff, CalendarDays, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { usePushNotifications, lastPushError } from "@/hooks/usePushNotifications";
 
 export default function Notifications() {
   const navigate = useNavigate();
@@ -59,7 +59,9 @@ export default function Notifications() {
                   ? "Você receberá alertas de novos eventos e roteiros."
                   : pushState === "denied"
                     ? "Permissão negada — reative nas configurações do navegador."
-                    : "Receba alertas de eventos, roteiros e novidades."}
+                    : pushState === "unsubscribed" && lastPushError
+                      ? `Erro: ${lastPushError}`
+                      : "Receba alertas de eventos, roteiros e novidades."}
               </p>
             </div>
             {pushState !== "denied" && (

@@ -10,6 +10,14 @@ function urlBase64ToUint8Array(base64String: string) {
   return outputArray;
 }
 
+async function getOrRegisterSW(): Promise<ServiceWorkerRegistration> {
+  // Prefer the existing /app/sw.js registration
+  const existing = await navigator.serviceWorker.getRegistration("/app/");
+  if (existing) return existing;
+  // Register if not present
+  return await navigator.serviceWorker.register("/app/sw.js", { scope: "/app/" });
+}
+
 export type PushState = "unsupported" | "denied" | "subscribed" | "unsubscribed" | "loading";
 
 export function usePushNotifications() {
@@ -27,25 +35,47 @@ export function usePushNotifications() {
       setState("denied");
       return;
     }
-    navigator.serviceWorker.ready.then(async (reg) => {
+    getOrRegisterSW().then(async (reg) => {
       const sub = await reg.pushManager.getSubscription();
       setState(sub ? "subscribed" : "unsubscribed");
     }).catch(() => setState("unsubscribed"));
   }, []);
 
   const subscribe = useCallback(async () => {
-    if (!vapidData?.publicKey) return;
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      setState("unsupported");
+      return;
+    }
     setState("loading");
     try {
-      const reg = await navigator.serviceWorker.ready;
+      // Register SW if needed
+      const reg = await getOrRegisterSW();
+
+      // Ask for permission
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
         setState("denied");
         return;
       }
+
+      // Get VAPID key — wait up to 5s if not loaded yet
+      let publicKey = vapidData?.publicKey;
+      if (!publicKey) {
+        const apiBase = (window as any).__VITE_API_URL__ || "";
+        try {
+          const resp = await fetch(`${apiBase}/api/trpc/push.vapidPublicKey`);
+          const json = await resp.json();
+          publicKey = json?.result?.data?.json?.publicKey;
+        } catch { /* ignore */ }
+      }
+      if (!publicKey) {
+        setState("unsubscribed");
+        return;
+      }
+
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidData.publicKey),
+        applicationServerKey: urlBase64ToUint8Array(publicKey),
       });
       const json = sub.toJSON();
       await subscribeMutation.mutateAsync({
@@ -54,7 +84,8 @@ export function usePushNotifications() {
         auth: (json.keys as any)?.auth ?? "",
       });
       setState("subscribed");
-    } catch {
+    } catch (err) {
+      console.error("[push] subscribe error:", err);
       setState("unsubscribed");
     }
   }, [vapidData, subscribeMutation]);
@@ -62,7 +93,7 @@ export function usePushNotifications() {
   const unsubscribe = useCallback(async () => {
     setState("loading");
     try {
-      const reg = await navigator.serviceWorker.ready;
+      const reg = await getOrRegisterSW();
       const sub = await reg.pushManager.getSubscription();
       if (sub) {
         await unsubscribeMutation.mutateAsync({ endpoint: sub.endpoint });

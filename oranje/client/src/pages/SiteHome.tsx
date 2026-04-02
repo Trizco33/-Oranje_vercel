@@ -125,6 +125,7 @@ export default function SiteHome() {
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
   const { data: heroData } = trpc.content.getHero.useQuery();
+  const [heroVideoError, setHeroVideoError] = useState(false);
   const places = allPlaces.slice(0, 6);
 
   // Build categoryId → name map for display
@@ -176,17 +177,45 @@ export default function SiteHome() {
           backgroundColor: "#00251A",
         }}
       >
-        {/* Background Image — CMS-only image, no hardcoded fallback */}
+        {/* Background: Video (if active) or Image — controlled by CMS */}
         {(() => {
-          const raw = heroData?.imageUrl ?? "";
-          const src =
-            raw.startsWith("data:image/") || /^https?:\/\//.test(raw) || raw.startsWith("/")
-              ? raw
-              : "";
-          if (!src) return null;
+          const mediaType = (heroData as any)?.mediaType ?? "image";
+          const videoUrl = (heroData as any)?.videoUrl ?? "";
+          const rawImg = heroData?.imageUrl ?? "";
+          const imgSrc =
+            rawImg.startsWith("data:image/") || /^https?:\/\//.test(rawImg) || rawImg.startsWith("/")
+              ? rawImg : "";
+
+          const useVideo = mediaType === "video" && videoUrl && !heroVideoError;
+
+          if (useVideo) {
+            return (
+              <video
+                key={videoUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                onError={() => setHeroVideoError(true)}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              >
+                <source src={videoUrl} type="video/mp4" />
+                {imgSrc && <img src={imgSrc} alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
+              </video>
+            );
+          }
+
+          if (!imgSrc) return null;
           return (
             <img
-              src={src}
+              src={imgSrc}
               alt=""
               aria-hidden="true"
               style={{

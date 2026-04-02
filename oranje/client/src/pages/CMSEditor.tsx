@@ -70,6 +70,9 @@ export default function CMSEditor() {
     buttonUrl: "",
     imageUrl: "",
   });
+  const [heroVideoUrl, setHeroVideoUrl] = useState("");
+  const [heroMediaType, setHeroMediaType] = useState<"image" | "video">("image");
+  const [savingVideo, setSavingVideo] = useState(false);
 
   const [services, setServices] = useState({
     title: "",
@@ -185,6 +188,8 @@ export default function CMSEditor() {
         buttonUrl: heroQuery.data.buttonUrl || "",
         imageUrl: isValidUrl ? rawUrl : "",
       });
+      setHeroVideoUrl((heroQuery.data as any).videoUrl || "");
+      setHeroMediaType(((heroQuery.data as any).mediaType as "image" | "video") || "image");
     }
   }, [heroQuery.data]);
 
@@ -282,6 +287,30 @@ export default function CMSEditor() {
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
         onSuccess();
+      } else {
+        toast.error("Erro ao salvar: " + (data.error || "Tente fazer logout e login novamente."));
+      }
+    } catch {
+      toast.error("Erro de conexão. Verifique a internet e tente novamente.");
+    }
+  };
+
+  const saveHeroMeta = async (field: "hero_video" | "hero_media_type", value: string, onSuccess?: () => void) => {
+    const apiBase = (import.meta.env.VITE_API_URL as string) || "";
+    const stored = localStorage.getItem("cms_token") || "";
+    try {
+      const res = await fetch(`${apiBase}/api/cms/save-hero`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(stored ? { "x-cms-token": stored } : {}),
+        },
+        credentials: "include",
+        body: JSON.stringify({ field, value }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        onSuccess?.();
       } else {
         toast.error("Erro ao salvar: " + (data.error || "Tente fazer logout e login novamente."));
       }
@@ -465,6 +494,107 @@ export default function CMSEditor() {
                   </div>
                 </div>
               </div>
+              {/* ── Vídeo Hero ── */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Vídeo do Hero <span className="text-gray-400 text-xs">(opcional)</span></label>
+                <div className="space-y-3">
+                  <div className="bg-purple-50 border border-purple-200 rounded p-3">
+                    <p className="text-xs font-semibold text-purple-800 mb-1">🎬 URL do vídeo (MP4)</p>
+                    <p className="text-xs text-purple-700 mb-2">
+                      Cole a URL pública de um vídeo <code>.mp4</code>. Exemplo: <code>/hero-video.mp4</code> para o vídeo enviado, ou uma URL externa <code>https://...</code>.
+                    </p>
+                    <Input
+                      value={heroVideoUrl}
+                      onChange={(e) => setHeroVideoUrl(e.target.value)}
+                      placeholder="https://... ou /hero-video.mp4"
+                      className="mb-2"
+                    />
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        disabled={savingVideo}
+                        onClick={async () => {
+                          setSavingVideo(true);
+                          await saveHeroMeta("hero_video", heroVideoUrl, () => {
+                            toast.success("URL do vídeo salva!");
+                            heroQuery.refetch();
+                          });
+                          setSavingVideo(false);
+                        }}
+                        className="text-xs bg-purple-600 text-white px-3 py-1.5 rounded hover:bg-purple-700 disabled:opacity-50"
+                      >
+                        {savingVideo ? "Salvando..." : "Salvar URL do vídeo"}
+                      </button>
+                      {heroVideoUrl && (
+                        <button
+                          type="button"
+                          disabled={savingVideo}
+                          onClick={async () => {
+                            setSavingVideo(true);
+                            setHeroVideoUrl("");
+                            await saveHeroMeta("hero_video", "", () => {
+                              toast.success("Vídeo removido.");
+                              heroQuery.refetch();
+                            });
+                            setSavingVideo(false);
+                          }}
+                          className="text-xs text-red-500 hover:underline disabled:opacity-50"
+                        >
+                          Remover vídeo
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Tipo de mídia ativo */}
+                  <div className="bg-gray-50 border rounded p-3">
+                    <p className="text-xs font-semibold text-gray-700 mb-2">Mídia ativa na hero</p>
+                    <div className="flex gap-3">
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="heroMediaType"
+                          value="image"
+                          checked={heroMediaType === "image"}
+                          onChange={async () => {
+                            setHeroMediaType("image");
+                            await saveHeroMeta("hero_media_type", "image", () => {
+                              toast.success("Hero usando imagem.");
+                              heroQuery.refetch();
+                            });
+                          }}
+                        />
+                        <span className="text-sm">🖼 Imagem</span>
+                      </label>
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="heroMediaType"
+                          value="video"
+                          checked={heroMediaType === "video"}
+                          disabled={!heroVideoUrl}
+                          onChange={async () => {
+                            if (!heroVideoUrl) return;
+                            setHeroMediaType("video");
+                            await saveHeroMeta("hero_media_type", "video", () => {
+                              toast.success("Hero usando vídeo.");
+                              heroQuery.refetch();
+                            });
+                          }}
+                        />
+                        <span className={`text-sm ${!heroVideoUrl ? "text-gray-400" : ""}`}>🎬 Vídeo</span>
+                      </label>
+                    </div>
+                    {!heroVideoUrl && heroMediaType === "image" && (
+                      <p className="text-xs text-gray-500 mt-1">Salve uma URL de vídeo acima para ativar o modo vídeo.</p>
+                    )}
+                    {heroMediaType === "video" && heroVideoUrl && (
+                      <p className="text-xs text-green-700 mt-1 font-medium">✅ Vídeo ativo — imagem usada como fallback se o vídeo falhar.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <Button
                 onClick={() => updateHeroMutation.mutate(hero)}
                 disabled={updateHeroMutation.isPending}

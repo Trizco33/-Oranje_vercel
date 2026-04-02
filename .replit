@@ -1,4 +1,4 @@
-modules = ["nodejs-24"]
+modules = ["nodejs-24", "postgresql-16"]
 
 [[artifacts]]
 id = "artifacts/api-server"
@@ -78,3 +78,6 @@ timeoutMs = 20000
 VAPID_PUBLIC_KEY = "BANFN3VXKXD4lnpaYBqAWTYaoWxnV5yXkYYvVijePJ_VUyqYG6mrWOkiGnjGRY_brfHMOX2Dh9WLCyV_6wh55u0"
 VAPID_PRIVATE_KEY = "OU_g4E9ncpiU_-O7YAEEbq8ZNH6V-dtLFd-T4VYSr4k"
 VAPID_EMAIL = "mailto:admin@oranjeapp.com.br"
+
+[nix]
+channel = "stable-25_05"

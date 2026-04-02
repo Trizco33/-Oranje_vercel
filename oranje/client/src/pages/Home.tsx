@@ -51,13 +51,9 @@ export default function Home() {
 
   const heroImageUrl = (() => {
     const url = appHeroData?.imageUrl ?? "";
-    const resolved =
-      url.startsWith("data:image/") || /^https?:\/\//.test(url) || url.startsWith("/")
-        ? url
-        : "/brand/moinho-povos-unidos.jpg";
-    // eslint-disable-next-line no-console
-    console.log("[AppHero] url final:", resolved, "| CMS raw:", url || "(vazio)");
-    return resolved;
+    return url.startsWith("data:image/") || /^https?:\/\//.test(url) || url.startsWith("/")
+      ? url
+      : "";
   })();
 
   function handleToggleFavorite(placeId: number) {
@@ -88,9 +84,7 @@ export default function Home() {
         style={{
           position: "relative",
           minHeight: 340,
-          backgroundImage: `url(${heroImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
+          ...(heroImageUrl ? { backgroundImage: `url(${heroImageUrl})`, backgroundSize: "cover", backgroundPosition: "center 30%" } : {}),
           overflow: "hidden",
         }}
       >

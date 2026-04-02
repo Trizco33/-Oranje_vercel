@@ -176,26 +176,19 @@ export default function SiteHome() {
           backgroundColor: "#00251A",
         }}
       >
-        {/* Background Image — single source of truth: CMS → fallback moinho */}
+        {/* Background Image — CMS-only image, no hardcoded fallback */}
         {(() => {
           const raw = heroData?.imageUrl ?? "";
           const src =
             raw.startsWith("data:image/") || /^https?:\/\//.test(raw) || raw.startsWith("/")
               ? raw
-              : "/brand/moinho-povos-unidos.jpg";
-          // eslint-disable-next-line no-console
-          console.log("[SiteHero] url final:", src, "| CMS raw:", raw || "(vazio)");
+              : "";
+          if (!src) return null;
           return (
             <img
               src={src}
               alt=""
               aria-hidden="true"
-              onError={(e) => {
-                const img = e.target as HTMLImageElement;
-                if (img.src !== window.location.origin + "/brand/moinho-povos-unidos.jpg") {
-                  img.src = "/brand/moinho-povos-unidos.jpg";
-                }
-              }}
               style={{
                 position: "absolute",
                 inset: 0,

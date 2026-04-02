@@ -21,9 +21,10 @@ export default function AdminGuard({ children }: AdminGuardProps) {
   const handleLogout = async () => {
     try {
       await logout.mutateAsync();
-      navigate("/");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
+    } finally {
+      localStorage.removeItem("cms_token");
       navigate("/");
     }
   };

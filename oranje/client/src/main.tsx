@@ -52,15 +52,19 @@ const trpcClient = trpc.createClient({
     httpBatchLink({
       url: `${API_BASE}/api/trpc`,
       transformer: superjson,
+      headers() {
+        try {
+          const stored = localStorage.getItem("cms_token");
+          if (stored) return { "x-cms-token": stored };
+        } catch {}
+        return {};
+      },
       fetch(input, init) {
         return globalThis.fetch(input, {
           ...(init ?? {}),
           credentials: "include",
         }).catch((err) => {
           console.warn("[tRPC] Network request failed (backend unreachable):", err?.message || err);
-          // Re-throw so React Query can handle the error properly
-          // (retry logic, error states, etc.) instead of masking it as null data
-          // which causes false "not found" screens
           throw err;
         });
       },

@@ -45,20 +45,34 @@ export const adminProcedure = t.procedure.use(
 );
 
 /**
- * CMS Procedure: Checks tRPC JWT auth first (adminProcedure path),
- * falls back to checking the cms_session cookie set by CMS login.
- * This bridges the gap when CMS login doesn't properly set the app_session_id JWT.
+ * CMS Procedure: 3-layer auth check for CMS admin access.
+ * 1. JWT cookie (app_session_id) — standard tRPC auth
+ * 2. X-CMS-Token header — localStorage-based session (most reliable)
+ * 3. cms_session cookie fallback
  */
 export const cmsProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
-    // First: if tRPC auth already resolved an admin user, use it
+    // Layer 1: JWT cookie resolved an admin user
     if (ctx.user && ctx.user.role === 'admin') {
       return next({ ctx: { ...ctx, user: ctx.user } });
     }
 
-    // Fallback: check cms_session cookie
+    // Layer 2: X-CMS-Token header (localStorage-based, path-independent)
+    try {
+      const tokenHeader = ctx.req.headers['x-cms-token'];
+      if (tokenHeader) {
+        const session = JSON.parse(String(tokenHeader));
+        if (session?.success && session?.user?.role === 'admin') {
+          return next({ ctx });
+        }
+      }
+    } catch (e) {
+      // Header parsing failed, continue
+    }
+
+    // Layer 3: cms_session cookie fallback
     try {
       const cookieHeader = ctx.req.headers.cookie || '';
       const cmsMatch = cookieHeader.match(/cms_session=([^;]+)/);
@@ -66,13 +80,11 @@ export const cmsProcedure = t.procedure.use(
         const decoded = decodeURIComponent(cmsMatch[1]);
         const session = JSON.parse(decoded);
         if (session?.success && session?.user?.role === 'admin') {
-          // CMS session is valid — allow access
-          // We don't have the full User object from DB here, but the session confirms admin access
           return next({ ctx });
         }
       }
     } catch (e) {
-      // Cookie parsing failed, fall through to error
+      // Cookie parsing failed
     }
 
     throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });

@@ -27,16 +27,15 @@ export default function CMSLogin() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json().catch(() => ({}));
       if (response.ok) {
+        localStorage.setItem("cms_token", JSON.stringify(data));
         toast.success("Login realizado com sucesso!");
-        // Invalidate trpc auth cache so AdminGuard picks up the new session
         await utils.auth.me.invalidate();
-        // Small delay to let cookie propagate
         setTimeout(() => {
           navigate(nextPath, { replace: true });
         }, 300);
       } else {
-        const data = await response.json().catch(() => ({}));
         toast.error(data.error || "Email ou senha incorretos");
       }
     } catch (error) {

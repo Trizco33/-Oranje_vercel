@@ -19,6 +19,13 @@ function getContentDb() {
 function getCmsUserId(ctx: any): number {
   if (ctx.user?.id) return ctx.user.id;
   try {
+    const tokenHeader = ctx.req?.headers?.['x-cms-token'];
+    if (tokenHeader) {
+      const session = JSON.parse(String(tokenHeader));
+      if (session?.user?.id) return session.user.id;
+    }
+  } catch {}
+  try {
     const cookieHeader = ctx.req?.headers?.cookie || "";
     const match = cookieHeader.match(/cms_session=([^;]+)/);
     if (match) {

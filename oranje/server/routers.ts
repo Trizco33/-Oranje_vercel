@@ -58,7 +58,7 @@ export const appRouter = router({
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       // Also clear CMS session cookie for complete logout
-      ctx.res.clearCookie("cms_session");
+      ctx.res.clearCookie("cms_session", { path: "/" });
       return { success: true } as const;
     }),
     requestMagicLink: publicProcedure.input(z.object({

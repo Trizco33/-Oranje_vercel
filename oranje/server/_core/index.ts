@@ -815,6 +815,7 @@ self.addEventListener('fetch', (event) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -855,7 +856,7 @@ self.addEventListener('fetch', (event) => {
   app.post("/api/cms/logout", (req, res) => {
     try {
       const { COOKIE_NAME } = require("@shared/const");
-      res.clearCookie("cms_session");
+      res.clearCookie("cms_session", { path: "/" });
       res.clearCookie(COOKIE_NAME, { path: "/" });
       return res.json({ success: true });
     } catch (error: any) {

@@ -284,10 +284,6 @@ export default function CMSEditor() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!hero.title || !hero.buttonText || !hero.buttonUrl) {
-      toast.error("Aguarde a página carregar completamente antes de enviar a imagem.");
-      return;
-    }
     setUploading(true);
     e.target.value = "";
     try {
@@ -406,8 +402,13 @@ export default function CMSEditor() {
                       <img src={hero.imageUrl} alt="Imagem atual do hero" className="w-full h-48 object-cover rounded" />
                       <button
                         type="button"
-                        onClick={() => setHero(prev => ({ ...prev, imageUrl: "" }))}
-                        className="text-xs text-red-500 mt-1 hover:underline"
+                        onClick={() => {
+                          const newHero = { ...hero, imageUrl: "" };
+                          setHero(newHero);
+                          updateHeroMutation.mutate(newHero);
+                        }}
+                        disabled={updateHeroMutation.isPending}
+                        className="text-xs text-red-500 mt-1 hover:underline disabled:opacity-50"
                       >
                         Remover foto (volta ao moinho padrão)
                       </button>

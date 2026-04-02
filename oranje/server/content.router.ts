@@ -136,6 +136,27 @@ export const contentRouter = router({
       return { success: true };
     }),
 
+  updateHeroMedia: cmsProcedure
+    .input(z.object({
+      videoUrl: z.string().default(""),
+      mediaType: z.enum(["image", "video"]).default("image"),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = getCmsUserId(ctx);
+      const db = getContentDb();
+      const updates = [
+        { key: "hero_videoUrl",   value: input.videoUrl },
+        { key: "hero_mediaType",  value: input.mediaType },
+      ];
+      for (const update of updates) {
+        await db
+          .insert(siteContent)
+          .values({ key: update.key, value: update.value, section: "hero", updatedBy: userId })
+          .onDuplicateKeyUpdate({ set: { value: update.value, updatedBy: userId } });
+      }
+      return { success: true };
+    }),
+
   // ─── App Hero Section (/app) ──────────────────────────────────────────────
   getAppHero: publicProcedure.query(async () => {
     if (!db) return { imageUrl: "" };

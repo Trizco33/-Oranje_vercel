@@ -165,6 +165,15 @@ export default function CMSEditor() {
     },
   });
 
+  const updateHeroMediaMutation = trpc.content.updateHeroMedia.useMutation({
+    onSuccess: () => {
+      heroQuery.refetch();
+    },
+    onError: (error) => {
+      toast.error("Erro ao salvar mídia: " + getFriendlyErrorMessage({ message: error.message }));
+    },
+  });
+
   const updateAppHeroMutation = trpc.content.updateAppHero.useMutation({
     onSuccess: () => {
       toast.success("Imagem do App salva com sucesso!");
@@ -512,31 +521,28 @@ export default function CMSEditor() {
                     <div className="flex gap-2 flex-wrap">
                       <button
                         type="button"
-                        disabled={savingVideo}
-                        onClick={async () => {
-                          setSavingVideo(true);
-                          await saveHeroMeta("hero_video", heroVideoUrl, () => {
-                            toast.success("URL do vídeo salva!");
-                            heroQuery.refetch();
-                          });
-                          setSavingVideo(false);
+                        disabled={updateHeroMediaMutation.isPending}
+                        onClick={() => {
+                          updateHeroMediaMutation.mutate(
+                            { videoUrl: heroVideoUrl, mediaType: heroMediaType },
+                            { onSuccess: () => toast.success("URL do vídeo salva!") }
+                          );
                         }}
                         className="text-xs bg-purple-600 text-white px-3 py-1.5 rounded hover:bg-purple-700 disabled:opacity-50"
                       >
-                        {savingVideo ? "Salvando..." : "Salvar URL do vídeo"}
+                        {updateHeroMediaMutation.isPending ? "Salvando..." : "Salvar URL do vídeo"}
                       </button>
                       {heroVideoUrl && (
                         <button
                           type="button"
-                          disabled={savingVideo}
-                          onClick={async () => {
-                            setSavingVideo(true);
+                          disabled={updateHeroMediaMutation.isPending}
+                          onClick={() => {
                             setHeroVideoUrl("");
-                            await saveHeroMeta("hero_video", "", () => {
-                              toast.success("Vídeo removido.");
-                              heroQuery.refetch();
-                            });
-                            setSavingVideo(false);
+                            setHeroMediaType("image");
+                            updateHeroMediaMutation.mutate(
+                              { videoUrl: "", mediaType: "image" },
+                              { onSuccess: () => toast.success("Vídeo removido.") }
+                            );
                           }}
                           className="text-xs text-red-500 hover:underline disabled:opacity-50"
                         >
@@ -556,12 +562,12 @@ export default function CMSEditor() {
                           name="heroMediaType"
                           value="image"
                           checked={heroMediaType === "image"}
-                          onChange={async () => {
+                          onChange={() => {
                             setHeroMediaType("image");
-                            await saveHeroMeta("hero_media_type", "image", () => {
-                              toast.success("Hero usando imagem.");
-                              heroQuery.refetch();
-                            });
+                            updateHeroMediaMutation.mutate(
+                              { videoUrl: heroVideoUrl, mediaType: "image" },
+                              { onSuccess: () => toast.success("Hero usando imagem.") }
+                            );
                           }}
                         />
                         <span className="text-sm">🖼 Imagem</span>
@@ -573,13 +579,13 @@ export default function CMSEditor() {
                           value="video"
                           checked={heroMediaType === "video"}
                           disabled={!heroVideoUrl}
-                          onChange={async () => {
+                          onChange={() => {
                             if (!heroVideoUrl) return;
                             setHeroMediaType("video");
-                            await saveHeroMeta("hero_media_type", "video", () => {
-                              toast.success("Hero usando vídeo.");
-                              heroQuery.refetch();
-                            });
+                            updateHeroMediaMutation.mutate(
+                              { videoUrl: heroVideoUrl, mediaType: "video" },
+                              { onSuccess: () => toast.success("Hero usando vídeo.") }
+                            );
                           }}
                         />
                         <span className={`text-sm ${!heroVideoUrl ? "text-gray-400" : ""}`}>🎬 Vídeo</span>

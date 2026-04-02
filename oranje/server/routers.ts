@@ -16,6 +16,7 @@ import { cmsRouter } from "./cms.router";
 import { contentRouter } from "./content.router";
 import { placesRouter } from "./places.router";
 import { reviewsRouter } from "./reviews.router";
+import { pushRouter } from "./push.router";
 import { generateSitemap } from "./sitemap";
 import * as db from "./db";
 import { getDb } from "./db";
@@ -41,6 +42,7 @@ export const appRouter = router({
   content: contentRouter,
   places: placesRouter,
   reviews: reviewsRouter,
+  push: pushRouter,
 
   // ── SEO ────────────────────────────────────────────────────────────────────
   seo: router({

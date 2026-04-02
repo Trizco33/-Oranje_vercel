@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { LogOut, FileText, Settings, BookOpen, Globe, Menu, X, LayoutDashboard } from "lucide-react";
+import { LogOut, FileText, Settings, BookOpen, Globe, Menu, X, LayoutDashboard, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import CMSEditor from "./CMSEditor";
 import CMSPages from "../components/CMSPages";
 import CMSBlog from "../components/CMSBlog";
 import CMSSEO from "../components/CMSSEO";
+import CMSPushPanel from "../components/CMSPushPanel";
 
 const CMS_NAV = [
   { id: "content", label: "Conteúdo", icon: FileText },
   { id: "pages", label: "Páginas", icon: BookOpen },
   { id: "blog", label: "Blog", icon: Globe },
+  { id: "push", label: "Notificações Push", icon: Bell },
   { id: "seo", label: "SEO", icon: Settings },
 ];
 
@@ -194,6 +196,7 @@ export default function CMSDashboard() {
           {activeTab === "content" && <CMSEditor />}
           {activeTab === "pages" && <CMSPages onNavigate={setActiveTab} />}
           {activeTab === "blog" && <CMSBlog />}
+          {activeTab === "push" && <CMSPushPanel />}
           {activeTab === "seo" && <CMSSEO />}
         </div>
       </div>

@@ -390,3 +390,16 @@ export const siteSeo = mysqlTable("site_seo", {
 
 export type SiteSeo = typeof siteSeo.$inferSelect;
 export type InsertSiteSeo = typeof siteSeo.$inferInsert;
+
+// ─── Push Subscriptions ───────────────────────────────────────────────────────
+export const pushSubscriptions = mysqlTable("push_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: varchar("auth", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;

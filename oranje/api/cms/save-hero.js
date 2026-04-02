@@ -1,8 +1,8 @@
-// Vercel serverless function — saves hero imageUrl directly to MySQL DB
-// This bypasses the Railway backend and uses Vercel's auto-deploy from GitHub
-// Path: /api/cms/save-hero  (takes precedence over the /api/* → Railway rewrite)
+// Vercel serverless function (ESM) — saves hero imageUrl directly to MySQL DB
+// Bypasses Railway backend; takes precedence over /api/* → Railway rewrite
+// Route: /api/cms/save-hero
 
-const mysql = require("mysql2/promise");
+import mysql from "mysql2/promise";
 
 function parseCmsAuth(req) {
   try {
@@ -27,7 +27,7 @@ function parseCmsAuth(req) {
   return null;
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-cms-token");
@@ -38,20 +38,24 @@ module.exports = async function handler(req, res) {
   const admin = parseCmsAuth(req);
   if (!admin) return res.status(403).json({ error: "Forbidden — faça login no CMS primeiro" });
 
-  const { imageUrl, field } = req.body || {};
+  const body = req.body || {};
+  const imageUrl = body.imageUrl;
+  const field = body.field;
   if (typeof imageUrl !== "string") return res.status(400).json({ error: "imageUrl obrigatório" });
 
   const dbKey = field === "app_hero" ? "app_hero_imageUrl" : "hero_imageUrl";
   const section = field === "app_hero" ? "app_hero" : "hero";
 
   const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl) return res.status(500).json({ error: "DATABASE_URL não configurado no Vercel — adicione nas Environment Variables do Vercel" });
+  if (!dbUrl) {
+    return res.status(500).json({ error: "DATABASE_URL não configurado no Vercel — adicione nas Environment Variables" });
+  }
 
   let conn;
   try {
     conn = await mysql.createConnection(dbUrl);
     await conn.execute(
-      "INSERT INTO site_content (`key`, value, section, updatedBy) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value), updatedBy = VALUES(updatedBy)",
+      "INSERT INTO site_content (`key`, `value`, section, updatedBy) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), updatedBy = VALUES(updatedBy)",
       [dbKey, imageUrl, section, admin.userId]
     );
     console.log(`[Vercel/save-hero] ${dbKey} saved (${imageUrl.length} chars) by userId=${admin.userId}`);
@@ -62,4 +66,4 @@ module.exports = async function handler(req, res) {
   } finally {
     if (conn) await conn.end().catch(() => {});
   }
-};
+}

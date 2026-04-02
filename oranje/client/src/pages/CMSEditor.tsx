@@ -266,6 +266,34 @@ export default function CMSEditor() {
     });
   };
 
+  const saveHeroImage = async (dataUrl: string): Promise<boolean> => {
+    const apiBase = import.meta.env.VITE_API_URL || "";
+    const cmsToken = (() => { try { return localStorage.getItem("cms_token") ?? undefined; } catch { return undefined; } })();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (cmsToken) headers["x-cms-token"] = cmsToken;
+    const res = await fetch(`${apiBase}/api/cms/hero-image`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: JSON.stringify({ imageUrl: dataUrl }),
+    });
+    return res.ok;
+  };
+
+  const saveAppHeroImage = async (dataUrl: string): Promise<boolean> => {
+    const apiBase = import.meta.env.VITE_API_URL || "";
+    const cmsToken = (() => { try { return localStorage.getItem("cms_token") ?? undefined; } catch { return undefined; } })();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (cmsToken) headers["x-cms-token"] = cmsToken;
+    const res = await fetch(`${apiBase}/api/cms/app-hero-image`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: JSON.stringify({ imageUrl: dataUrl }),
+    });
+    return res.ok;
+  };
+
   const handleAppHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -274,9 +302,16 @@ export default function CMSEditor() {
     try {
       const dataUrl = await compressImageToBase64(file);
       setAppHeroImage(dataUrl);
-      updateAppHeroMutation.mutate({ imageUrl: dataUrl });
+      const ok = await saveAppHeroImage(dataUrl);
+      if (ok) {
+        toast.success("Imagem do App salva com sucesso!");
+        appHeroQuery.refetch();
+      } else {
+        toast.error("Erro ao salvar imagem do App. Tente fazer logout e login novamente.");
+      }
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
+    } finally {
       setAppHeroUploading(false);
     }
   };
@@ -288,11 +323,17 @@ export default function CMSEditor() {
     e.target.value = "";
     try {
       const dataUrl = await compressImageToBase64(file);
-      const updatedHero = { ...hero, imageUrl: dataUrl };
-      setHero(updatedHero);
-      updateHeroMutation.mutate(updatedHero);
+      setHero(prev => ({ ...prev, imageUrl: dataUrl }));
+      const ok = await saveHeroImage(dataUrl);
+      if (ok) {
+        toast.success("Imagem salva com sucesso!");
+        heroQuery.refetch();
+      } else {
+        toast.error("Erro ao salvar imagem. Tente fazer logout e login novamente.");
+      }
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
+    } finally {
       setUploading(false);
     }
   };

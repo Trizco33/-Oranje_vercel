@@ -865,6 +865,73 @@ self.addEventListener('fetch', (event) => {
     }
   });
   
+  // ─── CMS direct REST endpoints (work with cms_session cookie at any path) ───
+  const parseCmsSession = (req: any): { userId: number } | null => {
+    try {
+      const cookieHeader = req.headers.cookie || "";
+      const match = cookieHeader.match(/cms_session=([^;]+)/);
+      if (match) {
+        const session = JSON.parse(decodeURIComponent(match[1]));
+        if (session?.success && session?.user?.role === "admin" && session?.user?.id) {
+          return { userId: Number(session.user.id) };
+        }
+      }
+    } catch {}
+    // Also check x-cms-token header
+    try {
+      const tokenHeader = req.headers["x-cms-token"];
+      if (tokenHeader) {
+        const session = JSON.parse(String(tokenHeader));
+        if (session?.success && session?.user?.role === "admin" && session?.user?.id) {
+          return { userId: Number(session.user.id) };
+        }
+      }
+    } catch {}
+    return null;
+  };
+
+  app.post("/api/cms/hero-image", async (req, res) => {
+    try {
+      const admin = parseCmsSession(req);
+      if (!admin) return res.status(403).json({ error: "Forbidden" });
+      const { imageUrl } = req.body;
+      if (typeof imageUrl !== "string") return res.status(400).json({ error: "imageUrl required" });
+      const mysql2 = await import("mysql2/promise");
+      const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+      await conn.execute(
+        "INSERT INTO site_content (`key`, value, section, updatedBy) VALUES ('hero_imageUrl', ?, 'hero', ?) ON DUPLICATE KEY UPDATE value=VALUES(value), updatedBy=VALUES(updatedBy)",
+        [imageUrl, admin.userId]
+      );
+      await conn.end();
+      console.log(`[CMS] hero_imageUrl saved (${imageUrl.length} chars) by userId=${admin.userId}`);
+      return res.json({ success: true });
+    } catch (error: any) {
+      console.error("[CMS] hero-image save error:", error.message);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/cms/app-hero-image", async (req, res) => {
+    try {
+      const admin = parseCmsSession(req);
+      if (!admin) return res.status(403).json({ error: "Forbidden" });
+      const { imageUrl } = req.body;
+      if (typeof imageUrl !== "string") return res.status(400).json({ error: "imageUrl required" });
+      const mysql2 = await import("mysql2/promise");
+      const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+      await conn.execute(
+        "INSERT INTO site_content (`key`, value, section, updatedBy) VALUES ('app_hero_imageUrl', ?, 'app_hero', ?) ON DUPLICATE KEY UPDATE value=VALUES(value), updatedBy=VALUES(updatedBy)",
+        [imageUrl, admin.userId]
+      );
+      await conn.end();
+      console.log(`[CMS] app_hero_imageUrl saved (${imageUrl.length} chars) by userId=${admin.userId}`);
+      return res.json({ success: true });
+    } catch (error: any) {
+      console.error("[CMS] app-hero-image save error:", error.message);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

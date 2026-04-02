@@ -8,7 +8,9 @@ export default function CMSPushPanel() {
   const [body, setBody] = useState("");
   const [url, setUrl] = useState("/app");
 
-  const { data: countData } = trpc.push.subscriberCount.useQuery();
+  const { data: countData, isLoading: countLoading, error: countError } = trpc.push.subscriberCount.useQuery(
+    undefined, { retry: 1, retryDelay: 2000 }
+  );
   const sendMutation = trpc.push.sendAll.useMutation({
     onSuccess: (result) => {
       toast.success(`Enviado para ${result.sent} dispositivos${result.staleRemoved > 0 ? ` (${result.staleRemoved} inválidos removidos)` : ""}`);
@@ -69,9 +71,12 @@ export default function CMSPushPanel() {
       }}>
         <Users size={16} style={{ color: "rgba(0,37,26,0.45)" }} />
         <span style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.7)" }}>
-          {countData !== undefined
-            ? <><strong style={{ color: "#00251A" }}>{countData.count}</strong> dispositivo{countData.count !== 1 ? "s" : ""} inscrito{countData.count !== 1 ? "s" : ""}</>
-            : "Carregando..."}
+          {countLoading
+            ? "Carregando..."
+            : countError || countData === undefined
+              ? <span style={{ color: "rgba(0,37,26,0.4)" }}>—</span>
+              : <><strong style={{ color: "#00251A" }}>{countData.count}</strong> dispositivo{countData.count !== 1 ? "s" : ""} inscrito{countData.count !== 1 ? "s" : ""}</>
+          }
         </span>
       </div>
 

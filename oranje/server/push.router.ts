@@ -40,7 +40,7 @@ export const pushRouter = router({
     return { publicKey: VAPID_PUBLIC_KEY || "" };
   }),
 
-  subscribe: protectedProcedure
+  subscribe: publicProcedure
     .input(z.object({
       endpoint: z.string(),
       p256dh: z.string(),
@@ -58,7 +58,7 @@ export const pushRouter = router({
 
       if (existing.length === 0) {
         await db.insert(pushSubscriptions).values({
-          userId: ctx.userId ?? null,
+          userId: ctx.user?.id ?? null,
           endpoint: input.endpoint,
           p256dh: input.p256dh,
           auth: input.auth,
@@ -68,7 +68,7 @@ export const pushRouter = router({
       return { success: true };
     }),
 
-  unsubscribe: protectedProcedure
+  unsubscribe: publicProcedure
     .input(z.object({ endpoint: z.string() }))
     .mutation(async ({ input }) => {
       const db = await getDb();

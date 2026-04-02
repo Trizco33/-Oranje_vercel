@@ -77,16 +77,25 @@ export function usePushNotifications() {
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicKey),
       });
+
+      // Browser subscription created — mark as subscribed immediately
+      setState("subscribed");
+
+      // Save to server (best-effort)
       const json = sub.toJSON();
-      await subscribeMutation.mutateAsync({
+      subscribeMutation.mutate({
         endpoint: sub.endpoint,
         p256dh: (json.keys as any)?.p256dh ?? "",
         auth: (json.keys as any)?.auth ?? "",
       });
-      setState("subscribed");
-    } catch (err) {
+    } catch (err: any) {
       console.error("[push] subscribe error:", err);
-      setState("unsubscribed");
+      // If permission was denied during the flow
+      if (Notification.permission === "denied") {
+        setState("denied");
+      } else {
+        setState("unsubscribed");
+      }
     }
   }, [vapidData, subscribeMutation]);
 

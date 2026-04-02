@@ -19,7 +19,7 @@ export default function Notifications() {
   if (!user) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
-        <OranjeHeader title="Notificações" showBack onBack={() => navigate("/")} />
+        <OranjeHeader title="Notificações" showBack onBack={() => navigate("/app")} />
         <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
           <Bell size={40} style={{ color: "var(--ds-color-accent)" }} className="mb-4" />
           <p className="text-sm" style={{ color: "var(--ds-color-text-secondary)" }}>Faça login para ver suas notificações.</p>
@@ -31,7 +31,7 @@ export default function Notifications() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
-      <OranjeHeader title="Notificações" showBack onBack={() => navigate("/")} />
+      <OranjeHeader title="Notificações" showBack onBack={() => navigate("/app")} />
 
       <div className="px-4 pt-4">
 

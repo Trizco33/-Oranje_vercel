@@ -1,6 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useArticleBySlug } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
+import { useEffect } from "react";
 import { ArrowLeft, Calendar, Share2 } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
 import { DSBadge } from "@/components/ds/Badge";
@@ -10,6 +11,72 @@ export default function SiteBlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { data: article, isLoading } = useArticleBySlug(slug || "");
+
+  useEffect(() => {
+    if (!article) return;
+
+    const siteName = "ORANJE — Guia Cultural de Holambra";
+    const postUrl = `${window.location.origin}/blog/${article.slug}`;
+    const description = (article as any).seoDescription || (article as any).excerpt || (article as any).description || "";
+
+    document.title = `${article.title} — ${siteName}`;
+
+    const setMeta = (property: string, content: string) => {
+      let tag = document.querySelector(`meta[property="${property}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("property", property);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    };
+
+    setMeta("og:title", article.title);
+    setMeta("og:description", description);
+    setMeta("og:type", "article");
+    setMeta("og:url", postUrl);
+    setMeta("og:site_name", siteName);
+    const cover = (article as any).coverImageUrl || (article as any).coverImage || "";
+    if (cover) setMeta("og:image", cover);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", postUrl);
+
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: article.title,
+      description,
+      url: postUrl,
+      ...(cover ? { image: cover } : {}),
+      ...((article as any).publishedAt ? { datePublished: (article as any).publishedAt } : {}),
+      ...((article as any).updatedAt ? { dateModified: (article as any).updatedAt } : {}),
+      author: { "@type": "Organization", name: "ORANJE" },
+      publisher: {
+        "@type": "Organization",
+        name: "ORANJE",
+        url: window.location.origin,
+      },
+    };
+
+    let schemaTag = document.querySelector('script[data-oranje="article"]');
+    if (!schemaTag) {
+      schemaTag = document.createElement("script");
+      schemaTag.setAttribute("type", "application/ld+json");
+      schemaTag.setAttribute("data-oranje", "article");
+      document.head.appendChild(schemaTag);
+    }
+    schemaTag.textContent = JSON.stringify(schema);
+
+    return () => {
+      document.title = siteName;
+    };
+  }, [article]);
 
   if (isLoading) {
     return (

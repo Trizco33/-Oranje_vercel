@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
@@ -213,6 +213,102 @@ export default function PlaceDetail() {
       navigator.clipboard.writeText(shareUrl);
     }
   }
+
+  useEffect(() => {
+    if (!place) return;
+
+    const siteName = "ORANJE — Guia Cultural de Holambra";
+    const placeUrl = `${window.location.origin}/app/lugar/${place.id}`;
+    const description = place.shortDesc || place.longDesc || `Conheça ${place.name} em Holambra, SP.`;
+    const image = place.coverImage || (Array.isArray(place.images) ? place.images[0] : "") || "";
+
+    document.title = `${place.name} — ${siteName}`;
+
+    const setMeta = (property: string, content: string, attr = "property") => {
+      let tag = document.querySelector(`meta[${attr}="${property}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute(attr, property);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    };
+
+    setMeta("og:title", place.name);
+    setMeta("og:description", description);
+    setMeta("og:type", "place");
+    setMeta("og:url", placeUrl);
+    setMeta("og:site_name", siteName);
+    if (image) setMeta("og:image", image);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", placeUrl);
+
+    const SCHEMA_TYPE: Record<number, string> = {
+      1: "Restaurant",
+      2: "CafeOrCoffeeShop",
+      3: "BarOrPub",
+      4: "TouristAttraction",
+      5: "LodgingBusiness",
+      6: "Store",
+      13: "Restaurant",
+      14: "BarOrPub",
+      15: "Hotel",
+      16: "Park",
+      17: "Bakery",
+    };
+    const schemaType = SCHEMA_TYPE[place.categoryId] || "LocalBusiness";
+
+    const schema: Record<string, unknown> = {
+      "@context": "https://schema.org",
+      "@type": schemaType,
+      name: place.name,
+      description,
+      url: placeUrl,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: place.address || "",
+        addressLocality: place.city || "Holambra",
+        addressRegion: place.state || "SP",
+        addressCountry: "BR",
+      },
+    };
+    if (place.lat && place.lng) {
+      schema.geo = { "@type": "GeoCoordinates", latitude: place.lat, longitude: place.lng };
+    }
+    if (place.phone || place.whatsapp) {
+      schema.telephone = place.phone || place.whatsapp;
+    }
+    if (place.website) schema.url = place.website;
+    if (image) schema.image = image;
+    if (place.rating && place.reviewCount) {
+      schema.aggregateRating = {
+        "@type": "AggregateRating",
+        ratingValue: place.rating,
+        reviewCount: place.reviewCount,
+        bestRating: 5,
+        worstRating: 1,
+      };
+    }
+
+    let schemaTag = document.querySelector('script[data-oranje="place"]');
+    if (!schemaTag) {
+      schemaTag = document.createElement("script");
+      schemaTag.setAttribute("type", "application/ld+json");
+      schemaTag.setAttribute("data-oranje", "place");
+      document.head.appendChild(schemaTag);
+    }
+    schemaTag.textContent = JSON.stringify(schema);
+
+    return () => {
+      document.title = siteName;
+    };
+  }, [place]);
 
   function handleReviewSubmit(rating: number, comment: string) {
     if (!user) { window.open(getLoginUrl(), '_blank'); return; }

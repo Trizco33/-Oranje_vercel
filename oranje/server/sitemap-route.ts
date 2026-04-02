@@ -3,9 +3,18 @@ import { generateSitemap } from "./sitemap";
 
 export const sitemapRouter = Router();
 
+function getBaseUrl(req: import("express").Request): string {
+  // Respect explicit override (set on Railway to "https://oranjeapp.com.br")
+  if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, "");
+  // Vercel forwards the original host via x-forwarded-host
+  const fwdHost = req.get("x-forwarded-host");
+  if (fwdHost) return `${req.protocol}://${fwdHost}`;
+  return `${req.protocol}://${req.get("host")}`;
+}
+
 sitemapRouter.get("/sitemap.xml", async (req, res) => {
   try {
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const baseUrl = getBaseUrl(req);
     const xml = await generateSitemap(baseUrl);
     res.type("application/xml").send(xml);
   } catch (error) {
@@ -15,7 +24,7 @@ sitemapRouter.get("/sitemap.xml", async (req, res) => {
 });
 
 sitemapRouter.get("/robots.txt", (req, res) => {
-  const baseUrl = `${req.protocol}://${req.get("host")}`;
+  const baseUrl = getBaseUrl(req);
   const robotsTxt = `User-agent: *
 Allow: /
 

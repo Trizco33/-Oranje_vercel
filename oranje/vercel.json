@@ -11,6 +11,14 @@
       "destination": "https://oranjevercel-production.up.railway.app/api/$1"
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "https://oranjevercel-production.up.railway.app/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "https://oranjevercel-production.up.railway.app/robots.txt"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

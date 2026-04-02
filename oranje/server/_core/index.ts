@@ -9,6 +9,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite, setupSPAFallback } from "./vite";
 import { seedDatabase } from "../seed";
 import { seedHolambra } from "../seed-holambra";
+import { sitemapRouter } from "../sitemap-route";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -941,6 +942,9 @@ self.addEventListener('fetch', (event) => {
       return res.status(500).json({ error: error.message });
     }
   });
+
+  // Sitemap + robots.txt (dynamic, reads from DB)
+  app.use(sitemapRouter);
 
   // tRPC API
   app.use(

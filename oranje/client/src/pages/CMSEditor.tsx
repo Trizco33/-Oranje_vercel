@@ -266,18 +266,18 @@ export default function CMSEditor() {
     });
   };
 
-  const saveImageViaRest = async (endpoint: string, imageUrl: string, onSuccess: () => void) => {
+  const saveImageViaRest = async (field: "hero" | "app_hero", imageUrl: string, onSuccess: () => void) => {
     const apiBase = (import.meta.env.VITE_API_URL as string) || "";
     const stored = localStorage.getItem("cms_token") || "";
     try {
-      const res = await fetch(`${apiBase}${endpoint}`, {
+      const res = await fetch(`${apiBase}/api/cms/save-hero`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           ...(stored ? { "x-cms-token": stored } : {}),
         },
         credentials: "include",
-        body: JSON.stringify({ imageUrl }),
+        body: JSON.stringify({ imageUrl, field }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
@@ -298,7 +298,7 @@ export default function CMSEditor() {
     try {
       const dataUrl = await compressImageToBase64(file);
       setAppHeroImage(dataUrl);
-      await saveImageViaRest("/api/cms/app-hero-image", dataUrl, () => {
+      await saveImageViaRest("app_hero", dataUrl, () => {
         toast.success("Imagem do App salva com sucesso!");
         appHeroQuery.refetch();
       });
@@ -316,7 +316,7 @@ export default function CMSEditor() {
     try {
       const dataUrl = await compressImageToBase64(file);
       setHero(prev => ({ ...prev, imageUrl: dataUrl }));
-      await saveImageViaRest("/api/cms/hero-image", dataUrl, () => {
+      await saveImageViaRest("hero", dataUrl, () => {
         toast.success("Imagem salva com sucesso!");
         heroQuery.refetch();
       });
@@ -432,7 +432,7 @@ export default function CMSEditor() {
                         onClick={async () => {
                           setHero(prev => ({ ...prev, imageUrl: "" }));
                           setUploading(true);
-                          await saveImageViaRest("/api/cms/hero-image", "", () => {
+                          await saveImageViaRest("hero", "", () => {
                             toast.success("Foto removida.");
                             heroQuery.refetch();
                           });
@@ -507,7 +507,7 @@ export default function CMSEditor() {
                     onClick={async () => {
                       setAppHeroImage("");
                       setAppHeroUploading(true);
-                      await saveImageViaRest("/api/cms/app-hero-image", "", () => {
+                      await saveImageViaRest("app_hero", "", () => {
                         toast.success("Foto do App removida.");
                         appHeroQuery.refetch();
                       });

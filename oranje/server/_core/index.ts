@@ -877,7 +877,6 @@ self.addEventListener('fetch', (event) => {
         }
       }
     } catch {}
-    // Also check x-cms-token header
     try {
       const tokenHeader = req.headers["x-cms-token"];
       if (tokenHeader) {
@@ -890,23 +889,35 @@ self.addEventListener('fetch', (event) => {
     return null;
   };
 
+  // Shared Drizzle pool for REST endpoints — uses same pattern as content.router.ts
+  let _restDb: any = null;
+  const getRestDb = async () => {
+    if (!_restDb) {
+      const { ENV } = await import("./env");
+      if (!ENV.databaseUrl) return null;
+      const { drizzle } = await import("drizzle-orm/mysql2");
+      const mysql = await import("mysql2/promise");
+      _restDb = drizzle(mysql.createPool(ENV.databaseUrl) as any);
+    }
+    return _restDb;
+  };
+
   app.post("/api/cms/hero-image", async (req, res) => {
     try {
       const admin = parseCmsSession(req);
       if (!admin) return res.status(403).json({ error: "Forbidden" });
       const { imageUrl } = req.body;
       if (typeof imageUrl !== "string") return res.status(400).json({ error: "imageUrl required" });
-      const mysql2 = await import("mysql2/promise");
-      const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-      await conn.execute(
-        "INSERT INTO site_content (`key`, value, section, updatedBy) VALUES ('hero_imageUrl', ?, 'hero', ?) ON DUPLICATE KEY UPDATE value=VALUES(value), updatedBy=VALUES(updatedBy)",
-        [imageUrl, admin.userId]
-      );
-      await conn.end();
-      console.log(`[CMS] hero_imageUrl saved (${imageUrl.length} chars) by userId=${admin.userId}`);
+      const db = await getRestDb();
+      if (!db) return res.status(500).json({ error: "Database not available" });
+      const { siteContent } = await import("../../drizzle/schema");
+      await db.insert(siteContent).values({
+        key: "hero_imageUrl", value: imageUrl, section: "hero", updatedBy: admin.userId,
+      }).onDuplicateKeyUpdate({ set: { value: imageUrl, updatedBy: admin.userId } });
+      console.log(`[CMS REST] hero_imageUrl saved (${imageUrl.length} chars) by userId=${admin.userId}`);
       return res.json({ success: true });
     } catch (error: any) {
-      console.error("[CMS] hero-image save error:", error.message);
+      console.error("[CMS REST] hero-image save error:", error.message);
       return res.status(500).json({ error: error.message });
     }
   });
@@ -917,17 +928,16 @@ self.addEventListener('fetch', (event) => {
       if (!admin) return res.status(403).json({ error: "Forbidden" });
       const { imageUrl } = req.body;
       if (typeof imageUrl !== "string") return res.status(400).json({ error: "imageUrl required" });
-      const mysql2 = await import("mysql2/promise");
-      const conn = await mysql2.createConnection(process.env.DATABASE_URL!);
-      await conn.execute(
-        "INSERT INTO site_content (`key`, value, section, updatedBy) VALUES ('app_hero_imageUrl', ?, 'app_hero', ?) ON DUPLICATE KEY UPDATE value=VALUES(value), updatedBy=VALUES(updatedBy)",
-        [imageUrl, admin.userId]
-      );
-      await conn.end();
-      console.log(`[CMS] app_hero_imageUrl saved (${imageUrl.length} chars) by userId=${admin.userId}`);
+      const db = await getRestDb();
+      if (!db) return res.status(500).json({ error: "Database not available" });
+      const { siteContent } = await import("../../drizzle/schema");
+      await db.insert(siteContent).values({
+        key: "app_hero_imageUrl", value: imageUrl, section: "app_hero", updatedBy: admin.userId,
+      }).onDuplicateKeyUpdate({ set: { value: imageUrl, updatedBy: admin.userId } });
+      console.log(`[CMS REST] app_hero_imageUrl saved (${imageUrl.length} chars) by userId=${admin.userId}`);
       return res.json({ success: true });
     } catch (error: any) {
-      console.error("[CMS] app-hero-image save error:", error.message);
+      console.error("[CMS REST] app-hero-image save error:", error.message);
       return res.status(500).json({ error: error.message });
     }
   });

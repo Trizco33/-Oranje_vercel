@@ -112,7 +112,7 @@ export default function CMSEditor() {
 
   const updateHeroMutation = trpc.content.updateHero.useMutation({
     onSuccess: () => {
-      toast.success("Imagem salva com sucesso!");
+      toast.success("Hero salvo com sucesso!");
       setUploading(false);
       heroQuery.refetch();
     },
@@ -266,34 +266,6 @@ export default function CMSEditor() {
     });
   };
 
-  const saveHeroImage = async (dataUrl: string): Promise<boolean> => {
-    const apiBase = import.meta.env.VITE_API_URL || "";
-    const cmsToken = (() => { try { return localStorage.getItem("cms_token") ?? undefined; } catch { return undefined; } })();
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (cmsToken) headers["x-cms-token"] = cmsToken;
-    const res = await fetch(`${apiBase}/api/cms/hero-image`, {
-      method: "POST",
-      credentials: "include",
-      headers,
-      body: JSON.stringify({ imageUrl: dataUrl }),
-    });
-    return res.ok;
-  };
-
-  const saveAppHeroImage = async (dataUrl: string): Promise<boolean> => {
-    const apiBase = import.meta.env.VITE_API_URL || "";
-    const cmsToken = (() => { try { return localStorage.getItem("cms_token") ?? undefined; } catch { return undefined; } })();
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (cmsToken) headers["x-cms-token"] = cmsToken;
-    const res = await fetch(`${apiBase}/api/cms/app-hero-image`, {
-      method: "POST",
-      credentials: "include",
-      headers,
-      body: JSON.stringify({ imageUrl: dataUrl }),
-    });
-    return res.ok;
-  };
-
   const handleAppHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -302,16 +274,9 @@ export default function CMSEditor() {
     try {
       const dataUrl = await compressImageToBase64(file);
       setAppHeroImage(dataUrl);
-      const ok = await saveAppHeroImage(dataUrl);
-      if (ok) {
-        toast.success("Imagem do App salva com sucesso!");
-        appHeroQuery.refetch();
-      } else {
-        toast.error("Erro ao salvar imagem do App. Tente fazer logout e login novamente.");
-      }
+      updateAppHeroMutation.mutate({ imageUrl: dataUrl });
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
-    } finally {
       setAppHeroUploading(false);
     }
   };
@@ -319,21 +284,19 @@ export default function CMSEditor() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!hero.title || !hero.buttonText || !hero.buttonUrl) {
+      toast.error("Aguarde a página carregar completamente antes de enviar a imagem.");
+      return;
+    }
     setUploading(true);
     e.target.value = "";
     try {
       const dataUrl = await compressImageToBase64(file);
-      setHero(prev => ({ ...prev, imageUrl: dataUrl }));
-      const ok = await saveHeroImage(dataUrl);
-      if (ok) {
-        toast.success("Imagem salva com sucesso!");
-        heroQuery.refetch();
-      } else {
-        toast.error("Erro ao salvar imagem. Tente fazer logout e login novamente.");
-      }
+      const newHero = { ...hero, imageUrl: dataUrl };
+      setHero(newHero);
+      updateHeroMutation.mutate(newHero);
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
-    } finally {
       setUploading(false);
     }
   };

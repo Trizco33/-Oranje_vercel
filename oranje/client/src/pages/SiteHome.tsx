@@ -176,41 +176,39 @@ export default function SiteHome() {
           backgroundColor: "#00251A",
         }}
       >
-        {/* Background Image — Ken Burns slow pan/zoom */}
-        <img
-          src="/brand/moinho-povos-unidos.jpg"
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center",
-            animation: "hero-ken-burns 24s ease-in-out infinite alternate",
-            transformOrigin: "center center",
-          }}
-        />
-        {/* Background Image — CMS override */}
-        {heroData?.imageUrl && (/^https?:\/\//.test(heroData.imageUrl) || heroData.imageUrl.startsWith("data:image/")) && (
-          <img
-            src={heroData.imageUrl}
-            alt=""
-            aria-hidden="true"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "center",
-              animation: "hero-ken-burns 24s ease-in-out infinite alternate",
-              transformOrigin: "center center",
-            }}
-          />
-        )}
+        {/* Background Image — single source of truth: CMS → fallback moinho */}
+        {(() => {
+          const raw = heroData?.imageUrl ?? "";
+          const src =
+            raw.startsWith("data:image/") || /^https?:\/\//.test(raw) || raw.startsWith("/")
+              ? raw
+              : "/brand/moinho-povos-unidos.jpg";
+          // eslint-disable-next-line no-console
+          console.log("[SiteHero] imageUrl do CMS:", raw || "(vazio)", "| url final:", src);
+          return (
+            <img
+              src={src}
+              alt=""
+              aria-hidden="true"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                if (img.src !== window.location.origin + "/brand/moinho-povos-unidos.jpg") {
+                  img.src = "/brand/moinho-povos-unidos.jpg";
+                }
+              }}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+                animation: "hero-ken-burns 24s ease-in-out infinite alternate",
+                transformOrigin: "center center",
+              }}
+            />
+          );
+        })()}
         {/* Gradient overlay — legibilidade */}
         <div
           style={{

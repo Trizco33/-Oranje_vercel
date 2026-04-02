@@ -51,8 +51,13 @@ export default function Home() {
 
   const heroImageUrl = (() => {
     const url = appHeroData?.imageUrl ?? "";
-    if (url.startsWith("data:image/") || /^https?:\/\//.test(url)) return url;
-    return "/brand/moinho-povos-unidos.jpg";
+    const resolved =
+      url.startsWith("data:image/") || /^https?:\/\//.test(url) || url.startsWith("/")
+        ? url
+        : "/brand/moinho-povos-unidos.jpg";
+    // eslint-disable-next-line no-console
+    console.log("[AppHero] imageUrl do CMS:", url || "(vazio)", "| url final:", resolved);
+    return resolved;
   })();
 
   function handleToggleFavorite(placeId: number) {

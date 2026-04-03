@@ -80,11 +80,18 @@ oranje/
 | `/admin` | CMS/Admin (requer login) |
 | `/api/trpc/*` | API tRPC |
 
-### Problemas Conhecidos (aguardando Tarefas #2 e #3)
+### DB: Routes / Roteiros
+
+- Tabela `routes` tem: id, userId, title, description, placeIds (json), **highlights** (json string[]), **placeNotes** (json Record<string,string>), duration, theme, isPublic, coverImage
+- 8 roteiros curados seeded (ids 1–8), todos com placeIds reais, highlights e placeNotes editoriais
+- Script de seed: `oranje/scripts/seed-routes.ts` (rodar com `npx tsx scripts/seed-routes.ts`)
+- tRPC: `routes.adminCreate`, `routes.adminUpdate`, `routes.adminDelete` aceitam todos os campos
+
+### Problemas Conhecidos
 
 1. **Hero do CMS** — validação muito rígida (`subtitle` obrigatório, `buttonUrl`/`imageUrl` exigem URL absoluta)
-2. **Mock data** — páginas de Explorar, Categorias, PlaceDetail usam `useMockData.ts` em vez de tRPC real
-3. **Sem banco MySQL** — todas as features dinâmicas retornam vazio sem DATABASE_URL MySQL
+2. **Mock data** — algumas páginas ainda usam `useMockData.ts` para dados secundários
+3. **Sem banco MySQL local** — DATABASE_URL precisa ser MySQL de produção (Railway)
 
 ---
 

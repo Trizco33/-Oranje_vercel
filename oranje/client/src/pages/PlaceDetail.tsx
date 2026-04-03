@@ -747,7 +747,7 @@ export default function PlaceDetail() {
   const instagramUrl = place.instagram
     ? `https://instagram.com/${place.instagram.replace("@", "")}`
     : null;
-  const hasContact = !!(phoneUrl || whatsappUrl || instagramUrl || place.website);
+  const hasContact = !!(phoneUrl || whatsappUrl);
   const hasHours = !!place.openingHours;
 
   /* ── RENDER ── */

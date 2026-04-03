@@ -44,14 +44,14 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   {
     name: "Casa Bela Restaurante",
     _categorySlug: "restaurantes",
-    shortDesc: "Culinária variada em ambiente familiar no centro de Holambra",
-    longDesc: "Restaurante tradicional de Holambra com cardápio variado, servindo pratos executivos e à la carte. Ambiente acolhedor e familiar, frequentado por moradores e turistas.",
-    address: "Centro, Holambra – SP", lat: -22.6391, lng: -47.0614,
+    shortDesc: "Restaurante familiar com cardápio farto e atendimento acolhedor — almoço sólido sem complicação",
+    longDesc: null,
+    address: "Rua Dória Vasconcelos, 81, Holambra, SP, 13825-065", lat: -22.6391, lng: -47.0614,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
-    tags: ["almoço", "família", "executivo"], status: "active",
-    dataPending: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["almoco", "familia", "casual", "tradicional", "central"], status: "active",
+    dataPending: false,
   },
 
   {
@@ -400,14 +400,14 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   {
     name: "Tulipa's Lounge",
     _categorySlug: "bares",
-    shortDesc: "Bar lounge sofisticado com coquetéis e música ao vivo",
-    longDesc: "Bar lounge com ambiente sofisticado, coquetéis autorais, carta de vinhos e eventos com música ao vivo. Ponto de encontro noturno em Holambra, ideal para ocasiões especiais.",
-    address: "Centro, Holambra – SP", lat: -22.6375, lng: -47.0622,
+    shortDesc: "Lounge sofisticado no Food Garden — drinks autorais, atmosfera noturna e o melhor da cidade depois do jantar",
+    longDesc: null,
+    address: "R. Campo do Pouso, 1162 – Centro, Holambra, SP, 13825-000", lat: -22.6375, lng: -47.0622,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$$", isFree: false,
-    isRecommended: false, isFeatured: false, isPartner: false,
-    tags: ["lounge", "coquetéis", "vinhos", "música ao vivo", "noturno"], status: "active",
-    dataPending: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["lounge", "noite", "romantico", "casal", "premium", "drinks", "bar"], status: "active",
+    dataPending: false,
   },
 
   // ─── Lugares com dados históricos (não estavam no seed original) ──────────
@@ -439,15 +439,15 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   {
     name: "Martin Holandesa Confeitaria e Restaurante",
     _categorySlug: "restaurantes",
-    shortDesc: "Confeitaria e restaurante holandês — uma das casas mais tradicionais de Holambra.",
+    shortDesc: "Confeitaria histórica do Boulevard Holandês — stroopwafels, pães artesanais e sabores da imigração holandesa",
     longDesc: null,
     coverImage: "https://martinholandesa.com.br/content/foto4.jpeg",
-    address: "Holambra – SP", lat: -22.6395, lng: -47.0608,
+    address: "Rua Doria Vasconcelos, 144, Boulevard Holandês, Holambra, SP", lat: -22.6395, lng: -47.0608,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: false, isFeatured: false, isPartner: false,
-    tags: ["tipico_holandes", "tradicional", "confeitaria", "restaurante", "familia"], status: "active",
-    dataPending: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["tipico_holandes", "tradicional", "cafe_da_manha", "almoco", "familia", "historico", "classico", "primeira_visita"], status: "active",
+    dataPending: false,
   },
 
   {
@@ -467,15 +467,15 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   {
     name: "Pousada Rancho da Cachaça",
     _categorySlug: "hoteis",
-    shortDesc: "Pousada rural com charme e cachaça artesanal, às margens de Holambra.",
+    shortDesc: "Pousada rural com cachaças artesanais, trilhas e café da manhã da roça — descanso real longe do centro",
     longDesc: null,
     coverImage: "https://ranchodacachaca.com.br/wp-content/uploads/2022/02/pousada-rancho-da-cachaca.jpg",
     address: "Holambra – SP", lat: -22.6500, lng: -47.0500,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: false, isFeatured: false, isPartner: false,
-    tags: ["rural", "pousada", "cachaça", "artesanal", "natureza", "casal"], status: "active",
-    dataPending: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["rural", "romantico", "natureza", "casal", "pousada", "turismo_rural"], status: "active",
+    dataPending: false,
   },
 ];
 

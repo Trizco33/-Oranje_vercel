@@ -7,6 +7,17 @@ import { eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
 import { AuthService } from "./authService";
 
+/* Basic HTML sanitizer — strips script blocks, on* handlers and javascript: hrefs */
+function sanitizeHtml(raw: string): string {
+  return raw
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<\s*script[^>]*>/gi, "")
+    .replace(/\son\w+\s*=\s*["'][^"']*["']/gi, "")
+    .replace(/\son\w+\s*=\s*[^\s>]*/gi, "")
+    .replace(/href\s*=\s*["']\s*javascript:[^"']*/gi, 'href="#"')
+    .replace(/src\s*=\s*["']\s*javascript:[^"']*/gi, 'src=""');
+}
+
 let pool: ReturnType<typeof mysql.createPool> | null = null;
 let db: any = null;
 
@@ -107,17 +118,19 @@ export const cmsRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       if (!db) throw new Error("Database not available");
+      const safeContent = sanitizeHtml(input.content);
+      const safeInput = { ...input, content: safeContent };
       if (input.id) {
         await db
           .update(sitePages)
           .set({
-            ...input,
+            ...safeInput,
             updatedBy: ctx.user.id,
           })
           .where(eq(sitePages.id, input.id));
       } else {
         await db.insert(sitePages).values({
-          ...input,
+          ...safeInput,
           createdBy: ctx.user.id,
           updatedBy: ctx.user.id,
           publishedAt: input.published ? new Date() : null,

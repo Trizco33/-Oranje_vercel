@@ -1,8 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass, Phone } from "lucide-react";
+import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass, Phone, Utensils, Coffee, Beer, Camera, PartyPopper, Route } from "lucide-react";
 import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
+
+const DESCUBRA_ITEMS = [
+  { label: "Restaurantes", href: "/melhores-restaurantes-de-holambra", icon: Utensils },
+  { label: "Cafés", href: "/melhores-cafes-de-holambra", icon: Coffee },
+  { label: "Bares & Drinks", href: "/bares-e-drinks-em-holambra", icon: Beer },
+  { label: "Pontos Turísticos", href: "/onde-tirar-fotos-em-holambra", icon: Camera },
+  { label: "Eventos", href: "/eventos-em-holambra", icon: PartyPopper },
+  { label: "Roteiro de 1 Dia", href: "/roteiro-1-dia-em-holambra", icon: Route },
+];
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Compass, MapPin, Calendar, BookOpen, Users, MessageCircle, Phone,
@@ -322,6 +331,49 @@ export default function SiteHeader() {
                   <Icon size={18} style={{ color: active ? "#E65100" : "rgba(255,255,255,0.35)", flexShrink: 0 }} />
                   <span style={{ flex: 1 }}>{item.label}</span>
                   {active && <ArrowRight size={14} style={{ color: "#E65100", opacity: 0.7 }} />}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Descubra Holambra */}
+          <div style={{ padding: "0 1rem 0.5rem", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: "0.5rem" }}>
+            <p style={{
+              fontSize: "0.6875rem",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color: "rgba(255,255,255,0.35)",
+              padding: "1rem 1rem 0.5rem",
+            }}>
+              Descubra Holambra
+            </p>
+            {DESCUBRA_ITEMS.map((item) => {
+              const active = isActive(item.href);
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={closeMenu}
+                  aria-current={active ? "page" : undefined}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                    padding: "0.625rem 1rem",
+                    marginBottom: "1px",
+                    borderRadius: "10px",
+                    textDecoration: "none",
+                    fontWeight: active ? 600 : 400,
+                    fontSize: "0.875rem",
+                    color: active ? "#FFFFFF" : "rgba(255,255,255,0.6)",
+                    background: active ? "rgba(255,255,255,0.08)" : "transparent",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  <Icon size={15} style={{ color: active ? "#E65100" : "rgba(255,255,255,0.3)", flexShrink: 0 }} />
+                  <span style={{ flex: 1 }}>{item.label}</span>
                 </Link>
               );
             })}

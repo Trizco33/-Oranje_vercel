@@ -108,10 +108,54 @@ export default function CMSPages({ onNavigate }: CMSPagesProps = {}) {
         )}
       </div>
 
+      {/* Category pages — editable via this module */}
+      <Card className="border-orange-100 bg-orange-50/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-[#004D40]">📄 Páginas Editoriais de Categoria</CardTitle>
+          <CardDescription>
+            Estas 5 páginas estão totalmente integradas ao CMS. Clique em "Editar" na lista abaixo para modificar título, subtítulo, conteúdo, imagem de capa e SEO. As rotas (URLs) são fixas para preservar o SEO.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {[
+              { route: "/melhores-restaurantes-de-holambra", label: "Melhores Restaurantes em Holambra" },
+              { route: "/melhores-cafes-de-holambra", label: "Melhores Cafés em Holambra" },
+              { route: "/bares-e-drinks-em-holambra", label: "Bares & Drinks em Holambra" },
+              { route: "/onde-tirar-fotos-em-holambra", label: "Pontos Turísticos de Holambra" },
+              { route: "/eventos-em-holambra", label: "Eventos em Holambra" },
+            ].map((page) => (
+              <div
+                key={page.route}
+                className="flex items-center justify-between p-3 rounded-lg border border-orange-100 bg-white/50"
+              >
+                <div>
+                  <p className="font-medium text-sm text-[#004D40]">{page.label}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    <span className="font-mono bg-gray-100 px-1 rounded">{page.route}</span>
+                  </p>
+                </div>
+                <a
+                  href={page.route}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-4 shrink-0 text-xs text-[#E65100] hover:underline"
+                >
+                  Ver página →
+                </a>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 mt-3">
+            💡 Para editar o conteúdo de uma página, localize-a na lista "Páginas Existentes" abaixo e clique em "Editar".
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Main public pages — managed by section editors, not this table */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base text-[#004D40]">Páginas Principais do Site</CardTitle>
+          <CardTitle className="text-base text-[#004D40]">Outras Páginas do Site</CardTitle>
           <CardDescription>
             Estas páginas são gerenciadas pelos editores de seção do CMS — não pelo módulo de páginas personalizadas.
           </CardDescription>
@@ -358,6 +402,11 @@ export default function CMSPages({ onNavigate }: CMSPagesProps = {}) {
                 <li>Rodapé — email, telefone, endereço, Instagram</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/blog/:slug</span> — Posts do blog (aba Blog)</li>
                 <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/pagina/:slug</span> — Páginas personalizadas (esta aba)</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/melhores-restaurantes-de-holambra</span> — Restaurantes</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/melhores-cafes-de-holambra</span> — Cafés</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/bares-e-drinks-em-holambra</span> — Bares</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/onde-tirar-fotos-em-holambra</span> — Pontos Turísticos</li>
+                <li><span className="font-mono text-xs bg-gray-100 px-1 rounded">/eventos-em-holambra</span> — Eventos</li>
               </ul>
             </div>
             <div>

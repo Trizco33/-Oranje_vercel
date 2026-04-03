@@ -39,6 +39,7 @@ const CMSEditor = lazy(() => import("./pages/CMSEditor"));
 const Admin = lazy(() => import("./pages/Admin"));
 const SiteWhatToDo = lazy(() => import("./pages/SiteWhatToDo"));
 const SiteSEOPages = lazy(() => import("./pages/SiteSEOPages"));
+const CMSCategoryPage = lazy(() => import("./pages/CMSCategoryPage"));
 const SiteSecondaryPages = lazy(() => import("./pages/SiteSecondaryPages"));
 const SiteBlog = lazy(() => import("./pages/SiteBlog"));
 const SiteBlogPost = lazy(() => import("./pages/SiteBlogPost"));
@@ -151,12 +152,12 @@ function Router() {
         {/* Site Pages - NO PWA, Splash, or Notifications */}
         <Route path="/" element={<Suspense fallback={<SiteHomeFallback />}><SiteHome /></Suspense>} />
         <Route path="/o-que-fazer-em-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteWhatToDo /></Suspense>} />
-        <Route path="/melhores-cafes-de-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
-        <Route path="/melhores-restaurantes-de-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
-        <Route path="/bares-e-drinks-em-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
+        <Route path="/melhores-cafes-de-holambra" element={<Suspense fallback={<LoadingFallback />}><CMSCategoryPage /></Suspense>} />
+        <Route path="/melhores-restaurantes-de-holambra" element={<Suspense fallback={<LoadingFallback />}><CMSCategoryPage /></Suspense>} />
+        <Route path="/bares-e-drinks-em-holambra" element={<Suspense fallback={<LoadingFallback />}><CMSCategoryPage /></Suspense>} />
+        <Route path="/onde-tirar-fotos-em-holambra" element={<Suspense fallback={<LoadingFallback />}><CMSCategoryPage /></Suspense>} />
+        <Route path="/eventos-em-holambra" element={<Suspense fallback={<LoadingFallback />}><CMSCategoryPage /></Suspense>} />
         <Route path="/roteiro-1-dia-em-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
-        <Route path="/onde-tirar-fotos-em-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
-        <Route path="/eventos-em-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
         <Route path="/roteiros" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/mapa" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/parceiros" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />

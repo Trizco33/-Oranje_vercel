@@ -142,17 +142,17 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/dc/2b/ab/caption.jpg?w=1200&h=1200&s=1",
   ],
   "Hotel 1948": [
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/369911865.jpg?k=93ff4114b604d1145d6347d6ddec8e9e8ee1e7f48e13ff097e5ebbd7f5c99ccf&o=",
+    // foto oficial pendente — dataPending=true, aguardando confirmação
+  ],
+  "Pousada Oca": [
+    // foto oficial pendente — dataPending=true, aguardando confirmação
   ],
   "Pousada Rancho da Cachaça": [
+    // fonte oficial: ranchodacachaca.com.br
     "https://ranchodacachaca.com.br/wp-content/uploads/2022/02/pousada-rancho-da-cachaca.jpg",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/23/9e/3e/68/rancho-da-cachaca-pousada.jpg?w=700&h=400&s=1",
-    "https://i.ytimg.com/vi/-EJTZKp0TvE/maxresdefault.jpg",
   ],
   "Parque Hotel Holambra": [
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/2b/1a/f2/parque-hotel-holambra.jpg?w=900&h=500&s=1",
-    "https://images.trvl-media.com/lodging/39000000/38940000/38938300/38938234/c6c8a5a2.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
-    "https://i.ytimg.com/vi/HWzeH0sTchs/maxresdefault.jpg",
+    // foto pendente de fonte oficial — aguardando site ou Instagram do hotel
   ],
 
   // ─── EVENTOS ───────────────────────────────────────────────────

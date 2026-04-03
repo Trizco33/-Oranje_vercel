@@ -3,7 +3,7 @@ import { publicProcedure, adminProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import * as db from "./db";
 import { places, placePhotos, categories } from "../drizzle/schema";
-import { eq, like } from "drizzle-orm";
+import { eq, like, and } from "drizzle-orm";
 
 export const placesRouter = router({
   // Get all places (for listing)
@@ -19,10 +19,12 @@ export const placesRouter = router({
 
       try {
         let query = db.select().from(places);
-        
+
+        const conditions: any[] = [eq(places.status, "active")];
         if (input.categoryId) {
-          query = query.where(eq(places.categoryId, input.categoryId)) as any;
+          conditions.push(eq(places.categoryId, input.categoryId));
         }
+        query = query.where(and(...conditions)) as any;
 
         const results = await (query as any)
           .limit(input.limit)

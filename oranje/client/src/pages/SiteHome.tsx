@@ -126,7 +126,11 @@ export default function SiteHome() {
   const { data: cats = [] } = useCategoriesList();
   const { data: heroData } = trpc.content.getHero.useQuery();
   const [heroVideoError, setHeroVideoError] = useState(false);
-  const places = allPlaces.slice(0, 6);
+  const places = allPlaces.filter((p: any) => p.status !== "inactive");
+  const featuredPlaces = useMemo(
+    () => allPlaces.filter((p: any) => p.isFeatured && p.isRecommended && p.status !== "inactive"),
+    [allPlaces]
+  );
 
   // Build categoryId → name map for display
   const catMap = useMemo(() => {
@@ -572,7 +576,7 @@ export default function SiteHome() {
                     </div>
                   </div>
                 ))
-              : places.slice(0, 3).map((place: any, i: number) => (
+              : featuredPlaces.slice(0, 3).map((place: any, i: number) => (
                   <Reveal key={place.id} delay={i * 80}>
                     <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block" }}>
                       <div className="card-press site-card" style={{ background: "#FFFFFF" }}>

@@ -55,9 +55,9 @@ function convertHours(raw: Record<string, string | null> | null | undefined): st
 const PLACES = [
   // ═══ BATCH 1 ═══════════════════════════════════════════════════════════════
 
-  // 1 — Martin Holandesa (NOVO)
+  // 1 — Martin Holandesa
   {
-    _dbId: null,
+    _dbId: 2613,
     name: "Martin Holandesa Confeitaria e Restaurante",
     slug: "martin-holandesa-confeitaria-e-restaurante",
     categoryId: 1,
@@ -109,9 +109,9 @@ const PLACES = [
     dataPending: false,
   },
 
-  // 3 — Lago do Holandês (NOVO)
+  // 3 — Lago do Holandês
   {
-    _dbId: null,
+    _dbId: 2614,
     name: "Lago do Holandês",
     slug: "lago-do-holandes",
     categoryId: 1,
@@ -128,9 +128,9 @@ const PLACES = [
     dataPending: false,
   },
 
-  // 4 — The Old Dutch (NOVO)
+  // 4 — The Old Dutch
   {
-    _dbId: null,
+    _dbId: 2615,
     name: "The Old Dutch",
     slug: "the-old-dutch",
     categoryId: 1,
@@ -213,9 +213,9 @@ const PLACES = [
     dataPending: false,
   },
 
-  // 8 — Moinho Povos Unidos (NOVO)
+  // 8 — Moinho Povos Unidos
   {
-    _dbId: null,
+    _dbId: 2616,
     name: "Moinho Povos Unidos",
     slug: "moinho-povos-unidos",
     categoryId: 4,

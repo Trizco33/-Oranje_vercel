@@ -394,22 +394,16 @@ export async function seedHolambra() {
       .values(insertValues)
       .onDuplicateKeyUpdate({
         set: {
-          shortDesc: insertValues.shortDesc,
-          longDesc: insertValues.longDesc,
+          // Apenas campos estruturais/geográficos — campos editoriais
+          // (shortDesc, longDesc, tags, dataPending) nunca são sobrescritos
+          // pelo seed de inicialização para preservar a curadoria do Oranje.
           categoryId: insertValues.categoryId,
           priceRange: insertValues.priceRange,
           isFree: insertValues.isFree,
           isRecommended: insertValues.isRecommended,
           isFeatured: insertValues.isFeatured,
-          tags: insertValues.tags,
-          website: insertValues.website,
-          whatsapp: insertValues.whatsapp,
-          instagram: insertValues.instagram,
-          mapsUrl: insertValues.mapsUrl,
           lat: insertValues.lat,
           lng: insertValues.lng,
-          address: insertValues.address,
-          dataPending: insertValues.dataPending,
           updatedAt: new Date(),
         },
       });

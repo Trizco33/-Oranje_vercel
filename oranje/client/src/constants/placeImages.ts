@@ -16,24 +16,32 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Holambra_windmill.jpg/600px-Holambra_windmill.jpg",
   ],
   "Martin Holandesa": [
+    // fonte oficial: martinholandesa.com.br
+    "https://martinholandesa.com.br/content/foto1.png",
+    "https://martinholandesa.com.br/content/foto2.png",
+    "https://martinholandesa.com.br/content/foto3.jpeg",
     "https://martinholandesa.com.br/content/foto4.jpeg",
   ],
   "Martin Holandesa Confeitaria e Restaurante": [
+    // fonte oficial: martinholandesa.com.br
+    "https://martinholandesa.com.br/content/foto1.png",
+    "https://martinholandesa.com.br/content/foto2.png",
+    "https://martinholandesa.com.br/content/foto3.jpeg",
     "https://martinholandesa.com.br/content/foto4.jpeg",
   ],
   "Casa Bela Restaurante": [
+    // fonte oficial: casabelarestaurante.com.br
     "https://casabelarestaurante.com.br/wp-content/uploads/2025/02/BRU_9396-scaled-4.jpg",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/04/41/a7/73/casa-bela-restaurante.jpg?w=800&h=500&s=1",
-    "https://media-cdn.tripadvisor.com/media/photo-s/04/b8/a0/de/casa-bela-restaurante.jpg",
   ],
   "Casa Bela": [
+    // fonte oficial: casabelarestaurante.com.br
     "https://casabelarestaurante.com.br/wp-content/uploads/2025/02/BRU_9396-scaled-4.jpg",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/04/41/a7/73/casa-bela-restaurante.jpg?w=800&h=500&s=1",
   ],
   "The Old Dutch": [
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/e6/d0/72/fachada.jpg?w=900&h=500&s=1",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0c/8c/eb/b2/tipicamente-holandes.jpg?w=900&h=500&s=1",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/4a/fe/95/caption.jpg?w=1100&h=1100&s=1",
+    // fonte oficial: olddutch.com.br
+    "https://olddutch.com.br/site/wp-content/uploads/2023/08/tobert___-495x400.jpg",
+    "https://olddutch.com.br/site/wp-content/uploads/2023/08/djager-495x400.jpg",
+    "https://olddutch.com.br/site/wp-content/uploads/2023/08/robert__-495x400.jpg",
   ],
   "Fratelli Wine Bar": [
     "https://fratelliwinebar.com.br/wp-content/uploads/2025/12/fratelli-3-scaled-1.webp",
@@ -115,37 +123,43 @@ export const PLACE_IMAGES: Record<string, string[]> = {
 
   // ─── HOTÉIS ────────────────────────────────────────────────────
   "Villa de Holanda Hotel": [
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/1d/fd/d2/hotel-villa-de-holanda.jpg?w=900&h=500&s=1",
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/601935053.jpg?k=2f2dda875a77f487f86905789d2cd6b6b3c46071983ab0be6624bda983b42e3c&o=",
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/601939646.jpg?k=0eed8b3c778e09088faf3a2073a6e9f688948104a0b58bdf959f360990fdfc2c&o=",
+    // fonte oficial: villadeholandahotel.com.br (outubro 2025)
+    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1761.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1748.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_2289.jpg",
   ],
   "Holambra Garden Hotel": [
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/369911865.jpg?k=93ff4114b604d1145d6347d6ddec8e9e8ee1e7f48e13ff097e5ebbd7f5c99ccf&o=",
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/270706316.jpg?k=9df76ab387a7b93b18ab0f482cd4f4e83fa5d7745fdfb74da2f7e0af1e36efd7&o=",
+    // foto pendente de fonte oficial — aguardando imagem do site holambragardenhotel.com.br
   ],
   "Garden Hotel Holambra": [
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/369911865.jpg?k=93ff4114b604d1145d6347d6ddec8e9e8ee1e7f48e13ff097e5ebbd7f5c99ccf&o=",
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/270706316.jpg?k=9df76ab387a7b93b18ab0f482cd4f4e83fa5d7745fdfb74da2f7e0af1e36efd7&o=",
+    // foto pendente de fonte oficial
   ],
   "Hotel Villa de Holanda": [
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/1d/fd/d2/hotel-villa-de-holanda.jpg?w=900&h=500&s=1",
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/601935053.jpg?k=2f2dda875a77f487f86905789d2cd6b6b3c46071983ab0be6624bda983b42e3c&o=",
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/601939646.jpg?k=0eed8b3c778e09088faf3a2073a6e9f688948104a0b58bdf959f360990fdfc2c&o=",
+    // fonte oficial: villadeholandahotel.com.br (outubro 2025)
+    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1761.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1748.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_2289.jpg",
   ],
   "Villa de Holanda Parque Hotel": [
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/25/d2/83/villa-de-holanda-parque.jpg?w=900&h=500&s=1",
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/601935053.jpg?k=2f2dda875a77f487f86905789d2cd6b6b3c46071983ab0be6624bda983b42e3c&o=",
+    // fonte oficial: villadeholanda.com.br (outubro 2025)
+    "https://villadeholanda.com.br/wp-content/uploads/2025/10/IMG_1857.jpg",
+    "https://villadeholanda.com.br/wp-content/uploads/2025/10/IMG_1927.jpg",
+    "https://villadeholanda.com.br/wp-content/uploads/2025/10/IMG_1928.jpg",
   ],
   "Shellter Hotel": [
-    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/297728157.jpg?k=4036a666c0889c64c0542e63fc86bbeaae67ec45bbc1544ec48171089fac2921&o=",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/23/5d/c7/eb/shellter-hotel.jpg?w=900&h=500&s=1",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/dc/2b/ab/caption.jpg?w=1200&h=1200&s=1",
+    // fonte oficial: shellterhotel.com.br (março 2025 — Enflor GF 2024)
+    "https://shellterhotel.com.br/wp-content/uploads/2025/03/Enflor-IMG_1906-Enflor-GF-2024.jpg",
+    "https://shellterhotel.com.br/wp-content/uploads/2025/03/Enflor-IMG_2024-Enflor-GF-2024.jpg",
+    "https://shellterhotel.com.br/wp-content/uploads/2025/03/Enflor-IMG_2066-Enflor-GF-2024.jpg",
   ],
   "Hotel 1948": [
-    // foto oficial pendente — dataPending=true, aguardando confirmação
+    // fonte oficial: hotel1948.com.br
+    "https://www.hotel1948.com.br/wp-content/uploads/2022/05/Hotel_UE-12-768x512.jpg",
+    "https://www.hotel1948.com.br/wp-content/uploads/2019/06/1948-hotel-20190612-untitled-20190612-_APM5850-684x1024.jpg",
+    "https://www.hotel1948.com.br/wp-content/uploads/2019/06/1948-hotel-20190612-untitled-20190612-_APM6008-768x1151.jpg",
   ],
   "Pousada Oca": [
-    // foto oficial pendente — dataPending=true, aguardando confirmação
+    // foto pendente — site pousadaoca.com.br não retornou galeria acessível
   ],
   "Pousada Rancho da Cachaça": [
     // fonte oficial: ranchodacachaca.com.br

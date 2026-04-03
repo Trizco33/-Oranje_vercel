@@ -369,7 +369,7 @@ export default function SiteHome() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="hero-enter hero-enter-d5" style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
+          <div className="hero-enter hero-enter-d5" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
             <Link
               to="/app"
               className="btn-press"
@@ -377,20 +377,44 @@ export default function SiteHome() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
-                height: 48,
-                padding: "0 28px",
+                height: 50,
+                padding: "0 30px",
                 background: "#E65100",
                 color: "#FFFFFF",
                 fontSize: "0.9375rem",
-                fontWeight: 600,
-                borderRadius: 12,
+                fontWeight: 700,
+                borderRadius: 13,
                 textDecoration: "none",
                 fontFamily: "'Montserrat', system-ui, sans-serif",
                 animation: "hero-cta-breathe 3s ease-in-out infinite",
+                boxShadow: "0 4px 20px rgba(230,81,0,0.35)",
               }}
             >
-              Abrir o App
+              Explorar Holambra
               <ArrowRight size={16} />
+            </Link>
+            <Link
+              to="/roteiros"
+              className="btn-press"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                height: 50,
+                padding: "0 28px",
+                background: "rgba(255,255,255,0.12)",
+                color: "#FFFFFF",
+                fontSize: "0.9375rem",
+                fontWeight: 600,
+                borderRadius: 13,
+                border: "1.5px solid rgba(255,255,255,0.3)",
+                textDecoration: "none",
+                fontFamily: "'Montserrat', system-ui, sans-serif",
+                backdropFilter: "blur(6px)",
+              }}
+            >
+              <Map size={15} />
+              Ver Roteiros
             </Link>
             {installPrompt && (
               <button
@@ -400,44 +424,20 @@ export default function SiteHome() {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
-                  height: 48,
-                  padding: "0 28px",
-                  background: "rgba(255,255,255,0.15)",
-                  color: "#FFFFFF",
-                  fontSize: "0.9375rem",
+                  height: 50,
+                  padding: "0 24px",
+                  background: "rgba(255,255,255,0.08)",
+                  color: "rgba(255,255,255,0.8)",
+                  fontSize: "0.875rem",
                   fontWeight: 600,
-                  borderRadius: 12,
-                  border: "1.5px solid rgba(255,255,255,0.4)",
-                  cursor: "pointer",
-                  fontFamily: "'Montserrat', system-ui, sans-serif",
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                <Download size={16} />
-                Instalar App
-              </button>
-            )}
-            {!installPrompt && (
-              <button
-                className="btn-press"
-                onClick={() => document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth" })}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: 48,
-                  padding: "0 28px",
-                  background: "transparent",
-                  color: "#FFFFFF",
-                  fontSize: "0.9375rem",
-                  fontWeight: 600,
-                  borderRadius: 12,
-                  border: "1.5px solid rgba(255,255,255,0.35)",
+                  borderRadius: 13,
+                  border: "1.5px solid rgba(255,255,255,0.2)",
                   cursor: "pointer",
                   fontFamily: "'Montserrat', system-ui, sans-serif",
                 }}
               >
-                Explorar agora
+                <Download size={15} />
+                Instalar
               </button>
             )}
           </div>

@@ -3,6 +3,7 @@ import { Heart, MapPin, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DSBadge } from "@/components/ds";
 import { getPlaceImagesByName, getCategoryFallbackImage } from "@/constants/placeImages";
+import { BusinessHoursBadge } from "@/components/BusinessHoursBadge";
 
 interface PlaceCardProps {
   place: {
@@ -20,6 +21,7 @@ interface PlaceCardProps {
     isFeatured?: boolean;
     address?: string | null;
     categoryName?: string | null;
+    openingHours?: string | null;
   };
   isFavorite?: boolean;
   onToggleFavorite?: (id: number) => void;
@@ -190,7 +192,7 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
                 fontSize: 12,
                 color: "var(--ds-color-text-muted)",
                 marginTop: 4,
-                marginBottom: 8,
+                marginBottom: 6,
                 lineHeight: 1.5,
               }}
             >
@@ -198,7 +200,13 @@ export function PlaceCard({ place, isFavorite, onToggleFavorite, compact = false
             </p>
           )}
 
-          <div className="flex items-center justify-between gap-2" style={{ marginTop: compact ? 6 : 4 }}>
+          {!compact && (
+            <div style={{ marginBottom: 6 }}>
+              <BusinessHoursBadge openingHours={place.openingHours} size="sm" />
+            </div>
+          )}
+
+          <div className="flex items-center justify-between gap-2" style={{ marginTop: compact ? 6 : 0 }}>
             {/* Rating */}
             {place.rating && place.rating > 0 ? (
               <div className="flex items-center gap-1">

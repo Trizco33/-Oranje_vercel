@@ -1,11 +1,14 @@
+import { Suspense, lazy } from "react";
 import { useLocation, Link } from "react-router-dom";
 import SiteLayout from "@/components/SiteLayout";
-import { Mail, Phone, MapPin, MessageCircle, ArrowRight, CheckCircle, Instagram } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, ArrowRight, CheckCircle, Instagram, Navigation } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
 import { DSCard } from "@/components/ds/Card";
 import { DSBadge } from "@/components/ds/Badge";
 import { DSInput } from "@/components/ds/Input";
 import { trpc } from "@/lib/trpc";
+
+const SiteMapView = lazy(() => import("@/components/SiteMapView"));
 
 function resolveInstagramHref(value: string | undefined): string | null {
   if (!value) return null;
@@ -168,24 +171,46 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
   },
   mapa: {
     title: "Mapa de Holambra",
-    subtitle: "Explore a cidade de forma interativa",
+    subtitle: "Veja os pontos turísticos, restaurantes e atrações no mapa interativo",
     component: (
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-6)" }}>
         <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)" }}>
-          Nosso mapa interativo mostra todos os lugares, eventos e roteiros em Holambra. Você pode filtrar por categoria, ver avaliações e planejar sua visita.
+          O mapa abaixo mostra os principais pontos de interesse de Holambra. Use o app para ver todos os lugares com filtros, avaliações e navegação em tempo real.
         </p>
+
+        {/* Mapa embutido */}
+        <div style={{ borderRadius: "var(--ds-radius-xl)", overflow: "hidden", border: "1px solid rgba(230,81,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}>
+          <Suspense fallback={
+            <div style={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--ds-color-bg-secondary)" }}>
+              <div style={{ textAlign: "center" }}>
+                <MapPin size={32} style={{ color: "var(--ds-color-accent)", margin: "0 auto 8px" }} />
+                <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)" }}>Carregando mapa...</p>
+              </div>
+            </div>
+          }>
+            <SiteMapView height="420px" />
+          </Suspense>
+        </div>
+
+        {/* CTA para experiência completa */}
         <DSCard variant="glass" padding="lg">
-          <div style={{ textAlign: "center", padding: "var(--ds-space-12) 0" }}>
-            <MapPin size={64} style={{ margin: "0 auto var(--ds-space-4)", color: "var(--ds-color-accent)" }} />
-            <p style={{ fontSize: "var(--ds-text-lg)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-6)" }}>Mapa Interativo</p>
-            <Link to="/app" style={{ textDecoration: "none" }}>
-              <DSButton variant="primary" size="lg">Abrir Mapa Completo</DSButton>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-4)", flexWrap: "wrap" }}>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)", marginBottom: "var(--ds-space-1)" }}>
+                <Navigation size={16} style={{ color: "var(--ds-color-accent)" }} />
+                <p style={{ fontWeight: 700, color: "var(--ds-color-text-primary)", fontSize: "var(--ds-text-base)", fontFamily: "var(--ds-font-display)" }}>
+                  Perto de você
+                </p>
+              </div>
+              <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)" }}>
+                Veja lugares próximos à sua localização em tempo real com o mapa interativo do app Oranje.
+              </p>
+            </div>
+            <Link to="/app" style={{ textDecoration: "none", flexShrink: 0 }}>
+              <DSButton variant="primary" size="md">Abrir no App</DSButton>
             </Link>
           </div>
         </DSCard>
-        <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)" }}>
-          O mapa oferece funcionalidades como busca por localização, filtros por categoria, avaliações de usuários e informações de contato para cada lugar.
-        </p>
       </div>
     ),
   },

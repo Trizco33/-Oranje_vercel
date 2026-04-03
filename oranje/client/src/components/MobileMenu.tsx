@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { X, Menu, Compass, Calendar, Heart, Map, Search, Sparkles, Settings } from "lucide-react";
+import {
+  X, Menu, Compass, Calendar, Heart, MapPin, Search,
+  Sparkles, Settings, Map, Navigation,
+} from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 export function MobileMenu() {
@@ -8,26 +11,10 @@ export function MobileMenu() {
   const location = useLocation();
   const { user } = useAuth();
 
-  const menuItems = useMemo(() => {
-    const items = [
-      { label: "Explorar", href: "/app/explorar", icon: Compass },
-      { label: "Buscar", href: "/app/busca", icon: Search },
-      { label: "Eventos", href: "/app/eventos", icon: Calendar },
-      { label: "Favoritos", href: "/app/favoritos", icon: Heart },
-      { label: "Roteiros", href: "/app/roteiros", icon: Map },
-    ];
-    if (user?.role === "admin") {
-      items.push({ label: "⚙️ Admin do App", href: "/app/adm", icon: Settings });
-    }
-    return items;
-  }, [user?.role]);
-
   const close = useCallback(() => setIsOpen(false), []);
 
-  // Close on route change
   useEffect(() => { close(); }, [location.pathname, close]);
 
-  // Lock body scroll when open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -37,7 +24,115 @@ export function MobileMenu() {
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  const isActive = (href: string) => location.pathname === href;
+  const isActive = (href: string) => location.pathname.startsWith(href);
+
+  const discoverItems = useMemo(() => [
+    { label: "Explorar", href: "/app/explorar", icon: Compass, desc: "Categorias e lugares" },
+    { label: "Mapa", href: "/app/mapa", icon: Navigation, desc: "Perto de você" },
+    { label: "Buscar", href: "/app/busca", icon: Search, desc: "Encontre qualquer lugar" },
+  ], []);
+
+  const planItems = useMemo(() => [
+    { label: "Roteiros", href: "/app/roteiros", icon: Map, desc: "Passeios planejados" },
+    { label: "Eventos", href: "/app/eventos", icon: Calendar, desc: "Agenda de Holambra" },
+    { label: "Favoritos", href: "/app/favoritos", icon: Heart, desc: "Seus lugares salvos" },
+  ], []);
+
+  const adminItems = useMemo(() => {
+    if (user?.role !== "admin") return [];
+    return [{ label: "Admin do App", href: "/app/adm", icon: Settings, desc: "Configurações" }];
+  }, [user?.role]);
+
+  function NavGroup({ title, items }: { title: string; items: { label: string; href: string; icon: any; desc?: string }[] }) {
+    return (
+      <div>
+        <p
+          style={{
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "rgba(230,81,0,0.5)",
+            padding: "0 var(--ds-space-4)",
+            marginBottom: "var(--ds-space-1)",
+          }}
+        >
+          {title}
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {items.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                onClick={close}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "var(--ds-space-3)",
+                  padding: "10px var(--ds-space-4)",
+                  borderRadius: "var(--ds-radius-lg)",
+                  textDecoration: "none",
+                  background: active ? "var(--ds-color-accent)" : "transparent",
+                  transition: "background 0.18s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) e.currentTarget.style.background = "rgba(230,81,0,0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) e.currentTarget.style.background = "transparent";
+                }}
+              >
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 10,
+                    background: active ? "rgba(255,255,255,0.2)" : "rgba(230,81,0,0.08)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <item.icon
+                    size={16}
+                    style={{ color: active ? "#fff" : "var(--ds-color-accent)" }}
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      fontWeight: active ? 700 : 500,
+                      color: active ? "#fff" : "var(--ds-color-text-primary)",
+                      fontFamily: "var(--ds-font-display)",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                  {item.desc && (
+                    <p
+                      style={{
+                        fontSize: 11,
+                        color: active ? "rgba(255,255,255,0.7)" : "var(--ds-color-text-muted)",
+                        lineHeight: 1.2,
+                        marginTop: 1,
+                      }}
+                    >
+                      {item.desc}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -56,8 +151,6 @@ export function MobileMenu() {
           cursor: "pointer",
           transition: "background 0.2s ease",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(230, 81, 0, 0.25)")}
-        onMouseLeave={(e) => (e.currentTarget.style.background = isOpen ? "rgba(230, 81, 0, 0.2)" : "rgba(230, 81, 0, 0.1)")}
         aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
         aria-expanded={isOpen}
       >
@@ -93,11 +186,14 @@ export function MobileMenu() {
             right: 0,
             height: "100vh",
             zIndex: 50,
-            width: "min(280px, 80vw)",
+            width: "min(300px, 84vw)",
             background: "var(--ds-color-bg-secondary)",
             borderLeft: "1px solid rgba(230, 81, 0, 0.1)",
             boxShadow: "-8px 0 32px rgba(0,0,0,0.3)",
-            animation: "oranje-slide-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+            animation: "oranje-slide-in 280ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
           }}
         >
           <style>{`
@@ -115,106 +211,99 @@ export function MobileMenu() {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              flexShrink: 0,
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)" }}>
-              <Sparkles size={18} style={{ color: "var(--ds-color-accent)" }} />
-              <span
+              <div
                 style={{
-                  fontWeight: 700,
-                  fontSize: "var(--ds-text-lg)",
-                  color: "var(--ds-color-accent)",
-                  fontFamily: "var(--ds-font-display)",
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10,
+                  background: "var(--ds-color-accent)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                Oranje
-              </span>
+                <Sparkles size={16} style={{ color: "#fff" }} />
+              </div>
+              <div>
+                <p style={{ fontWeight: 700, fontSize: 15, color: "var(--ds-color-text-primary)", fontFamily: "var(--ds-font-display)", lineHeight: 1.1 }}>
+                  Oranje
+                </p>
+                {user?.name && (
+                  <p style={{ fontSize: 11, color: "var(--ds-color-text-muted)", lineHeight: 1.1 }}>
+                    Olá, {user.name.split(" ")[0]}
+                  </p>
+                )}
+              </div>
             </div>
             <button
               onClick={close}
               style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "var(--ds-radius-lg)",
-                background: "rgba(230, 81, 0, 0.1)",
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: "rgba(230, 81, 0, 0.08)",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                transition: "background 0.2s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(230, 81, 0, 0.2)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(230, 81, 0, 0.1)")}
               aria-label="Fechar menu"
             >
-              <X width={20} height={20} style={{ color: "var(--ds-color-accent)" }} />
+              <X size={16} style={{ color: "var(--ds-color-accent)" }} />
             </button>
           </div>
 
-          {/* Nav Items */}
-          <nav style={{ padding: "var(--ds-space-4)", display: "flex", flexDirection: "column", gap: "var(--ds-space-1)" }}>
-            {menuItems.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  onClick={close}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "var(--ds-space-3)",
-                    padding: "var(--ds-space-3) var(--ds-space-4)",
-                    borderRadius: "var(--ds-radius-lg)",
-                    textDecoration: "none",
-                    fontWeight: active ? 600 : 500,
-                    fontSize: "var(--ds-text-base)",
-                    color: active ? "#FFFFFF" : "var(--ds-color-text-secondary)",
-                    background: active ? "var(--ds-color-accent)" : "transparent",
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!active) {
-                      e.currentTarget.style.background = "rgba(230, 81, 0, 0.1)";
-                      e.currentTarget.style.color = "var(--ds-color-text-primary)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!active) {
-                      e.currentTarget.style.background = "transparent";
-                      e.currentTarget.style.color = "var(--ds-color-text-secondary)";
-                    }
-                  }}
-                >
-                  <item.icon size={20} style={{ flexShrink: 0, opacity: active ? 1 : 0.7 }} />
-                  {item.label}
-                </Link>
-              );
-            })}
+          {/* Nav Content */}
+          <nav
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "var(--ds-space-3) var(--ds-space-2)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--ds-space-4)",
+            }}
+          >
+            <NavGroup title="Descobrir" items={discoverItems} />
+            <div style={{ height: 1, background: "rgba(230,81,0,0.07)", margin: "0 var(--ds-space-4)" }} />
+            <NavGroup title="Planejar" items={planItems} />
+            {adminItems.length > 0 && (
+              <>
+                <div style={{ height: 1, background: "rgba(230,81,0,0.07)", margin: "0 var(--ds-space-4)" }} />
+                <NavGroup title="Administração" items={adminItems} />
+              </>
+            )}
           </nav>
 
           {/* Footer */}
           <div
             style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: "var(--ds-space-4)",
-              borderTop: "1px solid rgba(230, 81, 0, 0.1)",
+              flexShrink: 0,
+              padding: "var(--ds-space-3) var(--ds-space-4)",
+              borderTop: "1px solid rgba(230, 81, 0, 0.08)",
             }}
           >
             <div
               style={{
-                padding: "var(--ds-space-4)",
+                padding: "var(--ds-space-3)",
                 borderRadius: "var(--ds-radius-lg)",
-                background: "rgba(230, 81, 0, 0.06)",
-                border: "1px solid rgba(230, 81, 0, 0.1)",
+                background: "rgba(230, 81, 0, 0.05)",
+                border: "1px solid rgba(230, 81, 0, 0.08)",
               }}
             >
-              <p style={{ fontSize: "var(--ds-text-xs)", color: "var(--ds-color-text-muted)", lineHeight: "1.5" }}>
-                <strong style={{ color: "var(--ds-color-accent)" }}>Oranje</strong> — Guia Cultural de Holambra
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <MapPin size={12} style={{ color: "var(--ds-color-accent)" }} />
+                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--ds-color-text-primary)" }}>
+                  Holambra, SP
+                </span>
+              </div>
+              <p style={{ fontSize: 11, color: "var(--ds-color-text-muted)", lineHeight: 1.4 }}>
+                Guia cultural e turístico local
               </p>
             </div>
           </div>

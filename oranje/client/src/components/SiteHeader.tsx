@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass, Phone, Utensils, Coffee, Beer, Camera, PartyPopper, Route } from "lucide-react";
+import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass, Phone, Utensils, Coffee, Beer, Camera, PartyPopper } from "lucide-react";
 import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 
@@ -10,7 +10,6 @@ const DESCUBRA_ITEMS = [
   { label: "Bares & Drinks", href: "/bares-e-drinks-em-holambra", icon: Beer },
   { label: "Pontos Turísticos", href: "/onde-tirar-fotos-em-holambra", icon: Camera },
   { label: "Eventos", href: "/eventos-em-holambra", icon: PartyPopper },
-  { label: "Roteiro de 1 Dia", href: "/roteiro-1-dia-em-holambra", icon: Route },
 ];
 
 const ICON_MAP: Record<string, React.ElementType> = {

@@ -43,6 +43,7 @@ const CMSCategoryPage = lazy(() => import("./pages/CMSCategoryPage"));
 const SiteSecondaryPages = lazy(() => import("./pages/SiteSecondaryPages"));
 const SiteBlog = lazy(() => import("./pages/SiteBlog"));
 const SiteBlogPost = lazy(() => import("./pages/SiteBlogPost"));
+const MapPage = lazy(() => import("./pages/MapPage"));
 
 // Lazy loaded - heavy app shell components
 const PWAInstallPrompt = lazy(() => import("./components/PWAInstallPrompt").then(m => ({ default: m.PWAInstallPrompt })));
@@ -186,6 +187,7 @@ function Router() {
           <Route path="evento/:id" element={<EventDetailWrapper />} />
           <Route path="ofertas" element={<Suspense fallback={<LoadingFallback />}><Offers /></Suspense>} />
           <Route path="notificacoes" element={<Suspense fallback={<LoadingFallback />}><Notifications /></Suspense>} />
+          <Route path="mapa" element={<Suspense fallback={<LoadingFallback />}><MapPage /></Suspense>} />
           <Route path="transporte" element={<Suspense fallback={<LoadingFallback />}><TransportPage /></Suspense>} />
           <Route path="motoristas" element={<Suspense fallback={<LoadingFallback />}><Drivers /></Suspense>} />
           <Route path="cadastrar-motorista" element={<Suspense fallback={<LoadingFallback />}><RegisterDriver /></Suspense>} />

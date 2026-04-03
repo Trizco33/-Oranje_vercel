@@ -166,7 +166,9 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://ranchodacachaca.com.br/wp-content/uploads/2022/02/pousada-rancho-da-cachaca.jpg",
   ],
   "Parque Hotel Holambra": [
-    // foto pendente de fonte oficial — aguardando site ou Instagram do hotel
+    // fonte oficial: parquehotelholambra.com.br (WordPress, 2018)
+    "https://parquehotelholambra.com.br/wp-content/uploads/2018/01/parque-hotel-holambra-area-piscina.jpg",
+    "https://parquehotelholambra.com.br/wp-content/uploads/2018/01/parque-hotel-holambra-aerea.jpg",
   ],
 
   // ─── EVENTOS ───────────────────────────────────────────────────

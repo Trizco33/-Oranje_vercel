@@ -317,6 +317,63 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     tags: ["lounge", "coquetéis", "vinhos", "música ao vivo", "noturno"], status: "active",
     dataPending: true,
   },
+
+  // ─── Lugares com dados históricos (não estavam no seed original) ──────────
+
+  {
+    name: "Expoflora",
+    _categorySlug: "pontos_turisticos",
+    shortDesc: "O maior evento de flores da América Latina — acontece todo setembro em Holambra.",
+    longDesc: "A Expoflora é o maior evento de flores e plantas ornamentais da América Latina e acontece anualmente em setembro, durante cerca de 30 dias, no Parque de Exposições de Holambra. É o ponto alto do calendário turístico da cidade: atrações ao vivo, gastronomia, artesanato, expositores de todo o Brasil e uma explosão de cor que transforma Holambra numa das cidades mais visitadas do estado durante o período. Se você está planejando uma visita em setembro, estruture o roteiro em torno da Expoflora — ela vale o deslocamento. Nos outros meses, o espaço não está em operação como evento.",
+    address: "Parque de Exposições de Holambra, SP", lat: -22.6380, lng: -47.0590,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: true, isFeatured: false, isPartner: false,
+    tags: ["evento_anual", "sazonal", "setembro", "flores", "turismo", "familia", "ao_ar_livre", "fotos", "primeira_visita", "cultura"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Martin Holandesa Confeitaria e Restaurante",
+    _categorySlug: "restaurantes",
+    shortDesc: "Confeitaria e restaurante holandês — uma das casas mais tradicionais de Holambra.",
+    longDesc: null,
+    coverImage: "https://martinholandesa.com.br/content/foto4.jpeg",
+    address: "Holambra – SP", lat: -22.6395, lng: -47.0608,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["tipico_holandes", "tradicional", "confeitaria", "restaurante", "familia"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Seo Carneiro Bar",
+    _categorySlug: "bares",
+    shortDesc: "Cervejaria artesanal com atmosfera autêntica em Holambra.",
+    longDesc: null,
+    coverImage: "https://seocarneiro.com.br/wp-content/uploads/2023/11/20231102_110640-scaled.jpg",
+    address: "Holambra – SP", lat: -22.6400, lng: -47.0610,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["cervejaria", "artesanal", "bar", "petiscos", "casual"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Pousada Rancho da Cachaça",
+    _categorySlug: "hoteis",
+    shortDesc: "Pousada rural com charme e cachaça artesanal, às margens de Holambra.",
+    longDesc: null,
+    coverImage: "https://ranchodacachaca.com.br/wp-content/uploads/2022/02/pousada-rancho-da-cachaca.jpg",
+    address: "Holambra – SP", lat: -22.6500, lng: -47.0500,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["rural", "pousada", "cachaça", "artesanal", "natureza", "casal"], status: "active",
+    dataPending: true,
+  },
 ];
 
 // ─── Runner ───────────────────────────────────────────────────────────────────

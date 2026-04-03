@@ -1,6 +1,7 @@
 /**
  * Real image URLs for places in Holambra
- * Sources: TripAdvisor, Google Maps, official websites, Booking.com, Wikipedia
+ * Priority: 1. official site, 2. official social media, 3. Wikimedia Commons (CC)
+ * Avoid as primary source: TripAdvisor, Booking, Expedia, Pinterest, YouTube frames
  * Used as fallback when place.coverImage / place.images are empty
  */
 
@@ -15,9 +16,10 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Holambra_windmill.jpg/600px-Holambra_windmill.jpg",
   ],
   "Martin Holandesa": [
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/06/79/39/00/confeitaria-martin-holandesa.jpg?w=800&h=500&s=1",
     "https://martinholandesa.com.br/content/foto4.jpeg",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/06/79/39/3a/confeitaria-martin-holandesa.jpg?w=800&h=500&s=1",
+  ],
+  "Martin Holandesa Confeitaria e Restaurante": [
+    "https://martinholandesa.com.br/content/foto4.jpeg",
   ],
   "Casa Bela Restaurante": [
     "https://casabelarestaurante.com.br/wp-content/uploads/2025/02/BRU_9396-scaled-4.jpg",
@@ -75,10 +77,11 @@ export const PLACE_IMAGES: Record<string, string[]> = {
   ],
 
   // ─── BARES ─────────────────────────────────────────────────────
+  "Seo Carneiro Bar": [
+    "https://seocarneiro.com.br/wp-content/uploads/2023/11/20231102_110640-scaled.jpg",
+  ],
   "Cervejaria Seo Carneiro": [
     "https://seocarneiro.com.br/wp-content/uploads/2023/11/20231102_110640-scaled.jpg",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/26/cd/7f/4f/entrada-da-nossa-humilde.jpg?w=500&h=-1&s=1",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/31/aa/d2/cd/caption.jpg?w=1200&h=1200&s=1",
   ],
   "Deck 237": [
     "https://static2.menufyy.com/deck-237-restaurante-bar-ltda-me-albums-4.jpg",
@@ -105,7 +108,10 @@ export const PLACE_IMAGES: Record<string, string[]> = {
   // ─── HOTÉIS ────────────────────────────────────────────────────
   "Holambra Garden Hotel": [
     "https://cf.bstatic.com/xdata/images/hotel/max1024x768/369911865.jpg?k=93ff4114b604d1145d6347d6ddec8e9e8ee1e7f48e13ff097e5ebbd7f5c99ccf&o=",
-    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/c6/fd/05/holambra-garden-hotel.jpg?w=900&h=-1&s=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/270706316.jpg?k=9df76ab387a7b93b18ab0f482cd4f4e83fa5d7745fdfb74da2f7e0af1e36efd7&o=",
+  ],
+  "Garden Hotel Holambra": [
+    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/369911865.jpg?k=93ff4114b604d1145d6347d6ddec8e9e8ee1e7f48e13ff097e5ebbd7f5c99ccf&o=",
     "https://cf.bstatic.com/xdata/images/hotel/max1024x768/270706316.jpg?k=9df76ab387a7b93b18ab0f482cd4f4e83fa5d7745fdfb74da2f7e0af1e36efd7&o=",
   ],
   "Hotel Villa de Holanda": [

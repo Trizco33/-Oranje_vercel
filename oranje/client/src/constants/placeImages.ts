@@ -142,6 +142,18 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://i.ytimg.com/vi/HWzeH0sTchs/maxresdefault.jpg",
   ],
 
+  // ─── EVENTOS ───────────────────────────────────────────────────
+  "Expoflora": [
+    "https://www.expoflora.com.br/public/imgs/atracoes/jardim_tematico.jpg",
+    "https://www.expoflora.com.br/public/imgs/atracoes/parada_das_flores.jpg",
+    "https://www.expoflora.com.br/public/imgs/atracoes/chuva_petalas.jpg",
+    "https://www.expoflora.com.br/public/imgs/atracoes/espaco_instagramaveis.jpg",
+    "https://www.expoflora.com.br/public/imgs/sobre_o_evento/evento1.jpg",
+    "https://www.expoflora.com.br/public/imgs/sobre_o_evento/evento3.jpg",
+    "https://www.expoflora.com.br/public/imgs/sobre_o_evento/evento5.jpg",
+    "https://www.expoflora.com.br/public/imgs/atracoes/danca_holandesa.jpg",
+  ],
+
   // ─── PARQUES ───────────────────────────────────────────────────
   "Parque Van Gogh": [
     "https://i.ytimg.com/vi/aJfA8tz0XH8/maxresdefault.jpg",

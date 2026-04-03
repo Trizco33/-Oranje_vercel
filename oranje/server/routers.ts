@@ -390,10 +390,28 @@ export const appRouter = router({
       title: z.string().min(1),
       description: z.string().optional(),
       placeIds: z.array(z.number()),
+      highlights: z.array(z.string()).optional(),
+      placeNotes: z.record(z.string(), z.string()).optional(),
       duration: z.string().optional(),
       theme: z.string().optional(),
+      coverImage: z.string().optional(),
       isPublic: z.boolean().optional(),
     })).mutation(({ input }) => db.createRoute({ ...input, userId: null } as any)),
+    adminUpdate: adminProcedure.input(z.object({
+      id: z.number(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+      placeIds: z.array(z.number()).optional(),
+      highlights: z.array(z.string()).optional(),
+      placeNotes: z.record(z.string(), z.string()).optional(),
+      duration: z.string().optional(),
+      theme: z.string().optional(),
+      coverImage: z.string().optional(),
+      isPublic: z.boolean().optional(),
+    })).mutation(({ input: { id, ...data } }) => db.updateRoute(id, data as any)),
+    adminDelete: adminProcedure.input(z.object({ id: z.number() })).mutation(({ input }) =>
+      db.deleteRoute(input.id)
+    ),
   }),
 
   // ── Notifications ─────────────────────────────────────────────────────────

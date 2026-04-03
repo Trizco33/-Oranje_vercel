@@ -188,6 +188,8 @@ export const routes = mysqlTable("routes", {
   title: varchar("title", { length: 200 }).notNull(),
   description: text("description"),
   placeIds: json("placeIds").$type<number[]>(),
+  highlights: json("highlights").$type<string[]>(),
+  placeNotes: json("placeNotes").$type<Record<string, string>>(),
   duration: varchar("duration", { length: 50 }),
   theme: varchar("theme", { length: 100 }),
   isPublic: boolean("isPublic").default(false).notNull(),

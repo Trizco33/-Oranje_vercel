@@ -414,6 +414,17 @@ function EventosContent() {
         Fora das grandes datas, a cidade recebe bem e sem filas. É uma experiência completamente diferente — mais
         tranquila, mais autêntica, mais parecida com o dia a dia dos moradores.
       </Para>
+      <SectionTitle>Onde os eventos acontecem</SectionTitle>
+      <Para>
+        O <PlaceLink href="/app/lugar/5">Expoflora Park</PlaceLink> é o palco principal dos grandes eventos de
+        Holambra — Expoflora, shows e feiras temáticas acontecem aqui. O{" "}
+        <PlaceLink href="/app/lugar/19">Parque Van Gogh</PlaceLink> e o{" "}
+        <PlaceLink href="/app/lugar/20">Parque Bloemen</PlaceLink> frequentemente sediam atividades culturais
+        ao ar livre durante datas especiais.
+      </Para>
+      <PlaceCard name="Expoflora Park" desc="Palco principal de eventos em Holambra — Expoflora, shows e feiras" href="/app/lugar/5" />
+      <PlaceCard name="Parque Van Gogh" desc="Eventos e atividades culturais ao ar livre em datas especiais" href="/app/lugar/19" />
+      <PlaceCard name="Parque Bloemen" desc="Atividades culturais e festivais ao ar livre no centro da cidade" href="/app/lugar/20" />
     </div>
   );
 }

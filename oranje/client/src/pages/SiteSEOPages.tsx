@@ -27,50 +27,44 @@ function setNameMeta(name: string, content: string) {
 }
 
 /* ─────────────────────────────────────────────
-   Página: Roteiro de 1 Dia (preservado — não migrado para CMS)
+   Página: Roteiro de 1 Dia — conteúdo e SEO preservados
 ───────────────────────────────────────────── */
 
 const roteiroContent = `
-Holambra é compacta e isso trabalha a seu favor quando o tempo é curto. Em um dia bem planejado, você consegue ver o essencial — e ainda sobra espaço para as surpresas que só acontecem quando você desacelera um pouco.
+Se você tem apenas um dia em Holambra, este roteiro ajudará você a aproveitar ao máximo sua visita.
 
-## Manhã — Comece com café e flores
+## Manhã (8h - 12h)
+Comece com um café da manhã em um dos cafés especializados da cidade. Depois, visite o centro histórico e explore as galerias de arte.
 
-Chegue cedo. Holambra de manhã tem uma leveza especial: as ruas ainda estão vazias, as flores estão abertas e os cafés começam o serviço com calma.
+## Almoço (12h - 14h)
+Desfrute de um almoço em um restaurante local. Aproveite para provar pratos típicos da região.
 
-Comece o dia no Café Moinho — café bem feito, ambiente acolhedor e um início de dia que define o tom. Depois, caminhe pelos jardins do Parque Van Gogh ou pelo Parque Bloemen. São paradas curtas que valem cada minuto — e a luz da manhã faz toda a diferença nas fotos.
+## Tarde (14h - 18h)
+Visite parques e áreas verdes. Explore lojas de artesanato e flores. Tire fotos em pontos turísticos.
 
-## Almoço — À beira do lago ou no centro
+## Noite (18h - 22h)
+Aproveite o pôr do sol em um mirante. Jante em um restaurante sofisticado ou mais casual, conforme sua preferência.
 
-Para o almoço, o Deck do Lago é a pedida: a vista para o lago transforma uma refeição simples em memória. Se preferir algo mais movimentado, o centro da cidade tem boas opções a poucos minutos de caminhada.
+## Dicas Importantes
+- Use o app Oranje para planejar sua rota
+- Leve água e protetor solar
+- Use sapatos confortáveis
+- Reserve restaurantes com antecedência
+- Deixe tempo para explorar e se perder um pouco
 
-Aproveite o almoço para conversar com outros visitantes. Em Holambra, o boca a boca ainda é a melhor fonte de descobertas.
-
-## Tarde — Parques, lojas e o Expoflora Park
-
-A tarde pede mais exploração. O Expoflora Park é parada obrigatória — mesmo fora do período do festival, o espaço tem estrutura e beleza o ano todo. Se vier em setembro, separe boa parte do dia para isso.
-
-Passe também pelas lojas de flores e artesanato do centro. Holambra exporta flores para o Brasil inteiro, e você vai encontrar variedades aqui que não existem em nenhuma outra cidade.
-
-## Noite — Bem-merecida
-
-Para fechar o dia, vá devagar. Um bar tranquilo como o Boteco do Holandês ou uma janta no Casa Bela Restaurante encerram bem qualquer visita. Se a energia ainda estiver alta, passe pela Tulipa's Lounge — o ambiente transforma qualquer noite em algo especial.
-
-## Dica final
-
-Use o app Oranje para montar seu roteiro com o mapa interativo. Você evita voltar pelo mesmo caminho e descobre lugares que não aparecem nos guias tradicionais.
+Este é apenas um exemplo. Customize seu roteiro de acordo com seus interesses!
 `;
 
 /* ─────────────────────────────────────────────
-   SEO config — apenas roteiro
+   SEO config — apenas roteiro (preservado)
 ───────────────────────────────────────────── */
 
 const seoConfig: Record<string, { title: string; description: string; h1: string; subtitle: string }> = {
   "roteiro-1-dia-em-holambra": {
     h1: "Roteiro de 1 Dia em Holambra",
-    subtitle: "Do café da manhã ao jantar — como aproveitar ao máximo um dia inteiro na cidade",
-    title: "Roteiro de 1 Dia em Holambra — Guia Oranje",
-    description:
-      "Roteiro completo para aproveitar Holambra em um dia: onde tomar café, almoçar, visitar parques e terminar bem a noite. Curadoria Oranje.",
+    subtitle: "Aproveite o melhor da cidade em um dia",
+    title: "Roteiro de 1 Dia em Holambra",
+    description: "Um dia em Holambra: roteiro completo com dicas de manhã, almoço, tarde e noite para aproveitar ao máximo a cidade das flores.",
   },
 };
 

@@ -140,7 +140,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
     title: "Pontos Turísticos de Holambra",
     subtitle: "Parques, flores e experiências que só existem aqui — os lugares que definem a cidade",
     metaTitle: "Pontos Turísticos de Holambra — Guia Oranje",
-    metaDescription: "Os principais pontos turísticos de Holambra: Expoflora Park, Parque Van Gogh, Cidade das Crianças e mais. Saiba o que visitar, quando ir e como se planejar.",
+    metaDescription: "Os principais pontos turísticos de Holambra: Expoflora, Parque Van Gogh, Cidade das Crianças e mais. Saiba o que visitar, quando ir e como se planejar.",
     published: true,
     publishedAt: new Date(),
     createdBy: ADMIN_USER_ID,
@@ -148,7 +148,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
     content: `<p>Holambra não é grande — e isso é uma vantagem. Em poucos quilômetros, você encontra parques floridos, lagos, espaços culturais e pontos que concentram tudo o que torna essa cidade única no Brasil. É o tipo de lugar que funciona tanto para uma tarde quanto para um fim de semana inteiro.</p>
 <p>O segredo para aproveitar bem Holambra é não tentar ver tudo de uma vez. Escolha bem, caminhe sem pressa e deixe a cidade te surpreender.</p>
 <h2>O grande evento que virou ponto fixo</h2>
-<p>O <a href="/app/lugar/5">Expoflora Park</a> é o coração turístico de Holambra. Durante a Expoflora — realizada todo setembro — o parque recebe centenas de milhares de visitantes e se transforma numa das maiores exposições de flores da América Latina. Fora do período do festival, o espaço também mantém atrações e é ponto de referência para quem chega à cidade.</p>
+<p>A <a href="/app/lugar/5">Expoflora</a> é o maior festival de flores da América Latina e acontece todo setembro no Parque de Exposições de Holambra — durante cerca de 30 dias, recebe centenas de milhares de visitantes e transforma a cidade numa das mais vibrantes do interior paulista. Se a sua visita coincide com setembro, estruture o roteiro em torno dela.</p>
 <h2>Parques para caminhar, respirar e fotografar</h2>
 <p>O <a href="/app/lugar/19">Parque Van Gogh</a> é um dos mais fotografados de Holambra — a combinação de jardins bem cuidados com referências ao pintor holandês cria um cenário incomum que funciona em qualquer estação do ano.</p>
 <p>O <a href="/app/lugar/20">Parque Bloemen</a> e o <a href="/app/lugar/32">Bloemen Park</a> expandem essa experiência com mais espaço verde, flores e estrutura para passeios tranquilos — ótimos para famílias ou casais que querem um programa sem pressa.</p>
@@ -159,7 +159,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <h2>Como se planejar</h2>
 <p>A maioria dos parques de Holambra tem horários de visitação e, em alguns casos, cobrança de entrada. Confira os detalhes no app antes de sair — você economiza tempo e evita surpresas na bilheteria.</p>
 <p>O melhor horário para fotos é logo pela manhã, antes do sol forte, ou no final da tarde, quando a luz fica mais dourada e os parques ficam mais tranquilos. Use roupas confortáveis e leve água — mesmo em dias frescos, o sol de Holambra pede respeito.</p>
-<a href="/app/lugar/5" class="place-card"><div class="place-card-name">Expoflora Park</div><div class="place-card-desc">O coração turístico de Holambra e sede da maior expo de flores do Brasil</div></a>
+<a href="/app/lugar/5" class="place-card"><div class="place-card-name">Expoflora</div><div class="place-card-desc">O maior festival de flores da América Latina — acontece todo setembro em Holambra</div></a>
 <a href="/app/lugar/19" class="place-card"><div class="place-card-name">Parque Van Gogh</div><div class="place-card-desc">Jardins temáticos e cenário único inspirado no pintor holandês</div></a>
 <a href="/app/lugar/20" class="place-card"><div class="place-card-name">Parque Bloemen</div><div class="place-card-desc">Espaço verde amplo, ideal para passeios tranquilos e fotos</div></a>
 <a href="/app/lugar/21" class="place-card"><div class="place-card-name">Cidade das Crianças</div><div class="place-card-desc">Atração ideal para famílias com crianças</div></a>
@@ -182,7 +182,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <p>Se você ainda não planejou uma visita em torno de algum evento, este é o motivo para fazer isso.</p>
 <h2>Expoflora — o maior de todos</h2>
 <p>A Expoflora acontece todo mês de setembro e é, sem exagero, um dos eventos mais impressionantes do interior paulista. Mais de 600 mil visitantes por edição. Flores que cobrem o chão, as paredes e o ar. Artesanato, gastronomia, música e cultura holandesa em tudo.</p>
-<p>Se você nunca foi, coloque na agenda. Se já foi, sabe que é difícil ir só uma vez. O Expoflora Park fica tomado de vida e cor de um jeito que nenhuma foto consegue traduzir completamente.</p>
+<p>Se você nunca foi, coloque na agenda. Se já foi, sabe que é difícil ir só uma vez. A Expoflora fica tomada de vida e cor de um jeito que nenhuma foto consegue traduzir completamente.</p>
 <h2>Mês do Rei — cultura holandesa em fevereiro</h2>
 <p>O Mês do Rei é a celebração da identidade holandesa de Holambra. Com trajes típicos, música folclórica, desfiles e uma série de atividades culturais, o evento lembra as raízes dos imigrantes que fundaram a cidade. É menor que a Expoflora, mas tem um charme particular — mais íntimo, mais local, mais verdadeiro.</p>
 <h2>Hortitec — para quem trabalha com o campo</h2>

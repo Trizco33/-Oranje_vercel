@@ -11,7 +11,7 @@ export interface MockPartner {
 }
 
 export const mockPartners: MockPartner[] = [
-  { id: 1, name: "Restaurante De Klok", category: "Gastronomia", logo: "", description: "Culinária holandesa autêntica", website: "https://deklok.com.br", discount: "10% no almoço", plan: "Premium", isActive: true },
+  { id: 1, name: "Martin Holandesa", category: "Gastronomia", logo: "", description: "Confeitaria e restaurante holandês no Boulevard Holandês", website: "https://martinholandesa.com.br", discount: "15% no almoço", plan: "Premium", isActive: true },
   { id: 2, name: "Café Moinho", category: "Cafés", logo: "", description: "Cafés especiais e bolos artesanais", website: "", discount: "15% em bebidas", plan: "Destaque", isActive: true },
   { id: 3, name: "Pousada Campos de Tulipas", category: "Hospedagem", logo: "", description: "Chalés aconchegantes", website: "", discount: "20% em diárias (seg-qui)", plan: "Premium", isActive: true },
   { id: 4, name: "Pizzaria Bella Napoli", category: "Gastronomia", logo: "", description: "Pizzas artesanais em forno a lenha", website: "", discount: "Refrigerante grátis", plan: "Essencial", isActive: true },
@@ -46,7 +46,7 @@ export interface MockVoucher {
 }
 
 export const mockVouchers: MockVoucher[] = [
-  { id: 1, title: "Desconto De Klok", description: "10% de desconto no almoço executivo", discount: "10%", code: "ORANJE10", placeId: 1, placeName: "Restaurante De Klok", expiresAt: "2026-06-30", isActive: true },
+  { id: 1, title: "Desconto Martin Holandesa", description: "15% de desconto no almoço executivo", discount: "15%", code: "ORANJE15", placeId: 2613, placeName: "Martin Holandesa", expiresAt: "2026-06-30", isActive: true },
   { id: 2, title: "Café Grátis", description: "Ganhe um café espresso na compra de qualquer bolo", discount: "Café grátis", code: "CAFEMOINHO", placeId: 2, placeName: "Café Moinho", expiresAt: "2026-05-31", isActive: true },
   { id: 3, title: "Diária Especial", description: "20% OFF em diárias de segunda a quinta", discount: "20%", code: "TULIPA20", placeId: 3, placeName: "Pousada Campos de Tulipas", expiresAt: "2026-07-31", isActive: true },
   { id: 4, title: "Sobremesa Cortesia", description: "Ganhe uma sobremesa na compra de qualquer fondue", discount: "Sobremesa", code: "GOUDA2026", placeId: 13, placeName: "Bistrô Gouda", expiresAt: "2026-05-15", isActive: true },

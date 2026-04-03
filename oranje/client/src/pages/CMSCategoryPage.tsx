@@ -305,12 +305,12 @@ function PontosTuristicosContent() {
         O segredo para aproveitar bem Holambra é não tentar ver tudo de uma vez. Escolha bem, caminhe sem pressa e
         deixe a cidade te surpreender.
       </Para>
-      <SectionTitle>O grande evento que virou ponto fixo</SectionTitle>
+      <SectionTitle>O grande evento que define setembro</SectionTitle>
       <Para>
-        O <PlaceLink href="/app/lugar/5">Expoflora Park</PlaceLink> é o coração turístico de Holambra. Durante a
-        Expoflora — realizada todo setembro — o parque recebe centenas de milhares de visitantes e se transforma numa
-        das maiores exposições de flores da América Latina. Fora do período do festival, o espaço também mantém
-        atrações e é ponto de referência para quem chega à cidade.
+        A <PlaceLink href="/app/lugar/5">Expoflora</PlaceLink> é o maior festival de flores da América Latina e
+        acontece todo setembro no Parque de Exposições de Holambra — durante cerca de 30 dias, recebe centenas de
+        milhares de visitantes e transforma a cidade numa das mais vibrantes do interior paulista. Se a sua visita
+        coincide com setembro, estruture o roteiro em torno dela.
       </Para>
       <SectionTitle>Parques para caminhar, respirar e fotografar</SectionTitle>
       <Para>
@@ -349,7 +349,7 @@ function PontosTuristicosContent() {
         mais dourada e os parques ficam mais tranquilos. Use roupas confortáveis e leve água — mesmo em dias frescos, o
         sol de Holambra pede respeito.
       </Para>
-      <PlaceCard name="Expoflora Park" desc="O coração turístico de Holambra e sede da maior expo de flores do Brasil" href="/app/lugar/5" />
+      <PlaceCard name="Expoflora" desc="O maior festival de flores da América Latina — acontece todo setembro em Holambra" href="/app/lugar/5" />
       <PlaceCard name="Parque Van Gogh" desc="Jardins temáticos e cenário único inspirado no pintor holandês" href="/app/lugar/19" />
       <PlaceCard name="Parque Bloemen" desc="Espaço verde amplo, ideal para passeios tranquilos e fotos" href="/app/lugar/20" />
       <PlaceCard name="Cidade das Crianças" desc="Atração ideal para famílias com crianças" href="/app/lugar/21" />
@@ -379,8 +379,8 @@ function EventosContent() {
         gastronomia, música e cultura holandesa em tudo.
       </Para>
       <Para>
-        Se você nunca foi, coloque na agenda. Se já foi, sabe que é difícil ir só uma vez. O Expoflora Park fica
-        tomado de vida e cor de um jeito que nenhuma foto consegue traduzir completamente.
+        Se você nunca foi, coloque na agenda. Se já foi, sabe que é difícil ir só uma vez. A Expoflora fica
+        tomada de vida e cor de um jeito que nenhuma foto consegue traduzir completamente.
       </Para>
       <SectionTitle>Mês do Rei — cultura holandesa em fevereiro</SectionTitle>
       <Para>
@@ -417,13 +417,13 @@ function EventosContent() {
       </Para>
       <SectionTitle>Onde os eventos acontecem</SectionTitle>
       <Para>
-        O <PlaceLink href="/app/lugar/5">Expoflora Park</PlaceLink> é o palco principal dos grandes eventos de
-        Holambra — Expoflora, shows e feiras temáticas acontecem aqui. O{" "}
+        O <PlaceLink href="/app/lugar/5">Parque de Exposições</PlaceLink> é o palco principal dos grandes eventos de
+        Holambra — a Expoflora, shows e feiras temáticas acontecem aqui. O{" "}
         <PlaceLink href="/app/lugar/19">Parque Van Gogh</PlaceLink> e o{" "}
         <PlaceLink href="/app/lugar/20">Parque Bloemen</PlaceLink> frequentemente sediam atividades culturais
         ao ar livre durante datas especiais.
       </Para>
-      <PlaceCard name="Expoflora Park" desc="Palco principal de eventos em Holambra — Expoflora, shows e feiras" href="/app/lugar/5" />
+      <PlaceCard name="Expoflora" desc="O maior festival de flores da América Latina — todo setembro em Holambra" href="/app/lugar/5" />
       <PlaceCard name="Parque Van Gogh" desc="Eventos e atividades culturais ao ar livre em datas especiais" href="/app/lugar/19" />
       <PlaceCard name="Parque Bloemen" desc="Atividades culturais e festivais ao ar livre no centro da cidade" href="/app/lugar/20" />
     </div>
@@ -469,7 +469,7 @@ const STATIC_CONFIG: Record<string, {
     h1: "Pontos Turísticos de Holambra",
     subtitle: "Parques, flores e experiências que só existem aqui — os lugares que definem a cidade",
     seoTitle: "Pontos Turísticos de Holambra — Guia Oranje",
-    seoDescription: "Os principais pontos turísticos de Holambra: Expoflora Park, Parque Van Gogh, Cidade das Crianças e mais. Saiba o que visitar, quando ir e como se planejar.",
+    seoDescription: "Os principais pontos turísticos de Holambra: Expoflora, Parque Van Gogh, Cidade das Crianças e mais. Saiba o que visitar, quando ir e como se planejar.",
     cta: { label: "Explorar pontos turísticos", href: "/app" },
     FallbackContent: PontosTuristicosContent,
   },

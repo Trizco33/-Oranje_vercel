@@ -31,28 +31,26 @@ function setNameMeta(name: string, content: string) {
 ───────────────────────────────────────────── */
 
 const roteiroContent = `
-Se você tem apenas um dia em Holambra, este roteiro ajudará você a aproveitar ao máximo sua visita.
+Um dia em Holambra é tempo suficiente para sair diferente de como entrou. A cidade é compacta, bonita e surpreendentemente generosa com quem chega disposto a descobrí-la sem pressa.
 
 ## Manhã (8h - 12h)
-Comece com um café da manhã em um dos cafés especializados da cidade. Depois, visite o centro histórico e explore as galerias de arte.
+Comece o dia com um bom café da manhã. A recomendação é escolher entre o Lotus Café, o Café Moinho, a Kéndi Confeitaria ou a Oma Beppie — onde você encontra as famosas stroopwafels, aquele biscoito holandês de caramelo que vicia. É uma forma deliciosa de entrar no clima da cidade logo cedo, antes do movimento do dia começar de verdade.
 
 ## Almoço (12h - 14h)
-Desfrute de um almoço em um restaurante local. Aproveite para provar pratos típicos da região.
+Na hora do almoço, siga para o Boulevard Holandês, uma das áreas mais agradáveis da cidade para comer bem sem pressa. Entre as indicações do Oranje estão o Casa Bela Restaurante, o Martin Holandesa, o Villa Girassol, o De Immigrant Garden e o Di Komê Garage Bistrô. São lugares com personalidade própria, que combinam bem com a proposta de um passeio desacelerado por Holambra.
 
 ## Tarde (14h - 18h)
-Visite parques e áreas verdes. Explore lojas de artesanato e flores. Tire fotos em pontos turísticos.
+A tarde pede ritmo contemplativo. Visite o moinho — um dos símbolos mais fotografados da cidade — ou siga direto para o Bloemen Park. Lá, a plantação de girassóis voltada para o pôr do sol rende fotos que não têm preço e cria uma das cenas mais bonitas que Holambra oferece ao longo do dia. Chegue com tempo para apreciar sem correria.
 
 ## Noite (18h - 22h)
-Aproveite o pôr do sol em um mirante. Jante em um restaurante sofisticado ou mais casual, conforme sua preferência.
+Holambra continua entregando uma boa experiência mesmo depois que o sol vai embora. A gastronomia local é divina, com opções que vão do casual ao mais sofisticado. Para quem quer uma culinária mais tradicional e com aquele charme de cidade pequena, a indicação do Oranje é o The Old Dutch — um encerramento à altura de um dia bem aproveitado.
 
-## Dicas Importantes
-- Use o app Oranje para planejar sua rota
-- Leve água e protetor solar
-- Use sapatos confortáveis
-- Reserve restaurantes com antecedência
-- Deixe tempo para explorar e se perder um pouco
-
-Este é apenas um exemplo. Customize seu roteiro de acordo com seus interesses!
+## Dicas para o seu roteiro
+- Baixe o app Oranje antes de sair: ele tem mapa, horários e avaliações reais de cada lugar
+- Chegue cedo no café da manhã — os melhores lugares lotam nos fins de semana
+- Vista sapatos confortáveis e leve protetor solar, principalmente para a tarde no parque
+- Se vier durante a Expoflora (setembro), reserve restaurantes com antecedência
+- Não tente ver tudo: Holambra recompensa quem escolhe bem e vai devagar
 `;
 
 /* ─────────────────────────────────────────────

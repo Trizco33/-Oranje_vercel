@@ -6,6 +6,14 @@
 
 export const PLACE_IMAGES: Record<string, string[]> = {
   // ─── RESTAURANTES ──────────────────────────────────────────────
+  "Café Moinho": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Moinho_holambra.jpg/800px-Moinho_holambra.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Holambra_windmill.jpg/600px-Holambra_windmill.jpg",
+  ],
+  "Cafe Moinho": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Moinho_holambra.jpg/800px-Moinho_holambra.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Holambra_windmill.jpg/600px-Holambra_windmill.jpg",
+  ],
   "Martin Holandesa": [
     "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/06/79/39/00/confeitaria-martin-holandesa.jpg?w=800&h=500&s=1",
     "https://martinholandesa.com.br/content/foto4.jpeg",

@@ -55,7 +55,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
     title: "Melhores Restaurantes em Holambra",
     subtitle: "Uma curadoria real dos lugares para comer bem na capital brasileira das flores",
     metaTitle: "Melhores Restaurantes em Holambra — Guia Oranje",
-    metaDescription: "Descubra os melhores restaurantes de Holambra com curadoria do Oranje. Do Deck do Lago ao De Klok, veja onde comer bem com avaliações reais.",
+    metaDescription: "Descubra os melhores restaurantes de Holambra com curadoria do Oranje. Do Deck do Lago ao Martin Holandesa, veja onde comer bem com avaliações reais.",
     published: true,
     publishedAt: new Date(),
     createdBy: ADMIN_USER_ID,
@@ -64,7 +64,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <p>Aqui você não vai encontrar genéricas "opções para todos os gostos". O que existe em Holambra são lugares com história, ingredientes frescos e cozinheiros que conhecem seus clientes pelo nome.</p>
 <h2>Onde comer bem em Holambra</h2>
 <p>Para um almoço tranquilo com vista para o lago, o <a href="/app/lugar/6">Deck do Lago</a> é referência. As mesas à beira d'água e o cardápio descomplicado fazem dele um dos favoritos de quem visita Holambra pela primeira vez — e de quem já volta pela décima.</p>
-<p>Quem prefere uma experiência mais clássica e com ambiente requintado vai bem no <a href="/app/lugar/1">Restaurante De Klok</a>, um dos mais tradicionais da cidade, que carrega no nome e na decoração a herança holandesa que define o espírito de Holambra.</p>
+<p>Quem busca culinária holandesa de verdade encontra no <a href="/app/lugar/2613">Martin Holandesa</a> uma das experiências mais autênticas da cidade — confeitaria e restaurante no Boulevard Holandês, com décadas de história e pratos que carregam a herança holandesa que define o espírito de Holambra.</p>
 <p>O <a href="/app/lugar/24">Casa Bela Restaurante</a> é a pedida certa para refeições em família. Ambiente acolhedor, cardápio farto e preço justo — o tipo de lugar que você recomenda sem hesitar.</p>
 <h2>Para os que gostam de algo diferente</h2>
 <p>O <a href="/app/lugar/36">De Immigrant Garden</a> traz uma proposta mais autoral, com pratos que contam histórias de imigração e pertencimento. Ótimo para quem quer ir além do convencional.</p>
@@ -73,7 +73,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <h2>Dicas de quem conhece</h2>
 <p>Holambra tem movimento intenso nos fins de semana e durante a Expoflora. Se for nessas datas, <strong>faça reserva com antecedência</strong> — os restaurantes mais procurados lotam cedo. Na semana, você consegue mesa com mais tranquilidade e muitas vezes um atendimento ainda mais cuidadoso.</p>
 <p>O horário de almoço começa cedo — por volta de 11h30 muitos lugares já estão servindo. Aproveite para chegar antes do pico e pedir a recomendação do dia ao garçom. Em Holambra, isso costuma render as melhores surpresas.</p>
-<a href="/app/lugar/1" class="place-card"><div class="place-card-name">Restaurante De Klok</div><div class="place-card-desc">Cozinha tradicional, ambiente clássico e herança holandesa</div></a>
+<a href="/app/lugar/2613" class="place-card"><div class="place-card-name">Martin Holandesa</div><div class="place-card-desc">Confeitaria e restaurante holandês — referência histórica no Boulevard Holandês</div></a>
 <a href="/app/lugar/6" class="place-card"><div class="place-card-name">Deck do Lago</div><div class="place-card-desc">Vista para o lago, cardápio descomplicado, excelente para almoço</div></a>
 <a href="/app/lugar/24" class="place-card"><div class="place-card-name">Casa Bela Restaurante</div><div class="place-card-desc">Ambiente familiar, farto e acolhedor</div></a>
 <a href="/app/lugar/36" class="place-card"><div class="place-card-name">De Immigrant Garden</div><div class="place-card-desc">Proposta autoral e ingredientes locais</div></a>

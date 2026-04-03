@@ -143,9 +143,10 @@ function RestaurantesContent() {
         décima.
       </Para>
       <Para>
-        Quem prefere uma experiência mais clássica e com ambiente requintado vai bem no{" "}
-        <PlaceLink href="/app/lugar/1">Restaurante De Klok</PlaceLink>, um dos mais tradicionais da cidade, que carrega
-        no nome e na decoração a herança holandesa que define o espírito de Holambra.
+        Quem busca culinária holandesa de verdade encontra no{" "}
+        <PlaceLink href="/app/lugar/2613">Martin Holandesa</PlaceLink> uma das experiências mais autênticas da cidade
+        — confeitaria e restaurante no Boulevard Holandês, com décadas de história e pratos que carregam a herança
+        holandesa que define o espírito de Holambra.
       </Para>
       <Para>
         O <PlaceLink href="/app/lugar/24">Casa Bela Restaurante</PlaceLink> é a pedida certa para refeições em família.
@@ -174,7 +175,7 @@ function RestaurantesContent() {
         O horário de almoço começa cedo — por volta de 11h30 muitos lugares já estão servindo. Aproveite para chegar
         antes do pico e pedir a recomendação do dia ao garçom. Em Holambra, isso costuma render as melhores surpresas.
       </Para>
-      <PlaceCard name="Restaurante De Klok" desc="Cozinha tradicional, ambiente clássico e herança holandesa" href="/app/lugar/1" />
+      <PlaceCard name="Martin Holandesa" desc="Confeitaria e restaurante holandês — referência histórica no Boulevard Holandês" href="/app/lugar/2613" />
       <PlaceCard name="Deck do Lago" desc="Vista para o lago, cardápio descomplicado, excelente para almoço" href="/app/lugar/6" />
       <PlaceCard name="Casa Bela Restaurante" desc="Ambiente familiar, farto e acolhedor" href="/app/lugar/24" />
       <PlaceCard name="De Immigrant Garden" desc="Proposta autoral e ingredientes locais" href="/app/lugar/36" />
@@ -444,7 +445,7 @@ const STATIC_CONFIG: Record<string, {
     h1: "Melhores Restaurantes em Holambra",
     subtitle: "Uma curadoria real dos lugares para comer bem na capital brasileira das flores",
     seoTitle: "Melhores Restaurantes em Holambra — Guia Oranje",
-    seoDescription: "Descubra os melhores restaurantes de Holambra com curadoria do Oranje. Do Deck do Lago ao De Klok, veja onde comer bem com avaliações reais.",
+    seoDescription: "Descubra os melhores restaurantes de Holambra com curadoria do Oranje. Do Deck do Lago ao Martin Holandesa, veja onde comer bem com avaliações reais.",
     cta: { label: "Ver restaurantes no App", href: "/app" },
     FallbackContent: RestaurantesContent,
   },

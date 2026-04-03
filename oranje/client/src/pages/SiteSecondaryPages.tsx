@@ -331,29 +331,12 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
         </div>
 
         <DSCard variant="elevated" padding="lg">
-          <h3 style={{ fontSize: "var(--ds-text-xl)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-4)" }}>
-            Entre em Contato
+          <h3 style={{ fontSize: "var(--ds-text-xl)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-3)" }}>
+            Como se candidatar
           </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-3)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-3)" }}>
-              <Mail size={20} style={{ color: "var(--ds-color-accent)" }} />
-              <a href="mailto:parceiros@oranje.com.br" style={{ color: "var(--ds-color-text-secondary)", textDecoration: "none" }}>
-                parceiros@oranje.com.br
-              </a>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-3)" }}>
-              <Phone size={20} style={{ color: "var(--ds-color-accent)" }} />
-              <a href="tel:+551940000000" style={{ color: "var(--ds-color-text-secondary)", textDecoration: "none" }}>
-                (19) 4000-0000
-              </a>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-3)" }}>
-              <MessageCircle size={20} style={{ color: "var(--ds-color-accent)" }} />
-              <a href="https://wa.me/5519999999999" style={{ color: "var(--ds-color-text-secondary)", textDecoration: "none" }}>
-                WhatsApp
-              </a>
-            </div>
-          </div>
+          <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)", marginBottom: 0 }}>
+            Preencha o formulário de cadastro e nossa equipe entra em contato para avaliar o seu negócio. É rápido, gratuito e sem compromisso.
+          </p>
         </DSCard>
       </div>
     ),

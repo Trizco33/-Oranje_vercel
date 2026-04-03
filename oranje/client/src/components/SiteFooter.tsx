@@ -9,9 +9,9 @@ export default function SiteFooter() {
   });
 
   const email     = contact?.email     || "contato@oranje.com.br";
-  const phone     = contact?.phone     || "(19) 3802-1000";
+  const phone     = contact?.phone     || "";
   const address   = contact?.address   || "Holambra, SP";
-  const instagram = contact?.instagram || "https://instagram.com/oranjeholambra";
+  const instagram = contact?.instagram || "";
 
   const linkStyle: React.CSSProperties = {
     fontSize: "0.875rem",
@@ -147,17 +147,19 @@ export default function SiteFooter() {
                   {email}
                 </a>
               </li>
-              <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Phone size={14} style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }} aria-hidden="true" />
-                <a
-                  href={`tel:${phone.replace(/\D/g, "")}`}
-                  style={linkStyle}
-                  onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
-                  onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
-                >
-                  {phone}
-                </a>
-              </li>
+              {phone && (
+                <li style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <Phone size={14} style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }} aria-hidden="true" />
+                  <a
+                    href={`tel:${phone.replace(/\D/g, "")}`}
+                    style={linkStyle}
+                    onMouseEnter={(e: any) => (e.currentTarget.style.color = "#E65100")}
+                    onMouseLeave={(e: any) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                  >
+                    {phone}
+                  </a>
+                </li>
+              )}
               <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
                 <MapPin size={14} style={{ color: "rgba(255,255,255,0.3)", marginTop: "2px", flexShrink: 0 }} aria-hidden="true" />
                 <span style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.5)" }}>{address}</span>

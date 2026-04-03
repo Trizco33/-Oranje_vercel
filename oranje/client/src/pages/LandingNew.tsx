@@ -95,7 +95,7 @@ export default function LandingNew() {
   const hero = heroData || defaultHero;
   const services = servicesData?.items || defaultServices;
   const about = aboutData || { title: "Sobre Holambra", text: "Holambra é a cidade das flores, conhecida por sua beleza natural e atrações turísticas." };
-  const contact = contactData || { email: "contato@oranje.com", phone: "(19) 3802-1000", address: "Holambra, SP" };
+  const contact = contactData || { email: "contato@oranje.com", phone: "", address: "Holambra, SP" };
 
   return (
     <div className="min-h-screen bg-white">
@@ -232,10 +232,12 @@ export default function LandingNew() {
               <p className="text-gray-200 mb-2">Email</p>
               <p className="text-xl font-semibold">{contact.email}</p>
             </div>
-            <div>
-              <p className="text-gray-200 mb-2">Telefone</p>
-              <p className="text-xl font-semibold">{contact.phone}</p>
-            </div>
+            {contact.phone && (
+              <div>
+                <p className="text-gray-200 mb-2">Telefone</p>
+                <p className="text-xl font-semibold">{contact.phone}</p>
+              </div>
+            )}
             <div>
               <p className="text-gray-200 mb-2">Endereço</p>
               <p className="text-xl font-semibold">{contact.address}</p>

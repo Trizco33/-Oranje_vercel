@@ -138,16 +138,14 @@ export default function Offers() {
           <p className="text-xs mb-4" style={{ color: "var(--ds-color-text-secondary)" }}>
             Aumente sua visibilidade em Holambra. Planos a partir de R$49/mês com destaque no app, vouchers exclusivos e selo de parceiro verificado.
           </p>
-          <a
-            href="https://wa.me/5519999999999?text=Quero%20ser%20parceiro%20ORANJE"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/seja-um-parceiro"
             className="px-6 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2"
             style={{ background: "var(--ds-color-accent)", color: "#fff" }}
           >
             <Tag size={15} />
             Quero ser parceiro
-          </a>
+          </Link>
         </div>
       </div>
 

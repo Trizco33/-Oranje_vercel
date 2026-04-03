@@ -154,8 +154,11 @@ function RestaurantesContent() {
       </Para>
       <SectionTitle>Para os que gostam de algo diferente</SectionTitle>
       <Para>
-        O <PlaceLink href="/app/lugar/36">De Immigrant Garden</PlaceLink> traz uma proposta mais autoral, com pratos
-        que contam histórias de imigração e pertencimento. Ótimo para quem quer ir além do convencional.
+        O <PlaceLink href="/app/lugar/36">De Immigrant Gastro Café</PlaceLink> abre todos os dias a partir das 8h
+        — café da manhã, almoço regional e uma proposta que conta a história dos imigrantes holandeses que fundaram
+        Holambra. Na mesma rua, o{" "}
+        <PlaceLink href="/app/lugar/3824">De Immigrant Restaurante Garden</PlaceLink> amplia essa experiência com
+        cardápio autoral em ambiente garden. Os dois juntos formam um dos endereços mais ricos da cidade.
       </Para>
       <Para>
         Se a fome for por hambúrguer artesanal de qualidade, o{" "}
@@ -178,7 +181,8 @@ function RestaurantesContent() {
       <PlaceCard name="Martin Holandesa" desc="Confeitaria e restaurante holandês — referência histórica no Boulevard Holandês" href="/app/lugar/2613" />
       <PlaceCard name="Deck do Lago" desc="Vista para o lago, cardápio descomplicado, excelente para almoço" href="/app/lugar/6" />
       <PlaceCard name="Casa Bela Restaurante" desc="Ambiente familiar, farto e acolhedor" href="/app/lugar/24" />
-      <PlaceCard name="De Immigrant Garden" desc="Proposta autoral e ingredientes locais" href="/app/lugar/36" />
+      <PlaceCard name="De Immigrant Gastro Café" desc="Café da manhã, almoço e história da imigração holandesa — desde as 8h" href="/app/lugar/36" />
+      <PlaceCard name="De Immigrant Restaurante Garden" desc="Cardápio autoral em ambiente garden — vizinho ao Gastro Café" href="/app/lugar/3824" />
       <PlaceCard name="Garden Restaurante" desc="Ambiente arborizado, ótima pedida para almoço tranquilo" href="/app/lugar/35" />
       <PlaceCard name="Cowburguer" desc="Hambúrguer artesanal de qualidade em Holambra" href="/app/lugar/42" />
     </div>

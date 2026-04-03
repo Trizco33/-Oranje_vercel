@@ -105,7 +105,20 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://media-cdn.tripadvisor.com/media/photo-s/1e/b9/05/0d/cafe-de-qualidade-num.jpg",
   ],
 
+  // ─── RESTAURANTES DE IMIGRANTES ───────────────────────────────
+  "De Immigrant Gastro Café": [
+    // foto oficial pendente — @deimmigrant no Instagram
+  ],
+  "De Immigrant Restaurante Garden": [
+    // foto oficial pendente — @restaurantegardenholambra no Instagram
+  ],
+
   // ─── HOTÉIS ────────────────────────────────────────────────────
+  "Villa de Holanda Hotel": [
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/1d/fd/d2/hotel-villa-de-holanda.jpg?w=900&h=500&s=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/601935053.jpg?k=2f2dda875a77f487f86905789d2cd6b6b3c46071983ab0be6624bda983b42e3c&o=",
+    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/601939646.jpg?k=0eed8b3c778e09088faf3a2073a6e9f688948104a0b58bdf959f360990fdfc2c&o=",
+  ],
   "Holambra Garden Hotel": [
     "https://cf.bstatic.com/xdata/images/hotel/max1024x768/369911865.jpg?k=93ff4114b604d1145d6347d6ddec8e9e8ee1e7f48e13ff097e5ebbd7f5c99ccf&o=",
     "https://cf.bstatic.com/xdata/images/hotel/max1024x768/270706316.jpg?k=9df76ab387a7b93b18ab0f482cd4f4e83fa5d7745fdfb74da2f7e0af1e36efd7&o=",

@@ -28,6 +28,7 @@ const HOLAMBRA_CATEGORIES: InsertCategory[] = [
   { name: "Pizzarias",             slug: "pizzarias",    icon: "🍕", description: "Pizzarias e delivery de pizza", isActive: true },
   { name: "Hotéis & Pousadas",     slug: "hoteis",       icon: "🏨", description: "Hotéis, pousadas e hospedagem", isActive: true },
   { name: "Parques & Atrações",    slug: "parques",      icon: "🌳", description: "Parques, jardins e atrações turísticas", isActive: true },
+  { name: "Pontos Turísticos",     slug: "pontos-turisticos", icon: "🌸", description: "Pontos de interesse e patrimônio histórico", isActive: true },
 ];
 
 // ─── 21 Lugares reais de Holambra ─────────────────────────────────────────────
@@ -169,22 +170,22 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6372, lng: -47.0632,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["hotel", "parque", "piscina", "lazer", "familia", "tradicional", "area_verde", "criancas"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
     name: "Shellter Hotel",
     _categorySlug: "hoteis",
-    shortDesc: "Hotel design com arquitetura contemporânea — um dos mais charmosos e modernos de Holambra",
+    shortDesc: "Hotel design com arquitetura contemporânea — o mais charmoso e visualmente cuidado de Holambra",
     longDesc: "O Shellter Hotel se destaca pela arquitetura contemporânea e proposta mais cuidada. Quartos bem projetados, design com identidade e um cuidado com a experiência que vai além do básico. Excelente para casais que valorizam estética e têm Holambra como destino principal do fim de semana.",
     address: "Holambra – SP", lat: -22.6355, lng: -47.0620,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["hotel", "design", "contemporaneo", "charmoso", "casal", "romantico", "fim_de_semana", "premium"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -283,12 +284,12 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   {
     name: "De Immigrant Gastro Café",
     _categorySlug: "restaurantes",
-    shortDesc: "Gastro café aberto todos os dias desde as 8h — culinária da imigração holandesa com ambiente que conta a história de Holambra",
+    shortDesc: "Gastro café desde as 8h — café da manhã, almoço e a história da imigração holandesa no mesmo endereço",
     longDesc: "O De Immigrant Gastro Café é um dos lugares mais carregados de identidade em Holambra. A proposta mistura café da manhã refinado, almoço regional e a história dos imigrantes holandeses que fundaram a cidade. Aberto todos os dias a partir das 8h, funciona como ponto de partida natural para quem chega à Rua Dória Vasconcelos.",
     address: "Rua Dória Vasconcelos, 293, Holambra – SP", lat: -22.6360, lng: -47.0615,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["cafe", "regional", "almoco", "cafe_da_manha", "casal", "roteiro_cultura", "gastronomia_holandesa", "curadoria_oranje", "historia", "primeira_visita"], status: "active",
     dataPending: false,
   },
@@ -414,7 +415,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "Expoflora",
-    _categorySlug: "pontos_turisticos",
+    _categorySlug: "pontos-turisticos",
     shortDesc: "O maior evento de flores da América Latina — acontece todo setembro em Holambra.",
     longDesc: "A Expoflora é o maior evento de flores e plantas ornamentais da América Latina e acontece anualmente em setembro, durante cerca de 30 dias, no Parque de Exposições de Holambra. É o ponto alto do calendário turístico da cidade: atrações ao vivo, gastronomia, artesanato, expositores de todo o Brasil e uma explosão de cor que transforma Holambra numa das cidades mais visitadas do estado durante o período. Se você está planejando uma visita em setembro, estruture o roteiro em torno da Expoflora — ela vale o deslocamento. Nos outros meses, o espaço não está em operação como evento.",
     address: "Parque de Exposições de Holambra, SP", lat: -22.6380, lng: -47.0590,
@@ -475,6 +476,61 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: true, isFeatured: true, isPartner: false,
     tags: ["rural", "romantico", "natureza", "casal", "pousada", "turismo_rural"], status: "active",
+    dataPending: false,
+  },
+
+  // ─── Eixo de passeio + Zoet en Zout ──────────────────────────────────────
+
+  {
+    name: "Zoet en Zout",
+    _categorySlug: "cafes",
+    shortDesc: "Café e doceria holandesa na Viela Lantanas — doces artesanais, brunch caprichado e o charme das manhãs de Holambra",
+    longDesc: "Zoet en Zout — que significa doce e salgado em holandês — é um dos cafés mais tradicionais de Holambra e um dos mais queridos por quem conhece a cidade de verdade. Localizado na Viela Lantanas, perto do eixo do lago e da Praça Vitória Régia, é o tipo de lugar que mistura café feito com cuidado, doces de influência holandesa e o ritmo tranquilo de quem não tem pressa. O ambiente é simples e aconchegante — nada é cenográfico aqui, e isso é exatamente o charme. Pedida certeira para o café da manhã ou brunch, especialmente nos fins de semana quando a cidade enche de visitantes e o ritmo do lugar fica ainda mais especial.",
+    address: "Viela Lantanas, 90, Holambra, SP, 13825-000", lat: -22.6395, lng: -47.0620,
+    city: "Holambra", state: "SP", country: "Brasil",
+    phone: "(19) 3802-1293",
+    priceRange: "$$", isFree: false,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["cafe_da_manha", "brunch", "doces", "tradicional", "tipico_holandes", "casal", "fotos", "turistico", "curadoria_oranje", "classico", "primeira_visita", "cultura_holandesa"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Deck do Amor",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Deque romântico com cadeados do amor — o ponto de casais mais simbólico de Holambra",
+    longDesc: "O Deck do Amor é um dos pontos mais íntimos e procurados de Holambra. Um deque de madeira à beira do lago onde casais têm o costume de pendurar cadeados como símbolo do amor e da passagem pela cidade — a prática criou uma atmosfera única, com centenas de cadeados coloridos preenchendo a cerca enquanto a água e as flores completam o quadro. Fica no eixo de passeio que liga a Rua dos Guarda-Chuvas ao Moinho Povos Unidos, passando pela Praça Vitória Régia — tudo a pé, no coração da cidade. O nascer do sol aqui é especial: a luz rasante reflete na água e a ausência de movimento cria uma quietude que poucos lugares de Holambra conseguem oferecer.",
+    address: "Eixo do Lago — Holambra, SP", lat: -22.6415, lng: -47.0600,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "free", isFree: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["romantico", "cadeados_do_amor", "casal", "fotos", "nascer_do_sol", "contemplacao", "experiencia_simbolica", "ponto_iconico", "primeira_visita", "eixo_de_passeio", "ao_ar_livre", "gratuito"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Praça Vitória Régia",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Espelho d'água com vitórias-régias — contemplação, reflexos e o nascer do sol mais bonito de Holambra",
+    longDesc: "A Praça Vitória Régia é um dos pontos mais contemplativos de Holambra. Um espelho d'água rodeado de vegetação densa onde as vitórias-régias flutuam sobre a superfície calma — plantas que em holandês não teriam nome, mas que aqui carregam perfeitamente a identidade da cidade. No outono, quando a névoa cobre o lago e a luz começa a filtrar entre as árvores, os reflexos formam imagens deslumbrantes que valem qualquer acordar cedo. Faz parte do eixo de passeio entre a Rua dos Guarda-Chuvas e o Moinho Povos Unidos, e é um dos melhores pontos de Holambra para fotografia de paisagem e contemplação silenciosa.",
+    address: "Praça Vitória Régia — Holambra, SP", lat: -22.6385, lng: -47.0608,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "free", isFree: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["nascer_do_sol", "lago", "outono", "fotos", "contemplacao", "manha", "romantico", "natureza", "eixo_de_passeio", "ao_ar_livre", "gratuito", "primeira_visita", "ponto_iconico"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Rua dos Guarda-Chuvas",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Corredor fotográfico com guarda-chuvas coloridos — parada visual obrigatória no eixo de passeio do centro",
+    longDesc: "A Rua dos Guarda-Chuvas é uma das paradas mais fotogênicas de Holambra. Uma rua do centro onde guarda-chuvas coloridos e lanternas decoram o ar acima da calçada, criando um corredor visual que virou um dos pontos mais fotografados da cidade. É uma parada leve — de dez a quinze minutos — perfeita para iniciar o passeio a pé pelo eixo central: daqui você continua pelo Deck do Amor, passa pela Praça Vitória Régia e chega ao Moinho Povos Unidos. Funciona bem para casais, grupos e qualquer um que queira uma foto bonita de Holambra sem muito esforço.",
+    address: "Centro — Holambra, SP", lat: -22.6392, lng: -47.0612,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "free", isFree: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["instagramavel", "fotos", "casal", "passeio_a_pe", "visual", "colorido", "primeira_visita", "eixo_de_passeio", "ao_ar_livre", "gratuito", "romantico", "familia"], status: "active",
     dataPending: false,
   },
 ];

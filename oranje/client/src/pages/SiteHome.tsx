@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, lazy, Suspense } from "react";
-import { usePlacesList, useArticlesListPublished, useCategoriesList } from "@/hooks/useMockData";
+import { usePlacesList, useArticlesListPublished, useCategoriesList, usePublicRoutes } from "@/hooks/useMockData";
 import { trpc } from "@/lib/trpc";
 import { getPlaceImage } from "@/components/PlaceCard";
 import { getPlaceImagesByName, isBlockedCoverUrl } from "@/constants/placeImages";

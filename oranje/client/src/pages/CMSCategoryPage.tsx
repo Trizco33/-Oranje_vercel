@@ -273,7 +273,7 @@ function BaresContent() {
         disso: produção própria, rótulos exclusivos e um espaço que convida a ficar.
       </Para>
       <Para>
-        O <PlaceLink href="/app/lugar/11">Seo Carneiro Bar</PlaceLink> também merece atenção — um dos mais queridos
+        A <PlaceLink href="/app/lugar/11">Cervejaria Seo Carneiro</PlaceLink> também merece atenção — um dos mais queridos
         pelos moradores locais, com ambiente descontraído e o tipo de petisco que combina com qualquer cerveja.
       </Para>
       <SectionTitle>Para noites mais longas</SectionTitle>
@@ -287,7 +287,7 @@ function BaresContent() {
         autorais e uma seleção de música que transforma qualquer terça em um programa especial.
       </Para>
       <PlaceCard name="Boteco do Holandês" desc="Botequim autêntico, chopp gelado e petiscos caprichados" href="/app/lugar/4" />
-      <PlaceCard name="Seo Carneiro Bar" desc="Querido pelos locais, ambiente leve e descontraído" href="/app/lugar/11" />
+      <PlaceCard name="Cervejaria Seo Carneiro" desc="Querida pelos locais, cervejaria artesanal com ambiente leve e descontraído" href="/app/lugar/11" />
       <PlaceCard name="Deck 237" desc="Espaço ao ar livre, boa música e view agradável" href="/app/lugar/12" />
       <PlaceCard name="Quintal Yah" desc="Drinks criativos, ambiente tranquilo" href="/app/lugar/13" />
       <PlaceCard name="Cervejaria Holambier" desc="Produção própria, rótulos exclusivos e espaço completo" href="/app/lugar/26" />

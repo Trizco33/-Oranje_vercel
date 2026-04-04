@@ -872,7 +872,37 @@ export async function seedHolambra() {
     }
   }
 
-  // 2. Upsert dos 21 lugares via ON DUPLICATE KEY UPDATE (keyed on name+city)
+  // 1b. Migrações de rename — idempotente:
+  //   a) Se newName já existe no banco → deleta oldName (duplicata do seed anterior)
+  //   b) Se newName não existe → renomeia oldName para newName (preserva o ID original)
+  const RENAMES: Array<{ oldName: string; newName: string; city: string }> = [
+    { oldName: "Seo Carneiro Bar", newName: "Cervejaria Seo Carneiro", city: "Holambra" },
+    { oldName: "Garden Restaurante", newName: "De Immigrant Restaurante Garden", city: "Holambra" },
+  ];
+  for (const { oldName, newName, city } of RENAMES) {
+    const [oldRow] = await db
+      .select()
+      .from(places)
+      .where(sql`name = ${oldName} AND city = ${city}`)
+      .limit(1);
+    if (!oldRow) continue;
+    const [newRow] = await db
+      .select()
+      .from(places)
+      .where(sql`name = ${newName} AND city = ${city}`)
+      .limit(1);
+    if (newRow) {
+      // newName já existe — remove o row legado com o nome antigo
+      await db.execute(sql`DELETE FROM places WHERE name = ${oldName} AND city = ${city}`);
+      console.log(`  🗑️  Removida entrada legada "${oldName}" (já existe "${newName}")`);
+    } else {
+      // newName não existe — renomeia preservando o ID original
+      await db.execute(sql`UPDATE places SET name = ${newName} WHERE name = ${oldName} AND city = ${city}`);
+      console.log(`  🔄 Renomeado "${oldName}" → "${newName}"`);
+    }
+  }
+
+  // 2. Upsert dos lugares via ON DUPLICATE KEY UPDATE (keyed on name+city)
   console.log("\n📍 Realizando upsert dos lugares...");
   let upserted = 0;
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Heart, MapPin, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DSBadge } from "@/components/ds";
-import { getPlaceImagesByName, getCategoryFallbackImage } from "@/constants/placeImages";
+import { getPlaceImagesByName, getCategoryFallbackImage, isBlockedCoverUrl } from "@/constants/placeImages";
 import { BusinessHoursBadge } from "@/components/BusinessHoursBadge";
 
 interface PlaceCardProps {
@@ -41,8 +41,8 @@ export function getPlaceImage(place: {
   images?: string[] | null;
   categoryName?: string | null;
 }): string {
-  if (place.coverImage) return place.coverImage;
-  if (place.images && place.images.length > 0) return place.images[0];
+  if (place.coverImage && !isBlockedCoverUrl(place.coverImage)) return place.coverImage;
+  if (place.images && place.images.length > 0 && !isBlockedCoverUrl(place.images[0])) return place.images[0];
 
   const nameImages = getPlaceImagesByName(place.name);
   if (nameImages.length > 0) return nameImages[0];

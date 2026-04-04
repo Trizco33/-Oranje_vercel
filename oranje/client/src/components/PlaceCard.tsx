@@ -29,20 +29,42 @@ interface PlaceCardProps {
 }
 
 /**
+ * Safely parse the images field from DB — Railway stores it as a JSON string,
+ * not a real array. Returns a clean array of valid, non-blocked URLs.
+ */
+function parsePlaceImages(images: any): string[] {
+  let arr: any[] = [];
+  if (!images) return [];
+  if (Array.isArray(images)) {
+    arr = images;
+  } else if (typeof images === "string") {
+    try { arr = JSON.parse(images); } catch { return []; }
+    if (!Array.isArray(arr)) return [];
+  } else {
+    return [];
+  }
+  return arr.filter((u: any) => typeof u === "string" && u.trim().length > 10 && !isBlockedCoverUrl(u));
+}
+
+/**
  * Resolves the best image for a place, with fallback chain:
- * 1. place.coverImage (from DB)
- * 2. First image from place.images array (from DB)
+ * 1. place.coverImage (from DB) — skips blocked/empty
+ * 2. First valid URL from place.images (from DB) — parsed safely, skips blocked
  * 3. Match from PLACE_IMAGES constant (by name)
  * 4. Category fallback image
  */
 export function getPlaceImage(place: {
   name: string;
   coverImage?: string | null;
-  images?: string[] | null;
+  images?: any;
   categoryName?: string | null;
 }): string {
-  if (place.coverImage && !isBlockedCoverUrl(place.coverImage)) return place.coverImage;
-  if (place.images && place.images.length > 0 && !isBlockedCoverUrl(place.images[0])) return place.images[0];
+  if (place.coverImage && place.coverImage.trim().length > 10 && !isBlockedCoverUrl(place.coverImage)) {
+    return place.coverImage;
+  }
+
+  const dbImages = parsePlaceImages(place.images);
+  if (dbImages.length > 0) return dbImages[0];
 
   const nameImages = getPlaceImagesByName(place.name);
   if (nameImages.length > 0) return nameImages[0];
@@ -56,17 +78,17 @@ export function getPlaceImage(place: {
 export function getAllPlaceImages(place: {
   name: string;
   coverImage?: string | null;
-  images?: string[] | null;
+  images?: any;
   categoryName?: string | null;
 }): string[] {
   const images: string[] = [];
 
-  // DB images first — skip blocked URLs (stock/wrong photos from legacy DB)
-  if (place.coverImage && !isBlockedCoverUrl(place.coverImage)) images.push(place.coverImage);
-  if (place.images) {
-    for (const img of place.images) {
-      if (!images.includes(img) && !isBlockedCoverUrl(img)) images.push(img);
-    }
+  // DB images first — parse safely (Railway stores as JSON string) + skip blocked
+  if (place.coverImage && place.coverImage.trim().length > 10 && !isBlockedCoverUrl(place.coverImage)) {
+    images.push(place.coverImage);
+  }
+  for (const img of parsePlaceImages(place.images)) {
+    if (!images.includes(img)) images.push(img);
   }
 
   // Name-matched images

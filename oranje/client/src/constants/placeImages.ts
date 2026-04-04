@@ -280,6 +280,12 @@ export const BLOCKED_COVER_URLS: Set<string> = new Set([
   "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800",  // pousada genérica
   "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800",     // hotel genérico
   "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800",  // parque genérico
+  // Nossa Prainha — capa oceânica irreal (praia de mar aberto, incompatível com lago de Holambra)
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",  // praia oceânica genérica
+  "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800",  // praia oceânica genérica 2
+  // Parque Bloemen (id=20) — entidade fantasma do banco legado Railway
+  "https://i.pinimg.com/474x/d0/bf/50/d0bf5018f4760c95ad30366e19901e51.jpg", // pinterest flores genérico
+  "https://i.ytimg.com/vi/6HmU6PqRnsw/sddefault.jpg",                        // YouTube thumbnail genérico
 ]);
 
 /**

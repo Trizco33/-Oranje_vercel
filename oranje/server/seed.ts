@@ -151,7 +151,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <p>A <a href="/app/lugar/5">Expoflora</a> é o maior festival de flores da América Latina e acontece todo setembro no Parque de Exposições de Holambra — durante cerca de 30 dias, recebe centenas de milhares de visitantes e transforma a cidade numa das mais vibrantes do interior paulista. Se a sua visita coincide com setembro, estruture o roteiro em torno dela.</p>
 <h2>Parques para caminhar, respirar e fotografar</h2>
 <p>O <a href="/app/lugar/19">Parque Van Gogh</a> é um dos mais fotografados de Holambra — a combinação de jardins bem cuidados com referências ao pintor holandês cria um cenário incomum que funciona em qualquer estação do ano.</p>
-<p>O <a href="/app/lugar/20">Parque Bloemen</a> e o <a href="/app/lugar/32">Bloemen Park</a> expandem essa experiência com mais espaço verde, flores e estrutura para passeios tranquilos — ótimos para famílias ou casais que querem um programa sem pressa.</p>
+<p>O <a href="/app/lugar/32">Bloemen Park</a> expande essa experiência com mais espaço verde, flores e estrutura para passeios tranquilos — ótimo para famílias ou casais que querem um programa sem pressa.</p>
 <p>O <a href="/app/lugar/34">Macena Flores</a> é uma parada especial para quem quer ver flores de perto, em canteiros cuidados e com opção de compra. A beleza do lugar está na simplicidade e na abundância de cor.</p>
 <h2>Para ir com crianças</h2>
 <p>A <a href="/app/lugar/21">Cidade das Crianças</a> é a atração mais indicada para famílias com os pequenos. O espaço tem infraestrutura pensada para crianças, com brinquedos, segurança e muito espaço para correr — enquanto os adultos respiram e tomam aquele café merecido.</p>
@@ -161,7 +161,6 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <p>O melhor horário para fotos é logo pela manhã, antes do sol forte, ou no final da tarde, quando a luz fica mais dourada e os parques ficam mais tranquilos. Use roupas confortáveis e leve água — mesmo em dias frescos, o sol de Holambra pede respeito.</p>
 <a href="/app/lugar/5" class="place-card"><div class="place-card-name">Expoflora</div><div class="place-card-desc">O maior festival de flores da América Latina — acontece todo setembro em Holambra</div></a>
 <a href="/app/lugar/19" class="place-card"><div class="place-card-name">Parque Van Gogh</div><div class="place-card-desc">Jardins temáticos e cenário único inspirado no pintor holandês</div></a>
-<a href="/app/lugar/20" class="place-card"><div class="place-card-name">Parque Bloemen</div><div class="place-card-desc">Espaço verde amplo, ideal para passeios tranquilos e fotos</div></a>
 <a href="/app/lugar/21" class="place-card"><div class="place-card-name">Cidade das Crianças</div><div class="place-card-desc">Atração ideal para famílias com crianças</div></a>
 <a href="/app/lugar/22" class="place-card"><div class="place-card-name">Parque Vitória</div><div class="place-card-desc">Área verde com lago, ótimo para piquenique</div></a>
 <a href="/app/lugar/23" class="place-card"><div class="place-card-name">Nossa Prainha</div><div class="place-card-desc">Espaço de lazer à beira d'água, perfeito para relaxar</div></a>

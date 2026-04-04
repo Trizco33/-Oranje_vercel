@@ -323,9 +323,8 @@ function PontosTuristicosContent() {
         qualquer estação do ano.
       </Para>
       <Para>
-        O <PlaceLink href="/app/lugar/20">Parque Bloemen</PlaceLink> e o{" "}
-        <PlaceLink href="/app/lugar/32">Bloemen Park</PlaceLink> expandem essa experiência com mais espaço verde,
-        flores e estrutura para passeios tranquilos — ótimos para famílias ou casais que querem um programa sem pressa.
+        O <PlaceLink href="/app/lugar/32">Bloemen Park</PlaceLink> expande essa experiência com mais espaço verde,
+        flores e estrutura para passeios tranquilos — ótimo para famílias ou casais que querem um programa sem pressa.
       </Para>
       <Para>
         O <PlaceLink href="/app/lugar/34">Macena Flores</PlaceLink> é uma parada especial para quem quer ver flores de
@@ -355,7 +354,6 @@ function PontosTuristicosContent() {
       </Para>
       <PlaceCard name="Expoflora" desc="O maior festival de flores da América Latina — acontece todo setembro em Holambra" href="/app/lugar/5" />
       <PlaceCard name="Parque Van Gogh" desc="Jardins temáticos e cenário único inspirado no pintor holandês" href="/app/lugar/19" />
-      <PlaceCard name="Parque Bloemen" desc="Espaço verde amplo, ideal para passeios tranquilos e fotos" href="/app/lugar/20" />
       <PlaceCard name="Cidade das Crianças" desc="Atração ideal para famílias com crianças" href="/app/lugar/21" />
       <PlaceCard name="Parque Vitória" desc="Área verde com lago, ótimo para piquenique" href="/app/lugar/22" />
       <PlaceCard name="Nossa Prainha" desc="Espaço de lazer à beira d'água, perfeito para relaxar" href="/app/lugar/23" />
@@ -424,12 +422,12 @@ function EventosContent() {
         O <PlaceLink href="/app/lugar/5">Parque de Exposições</PlaceLink> é o palco principal dos grandes eventos de
         Holambra — a Expoflora, shows e feiras temáticas acontecem aqui. O{" "}
         <PlaceLink href="/app/lugar/19">Parque Van Gogh</PlaceLink> e o{" "}
-        <PlaceLink href="/app/lugar/20">Parque Bloemen</PlaceLink> frequentemente sediam atividades culturais
+        <PlaceLink href="/app/lugar/32">Bloemen Park</PlaceLink> frequentemente sediam atividades culturais
         ao ar livre durante datas especiais.
       </Para>
       <PlaceCard name="Expoflora" desc="O maior festival de flores da América Latina — todo setembro em Holambra" href="/app/lugar/5" />
       <PlaceCard name="Parque Van Gogh" desc="Eventos e atividades culturais ao ar livre em datas especiais" href="/app/lugar/19" />
-      <PlaceCard name="Parque Bloemen" desc="Atividades culturais e festivais ao ar livre no centro da cidade" href="/app/lugar/20" />
+      <PlaceCard name="Bloemen Park" desc="Flores, jardins e atividades culturais ao ar livre em Holambra" href="/app/lugar/32" />
     </div>
   );
 }

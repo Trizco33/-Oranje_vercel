@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo, lazy, Suspense } from "react";
 import { usePlacesList, useArticlesListPublished, useCategoriesList } from "@/hooks/useMockData";
 import { trpc } from "@/lib/trpc";
 import { getPlaceImage } from "@/components/PlaceCard";
-import { getPlaceImagesByName } from "@/constants/placeImages";
+import { getPlaceImagesByName, isBlockedCoverUrl } from "@/constants/placeImages";
 import SiteLayout from "@/components/SiteLayout";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -129,7 +129,9 @@ export default function SiteHome() {
   const [heroVideoError, setHeroVideoError] = useState(false);
   const places = allPlaces.filter((p: any) => p.status !== "inactive");
   const hasVerifiedImage = (p: any): boolean => {
-    if (p.coverImage && p.coverImage.trim().length > 10) return true;
+    // coverImage from DB is valid only if it exists AND isn't in the blocklist
+    if (p.coverImage && p.coverImage.trim().length > 10 && !isBlockedCoverUrl(p.coverImage)) return true;
+    // Fall back to named images — but only non-empty arrays (empty array = pending)
     const namedImages = getPlaceImagesByName(p.name).filter((url: string) => url && url.trim().length > 0);
     return namedImages.length > 0;
   };

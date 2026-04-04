@@ -265,6 +265,35 @@ export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
 };
 
 /**
+ * URLs known to be generic/wrong — these are Unsplash stock photos or
+ * monument photos misused for specific places. A place whose only image
+ * matches one of these is treated as having NO verified image.
+ */
+export const BLOCKED_COVER_URLS: Set<string> = new Set([
+  // Moinho monumento (Moinho Povos Unidos) — usado erroneamente para Café Moinho
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Moinho_holambra.jpg/800px-Moinho_holambra.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Holambra_windmill.jpg/600px-Holambra_windmill.jpg",
+  // Unsplash genéricas usadas no banco de produção legado (Railway)
+  "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800",     // hotel genérico
+  "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800",  // hotel genérico
+  "https://images.unsplash.com/photo-1618773928121-c3",                  // hotel genérico (prefix)
+  "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800",  // pousada genérica
+  "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800",     // hotel genérico
+  "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800",  // parque genérico
+]);
+
+/**
+ * Returns true if a cover image URL is known to be generic/wrong.
+ */
+export function isBlockedCoverUrl(url: string): boolean {
+  if (!url) return false;
+  for (const blocked of BLOCKED_COVER_URLS) {
+    if (url.startsWith(blocked) || url === blocked) return true;
+  }
+  return false;
+}
+
+/**
  * Get images for a place by name matching (fuzzy)
  */
 export function getPlaceImagesByName(name: string): string[] {

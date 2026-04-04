@@ -8,12 +8,10 @@
 export const PLACE_IMAGES: Record<string, string[]> = {
   // ─── RESTAURANTES ──────────────────────────────────────────────
   "Café Moinho": [
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Moinho_holambra.jpg/800px-Moinho_holambra.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Holambra_windmill.jpg/600px-Holambra_windmill.jpg",
+    // fotos pendentes — imagens anteriores eram do monumento Moinho Povos Unidos (errado)
   ],
   "Cafe Moinho": [
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Moinho_holambra.jpg/800px-Moinho_holambra.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Holambra_windmill.jpg/600px-Holambra_windmill.jpg",
+    // fotos pendentes — imagens anteriores eram do monumento Moinho Povos Unidos (errado)
   ],
   "Martin Holandesa": [
     // fonte oficial: martinholandesa.com.br

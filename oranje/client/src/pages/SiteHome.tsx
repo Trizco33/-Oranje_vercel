@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo, lazy, Suspense } from "react";
 import { usePlacesList, useArticlesListPublished, useCategoriesList } from "@/hooks/useMockData";
 import { trpc } from "@/lib/trpc";
 import { getPlaceImage } from "@/components/PlaceCard";
+import { getPlaceImagesByName } from "@/constants/placeImages";
 import SiteLayout from "@/components/SiteLayout";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -127,8 +128,16 @@ export default function SiteHome() {
   const { data: heroData } = trpc.content.getHero.useQuery();
   const [heroVideoError, setHeroVideoError] = useState(false);
   const places = allPlaces.filter((p: any) => p.status !== "inactive");
+  const hasVerifiedImage = (p: any): boolean => {
+    if (p.coverImage && p.coverImage.trim().length > 10) return true;
+    const namedImages = getPlaceImagesByName(p.name).filter((url: string) => url && url.trim().length > 0);
+    return namedImages.length > 0;
+  };
+
   const featuredPlaces = useMemo(
-    () => allPlaces.filter((p: any) => p.isFeatured && p.isRecommended && p.status !== "inactive"),
+    () => allPlaces.filter(
+      (p: any) => p.isFeatured && p.isRecommended && p.status !== "inactive" && hasVerifiedImage(p)
+    ),
     [allPlaces]
   );
 

@@ -43,7 +43,13 @@ function parsePlaceImages(images: any): string[] {
   } else {
     return [];
   }
-  return arr.filter((u: any) => typeof u === "string" && u.trim().length > 10 && !isBlockedCoverUrl(u));
+  return arr.filter((u: any) =>
+    typeof u === "string" &&
+    u.trim().length > 10 &&
+    !isBlockedCoverUrl(u) &&
+    // Railway DB legacy: images[] is 100% generic Unsplash stock photos — never real place photos
+    !u.includes("images.unsplash.com")
+  );
 }
 
 /**

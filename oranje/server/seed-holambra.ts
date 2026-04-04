@@ -63,7 +63,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6352, lng: -47.0588,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["regional", "almoço", "natureza"], status: "active",
     dataPending: true,
   },
@@ -76,7 +76,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Centro, Holambra – SP", lat: -22.6381, lng: -47.0607,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: true, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["cerveja artesanal", "petiscos", "boteco", "música ao vivo"], status: "active",
     dataPending: true,
   },
@@ -89,7 +89,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Centro, Holambra – SP", lat: -22.6385, lng: -47.0598,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["café especial", "bolos", "tortas"], status: "active",
     dataPending: true,
   },
@@ -115,7 +115,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Centro, Holambra – SP", lat: -22.6378, lng: -47.0610,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["confeitaria", "doces finos", "café da manhã", "tortas"], status: "active",
     dataPending: true,
   },
@@ -157,7 +157,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6370, lng: -47.0630,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$$", isFree: false,
-    isRecommended: true, isFeatured: true, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["hotel", "piscina", "casal", "familia", "tradicional", "central", "premium"], status: "active",
     dataPending: true,
   },
@@ -213,7 +213,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6360, lng: -47.0618,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["hotel", "historia", "tradicional", "casal", "cultura_holandesa", "imigracao"], status: "active",
     dataPending: true,
   },
@@ -226,7 +226,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6375, lng: -47.0628,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["pousada", "charmosa", "casal", "romantico", "intimista", "descanso", "fim_de_semana"], status: "active",
     dataPending: true,
   },
@@ -239,7 +239,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Av. dos Imigrantes, Holambra – SP", lat: -22.6348, lng: -47.0652,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
-    isRecommended: true, isFeatured: true, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["flores", "família", "eventos", "holandês", "turismo"], status: "active",
     dataPending: true,
   },
@@ -454,7 +454,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6400, lng: -47.0610,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["cervejaria", "artesanal", "bar", "petiscos", "casual", "animado"], status: "active",
     dataPending: true,
   },
@@ -542,7 +542,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6385, lng: -47.0610,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["tipico_holandes", "tradicional", "almoco", "jantar", "historico", "casal", "gastronomia_holandesa"], status: "active",
     dataPending: true,
   },
@@ -570,7 +570,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6395, lng: -47.0615,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["japones", "oriental", "sushi", "almoco", "jantar", "casal", "diferente"], status: "active",
     dataPending: true,
   },
@@ -583,7 +583,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6430, lng: -47.0575,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["lago", "vista", "almoco", "familia", "romantico", "ao_ar_livre"], status: "active",
     dataPending: true,
   },
@@ -613,7 +613,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     address: "Holambra – SP", lat: -22.6435, lng: -47.0570,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["praia", "lago", "lazer", "familia", "criancas", "verao", "agua", "ao_ar_livre"], status: "active",
     dataPending: true,
   },
@@ -808,6 +808,16 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 // ─── Runner ───────────────────────────────────────────────────────────────────
 export async function seedHolambra() {
   console.log("🌷 Iniciando seed dos 40 lugares reais de Holambra...\n");
+
+  // ── Regra de curadoria: dataPending=true → isRecommended=false e isFeatured=false ─────
+  const violations = HOLAMBRA_PLACES.filter(
+    (p) => p.dataPending && (p.isRecommended || p.isFeatured)
+  );
+  if (violations.length > 0) {
+    console.error("❌ Violação de regra curatorial detectada:");
+    violations.forEach((v) => console.error(`   - "${v.name}": dataPending=true mas isRecommended=${v.isRecommended}, isFeatured=${v.isFeatured}`));
+    process.exit(1);
+  }
 
   const db = await getDb();
   if (!db) {

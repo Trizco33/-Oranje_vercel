@@ -121,10 +121,11 @@ export const PLACE_IMAGES: Record<string, string[]> = {
 
   // ─── HOTÉIS ────────────────────────────────────────────────────
   "Villa de Holanda Hotel": [
-    // fonte oficial: villadeholandahotel.com.br (outubro 2025)
-    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1761.jpg",
-    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1748.jpg",
-    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_2289.jpg",
+    // fonte oficial: villadeholandahotel.com.br — thumbs Elementor (~50-70KB cada)
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_1761-rcx7t5tncgdkfxe0p396ipvkdjwvp4qmz8gxkdispw.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_1748-rcx7tize04vkyguwk8xyhmk0oy40ow6vp1lqa8zaas.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_2289-rcx7ub6jp5y6mrpxzl4rkffuii913tatsx6aojth44.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_1764-rcx7v59drv3cyai93y4ts7uliu4ry4m8l21u1ekvl0.jpg",
   ],
   "Holambra Garden Hotel": [
     // foto pendente de fonte oficial — aguardando imagem do site holambragardenhotel.com.br
@@ -133,10 +134,11 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     // foto pendente de fonte oficial
   ],
   "Hotel Villa de Holanda": [
-    // fonte oficial: villadeholandahotel.com.br (outubro 2025)
-    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1761.jpg",
-    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_1748.jpg",
-    "https://villadeholandahotel.com.br/wp-content/uploads/2025/10/IMG_2289.jpg",
+    // fonte oficial: villadeholandahotel.com.br — thumbs Elementor (~50-70KB cada)
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_1761-rcx7t5tncgdkfxe0p396ipvkdjwvp4qmz8gxkdispw.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_1748-rcx7tize04vkyguwk8xyhmk0oy40ow6vp1lqa8zaas.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_2289-rcx7ub6jp5y6mrpxzl4rkffuii913tatsx6aojth44.jpg",
+    "https://villadeholandahotel.com.br/wp-content/uploads/elementor/thumbs/IMG_1764-rcx7v59drv3cyai93y4ts7uliu4ry4m8l21u1ekvl0.jpg",
   ],
   "Villa de Holanda Parque Hotel": [
     // fonte oficial: villadeholanda.com.br (outubro 2025)

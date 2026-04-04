@@ -14,7 +14,8 @@ import { getLoginUrl } from "@/const";
 import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewForm } from "@/components/ReviewForm";
 import { DSButton, DSBadge } from "@/components/ds";
-import { getAllPlaceImages } from "@/components/PlaceCard";
+import { getAllPlaceImages, getPlaceImage } from "@/components/PlaceCard";
+import { isBlockedCoverUrl } from "@/constants/placeImages";
 import { useBusinessHours, getBusinessStatus } from "@/hooks/useBusinessHours";
 
 /* ─── Constants ─────────────────────────────────────────────────────────────── */
@@ -420,7 +421,7 @@ function RelatedPlacesBlock({ categoryId, categoryName, excludeId }: {
       <SectionTitle icon={<Map size={14} />} title={`Mais em ${categoryName || "Holambra"}`} />
       <div className="flex gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
         {related.map((p: any) => {
-          const img = p.coverImage || (Array.isArray(p.images) ? p.images[0] : null);
+          const img = getPlaceImage(p);
           return (
             <Link
               key={p.id}
@@ -561,7 +562,8 @@ export default function PlaceDetail() {
     const siteName = "ORANJE — Guia Cultural de Holambra";
     const placeUrl = `${window.location.origin}/app/lugar/${place.id}`;
     const description = place.shortDesc || place.longDesc || `Conheça ${place.name} em Holambra, SP.`;
-    const image = place.coverImage || (Array.isArray(place.images) ? place.images[0] : "") || "";
+    const rawCover = (!isBlockedCoverUrl(place.coverImage || "") && place.coverImage) || "";
+    const image = rawCover || (Array.isArray(place.images) ? (place.images.find((u: string) => u && !isBlockedCoverUrl(u)) ?? "") : "") || "";
     document.title = `${place.name} — ${siteName}`;
 
     const setMeta = (property: string, content: string, attr = "property") => {

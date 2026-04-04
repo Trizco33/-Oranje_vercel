@@ -61,11 +61,11 @@ export function getAllPlaceImages(place: {
 }): string[] {
   const images: string[] = [];
 
-  // DB images first
-  if (place.coverImage) images.push(place.coverImage);
+  // DB images first — skip blocked URLs (stock/wrong photos from legacy DB)
+  if (place.coverImage && !isBlockedCoverUrl(place.coverImage)) images.push(place.coverImage);
   if (place.images) {
     for (const img of place.images) {
-      if (!images.includes(img)) images.push(img);
+      if (!images.includes(img) && !isBlockedCoverUrl(img)) images.push(img);
     }
   }
 

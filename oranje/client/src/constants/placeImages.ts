@@ -234,6 +234,18 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/6c/87/de/dsc-0098-largejpg.jpg?w=900&h=-1&s=1",
     "https://c8.alamy.com/comp/2C777C7/the-entrance-of-holambra-historical-museum-museu-holambra-tourist-attraction-located-at-alameda-mauricio-de-nasau-street-in-downtown-2C777C7.jpg",
   ],
+  "Museu da Cultura e História de Holambra": [
+    // nome oficial completo — fuzzy match não alcança "Museu de Holambra", então entrada explícita
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/27/89/95/87/entrada.jpg?w=1200&h=-1&s=1",
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/6c/87/de/dsc-0098-largejpg.jpg?w=900&h=-1&s=1",
+    "https://c8.alamy.com/comp/2C777C7/the-entrance-of-holambra-historical-museum-museu-holambra-tourist-attraction-located-at-alameda-mauricio-de-nasau-street-in-downtown-2C777C7.jpg",
+  ],
+  "Hana Restaurante Holambra": [
+    // alias explícito — fuzzy match alcança via "Hana Restaurante" mas entrada explícita é mais segura
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/aa/72/b9/sabor-delicadeza-e-amor.jpg?w=900&h=500&s=1",
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/21/af/70/13/hana-restaurante-holambra.jpg?w=1200&h=1200&s=1",
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/07/c4/58/hana-restaurante-holambra.jpg?w=1100&h=1100&s=1",
+  ],
   "Portal da Cidade": [
     "https://upload.wikimedia.org/wikipedia/commons/d/da/Portal_Holambra.jpg",
     "https://live.staticflickr.com/4351/36374638894_04cc663dc4_b.jpg",

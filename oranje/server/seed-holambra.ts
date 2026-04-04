@@ -271,19 +271,9 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   },
 
   // ── Média prioridade ──────────────────────────────────────────────────────
-
-  {
-    name: "Garden Restaurante",
-    _categorySlug: "restaurantes",
-    shortDesc: "Restaurante com culinária holandesa, almoço e jantar — experiência gastronômica no coração de Holambra.",
-    longDesc: "O Garden é o endereço certo quando o pedido é gastronomia holandesa num ambiente de verdade. Fica na Rua Dória Vasconcelos — a mesma rua de outros pontos centrais de Holambra — num espaço com jardim que funciona tanto para almoços em família quanto para jantares mais tranquilos a dois. O cardápio explora os sabores da imigração: pratos típicos holandeses ao lado de opções contemporâneas, com atenção à qualidade dos ingredientes e à apresentação. Fecha às terças e quartas — vale confirmar antes de ir. Uma das escolhas mais consistentes da cidade para quem quer comer bem sem sair da pegada cultural de Holambra.",
-    address: "R. Dória Vasconcelos, 229 – Holambra, SP", lat: -22.6418, lng: -47.0572,
-    city: "Holambra", state: "SP", country: "Brasil",
-    priceRange: "$$", isFree: false,
-    isRecommended: true, isFeatured: false, isPartner: false,
-    tags: ["regional", "almoco", "jantar", "casal", "familia", "roteiro_romantico", "gastronomia_holandesa", "curadoria_oranje", "tipico_holandes", "tradicional", "historico"], status: "active",
-    dataPending: false,
-  },
+  // NOTA: "Garden Restaurante" foi removido por ser duplicata de
+  // "De Immigrant Restaurante Garden" — ambos no mesmo endereço (nº 229).
+  // Os dados editoriais foram consolidados na entrada canônica abaixo.
 
   {
     name: "De Immigrant Gastro Café",
@@ -456,16 +446,16 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   },
 
   {
-    name: "Seo Carneiro Bar",
+    name: "Cervejaria Seo Carneiro",
     _categorySlug: "bares",
-    shortDesc: "Cervejaria artesanal com atmosfera autêntica em Holambra.",
+    shortDesc: "Cervejaria artesanal com atmosfera autêntica — o bar mais animado e descontraído de Holambra.",
     longDesc: null,
     coverImage: "https://seocarneiro.com.br/wp-content/uploads/2023/11/20231102_110640-scaled.jpg",
     address: "Holambra – SP", lat: -22.6400, lng: -47.0610,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
-    isRecommended: false, isFeatured: false, isPartner: false,
-    tags: ["cervejaria", "artesanal", "bar", "petiscos", "casual"], status: "active",
+    isRecommended: true, isFeatured: false, isPartner: false,
+    tags: ["cervejaria", "artesanal", "bar", "petiscos", "casual", "animado"], status: "active",
     dataPending: true,
   },
 
@@ -540,11 +530,284 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     tags: ["instagramavel", "fotos", "casal", "passeio_a_pe", "visual", "colorido", "primeira_visita", "eixo_de_passeio", "ao_ar_livre", "gratuito", "romantico", "familia"], status: "active",
     dataPending: false,
   },
+
+  // ── Migrados do Railway — âncoras com foto real confirmada ────────────────
+
+  {
+    name: "The Old Dutch",
+    _categorySlug: "restaurantes",
+    shortDesc: "Restaurante holandês tradicional no Boulevard — cardápio típico, ambiente histórico e boa reputação na cidade",
+    longDesc: null,
+    coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/e6/d0/72/fachada.jpg?w=900&h=500&s=1",
+    address: "Holambra – SP", lat: -22.6385, lng: -47.0610,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: true, isFeatured: false, isPartner: false,
+    tags: ["tipico_holandes", "tradicional", "almoco", "jantar", "historico", "casal", "gastronomia_holandesa"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Fratelli Wine Bar",
+    _categorySlug: "bares",
+    shortDesc: "Wine bar com rótulos selecionados, petiscos de qualidade e ambiente elegante — o endereço premium de Holambra para quem quer um bom vinho.",
+    longDesc: "O Fratelli Wine Bar é o único wine bar de Holambra com proposta realmente focada em vinho de qualidade. Carta cuidadosa, petiscos que combinam com a seleção e um ambiente que funciona muito bem para jantares de casal ou encontros com amigos que valorizam a experiência. É o tipo de lugar que faz falta em cidades menores e que Holambra tem sorte de ter.",
+    coverImage: "https://fratelliwinebar.com.br/wp-content/uploads/2025/12/fratelli-3-scaled-1.webp",
+    address: "Holambra – SP", lat: -22.6388, lng: -47.0605,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$$", isFree: false,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["vinho", "wine_bar", "premium", "casal", "romantico", "jantar", "petiscos", "curadoria_oranje", "noite"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Hana Restaurante Holambra",
+    _categorySlug: "restaurantes",
+    shortDesc: "Culinária japonesa com qualidade e capricho — o único endereço oriental de Holambra",
+    longDesc: null,
+    coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/aa/72/b9/sabor-delicadeza-e-amor.jpg?w=900&h=500&s=1",
+    address: "Holambra – SP", lat: -22.6395, lng: -47.0615,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: true, isFeatured: false, isPartner: false,
+    tags: ["japones", "oriental", "sushi", "almoco", "jantar", "casal", "diferente"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Lago do Holandês",
+    _categorySlug: "restaurantes",
+    shortDesc: "Restaurante às margens do Lago do Holandês — almoço com vista para o lago central de Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6430, lng: -47.0575,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: true, isFeatured: false, isPartner: false,
+    tags: ["lago", "vista", "almoco", "familia", "romantico", "ao_ar_livre"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Museu da Cultura e História de Holambra",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Museu preserva documentos, fotos e objetos dos imigrantes holandeses que fundaram Holambra em 1948.",
+    longDesc: "O Museu da Cultura e História de Holambra é uma visita obrigatória para quem quer entender a cidade além da superfície floral. O acervo reúne documentos originais, fotografias e objetos pessoais dos imigrantes holandeses que chegaram em 1948 e fundaram a colônia — uma história de coragem, adaptação e identidade que moldou tudo que você vê na cidade hoje. Pequeno, bem curado e gratuito, é o tipo de parada que dura menos de uma hora mas deixa uma impressão duradoura.",
+    coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/27/89/95/87/entrada.jpg?w=1200&h=-1&s=1",
+    address: "Holambra – SP", lat: -22.6390, lng: -47.0618,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: null, isFree: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["museu", "historia", "cultura", "imigracao_holandesa", "gratuito", "educativo", "familia", "casal", "primeira_visita", "roteiro_cultura", "curadoria_oranje"], status: "active",
+    dataPending: false,
+  },
+
+  // ── Prioridade alta — novos lugares ───────────────────────────────────────
+
+  {
+    name: "Nossa Prainha",
+    _categorySlug: "parques",
+    shortDesc: "Praia de lago artificial às margens do Lago do Holandês — área de lazer com areia, sombreiros e acesso à água",
+    longDesc: null,
+    coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/44/67/dc/20160514-142534-largejpg.jpg?w=900&h=-1&s=1",
+    address: "Holambra – SP", lat: -22.6435, lng: -47.0570,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: true, isFeatured: false, isPartner: false,
+    tags: ["praia", "lago", "lazer", "familia", "criancas", "verao", "agua", "ao_ar_livre"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Oma Beppie",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Ponto turístico cultural com referências à imigração holandesa — memória afetiva da colonização em Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6388, lng: -47.0612,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: null, isFree: true,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["cultura_holandesa", "historia", "imigracao", "ponto_turistico"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Cantinho da Cida",
+    _categorySlug: "hoteis",
+    shortDesc: "Hospedagem familiar aconchegante — opção íntima e acolhedora para quem busca alternativa às redes maiores",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6378, lng: -47.0625,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["hospedagem", "familiar", "aconchegante", "economico", "casal"], status: "active",
+    dataPending: true,
+  },
+
+  // ── Prioridade média — novos lugares ──────────────────────────────────────
+
+  {
+    name: "Villa Grill Hamburgueria e Bar",
+    _categorySlug: "bares",
+    shortDesc: "Hamburgueria com proposta de bar — lanches artesanais e ambiente descontraído para o jantar",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6392, lng: -47.0618,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["hamburguer", "bar", "jantar", "casual", "amigos"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Di Komê",
+    _categorySlug: "restaurantes",
+    shortDesc: "Restaurante casual com culinária variada — almoço e jantar no centro de Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6385, lng: -47.0608,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["almoco", "jantar", "casual", "variado", "central"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Houtskool Steak & Burger",
+    _categorySlug: "restaurantes",
+    shortDesc: "Steak house e hamburgueria com cortes nobres e hambúrgueres premium — proposta carnívora de qualidade em Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6380, lng: -47.0605,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["steak", "hamburguer", "carnes", "premium", "jantar", "casal", "grill"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Op Sorvetes Artesanais",
+    _categorySlug: "docerias",
+    shortDesc: "Sorveteria artesanal com sabores criativos e ingredientes regionais — parada refrescante no passeio",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6383, lng: -47.0610,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["sorvetes", "artesanal", "doces", "familia", "criancas", "tarde", "passeio"], status: "active",
+    dataPending: true,
+  },
+
+  // ── Prioridade baixa — presença na base, sem evidenciar ───────────────────
+
+  {
+    name: "Real Receptivo Holambra",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Agência de turismo receptivo especializada em roteiros e passeios por Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6388, lng: -47.0615,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["agencia", "turismo", "roteiros", "passeios", "receptivo"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "HolamBrasil Turismo",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Agência de turismo local com pacotes e roteiros para Holambra e região",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6390, lng: -47.0612,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["agencia", "turismo", "pacotes", "roteiros"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Em Busca do Galope",
+    _categorySlug: "parques",
+    shortDesc: "Passeios a cavalo no campo — turismo equestre às portas de Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6510, lng: -47.0490,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["cavalo", "equestre", "turismo_rural", "natureza", "passeio", "familia"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Mais Coxinha",
+    _categorySlug: "restaurantes",
+    shortDesc: "Lanchonete popular com coxinhas e salgados artesanais — lanche rápido e acessível",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6388, lng: -47.0608,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["lanche", "rapido", "popular", "salgados", "acessivel"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Kok Holambra Food Truck",
+    _categorySlug: "restaurantes",
+    shortDesc: "Food truck com culinária de rua — lanches e refeições no formato mobile",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6392, lng: -47.0610,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["food_truck", "lanche", "rapido", "casual", "rua"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Villa Milani",
+    _categorySlug: "restaurantes",
+    shortDesc: "Restaurante italiano com proposta autoral — massas e risotos em Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6385, lng: -47.0618,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["italiana", "massas", "risotos", "jantar", "premium", "casal"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Lanchonete Luiz",
+    _categorySlug: "restaurantes",
+    shortDesc: "Lanchonete clássica popular — ponto de encontro tradicional de Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6390, lng: -47.0615,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["lanchonete", "popular", "classico", "acessivel", "tradicional"], status: "active",
+    dataPending: true,
+  },
+
+  {
+    name: "Sabor & Arte",
+    _categorySlug: "restaurantes",
+    shortDesc: "Restaurante com culinária criativa e apresentação artística — gastronomia autoral em Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6382, lng: -47.0608,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["autoral", "criativo", "almoco", "jantar", "arte", "gastronomia"], status: "active",
+    dataPending: true,
+  },
 ];
 
 // ─── Runner ───────────────────────────────────────────────────────────────────
 export async function seedHolambra() {
-  console.log("🌷 Iniciando seed dos 21 lugares reais de Holambra...\n");
+  console.log("🌷 Iniciando seed dos 40 lugares reais de Holambra...\n");
 
   const db = await getDb();
   if (!db) {

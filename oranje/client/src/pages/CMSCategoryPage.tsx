@@ -165,7 +165,8 @@ function RestaurantesContent() {
         <PlaceLink href="/app/lugar/42">Cowburguer</PlaceLink> entrega exatamente isso — sem firulas, com muito sabor.
       </Para>
       <Para>
-        E o <PlaceLink href="/app/lugar/35">Garden Restaurante</PlaceLink> fecha essa lista com um ambiente verde e
+        E a{" "}
+        <PlaceLink href="/app/lugar/3824">De Immigrant Restaurante Garden</PlaceLink> fecha essa lista com um ambiente arborizado e
         agradável, ideal para quem quer comer bem num ambiente que combina com a natureza da cidade.
       </Para>
       <SectionTitle>Dicas de quem conhece</SectionTitle>
@@ -183,7 +184,6 @@ function RestaurantesContent() {
       <PlaceCard name="Casa Bela Restaurante" desc="Ambiente familiar, farto e acolhedor" href="/app/lugar/24" />
       <PlaceCard name="De Immigrant Gastro Café" desc="Café da manhã, almoço e história da imigração holandesa — desde as 8h" href="/app/lugar/36" />
       <PlaceCard name="De Immigrant Restaurante Garden" desc="Cardápio autoral em ambiente garden — vizinho ao Gastro Café" href="/app/lugar/3824" />
-      <PlaceCard name="Garden Restaurante" desc="Ambiente arborizado, ótima pedida para almoço tranquilo" href="/app/lugar/35" />
       <PlaceCard name="Cowburguer" desc="Hambúrguer artesanal de qualidade em Holambra" href="/app/lugar/42" />
     </div>
   );

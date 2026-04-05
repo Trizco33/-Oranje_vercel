@@ -994,13 +994,53 @@ export async function seedHolambra() {
       city: "Holambra",
       longDesc: "A Cervejaria Seo Carneiro é o ponto de encontro mais autêntico de Holambra para os amantes de cerveja artesanal. Com um cardápio que mescla rótulos próprios e selecionados, o ambiente é descontraído, barulhento do jeito certo e cheio de gente que volta sempre. Os petiscos combinam com as cervejas e o atendimento é aquele estilo de bar de bairro que faz falta nas cidades grandes. É o tipo de lugar que aparece nas histórias de quem visita Holambra e não esperava encontrar um bom bar artesanal por lá.",
     },
+    {
+      name: "Parque Van Gogh",
+      city: "Holambra",
+      longDesc: "O Parque Van Gogh é o cartão-postal mais fotografado de Holambra: campos de flores coloridas dispostas em blocos geométricos que evocam os quadros do pintor holandês que dá nome ao espaço. A entrada é paga e vale o investimento — especialmente durante o pico do florescimento entre agosto e outubro. O parque tem área de piquenique, café interno e espaço amplo que funciona para famílias e casais. É um dos pontos mais requisitados da cidade durante o Festival das Flores e a primeira parada recomendada para quem chega em Holambra pela primeira vez.",
+    },
+    {
+      name: "Praça Vitória Régia",
+      city: "Holambra",
+      longDesc: "A Praça Vitória Régia é o centro nevrálgico de Holambra: o ponto de chegada de quem percorre o Boulevard Holandês, o espaço de encontro dos moradores e o palco dos eventos da cidade. Com um espelho d'água central decorado com vitórias-régias, bancos à sombra e acesso direto ao Deck do Amor e ao Lago do Holandês, ela é tanto uma parada de descanso quanto um miradouro natural. A praça é gratuita, sempre aberta e animada nos fins de semana com famílias, músicos e comerciantes locais. É o coração da cidade a céu aberto.",
+    },
+    {
+      name: "Rua dos Guarda-Chuvas",
+      city: "Holambra",
+      longDesc: "A Rua dos Guarda-Chuvas é a instalação mais instagramável de Holambra: um túnel de guarda-chuvas coloridos suspensos sobre a calçada que cria uma atmosfera festiva e visualmente marcante. Localizada no centro histórico, próximo ao Boulevard Holandês, ela é ponto de parada obrigatória para fotos e integra o circuito de passeio a pé do centro. É especialmente fotogênica no início da manhã e no final da tarde, quando a luz atravessa os guarda-chuvas e cria tons quentes na calçada. Gratuita e sempre disponível.",
+    },
+    {
+      name: "De Immigrant Gastro Café",
+      city: "Holambra",
+      longDesc: "O De Immigrant Gastro Café é a versão diurna da experiência De Immigrant — mais leve, mais rápida e com um cardápio de café da manhã e brunch que combina muito bem com a vibe do Boulevard Holandês. Croissants, quiches, panquecas e cafés especiais em um ambiente com decoração que remete à imigração europeia. É o ponto certo para começar o dia em Holambra antes de seguir para o Parque Van Gogh ou o Moinho Povos Unidos. Funciona de quarta a domingo, a partir das 9h.",
+    },
+    {
+      name: "Macena Flores",
+      city: "Holambra",
+      longDesc: "A Macena Flores é o principal ponto de compra de flores e plantas de Holambra para visitantes. Com um mix impressionante de variedades — de buquês prontos a plantas raras — e preços de produtor que justificam o deslocamento, é uma parada que a maioria dos turistas faz ao encerrar o passeio pela cidade. O espaço é amplo, com estacionamento próprio e atendimento que conhece profundamente os produtos. Ideal para quem quer levar algo vivo de Holambra para casa.",
+    },
+    {
+      name: "Bloemen Park",
+      city: "Holambra",
+      longDesc: "O Bloemen Park é um dos parques de flores mais acessíveis e completos de Holambra, com entrada paga e uma proposta familiar: campos de flores organizados em corredores temáticos, moinhos decorativos, área de lazer infantil e gastronomia no local. A experiência é mais tranquila e menos concorrida que o Parque Van Gogh, o que o torna a melhor opção para famílias com crianças pequenas ou para quem quer uma experiência menos massificada. Programação especial durante o Festival das Flores em setembro.",
+    },
+    {
+      name: "Deck do Amor",
+      city: "Holambra",
+      longDesc: "O Deck do Amor é o mirante mais romântico de Holambra: uma plataforma de madeira que avança sobre o Lago do Holandês e oferece uma das melhores vistas da cidade. Ao entardecer, com o reflexo da luz no lago e os pássaros sobrevoando a água, o deck vira ponto de parada quase obrigatório para casais que passam por Holambra. É gratuito, de acesso livre e fica no eixo central do passeio entre a Praça Vitória Régia e a Nossa Prainha — fácil de combinar com qualquer roteiro pelo centro da cidade.",
+    },
+    {
+      name: "Museu da Cultura e História de Holambra",
+      city: "Holambra",
+      longDesc: "O Museu da Cultura e História de Holambra é o lugar onde a história da imigração holandesa se torna tangível. Com acervo de objetos pessoais dos primeiros colonos, documentos, fotografias e reconstituições do cotidiano da fundação da cidade, o museu oferece contexto que transforma o passeio por Holambra em algo mais do que turismo de flores. A visita dura entre 40 e 60 minutos e funciona bem como ponto de partida para entender por que a cidade é do jeito que é — antes de seguir para o Boulevard Holandês e o Moinho Povos Unidos.",
+    },
   ];
 
   for (const anchor of ANCHOR_LONG_DESCS) {
     await db.execute(
       sql`UPDATE places SET \`longDesc\` = ${anchor.longDesc}, \`updatedAt\` = NOW()
           WHERE name = ${anchor.name} AND city = ${anchor.city}
-            AND (\`longDesc\` IS NULL OR \`longDesc\` = '')`
+            AND (\`longDesc\` IS NULL OR \`longDesc\` = '' OR CHAR_LENGTH(\`longDesc\`) < 80)`
     );
     console.log(`  ✍️  longDesc → ${anchor.name}`);
   }

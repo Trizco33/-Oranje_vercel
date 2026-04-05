@@ -22,6 +22,8 @@ import {
   Users,
   Search,
   ChevronDown,
+  Navigation,
+  SlidersHorizontal,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1056,47 +1058,93 @@ export default function SiteHome() {
 
           <Reveal delay={80}>
             <div style={{
-              background: "#00251A",
-              borderRadius: 20,
-              padding: "44px 40px",
+              background: "linear-gradient(160deg, #001A12 0%, #00251A 60%, #002E1F 100%)",
+              borderRadius: 24,
+              padding: "40px 32px",
               display: "flex",
               flexDirection: "column",
-              gap: 36,
+              gap: 32,
+              border: "1px solid rgba(255,255,255,0.06)",
+              position: "relative",
+              overflow: "hidden",
             }}>
+              {/* decorative radial glow */}
+              <div style={{
+                position: "absolute",
+                top: -80, right: -80,
+                width: 300, height: 300,
+                borderRadius: "50%",
+                background: "radial-gradient(circle, rgba(230,81,0,0.1) 0%, transparent 70%)",
+                pointerEvents: "none",
+              }} />
+
               {/* Feature grid */}
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: 24,
+                gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+                gap: 16,
               }}>
                 {[
                   {
-                    icon: "📍",
+                    icon: <Navigation size={20} strokeWidth={2} />,
+                    accent: "#E65100",
                     title: "Perto de Mim",
                     desc: "Veja o que está mais próximo de você agora, em tempo real",
                   },
                   {
-                    icon: "🔍",
+                    icon: <SlidersHorizontal size={20} strokeWidth={2} />,
+                    accent: "#FF8C42",
                     title: "Filtros por Categoria",
                     desc: "Restaurantes, cafés, parques — filtre e encontre o que quer",
                   },
                   {
-                    icon: "⭐",
+                    icon: <Heart size={20} strokeWidth={2} />,
+                    accent: "#FFB347",
                     title: "Favoritos no Mapa",
                     desc: "Seus lugares favoritos marcados e acessíveis de onde estiver",
                   },
                 ].map((feat, i) => (
                   <div key={i} style={{
-                    background: "rgba(255,255,255,0.06)",
-                    borderRadius: 14,
-                    padding: "22px 24px",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                  }}>
-                    <div style={{ fontSize: "1.75rem", marginBottom: 10 }}>{feat.icon}</div>
-                    <p style={{ fontWeight: 700, color: "#fff", fontSize: "0.9375rem", margin: "0 0 6px", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                    background: "rgba(255,255,255,0.05)",
+                    borderRadius: 16,
+                    padding: "24px 22px",
+                    border: "1px solid rgba(255,255,255,0.09)",
+                    borderTop: `2px solid ${feat.accent}`,
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
+                    cursor: "default",
+                  }}
+                    onMouseEnter={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.transform = "translateY(-4px)";
+                      el.style.background = "rgba(255,255,255,0.08)";
+                      el.style.boxShadow = `0 12px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)`;
+                    }}
+                    onMouseLeave={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.transform = "";
+                      el.style.background = "rgba(255,255,255,0.05)";
+                      el.style.boxShadow = "";
+                    }}
+                  >
+                    {/* icon circle */}
+                    <div style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 12,
+                      background: `linear-gradient(135deg, ${feat.accent}28, ${feat.accent}10)`,
+                      border: `1px solid ${feat.accent}40`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 14,
+                      color: feat.accent,
+                    }}>
+                      {feat.icon}
+                    </div>
+                    <p style={{ fontWeight: 800, color: "#fff", fontSize: "0.9375rem", margin: "0 0 7px", fontFamily: "'Montserrat', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
                       {feat.title}
                     </p>
-                    <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8125rem", margin: 0, lineHeight: 1.6 }}>
+                    <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.8125rem", margin: 0, lineHeight: 1.65 }}>
                       {feat.desc}
                     </p>
                   </div>
@@ -1104,16 +1152,21 @@ export default function SiteHome() {
               </div>
 
               {/* CTAs */}
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", position: "relative" }}>
                 <Link
                   to="/app/mapa"
                   style={{
                     display: "inline-flex", alignItems: "center", gap: 8,
-                    height: 48, padding: "0 28px",
-                    background: "#E65100", color: "#FFFFFF",
-                    fontSize: "0.9375rem", fontWeight: 700, borderRadius: 12,
+                    height: 50, padding: "0 28px",
+                    background: "linear-gradient(135deg, #E65100, #FF6D00)",
+                    color: "#FFFFFF",
+                    fontSize: "0.9375rem", fontWeight: 700, borderRadius: 13,
                     textDecoration: "none", fontFamily: "'Montserrat', system-ui, sans-serif",
+                    boxShadow: "0 4px 18px rgba(230,81,0,0.4)",
+                    transition: "transform 0.15s ease, box-shadow 0.15s ease",
                   }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 22px rgba(230,81,0,0.5)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 18px rgba(230,81,0,0.4)"; }}
                 >
                   <MapPin size={17} />
                   Abrir mapa no app
@@ -1123,12 +1176,15 @@ export default function SiteHome() {
                   to="/mapa"
                   style={{
                     display: "inline-flex", alignItems: "center", gap: 8,
-                    height: 48, padding: "0 24px",
-                    background: "transparent", color: "rgba(255,255,255,0.75)",
-                    fontSize: "0.875rem", fontWeight: 600, borderRadius: 12,
-                    textDecoration: "none", border: "1.5px solid rgba(255,255,255,0.18)",
+                    height: 50, padding: "0 24px",
+                    background: "transparent", color: "rgba(255,255,255,0.7)",
+                    fontSize: "0.875rem", fontWeight: 600, borderRadius: 13,
+                    textDecoration: "none", border: "1.5px solid rgba(255,255,255,0.15)",
                     fontFamily: "'Montserrat', system-ui, sans-serif",
+                    transition: "border-color 0.15s ease, color 0.15s ease",
                   }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.35)"; el.style.color = "#fff"; }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.15)"; el.style.color = "rgba(255,255,255,0.7)"; }}
                 >
                   Saiba mais sobre o mapa
                 </Link>

@@ -1,12 +1,12 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
-import { useRouteById } from "@/hooks/useMockData";
+import { useRouteById, usePublicRoutes } from "@/hooks/useMockData";
 import { Clock, Map, Sparkles, ChevronRight, Lightbulb, Quote } from "lucide-react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { DSBadge } from "@/components/ds";
 import { getPlaceImage } from "@/components/PlaceCard";
 import { getCategoryFallbackImage } from "@/constants/placeImages";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 /* ─────────────────────────────────────────────
    Componente de Momento (highlight editorial)
@@ -188,6 +188,20 @@ function RoutePlace({
                 </p>
               </div>
             )}
+            {/* Affordance "Ver lugar completo" */}
+            <div style={{
+              padding: "8px 12px",
+              borderTop: "1px solid var(--ds-color-border-default)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: 4,
+            }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--ds-color-accent)" }}>
+                Ver lugar completo
+              </span>
+              <ChevronRight size={12} style={{ color: "var(--ds-color-accent)" }} />
+            </div>
           </div>
         </Link>
       </div>
@@ -219,6 +233,15 @@ export default function RouteDetail() {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: route, isLoading } = useRouteById(Number(params.id));
+  const { data: publicRoutes } = usePublicRoutes();
+
+  const currentId = Number(params.id);
+  const otherRoutes = useMemo(() => {
+    if (!publicRoutes) return [];
+    return (publicRoutes as any[])
+      .filter((r: any) => r.id !== currentId)
+      .slice(0, 3);
+  }, [publicRoutes, currentId]);
 
   if (isLoading) return <RouteDetailSkeleton />;
   if (!route) return null;
@@ -448,29 +471,134 @@ export default function RouteDetail() {
           </p>
         </div>
 
-        {/* ── CTA Final ── */}
-        <Link
-          to="/app/mapa"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            width: "100%",
-            height: 50,
-            background: "var(--ds-color-accent)",
-            color: "#fff",
-            fontSize: 15,
-            fontWeight: 700,
-            borderRadius: 14,
-            textDecoration: "none",
-            fontFamily: "var(--ds-font-display)",
-            boxShadow: "0 4px 16px rgba(230,81,0,0.3)",
-          }}
-        >
-          Explorar no Mapa
-          <ChevronRight size={16} />
-        </Link>
+        {/* ── Outros Roteiros ── */}
+        {otherRoutes.length > 0 && (
+          <div className="mb-5">
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <div style={{ height: 2, width: 16, borderRadius: 2, background: "linear-gradient(90deg, var(--ds-color-accent), transparent)" }} />
+              <p style={{
+                fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
+                textTransform: "uppercase" as const, color: "var(--ds-color-accent)",
+              }}>
+                Outros Roteiros
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {otherRoutes.map((r: any) => {
+                const pIds: number[] = Array.isArray(r.placeIds) ? r.placeIds : [];
+                return (
+                  <Link
+                    key={r.id}
+                    to={`/app/roteiro/${r.id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <div
+                      className="card-press"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        padding: "12px 14px",
+                        borderRadius: 14,
+                        background: "var(--ds-color-bg-elevated)",
+                        border: "1px solid var(--ds-color-border-default)",
+                      }}
+                    >
+                      {r.coverImage ? (
+                        <div style={{
+                          width: 52, height: 52, borderRadius: 10,
+                          overflow: "hidden", flexShrink: 0,
+                        }}>
+                          <img
+                            src={r.coverImage}
+                            alt={r.title}
+                            loading="lazy"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                        </div>
+                      ) : (
+                        <div style={{
+                          width: 52, height: 52, borderRadius: 10,
+                          background: "linear-gradient(135deg, #00251A 0%, #004D40 100%)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          flexShrink: 0,
+                        }}>
+                          <Map size={20} style={{ color: "rgba(255,255,255,0.4)" }} />
+                        </div>
+                      )}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{
+                          fontFamily: "var(--ds-font-display)",
+                          fontWeight: 700, fontSize: 14,
+                          color: "var(--ds-color-text-primary)",
+                          marginBottom: 4, lineHeight: 1.25,
+                          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                        }}>
+                          {r.title}
+                        </p>
+                        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                          {r.theme && <DSBadge variant="accent" size="sm">{r.theme}</DSBadge>}
+                          <span style={{ fontSize: 11, color: "var(--ds-color-text-muted)" }}>
+                            {pIds.length} {pIds.length === 1 ? "lugar" : "lugares"}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight size={15} style={{ color: "var(--ds-color-accent)", flexShrink: 0 }} />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── CTA Final (duplo) ── */}
+        <div style={{ display: "flex", gap: 10 }}>
+          <Link
+            to="/app/mapa"
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              height: 50,
+              background: "var(--ds-color-accent)",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 700,
+              borderRadius: 14,
+              textDecoration: "none",
+              fontFamily: "var(--ds-font-display)",
+              boxShadow: "0 4px 16px rgba(230,81,0,0.3)",
+            }}
+          >
+            <Map size={15} />
+            Ver no Mapa
+          </Link>
+          <Link
+            to="/app/roteiros"
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              height: 50,
+              background: "var(--ds-color-bg-elevated)",
+              color: "var(--ds-color-text-primary)",
+              fontSize: 14,
+              fontWeight: 700,
+              borderRadius: 14,
+              textDecoration: "none",
+              fontFamily: "var(--ds-font-display)",
+              border: "1.5px solid var(--ds-color-border-default)",
+            }}
+          >
+            Todos os Roteiros
+            <ChevronRight size={14} />
+          </Link>
+        </div>
       </div>
 
       <TabBar />

@@ -4,8 +4,8 @@ import { usePublicRoutes, useMyRoutes } from "@/hooks/useMockData";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
-import { ChevronRight, Clock, Map, Plus, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { ChevronRight, Clock, Map, Plus, Trash2, X, Star, Utensils, Heart, Users, Landmark, Zap, Waves } from "lucide-react";
+import { useState, useMemo, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { DSButton, DSBadge, DSInput } from "@/components/ds";
@@ -13,7 +13,7 @@ import { DSButton, DSBadge, DSInput } from "@/components/ds";
 const ROUTE_THEMES = ["Romântico", "Família", "Gastronômico", "Cultural", "Aventura", "Relaxante"];
 
 /* ─── Route Card Visual (para roteiros curados) ────── */
-function RouteCard({ route }: { route: any }) {
+function RouteCard({ route, featured = false }: { route: any; featured?: boolean }) {
   const placeIds: number[] = Array.isArray(route.placeIds) ? route.placeIds : [];
   const hasCover = !!route.coverImage;
 
@@ -24,13 +24,13 @@ function RouteCard({ route }: { route: any }) {
         style={{
           borderRadius: 16,
           background: "var(--ds-color-bg-elevated)",
-          border: "1px solid var(--ds-color-border-default)",
-          boxShadow: "var(--ds-shadow-sm)",
+          border: featured ? "1.5px solid var(--ds-color-accent)" : "1px solid var(--ds-color-border-default)",
+          boxShadow: featured ? "0 4px 20px rgba(230,81,0,0.15)" : "var(--ds-shadow-sm)",
         }}
       >
         {/* Cover image */}
         {hasCover ? (
-          <div style={{ position: "relative", height: 130, overflow: "hidden" }}>
+          <div style={{ position: "relative", height: featured ? 160 : 130, overflow: "hidden" }}>
             <img
               src={route.coverImage}
               alt={route.title}
@@ -45,6 +45,20 @@ function RouteCard({ route }: { route: any }) {
                   "linear-gradient(to top, rgba(0,37,26,0.92) 0%, rgba(0,37,26,0.2) 55%, transparent 100%)",
               }}
             />
+            {/* Destaque badge */}
+            {featured && (
+              <div style={{ position: "absolute", top: 10, right: 10 }}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 4,
+                  background: "#E65100", color: "#fff",
+                  fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
+                  padding: "3px 10px", borderRadius: 20, textTransform: "uppercase" as const,
+                }}>
+                  <Star size={9} fill="#fff" />
+                  Em Destaque
+                </div>
+              </div>
+            )}
             {/* Overlay meta */}
             <div
               style={{
@@ -62,7 +76,7 @@ function RouteCard({ route }: { route: any }) {
                   style={{
                     fontFamily: "var(--ds-font-display)",
                     fontWeight: 700,
-                    fontSize: 15,
+                    fontSize: featured ? 17 : 15,
                     color: "#fff",
                     lineHeight: 1.2,
                     marginBottom: 4,
@@ -124,18 +138,31 @@ function RouteCard({ route }: { route: any }) {
               <Map size={20} style={{ color: "var(--ds-color-accent)" }} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p
-                style={{
-                  fontFamily: "var(--ds-font-display)",
-                  fontWeight: 700,
-                  fontSize: 14,
-                  color: "var(--ds-color-text-primary)",
-                  marginBottom: 4,
-                  lineHeight: 1.25,
-                }}
-              >
-                {route.title}
-              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                <p
+                  style={{
+                    fontFamily: "var(--ds-font-display)",
+                    fontWeight: 700,
+                    fontSize: 14,
+                    color: "var(--ds-color-text-primary)",
+                    lineHeight: 1.25,
+                    margin: 0,
+                  }}
+                >
+                  {route.title}
+                </p>
+                {featured && (
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: 3,
+                    background: "rgba(230,81,0,0.1)", color: "#E65100",
+                    fontSize: 9, fontWeight: 700, letterSpacing: "0.06em",
+                    padding: "2px 7px", borderRadius: 20, textTransform: "uppercase" as const, flexShrink: 0,
+                  }}>
+                    <Star size={8} fill="#E65100" />
+                    Destaque
+                  </div>
+                )}
+              </div>
               <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                 {route.theme && <DSBadge variant="accent" size="sm">{route.theme}</DSBadge>}
                 {route.duration && (
@@ -176,6 +203,16 @@ function RouteCard({ route }: { route: any }) {
   );
 }
 
+/* ─── Ícones por tema ─── */
+const THEME_ICONS: Record<string, ReactNode> = {
+  "Romântico": <Heart size={13} />,
+  "Família": <Users size={13} />,
+  "Gastronômico": <Utensils size={13} />,
+  "Cultural": <Landmark size={13} />,
+  "Aventura": <Zap size={13} />,
+  "Relaxante": <Waves size={13} />,
+};
+
 export default function Routes() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -191,6 +228,22 @@ export default function Routes() {
   const [newTheme, setNewTheme] = useState("");
   const [newDuration, setNewDuration] = useState("");
   const [isPublic, setIsPublic] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+
+  const filteredRoutes = useMemo(() => {
+    if (!publicRoutes) return [];
+    if (!selectedTheme) return publicRoutes as any[];
+    return (publicRoutes as any[]).filter((r: any) =>
+      r.theme?.toLowerCase() === selectedTheme.toLowerCase()
+    );
+  }, [publicRoutes, selectedTheme]);
+
+  const availableThemes = useMemo(() => {
+    if (!publicRoutes) return [];
+    const set = new Set<string>();
+    (publicRoutes as any[]).forEach((r: any) => { if (r.theme) set.add(r.theme); });
+    return Array.from(set);
+  }, [publicRoutes]);
 
   function handleCreate() {
     if (!newTitle.trim()) { toast.error("Informe um título para o roteiro."); return; }
@@ -225,14 +278,72 @@ export default function Routes() {
 
         {/* ── Header editorial ── */}
         <div className="mb-5">
-          <p style={{ fontSize: 13, color: "var(--ds-color-text-muted)", lineHeight: 1.5 }}>
-            Roteiros curados pelo time Oranje — com os melhores lugares de Holambra organizados por experiência.
+          <h2 style={{
+            fontFamily: "var(--ds-font-display)",
+            fontSize: 22,
+            fontWeight: 800,
+            color: "var(--ds-color-text-primary)",
+            lineHeight: 1.2,
+            marginBottom: 8,
+          }}>
+            Roteiros para cada jeito de visitar
+          </h2>
+          <p style={{ fontSize: 13, color: "var(--ds-color-text-muted)", lineHeight: 1.6 }}>
+            Curadoria do time Oranje — cada roteiro foi testado, ajustado e organizado para você aproveitar Holambra sem desperdício de tempo.
           </p>
         </div>
 
+        {/* ── Filtros por tema ── */}
+        {publicRoutes && publicRoutes.length > 0 && availableThemes.length > 0 && (
+          <div
+            style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, marginBottom: 16 }}
+            className="hide-scrollbar"
+          >
+            <button
+              onClick={() => setSelectedTheme(null)}
+              style={{
+                flexShrink: 0,
+                display: "flex", alignItems: "center", gap: 5,
+                padding: "6px 14px", borderRadius: 999,
+                fontSize: 12, fontWeight: 600,
+                border: selectedTheme === null ? "1.5px solid #E65100" : "1.5px solid var(--ds-color-border-default)",
+                background: selectedTheme === null ? "#E65100" : "var(--ds-color-bg-elevated)",
+                color: selectedTheme === null ? "#fff" : "var(--ds-color-text-secondary)",
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+            >
+              Todos
+            </button>
+            {availableThemes.map((theme) => {
+              const active = selectedTheme === theme;
+              return (
+                <button
+                  key={theme}
+                  onClick={() => setSelectedTheme(active ? null : theme)}
+                  style={{
+                    flexShrink: 0,
+                    display: "flex", alignItems: "center", gap: 5,
+                    padding: "6px 14px", borderRadius: 999,
+                    fontSize: 12, fontWeight: 600,
+                    border: active ? "1.5px solid #E65100" : "1.5px solid var(--ds-color-border-default)",
+                    background: active ? "#E65100" : "var(--ds-color-bg-elevated)",
+                    color: active ? "#fff" : "var(--ds-color-text-secondary)",
+                    cursor: "pointer",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  {THEME_ICONS[theme] && <span style={{ display: "flex", alignItems: "center" }}>{THEME_ICONS[theme]}</span>}
+                  {theme}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {/* ── Roteiros Curados ── */}
         {publicRoutes && publicRoutes.length > 0 && (
-          <section className="mb-6">
+          <section className="mb-2">
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
               <div
                 style={{
@@ -251,13 +362,76 @@ export default function Routes() {
                   color: "var(--ds-color-accent)",
                 }}
               >
-                Roteiros Curados · {publicRoutes.length} no total
+                {selectedTheme ? `${filteredRoutes.length} roteiro${filteredRoutes.length !== 1 ? "s" : ""} · ${selectedTheme}` : `Curados pelo Oranje · ${publicRoutes.length} no total`}
               </p>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {publicRoutes.map((route: any) => (
-                <RouteCard key={route.id} route={route} />
-              ))}
+
+            {filteredRoutes.length === 0 ? (
+              <div style={{
+                textAlign: "center", padding: "32px 20px", borderRadius: 16,
+                background: "rgba(230,81,0,0.04)", border: "1px dashed rgba(230,81,0,0.15)",
+                marginBottom: 20,
+              }}>
+                <p style={{ fontSize: 28, marginBottom: 8 }}>🗺️</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--ds-color-text-primary)", marginBottom: 4 }}>
+                  Nenhum roteiro com este tema
+                </p>
+                <button onClick={() => setSelectedTheme(null)} style={{
+                  fontSize: 13, color: "#E65100", fontWeight: 600, background: "none",
+                  border: "none", cursor: "pointer", textDecoration: "underline",
+                }}>
+                  Ver todos os roteiros
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
+                {filteredRoutes.map((route: any, idx: number) => (
+                  <RouteCard key={route.id} route={route} featured={!selectedTheme && idx < 2} />
+                ))}
+              </div>
+            )}
+
+            {/* ── Bloco Explore mais Holambra ── */}
+            <div style={{
+              borderRadius: 16,
+              background: "linear-gradient(135deg, #00251A 0%, #003828 100%)",
+              padding: "20px 18px",
+              marginBottom: 24,
+            }}>
+              <p style={{
+                fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
+                textTransform: "uppercase" as const, color: "rgba(255,255,255,0.5)",
+                marginBottom: 10,
+              }}>
+                Explore mais Holambra
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                {[
+                  { label: "Melhores Restaurantes", href: "/melhores-restaurantes-de-holambra", icon: <Utensils size={14} /> },
+                  { label: "Onde Tirar Fotos", href: "/onde-tirar-fotos-em-holambra", icon: <Star size={14} /> },
+                  { label: "Mapa Interativo", href: "/app/mapa", icon: <Map size={14} /> },
+                  { label: "Holambra Romântica", href: "/holambra-romantica", icon: <Heart size={14} /> },
+                ].map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "10px 0",
+                      borderBottom: "1px solid rgba(255,255,255,0.07)",
+                      textDecoration: "none",
+                      color: "rgba(255,255,255,0.85)",
+                      fontSize: 13, fontWeight: 500,
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ color: "#E65100" }}>{item.icon}</span>
+                      {item.label}
+                    </div>
+                    <ChevronRight size={14} style={{ color: "rgba(255,255,255,0.3)" }} />
+                  </Link>
+                ))}
+              </div>
             </div>
           </section>
         )}

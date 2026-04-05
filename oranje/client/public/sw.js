@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oranje-v2';
+const CACHE_NAME = 'oranje-v3';
 
 const urlsToCache = [
   '/',

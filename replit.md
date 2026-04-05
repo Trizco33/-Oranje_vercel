@@ -87,6 +87,30 @@ oranje/
 - Script de seed: `oranje/scripts/seed-routes.ts` (rodar com `npx tsx scripts/seed-routes.ts`)
 - tRPC: `routes.adminCreate`, `routes.adminUpdate`, `routes.adminDelete` aceitam todos os campos
 
+### Receptivo Oranje (nova feature estratégica)
+
+Feature de **passeios turísticos guiados** — independente dos roteiros existentes.
+
+**Arquitetura:**
+- Tabela `guided_tours` — passeio (slug, nome, tagline, descrição, tema, duração, capa, status)
+- Tabela `guided_tour_stops` — parada (tourId, placeId, stopOrder, narrative, tip, bestMoment)
+- tRPC: `receptivo.list` (passeios ativos) + `receptivo.bySlug` (passeio + paradas com dados do lugar)
+- Rota: `/app/receptivo/:slug` → `ReceptivoDetail.tsx`
+
+**Piloto: Holambra Romântica**
+- Slug: `holambra-romantica` | Status: active | 5 paradas | 2–3 horas
+- Paradas reais (com IDs do banco):
+  1. Rua dos Guarda-Chuvas (id 4215)
+  2. Deck do Amor (id 4213)
+  3. Praça Vitória Régia (id 4214)
+  4. Moinho Povos Unidos (id 2616)
+  5. Zoet en Zout (id 4212)
+
+**Seed:** `oranje/server/seed-receptivo.ts` — cria tabelas + popula piloto
+**Discovery:** Banner na home do app (`Home.tsx`) → `/app/receptivo/holambra-romantica`
+**Mapa:** Leaflet com marcadores numerados, polyline do percurso, parada ativa em laranja
+**UX:** Cover → Mapa + painel da parada ativa → Navegação (próxima/anterior) → Encerramento elegante
+
 ### Problemas Conhecidos
 
 1. **Hero do CMS** — validação muito rígida (`subtitle` obrigatório, `buttonUrl`/`imageUrl` exigem URL absoluta)

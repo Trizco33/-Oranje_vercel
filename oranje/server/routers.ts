@@ -442,6 +442,14 @@ export const appRouter = router({
     ),
   }),
 
+  // ── Receptivo Oranje — Guided Tours ──────────────────────────────────────
+  receptivo: router({
+    list: publicProcedure.query(() => db.getPublicGuidedTours()),
+    bySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(({ input }) => db.getGuidedTourBySlug(input.slug)),
+  }),
+
   // ── Admin ─────────────────────────────────────────────────────────────────
   admin: router({
     stats: adminProcedure.query(() => db.getAdminStats()),

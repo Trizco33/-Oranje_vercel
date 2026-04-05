@@ -426,3 +426,40 @@ export const pushSubscriptions = mysqlTable("push_subscriptions", {
 
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
 export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
+
+// ─── Receptivo Oranje — Guided Tours ─────────────────────────────────────────
+// Independent of the existing "roteiros" feature.
+// Each guided_tour is a curated walking experience with ordered stops and
+// per-stop editorial narratives. Designed to scale: 1 pilot now, N later.
+
+export const guidedTours = mysqlTable("guided_tours", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),       // 'holambra-romantica'
+  name: varchar("name", { length: 255 }).notNull(),                // 'Holambra Romântica'
+  tagline: varchar("tagline", { length: 255 }),                    // 'O passeio mais bonito de Holambra'
+  description: text("description"),                                 // Opening editorial text
+  theme: varchar("theme", { length: 100 }),                        // 'romantica'
+  duration: varchar("duration", { length: 50 }),                   // '3 a 4 horas'
+  coverImage: text("coverImage"),
+  status: varchar("status", { length: 20 }).default("draft").notNull(), // 'active' | 'draft' | 'archived'
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GuidedTour = typeof guidedTours.$inferSelect;
+export type InsertGuidedTour = typeof guidedTours.$inferInsert;
+
+export const guidedTourStops = mysqlTable("guided_tour_stops", {
+  id: int("id").autoincrement().primaryKey(),
+  tourId: int("tourId").notNull().references(() => guidedTours.id),
+  placeId: int("placeId").notNull().references(() => places.id),
+  stopOrder: int("stopOrder").notNull(),                           // 1, 2, 3…
+  narrative: text("narrative"),                                     // Editorial mini-text per stop
+  tip: text("tip"),                                                 // Practical optional tip
+  bestMoment: varchar("bestMoment", { length: 255 }),             // 'Entardecer', 'Manhã cedo'
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GuidedTourStop = typeof guidedTourStops.$inferSelect;
+export type InsertGuidedTourStop = typeof guidedTourStops.$inferInsert;

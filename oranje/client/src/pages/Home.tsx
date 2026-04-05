@@ -1,5 +1,5 @@
 import { getLoginUrl } from "@/const";
-import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight } from "lucide-react";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
@@ -248,6 +248,93 @@ export default function Home() {
             </Link>
           ))}
         </div>
+      </section>
+
+      {/* ── Receptivo Oranje ── */}
+      <section style={{ padding: "0 20px", marginTop: 32 }}>
+        <Link to="/app/receptivo/holambra-romantica" style={{ textDecoration: "none", display: "block" }}>
+          <div
+            style={{
+              borderRadius: 18,
+              overflow: "hidden",
+              background: "linear-gradient(135deg, #00251A 0%, #003D2A 50%, #00251A 100%)",
+              border: "1px solid rgba(230,81,0,0.25)",
+              padding: "20px 20px 20px 20px",
+              position: "relative",
+            }}
+          >
+            {/* Decorative dots */}
+            <div style={{ position: "absolute", top: 0, right: 0, width: 120, height: 120, background: "radial-gradient(circle at top right, rgba(230,81,0,0.12) 0%, transparent 70%)" }} />
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                background: "rgba(230,81,0,0.15)",
+                border: "1px solid rgba(230,81,0,0.3)",
+                borderRadius: 6,
+                padding: "3px 9px",
+                marginBottom: 10,
+              }}
+            >
+              <span style={{ fontSize: 9, fontWeight: 800, color: "#E65100", fontFamily: "Montserrat, sans-serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                Receptivo Oranje
+              </span>
+            </div>
+            <h2
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: 800,
+                fontFamily: "Montserrat, sans-serif",
+                margin: "0 0 6px",
+                lineHeight: 1.2,
+              }}
+            >
+              Holambra Romântica
+            </h2>
+            <p
+              style={{
+                color: "rgba(255,255,255,0.65)",
+                fontSize: 13,
+                fontFamily: "Montserrat, sans-serif",
+                margin: "0 0 16px",
+                lineHeight: 1.5,
+              }}
+            >
+              Um passeio a pé guiado pelo coração histórico da cidade — com mapa, narrativas e 5 paradas curadas.
+            </p>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <MapPin size={12} color="#E65100" />
+                  <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontFamily: "Montserrat, sans-serif", fontWeight: 600 }}>5 paradas</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <CalendarDays size={12} color="#E65100" />
+                  <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontFamily: "Montserrat, sans-serif", fontWeight: 600 }}>2–3 horas</span>
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  background: "#E65100",
+                  borderRadius: 8,
+                  padding: "8px 14px",
+                  color: "#fff",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  fontFamily: "Montserrat, sans-serif",
+                }}
+              >
+                Iniciar
+                <ArrowRight size={13} />
+              </div>
+            </div>
+          </div>
+        </Link>
       </section>
 
       {/* ── Perto de Você ── */}

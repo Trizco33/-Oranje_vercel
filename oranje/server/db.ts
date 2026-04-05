@@ -4,9 +4,10 @@ import type { ResultSetHeader } from "mysql2";
 import {
   InsertUser, ads, adminLogs, categories, events, favorites, magicLinks, notifications,
   partners, placePhotos, places, routes, users, vouchers, drivers, siteRouteFeatures,
+  guidedTours, guidedTourStops,
   type InsertAdminLog, type InsertCategory, type InsertEvent, type InsertMagicLink, type InsertPartner,
   type InsertPlace, type InsertRoute, type InsertVoucher, type MagicLink, type InsertDriver,
-  type InsertSiteRouteFeature,
+  type InsertSiteRouteFeature, type InsertGuidedTour, type InsertGuidedTourStop,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -695,4 +696,74 @@ export async function getPendingDriversCount() {
   if (!db) return 0;
   const result = await db.select({ count: sql`COUNT(*)` }).from(drivers).where(eq(drivers.status, "PENDING"));
   return (result[0]?.count as number) || 0;
+}
+
+// ─── Receptivo Oranje — Guided Tours ─────────────────────────────────────────
+
+export async function getPublicGuidedTours() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(guidedTours).where(eq(guidedTours.status, "active")).orderBy(guidedTours.name);
+}
+
+export async function getGuidedTourBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  // Fetch the tour
+  const tourRows = await db.select().from(guidedTours).where(eq(guidedTours.slug, slug)).limit(1);
+  const tour = tourRows[0];
+  if (!tour) return undefined;
+
+  // Fetch ordered stops joined with place data
+  const stopRows = await db
+    .select({
+      stopId: guidedTourStops.id,
+      tourId: guidedTourStops.tourId,
+      placeId: guidedTourStops.placeId,
+      stopOrder: guidedTourStops.stopOrder,
+      narrative: guidedTourStops.narrative,
+      tip: guidedTourStops.tip,
+      bestMoment: guidedTourStops.bestMoment,
+      placeName: places.name,
+      placeShortDesc: places.shortDesc,
+      placeLat: places.lat,
+      placeLng: places.lng,
+      placeAddress: places.address,
+      placeCoverImage: places.coverImage,
+      placeImages: places.images,
+      placeCategoryId: places.categoryId,
+    })
+    .from(guidedTourStops)
+    .innerJoin(places, eq(guidedTourStops.placeId, places.id))
+    .where(eq(guidedTourStops.tourId, tour.id))
+    .orderBy(guidedTourStops.stopOrder);
+
+  return { ...tour, stops: stopRows };
+}
+
+export async function upsertGuidedTour(data: InsertGuidedTour) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const existing = await db.select().from(guidedTours).where(eq(guidedTours.slug, data.slug)).limit(1);
+  if (existing[0]) {
+    await db.update(guidedTours).set({ ...data, updatedAt: new Date() }).where(eq(guidedTours.slug, data.slug));
+    return existing[0].id;
+  } else {
+    const result = await db.insert(guidedTours).values(data);
+    return (result[0] as ResultSetHeader).insertId;
+  }
+}
+
+export async function upsertGuidedTourStop(data: InsertGuidedTourStop) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const existing = await db.select().from(guidedTourStops)
+    .where(and(eq(guidedTourStops.tourId, data.tourId!), eq(guidedTourStops.stopOrder, data.stopOrder)))
+    .limit(1);
+  if (existing[0]) {
+    await db.update(guidedTourStops).set({ ...data, updatedAt: new Date() }).where(eq(guidedTourStops.id, existing[0].id));
+  } else {
+    await db.insert(guidedTourStops).values(data);
+  }
 }

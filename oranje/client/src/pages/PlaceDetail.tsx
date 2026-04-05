@@ -553,18 +553,20 @@ function ContinueExplorando({
     return ids.includes(placeId);
   });
 
-  const CATEGORY_LINKS: Record<number, string> = {
-    1: "/app/lugares?categoria=restaurantes",
-    2: "/app/lugares?categoria=cafes",
-    3: "/app/lugares?categoria=bares",
-    4: "/app/lugares?categoria=pontos-turisticos",
-    5: "/app/lugares?categoria=hoteis",
-    14: "/app/lugares?categoria=bares",
-    15: "/app/lugares?categoria=hoteis",
-    16: "/app/lugares?categoria=parques",
-    17: "/app/lugares?categoria=padarias",
+  const CATEGORY_SLUGS: Record<number, string> = {
+    1: "restaurantes",
+    2: "cafes",
+    3: "bares",
+    4: "pontos-turisticos",
+    5: "hoteis",
+    13: "pizzarias",
+    14: "bares",
+    15: "hoteis",
+    16: "parques",
+    17: "docerias",
   };
-  const categoryLink = categoryId ? (CATEGORY_LINKS[categoryId] || "/app/lugares") : "/app/lugares";
+  const categorySlug = categoryId ? (CATEGORY_SLUGS[categoryId] ?? null) : null;
+  const categoryLink = categorySlug ? `/app/explorar/${categorySlug}` : "/app/explorar";
 
   return (
     <div

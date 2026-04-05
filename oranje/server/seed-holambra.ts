@@ -818,11 +818,59 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     tags: ["autoral", "criativo", "almoco", "jantar", "arte", "gastronomia"], status: "active",
     dataPending: true,
   },
+  {
+    name: "Floricultura Veiling",
+    _categorySlug: "parques",
+    shortDesc: "Centro de comercialização de flores e plantas — um dos maiores complexos floriculturais do Brasil",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6241, lng: -47.0521,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["flores", "plantas", "veiling", "compras", "comercio", "atacado"], status: "active",
+    dataPending: true,
+  },
+  {
+    name: "Campo de Girassóis",
+    _categorySlug: "parques",
+    shortDesc: "Campos abertos com plantações de girassóis — ponto fotográfico icônico nas estradas de Holambra",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6350, lng: -47.0450,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: true,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["girassol", "campo", "foto", "natureza", "flores", "rural"], status: "active",
+    dataPending: true,
+  },
+  {
+    name: "Parque Linear do Lago",
+    _categorySlug: "parques",
+    shortDesc: "Área verde à beira do Lago do Holandês — pista de caminhada, bancos e vista para o espelho d'água",
+    longDesc: null,
+    address: "Holambra – SP", lat: -22.6297, lng: -47.0578,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: true,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["parque", "lago", "caminhada", "natureza", "lazer", "familia"], status: "active",
+    dataPending: true,
+  },
+  {
+    name: "Igreja Nossa Senhora das Flores",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Igreja matriz de Holambra com arquitetura holandesa — símbolo religioso e cultural da cidade",
+    longDesc: null,
+    address: "Rua dos Imigrantes, Holambra – SP", lat: -22.6285, lng: -47.0593,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: true,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["igreja", "religiao", "cultura", "historia", "arquitetura", "holandes"], status: "active",
+    dataPending: true,
+  },
 ];
 
 // ─── Runner ───────────────────────────────────────────────────────────────────
 export async function seedHolambra() {
-  console.log("🌷 Iniciando seed dos 40 lugares reais de Holambra...\n");
+  console.log("🌷 Iniciando seed dos 60 lugares reais de Holambra...\n");
 
   // ── Regra de curadoria: dataPending=true → isRecommended=false e isFeatured=false ─────
   const violations = HOLAMBRA_PLACES.filter(
@@ -1033,6 +1081,26 @@ export async function seedHolambra() {
       name: "Museu da Cultura e História de Holambra",
       city: "Holambra",
       longDesc: "O Museu da Cultura e História de Holambra é o lugar onde a história da imigração holandesa se torna tangível. Com acervo de objetos pessoais dos primeiros colonos, documentos, fotografias e reconstituições do cotidiano da fundação da cidade, o museu oferece contexto que transforma o passeio por Holambra em algo mais do que turismo de flores. A visita dura entre 40 e 60 minutos e funciona bem como ponto de partida para entender por que a cidade é do jeito que é — antes de seguir para o Boulevard Holandês e o Moinho Povos Unidos.",
+    },
+    {
+      name: "Floricultura Veiling",
+      city: "Holambra",
+      longDesc: "A Floricultura Veiling é o coração comercial de Holambra — um dos maiores centros de comercialização de flores e plantas ornamentais do Brasil. O complexo movimenta milhões de flores diariamente, principalmente para atacadistas e floricultores, mas visitantes também encontram ali variedades e preços impossíveis de achar em centros urbanos. Menos turístico que o Parque Van Gogh ou a Macena Flores, a Veiling é o lugar onde a flor de Holambra acontece de verdade: escala industrial, diversidade impressionante e uma dinâmica de mercado que vale conhecer.",
+    },
+    {
+      name: "Campo de Girassóis",
+      city: "Holambra",
+      longDesc: "Os campos de girassóis nas estradas ao redor de Holambra são uma das atrações mais fotogênicas da região — e das menos formalizadas. Não existe um 'Campo de Girassóis oficial', mas sim propriedades agrícolas cujos campos florescem entre janeiro e março, transformando os acostamentos das estradas vicinais em corredores amarelos que chamam atenção de quem passa. O melhor jeito de encontrá-los é saindo de carro pelos arredores da cidade no verão, especialmente pela Estrada Municipal e pelos acessos à rodovia. Nenhum ingresso, nenhuma bilheteria — só a flor e a foto.",
+    },
+    {
+      name: "Parque Linear do Lago",
+      city: "Holambra",
+      longDesc: "O Parque Linear do Lago é o pulmão verde de Holambra — uma faixa de área pública à beira do Lago do Holandês com pista de caminhada, bancos, iluminação e vegetação nativa. É onde os moradores caminham de manhã, onde as famílias levam as crianças no fim de tarde e onde você consegue uma vista do lago mais tranquila do que na Praça Vitória Régia. O parque se estende do Deck do Amor até a Nossa Prainha, conectando os dois pontos mais visitados do eixo do lago. Entrada livre, sempre aberto.",
+    },
+    {
+      name: "Igreja Nossa Senhora das Flores",
+      city: "Holambra",
+      longDesc: "A Igreja Nossa Senhora das Flores é a igreja matriz de Holambra e um dos pontos de referência mais reconhecíveis da cidade. A arquitetura com elementos holandeses, o sino alto e o adro amplo contam a história de uma comunidade que construiu sua identidade religiosa junto com a identidade cultural. É um dos pontos de encontro da vida comunitária de Holambra: missas frequentes, festas religiosas e eventos que mobilizam a cidade ao longo do ano. Para quem visita, a fachada e o entorno são uma parada fotográfica natural e gratuita — dois minutos a pé do centro histórico.",
     },
   ];
 

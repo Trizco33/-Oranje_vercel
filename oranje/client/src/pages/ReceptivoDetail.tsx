@@ -6,8 +6,14 @@ import { trpc } from "@/lib/trpc";
 import { getPlaceImage } from "@/components/PlaceCard";
 import {
   ChevronLeft, ChevronRight, MapPin, Clock, Navigation,
-  ExternalLink, CheckCircle2, Compass, ArrowRight, Heart,
+  ExternalLink, CheckCircle2, Compass, ArrowRight, Heart, AlertCircle,
 } from "lucide-react";
+import {
+  trackReceptivoEvent,
+  saveReceptivoProgress,
+  loadReceptivoProgress,
+  clearReceptivoProgress,
+} from "@/lib/receptivoAnalytics";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -40,7 +46,10 @@ function haversineMeters(lat1: number, lng1: number, lat2: number, lng2: number)
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-const ARRIVAL_RADIUS_M = 80; // meters within which we consider "arrived"
+// ─── Configurable constants ───────────────────────────────────────────────────
+// Adjust ARRIVAL_RADIUS_METERS to tune how close the user needs to be
+// before "Você chegou!" fires. 80m works well for Holambra's street layout.
+const ARRIVAL_RADIUS_METERS = 80;
 
 // ─── Map Component ────────────────────────────────────────────────────────────
 // Tile: CartoDB Positron (clean light map — orange markers pop dramatically)
@@ -141,6 +150,7 @@ function ReceptivoMap({
   onStopSelect,
   onDistanceUpdate,
   onArrival,
+  onGeoError,
 }: {
   stops: TourStop[];
   activeIndex: number;
@@ -148,6 +158,7 @@ function ReceptivoMap({
   onStopSelect: (i: number) => void;
   onDistanceUpdate: (meters: number | null) => void;
   onArrival: (stopIndex: number) => void;
+  onGeoError: (code: number) => void;
 }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletRef = useRef<any>(null);
@@ -323,14 +334,17 @@ function ReceptivoMap({
           onDistanceUpdate(dist);
 
           // Fire arrival callback once per stop
-          if (dist <= ARRIVAL_RADIUS_M && !arrivedRef.current.has(activeIndex)) {
+          if (dist <= ARRIVAL_RADIUS_METERS && !arrivedRef.current.has(activeIndex)) {
             arrivedRef.current.add(activeIndex);
             onArrival(activeIndex);
           }
         }
       },
-      () => onDistanceUpdate(null),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+      (err) => {
+        onDistanceUpdate(null);
+        onGeoError(err.code); // 1=denied, 2=unavailable, 3=timeout
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 5000 }
     );
 
     return () => {
@@ -523,8 +537,11 @@ function JourneyStrip({
 //   navigating (far) → distance indicator to active stop
 //   navigating (arrived) → "Você chegou!" + advance button
 
+type GeoStatus = "idle" | "locating" | "tracking" | "denied" | "unavailable";
+
 function NavBar({
   navActive,
+  geoStatus,
   distanceMeters,
   arrived,
   activeStop,
@@ -533,6 +550,7 @@ function NavBar({
   onAdvance,
 }: {
   navActive: boolean;
+  geoStatus: GeoStatus;
   distanceMeters: number | null;
   arrived: boolean;
   activeStop: TourStop | null;
@@ -546,47 +564,36 @@ function NavBar({
       : `${Math.round(distanceMeters)} m`
     : null;
 
-  // Idle state — invite to activate navigation
+  // ── Idle: invite user to activate guided navigation ──────────────────────
   if (!navActive) {
     return (
-      <div
-        style={{
-          margin: "0 16px 4px",
-          borderRadius: 14,
-          background: "linear-gradient(135deg, #00251A 0%, #004D3A 100%)",
-          padding: "14px 16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-          boxShadow: "0 2px 12px rgba(0,37,26,0.18)",
-        }}
-      >
+      <div style={{
+        margin: "0 16px 4px",
+        borderRadius: 14,
+        background: "linear-gradient(135deg, #00251A 0%, #004D3A 100%)",
+        padding: "14px 16px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        boxShadow: "0 2px 12px rgba(0,37,26,0.18)",
+      }}>
         <div>
           <p style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "Montserrat,sans-serif", margin: "0 0 2px" }}>
-            Modo navegação guiada
+            Navegação guiada
           </p>
-          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0 }}>
-            Use sua localização para acompanhar o passeio ao vivo
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0, lineHeight: 1.4 }}>
+            Ative para acompanhar o percurso com sua localização
           </p>
         </div>
         <button
           onClick={onActivate}
           style={{
-            background: "#E65100",
-            border: "none",
-            borderRadius: 10,
-            padding: "10px 14px",
-            color: "#fff",
-            fontSize: 12,
-            fontWeight: 700,
-            fontFamily: "Montserrat,sans-serif",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            whiteSpace: "nowrap",
-            flexShrink: 0,
+            background: "#E65100", border: "none", borderRadius: 10,
+            padding: "10px 14px", color: "#fff", fontSize: 12, fontWeight: 700,
+            fontFamily: "Montserrat,sans-serif", cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 5,
+            whiteSpace: "nowrap", flexShrink: 0,
           }}
         >
           <Compass size={14} />
@@ -596,18 +603,68 @@ function NavBar({
     );
   }
 
-  // Arrived state — celebration + advance button
+  // ── GPS Permission denied — clean fallback, no broken state ─────────────
+  if (geoStatus === "denied") {
+    return (
+      <div style={{
+        margin: "0 16px 4px",
+        borderRadius: 14,
+        background: "rgba(0,37,26,0.08)",
+        border: "1px solid rgba(0,37,26,0.12)",
+        padding: "14px 16px",
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 10,
+      }}>
+        <AlertCircle size={18} color="#E65100" style={{ flexShrink: 0, marginTop: 1 }} />
+        <div>
+          <p style={{ color: "#00251A", fontSize: 13, fontWeight: 700, fontFamily: "Montserrat,sans-serif", margin: "0 0 2px" }}>
+            Permissão de localização negada
+          </p>
+          <p style={{ color: "rgba(0,37,26,0.55)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0, lineHeight: 1.4 }}>
+            Para usar a navegação guiada, habilite a localização nas configurações do seu navegador. O passeio continua normalmente mesmo sem GPS.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── GPS unavailable — friendly message ───────────────────────────────────
+  if (geoStatus === "unavailable") {
+    return (
+      <div style={{
+        margin: "0 16px 4px",
+        borderRadius: 14,
+        background: "rgba(0,37,26,0.08)",
+        border: "1px solid rgba(0,37,26,0.12)",
+        padding: "14px 16px",
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 10,
+      }}>
+        <AlertCircle size={18} color="rgba(0,37,26,0.4)" style={{ flexShrink: 0, marginTop: 1 }} />
+        <div>
+          <p style={{ color: "#00251A", fontSize: 13, fontWeight: 700, fontFamily: "Montserrat,sans-serif", margin: "0 0 2px" }}>
+            Sinal GPS indisponível
+          </p>
+          <p style={{ color: "rgba(0,37,26,0.5)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0, lineHeight: 1.4 }}>
+            Seu dispositivo não conseguiu obter localização. Tente em área aberta. O passeio continua normalmente.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Arrived: "Você chegou!" + advance or congratulations ─────────────────
   if (arrived) {
     return (
-      <div
-        style={{
-          margin: "0 16px 4px",
-          borderRadius: 14,
-          background: "linear-gradient(135deg, #E65100 0%, #BF360C 100%)",
-          padding: "14px 16px",
-          boxShadow: "0 2px 16px rgba(230,81,0,0.35)",
-        }}
-      >
+      <div style={{
+        margin: "0 16px 4px",
+        borderRadius: 14,
+        background: "linear-gradient(135deg, #E65100 0%, #BF360C 100%)",
+        padding: "14px 16px",
+        boxShadow: "0 2px 16px rgba(230,81,0,0.35)",
+      }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
           <CheckCircle2 size={20} color="#fff" />
           <div>
@@ -623,72 +680,66 @@ function NavBar({
           <button
             onClick={onAdvance}
             style={{
-              width: "100%",
-              background: "rgba(255,255,255,0.18)",
-              border: "1.5px solid rgba(255,255,255,0.35)",
-              borderRadius: 10,
-              padding: "10px 0",
-              color: "#fff",
-              fontSize: 13,
-              fontWeight: 700,
-              fontFamily: "Montserrat,sans-serif",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 7,
+              width: "100%", background: "rgba(255,255,255,0.18)",
+              border: "1.5px solid rgba(255,255,255,0.35)", borderRadius: 10,
+              padding: "10px 0", color: "#fff", fontSize: 13, fontWeight: 700,
+              fontFamily: "Montserrat,sans-serif", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
             }}
           >
             Próxima parada
             <ArrowRight size={15} />
           </button>
         ) : (
-          <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 12.5, fontFamily: "Montserrat,sans-serif", textAlign: "center", margin: 0, fontWeight: 600 }}>
-            Parabéns — passeio concluído! 🎉
+          <p style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5, fontFamily: "Montserrat,sans-serif", textAlign: "center", margin: 0, fontWeight: 600 }}>
+            Parabéns — você completou o passeio! ✦
           </p>
         )}
       </div>
     );
   }
 
-  // Navigating state — distance display
+  // ── Navigating: live distance meter ──────────────────────────────────────
   return (
-    <div
-      style={{
-        margin: "0 16px 4px",
-        borderRadius: 14,
-        background: "#00251A",
-        padding: "12px 16px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-      }}
-    >
+    <div style={{
+      margin: "0 16px 4px",
+      borderRadius: 14,
+      background: "#00251A",
+      padding: "12px 16px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+    }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        {/* Live blue dot */}
         <div style={{
           width: 10, height: 10, borderRadius: "50%",
           background: "rgba(30,136,229,0.9)",
-          boxShadow: "0 0 0 3px rgba(30,136,229,0.2)",
+          boxShadow: "0 0 0 3px rgba(30,136,229,0.22)",
           flexShrink: 0,
         }} />
         <div>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 9, fontWeight: 700, fontFamily: "Montserrat,sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 1px" }}>
+          <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 9, fontWeight: 700, fontFamily: "Montserrat,sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 1px" }}>
             Navegação ativa
           </p>
           <p style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "Montserrat,sans-serif", margin: 0 }}>
-            {activeStop?.placeName ?? "Aguardando sinal..."}
+            {activeStop?.placeName ?? "—"}
           </p>
         </div>
       </div>
-      {distLabel != null ? (
-        <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 9, fontFamily: "Montserrat,sans-serif", margin: "0 0 1px", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>distância</p>
-          <p style={{ color: "#E65100", fontSize: 18, fontWeight: 800, fontFamily: "Montserrat,sans-serif", margin: 0, lineHeight: 1 }}>{distLabel}</p>
-        </div>
+      {geoStatus === "locating" || distLabel === null ? (
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0, flexShrink: 0 }}>
+          Localizando...
+        </p>
       ) : (
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0 }}>Localizando...</p>
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 9, fontFamily: "Montserrat,sans-serif", margin: "0 0 1px", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            distância
+          </p>
+          <p style={{ color: "#E65100", fontSize: 20, fontWeight: 800, fontFamily: "Montserrat,sans-serif", margin: 0, lineHeight: 1 }}>
+            {distLabel}
+          </p>
+        </div>
       )}
     </div>
   );
@@ -954,7 +1005,7 @@ function StopPanel({
             }}
           >
             <Navigation size={11} />
-            Abrir no Maps (externo)
+            Abrir navegação externa
           </a>
         </div>
       </div>
@@ -1239,8 +1290,10 @@ export default function ReceptivoDetail() {
 
   // ── Navigation mode state ──────────────────────────────────────────────────
   const [navActive, setNavActive] = useState(false);
+  const [geoStatus, setGeoStatus] = useState<GeoStatus>("idle");
   const [distanceToActive, setDistanceToActive] = useState<number | null>(null);
   const [arrivedAtActive, setArrivedAtActive] = useState(false);
+  const hasTrackedStart = useRef(false);
 
   const { data: tour, isLoading, error } = trpc.receptivo.bySlug.useQuery(
     { slug: slug ?? "" },
@@ -1248,18 +1301,73 @@ export default function ReceptivoDetail() {
   );
 
   const stops: TourStop[] = (tour as any)?.stops ?? [];
+  const tourName: string = (tour as any)?.name ?? "";
+
+  // ── Restore persisted progress ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!slug || stops.length === 0 || hasTrackedStart.current) return;
+    const saved = loadReceptivoProgress(slug);
+    if (saved && saved.activeIndex > 0 && saved.activeIndex < stops.length) {
+      setActiveIndex(saved.activeIndex);
+    }
+    // Track journey start (once)
+    hasTrackedStart.current = true;
+    trackReceptivoEvent("receptivo_start", {
+      tourSlug: slug,
+      totalStops: stops.length,
+    });
+  }, [slug, stops.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Persist progress on activeIndex change ─────────────────────────────────
+  useEffect(() => {
+    if (!slug || !tourName || stops.length === 0) return;
+    if (finished) {
+      clearReceptivoProgress();
+      return;
+    }
+    saveReceptivoProgress({
+      slug,
+      tourName,
+      activeIndex,
+      totalStops: stops.length,
+    });
+  }, [slug, tourName, activeIndex, stops.length, finished]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Abandon tracking (best-effort on unmount) ──────────────────────────────
+  useEffect(() => {
+    return () => {
+      if (!finished && hasTrackedStart.current && slug && activeIndex > 0) {
+        trackReceptivoEvent("receptivo_abandon", {
+          tourSlug: slug,
+          stopIndex: activeIndex,
+          totalStops: stops.length,
+        });
+      }
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNext = useCallback(() => {
     if (activeIndex < stops.length - 1) {
+      trackReceptivoEvent("receptivo_stop_advance", {
+        tourSlug: slug ?? "",
+        stopIndex: activeIndex,
+        stopName: stops[activeIndex]?.placeName,
+        totalStops: stops.length,
+      });
       setActiveIndex((i) => i + 1);
       setArrivedAtActive(false);
       setDistanceToActive(null);
       stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       setFinished(true);
+      clearReceptivoProgress();
+      trackReceptivoEvent("receptivo_complete", {
+        tourSlug: slug ?? "",
+        totalStops: stops.length,
+      });
       stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [activeIndex, stops.length]);
+  }, [activeIndex, stops, slug]);
 
   const handlePrev = useCallback(() => {
     if (activeIndex > 0) {
@@ -1281,17 +1389,34 @@ export default function ReceptivoDetail() {
   // ── Navigation mode handlers ───────────────────────────────────────────────
   const handleActivateNav = useCallback(() => {
     setNavActive(true);
-  }, []);
+    setGeoStatus("locating");
+    trackReceptivoEvent("receptivo_nav_activate", {
+      tourSlug: slug ?? "",
+      stopIndex: activeIndex,
+      totalStops: stops.length,
+    });
+  }, [slug, activeIndex, stops.length]);
 
   const handleDistanceUpdate = useCallback((meters: number | null) => {
     setDistanceToActive(meters);
+    if (meters !== null) setGeoStatus("tracking");
   }, []);
 
-  const handleArrival = useCallback((_stopIndex: number) => {
-    setArrivedAtActive(true);
-    // Scroll to navBar so user sees "Você chegou!"
-    stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const handleGeoError = useCallback((code: number) => {
+    setGeoStatus(code === 1 ? "denied" : "unavailable");
+    setDistanceToActive(null);
   }, []);
+
+  const handleArrival = useCallback((stopIndex: number) => {
+    setArrivedAtActive(true);
+    trackReceptivoEvent("receptivo_stop_arrival", {
+      tourSlug: slug ?? "",
+      stopIndex,
+      stopName: stops[stopIndex]?.placeName,
+      totalStops: stops.length,
+    });
+    stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [slug, stops]);
 
   const handleAdvanceFromNav = useCallback(() => {
     handleNext();
@@ -1523,6 +1648,7 @@ export default function ReceptivoDetail() {
             onStopSelect={handleSelectStop}
             onDistanceUpdate={handleDistanceUpdate}
             onArrival={handleArrival}
+            onGeoError={handleGeoError}
           />
           <JourneyStrip stops={stops} activeIndex={activeIndex} onSelect={handleSelectStop} />
         </div>
@@ -1533,6 +1659,7 @@ export default function ReceptivoDetail() {
         <div style={{ marginTop: 12, marginBottom: 4 }}>
           <NavBar
             navActive={navActive}
+            geoStatus={geoStatus}
             distanceMeters={distanceToActive}
             arrived={arrivedAtActive}
             activeStop={stops[activeIndex] ?? null}

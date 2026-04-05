@@ -1,7 +1,8 @@
 import { getLoginUrl } from "@/const";
-import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Search, Sparkles, TrendingUp, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight, Play } from "lucide-react";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getAnyReceptivoProgress, type ReceptivoProgress } from "@/lib/receptivoAnalytics";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { PlaceCard } from "@/components/PlaceCard";
 import { PlaceCardSkeleton } from "@/components/PlaceCardSkeleton";
@@ -32,6 +33,7 @@ export default function Home() {
   const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [showNearbyMap, setShowNearbyMap] = useState(false);
+  const [inProgressJourney, setInProgressJourney] = useState<ReceptivoProgress | null>(null);
 
   useEffect(() => {
     const onboardingCompleted = localStorage.getItem("onboarding_completed");
@@ -39,6 +41,12 @@ export default function Home() {
       navigate("/app/onboarding");
     }
   }, [user, navigate]);
+
+  // Check for any in-progress Receptivo journey
+  useEffect(() => {
+    const progress = getAnyReceptivoProgress();
+    setInProgressJourney(progress);
+  }, []);
 
   const { data: categories } = useCategoriesList();
   const { data: featuredPlaces, isLoading: featuredLoading } = usePlacesList({ limit: 6, offset: 0 });
@@ -249,6 +257,53 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ── Continuar passeio em andamento ── */}
+      {inProgressJourney && inProgressJourney.activeIndex > 0 && (
+        <section style={{ padding: "0 20px", marginTop: 24 }}>
+          <Link
+            to={`/app/receptivo/${inProgressJourney.slug}`}
+            style={{ textDecoration: "none", display: "block" }}
+          >
+            <div style={{
+              borderRadius: 14,
+              background: "#E65100",
+              padding: "14px 16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              boxShadow: "0 2px 12px rgba(230,81,0,0.28)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: "50%",
+                  background: "rgba(255,255,255,0.18)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0,
+                }}>
+                  <Play size={16} color="#fff" fill="#fff" />
+                </div>
+                <div>
+                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 9, fontWeight: 700, fontFamily: "Montserrat, sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 2px" }}>
+                    Passeio em andamento
+                  </p>
+                  <p style={{ color: "#fff", fontSize: 13, fontWeight: 800, fontFamily: "Montserrat, sans-serif", margin: "0 0 1px" }}>
+                    {inProgressJourney.tourName}
+                  </p>
+                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 11, fontFamily: "Montserrat, sans-serif", margin: 0 }}>
+                    Parada {inProgressJourney.activeIndex + 1} de {inProgressJourney.totalStops}
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                <span style={{ color: "rgba(255,255,255,0.85)", fontSize: 12, fontWeight: 700, fontFamily: "Montserrat, sans-serif" }}>Continuar</span>
+                <ArrowRight size={14} color="rgba(255,255,255,0.85)" />
+              </div>
+            </div>
+          </Link>
+        </section>
+      )}
 
       {/* ── Receptivo Oranje ── */}
       <section style={{ padding: "0 20px", marginTop: 32 }}>

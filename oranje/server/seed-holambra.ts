@@ -973,6 +973,13 @@ export async function seedHolambra() {
     const { _categorySlug, ...placeFields } = placeData;
     const categoryId = categoryIdMap[_categorySlug] ?? null;
 
+    // Structural safeguard: dataPending=true → force isFeatured=false, isRecommended=false
+    if (placeFields.dataPending && (placeFields.isFeatured || placeFields.isRecommended)) {
+      console.warn(`  ⚠️  SAFEGUARD: ${placeFields.name} tem dataPending=true mas isFeatured/isRecommended=true — corrigindo automaticamente`);
+      placeFields.isFeatured = false;
+      placeFields.isRecommended = false;
+    }
+
     const insertValues: InsertPlace = {
       ...placeFields,
       categoryId,

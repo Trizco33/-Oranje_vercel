@@ -144,6 +144,20 @@ export default function SiteHome() {
     [allPlaces]
   );
 
+  // Resolve specific curated route links by title keyword — falls back to /roteiros
+  const routeLinkByKeyword = useMemo(() => {
+    const find = (keywords: string[]): string => {
+      const match = (publicRoutes as any[]).find((r: any) =>
+        keywords.some((kw) => r.title?.toLowerCase().includes(kw.toLowerCase()))
+      );
+      return match ? `/app/roteiro/${match.id}` : "/roteiros";
+    };
+    return {
+      romantico: find(["romântic", "romantic", "casal"]),
+      familia: find(["família", "familia", "família"]),
+    };
+  }, [publicRoutes]);
+
   // Build categoryId → name map for display
   const catMap = useMemo(() => {
     const m: Record<number, string> = {};
@@ -717,40 +731,33 @@ export default function SiteHome() {
                       className="site-card card-press"
                       style={{ display: "flex", flexDirection: "column", height: "100%", background: "#FFFFFF", overflow: "hidden" }}
                     >
-                      {/* Cover image se disponível */}
-                      {route.coverImage && (
-                        <div style={{ position: "relative", height: 140, overflow: "hidden", borderRadius: "14px 14px 0 0" }}>
+                      {/* Cover image — sempre mostra algo (fallback verde se sem imagem) */}
+                      <div style={{ position: "relative", height: 140, overflow: "hidden", borderRadius: "14px 14px 0 0", background: "linear-gradient(135deg, #00251A 0%, #004D40 100%)" }}>
+                        {route.coverImage && (
                           <img
                             src={route.coverImage}
                             alt={route.title}
                             loading="lazy"
                             className="card-img-zoom"
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
                           />
-                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.7) 0%, transparent 60%)" }} />
-                          {route.theme && (
-                            <span style={{
-                              position: "absolute", bottom: 10, left: 12,
-                              fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em",
-                              background: "#E65100", color: "#fff", padding: "3px 10px", borderRadius: 20,
-                              textTransform: "uppercase",
-                            }}>
-                              {route.theme}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
-                        {!route.coverImage && route.theme && (
+                        )}
+                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.75) 0%, transparent 55%)" }} />
+                        {route.theme && (
                           <span style={{
-                            display: "inline-block", marginBottom: 10,
+                            position: "absolute", bottom: 10, left: 12,
                             fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em",
-                            background: "rgba(230,81,0,0.08)", color: "#E65100", padding: "3px 10px", borderRadius: 20,
+                            background: "#E65100", color: "#fff", padding: "3px 10px", borderRadius: 20,
                             textTransform: "uppercase",
                           }}>
                             {route.theme}
                           </span>
                         )}
+                        {!route.coverImage && (
+                          <Map size={32} style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%) translateY(-10px)", color: "rgba(255,255,255,0.25)" }} />
+                        )}
+                      </div>
+                      <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
                         <h3 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "#00251A", marginBottom: 8, lineHeight: 1.3 }}>
                           {route.title}
                         </h3>
@@ -996,14 +1003,14 @@ export default function SiteHome() {
                 title: "A dois em Holambra",
                 desc: "Experiências românticas com curadoria especial para casais — jardins, vinhos e pôr do sol.",
                 cta: "Ver roteiro romântico",
-                link: "/roteiros",
+                link: routeLinkByKeyword.romantico,
               },
               {
                 icon: <Users size={28} strokeWidth={1.5} />,
                 title: "Com a família",
                 desc: "Passeios ao ar livre, restaurantes pet-friendly e atrações para crianças e adultos juntos.",
                 cta: "Ver roteiro família",
-                link: "/roteiros",
+                link: routeLinkByKeyword.familia,
               },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 80}>

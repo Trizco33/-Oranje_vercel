@@ -371,6 +371,7 @@ export type SaveSiteRouteFeatureInput = {
   label?: string | null;
   subtitle?: string | null;
   ctaText?: string | null;
+  imageUrl?: string | null;
   isFeatured?: boolean;
   isActive?: boolean;
   sortOrder?: number;

@@ -30,10 +30,6 @@ import {
    Mobile-first, WCAG AAA, No glassmorphism, Generous spacing
    ═══════════════════════════════════════════════════════════════════════════ */
 
-// Lazy load the map components
-const SiteMapView = lazy(() => import("@/components/SiteMapView"));
-const NearbyMap = lazy(() => import("@/components/NearbyMap"));
-
 // Scroll reveal hook
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -76,6 +72,7 @@ type SiteFeatureItem = {
   label: string | null;
   subtitle: string | null;
   ctaText: string | null;
+  imageUrl: string | null;
   isFeatured: boolean;
   isActive: boolean;
   sortOrder: number;
@@ -142,13 +139,12 @@ function SectionHeader({
 export default function SiteHome() {
   const navigate = useNavigate();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const [showNearbyMap, setShowNearbyMap] = useState(false);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
   const { data: publicRoutes = [], isLoading: routesLoading } = usePublicRoutes();
   const { data: siteFeatureItems = [], isLoading: siteFeaturesLoading } = trpc.routes.siteFeatures.useQuery(undefined, { staleTime: 60_000 });
-  const siteFeatures = siteFeatureItems as SiteFeatureItem[];
+  const siteFeatures = siteFeatureItems as unknown as SiteFeatureItem[];
   const featuredRoute = siteFeatures.find((f) => f.isFeatured) ?? null;
   const secondaryRoutes = siteFeatures.filter((f) => !f.isFeatured);
   const hasCmsRoutes = siteFeatures.length > 0;
@@ -770,15 +766,22 @@ export default function SiteHome() {
                     >
                       {/* Cover — taller for hero */}
                       <div style={{ position: "relative", height: 240, background: "linear-gradient(135deg, #00251A 0%, #003828 100%)", overflow: "hidden" }}>
-                        {featuredRoute.route.coverImage && !featuredRoute.route.coverImage.includes("unsplash.com") && (
-                          <img
-                            src={featuredRoute.route.coverImage}
-                            alt={featuredRoute.label || featuredRoute.route.title}
-                            loading="lazy"
-                            className="card-img-zoom"
-                            style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
-                          />
-                        )}
+                        {(() => {
+                          const src =
+                            featuredRoute.imageUrl ||
+                            (featuredRoute.route.coverImage && !featuredRoute.route.coverImage.includes("unsplash.com")
+                              ? featuredRoute.route.coverImage
+                              : null);
+                          return src ? (
+                            <img
+                              src={src}
+                              alt={featuredRoute.label || featuredRoute.route.title}
+                              loading="lazy"
+                              className="card-img-zoom"
+                              style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
+                            />
+                          ) : null;
+                        })()}
                         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.85) 0%, rgba(0,37,26,0.2) 60%, transparent 100%)" }} />
                         {/* Badges */}
                         <div style={{ position: "absolute", top: 16, left: 16, display: "flex", gap: 8 }}>
@@ -859,15 +862,22 @@ export default function SiteHome() {
                           >
                             {/* Cover */}
                             <div style={{ position: "relative", height: 140, overflow: "hidden", borderRadius: "14px 14px 0 0", background: "linear-gradient(135deg, #00251A 0%, #004D40 100%)" }}>
-                              {item.route.coverImage && !item.route.coverImage.includes("unsplash.com") && (
-                                <img
-                                  src={item.route.coverImage}
-                                  alt={item.label || item.route.title}
-                                  loading="lazy"
-                                  className="card-img-zoom"
-                                  style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
-                                />
-                              )}
+                              {(() => {
+                                const src =
+                                  item.imageUrl ||
+                                  (item.route.coverImage && !item.route.coverImage.includes("unsplash.com")
+                                    ? item.route.coverImage
+                                    : null);
+                                return src ? (
+                                  <img
+                                    src={src}
+                                    alt={item.label || item.route.title}
+                                    loading="lazy"
+                                    className="card-img-zoom"
+                                    style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
+                                  />
+                                ) : null;
+                              })()}
                               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.75) 0%, transparent 55%)" }} />
                               {item.route.theme && (
                                 <span style={{
@@ -879,7 +889,7 @@ export default function SiteHome() {
                                   {item.route.theme}
                                 </span>
                               )}
-                              {!item.route.coverImage && (
+                              {!item.imageUrl && !item.route.coverImage && (
                                 <Map size={28} style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", color: "rgba(255,255,255,0.25)" }} />
                               )}
                             </div>
@@ -1039,81 +1049,92 @@ export default function SiteHome() {
           <Reveal>
             <SectionHeader
               label="Mapa"
-              title="Navegue com Facilidade"
-              subtitle="Explore Holambra no mapa interativo com todos os pontos de interesse"
+              title="Explore Holambra com o Mapa Interativo"
+              subtitle="Encontre lugares próximos, filtre por categoria e navegue pela cidade com o mapa do Oranje"
             />
           </Reveal>
 
-          <Reveal delay={100}>
-            <Suspense
-              fallback={
-                <div
-                  style={{
-                    height: 400,
+          <Reveal delay={80}>
+            <div style={{
+              background: "#00251A",
+              borderRadius: 20,
+              padding: "44px 40px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 36,
+            }}>
+              {/* Feature grid */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: 24,
+              }}>
+                {[
+                  {
+                    icon: "📍",
+                    title: "Perto de Mim",
+                    desc: "Veja o que está mais próximo de você agora, em tempo real",
+                  },
+                  {
+                    icon: "🔍",
+                    title: "Filtros por Categoria",
+                    desc: "Restaurantes, cafés, parques — filtre e encontre o que quer",
+                  },
+                  {
+                    icon: "⭐",
+                    title: "Favoritos no Mapa",
+                    desc: "Seus lugares favoritos marcados e acessíveis de onde estiver",
+                  },
+                ].map((feat, i) => (
+                  <div key={i} style={{
+                    background: "rgba(255,255,255,0.06)",
                     borderRadius: 14,
-                    background: "rgba(0,37,26,0.03)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    padding: "22px 24px",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}>
+                    <div style={{ fontSize: "1.75rem", marginBottom: 10 }}>{feat.icon}</div>
+                    <p style={{ fontWeight: 700, color: "#fff", fontSize: "0.9375rem", margin: "0 0 6px", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                      {feat.title}
+                    </p>
+                    <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8125rem", margin: 0, lineHeight: 1.6 }}>
+                      {feat.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTAs */}
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <Link
+                  to="/app/mapa"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    height: 48, padding: "0 28px",
+                    background: "#E65100", color: "#FFFFFF",
+                    fontSize: "0.9375rem", fontWeight: 700, borderRadius: 12,
+                    textDecoration: "none", fontFamily: "'Montserrat', system-ui, sans-serif",
                   }}
                 >
-                  <p style={{ color: "rgba(0,37,26,0.4)", fontSize: "0.875rem" }}>Carregando mapa...</p>
-                </div>
-              }
-            >
-              <SiteMapView height="400px" />
-            </Suspense>
+                  <MapPin size={17} />
+                  Abrir mapa no app
+                  <ArrowRight size={15} />
+                </Link>
+                <Link
+                  to="/mapa"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    height: 48, padding: "0 24px",
+                    background: "transparent", color: "rgba(255,255,255,0.75)",
+                    fontSize: "0.875rem", fontWeight: 600, borderRadius: 12,
+                    textDecoration: "none", border: "1.5px solid rgba(255,255,255,0.18)",
+                    fontFamily: "'Montserrat', system-ui, sans-serif",
+                  }}
+                >
+                  Saiba mais sobre o mapa
+                </Link>
+              </div>
+            </div>
           </Reveal>
-
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-            <Link
-              to="/mapa"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                height: 44,
-                padding: "0 24px",
-                background: "#E65100",
-                color: "#FFFFFF",
-                fontSize: "0.875rem",
-                fontWeight: 600,
-                borderRadius: 11,
-                textDecoration: "none",
-                transition: "background 0.2s ease",
-                fontFamily: "'Montserrat', system-ui, sans-serif",
-              }}
-              onMouseEnter={(e: any) => (e.currentTarget.style.background = "#FF6D00")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.background = "#E65100")}
-            >
-              Abrir Mapa Completo
-              <ArrowRight size={16} />
-            </Link>
-            <button
-              onClick={() => setShowNearbyMap(true)}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                height: 44,
-                padding: "0 24px",
-                background: "transparent",
-                color: "#00251A",
-                fontSize: "0.875rem",
-                fontWeight: 600,
-                borderRadius: 11,
-                border: "1.5px solid rgba(0,37,26,0.15)",
-                cursor: "pointer",
-                transition: "border-color 0.2s ease",
-                fontFamily: "'Montserrat', system-ui, sans-serif",
-              }}
-              onMouseEnter={(e: any) => (e.currentTarget.style.borderColor = "rgba(0,37,26,0.3)")}
-              onMouseLeave={(e: any) => (e.currentTarget.style.borderColor = "rgba(0,37,26,0.15)")}
-            >
-              <MapPin size={16} />
-              Perto de mim
-            </button>
-          </div>
         </div>
       </section>
 
@@ -1452,11 +1473,6 @@ export default function SiteHome() {
           )}
         </div>
       </section>
-      {showNearbyMap && (
-        <Suspense fallback={null}>
-          <NearbyMap onClose={() => setShowNearbyMap(false)} />
-        </Suspense>
-      )}
     </SiteLayout>
   );
 }

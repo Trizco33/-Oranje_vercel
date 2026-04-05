@@ -1,4 +1,3 @@
-import { Suspense, lazy } from "react";
 import { useLocation, Link } from "react-router-dom";
 import SiteLayout from "@/components/SiteLayout";
 import { Mail, Phone, MapPin, MessageCircle, ArrowRight, CheckCircle, Instagram, Navigation } from "lucide-react";
@@ -7,8 +6,6 @@ import { DSCard } from "@/components/ds/Card";
 import { DSBadge } from "@/components/ds/Badge";
 import { DSInput } from "@/components/ds/Input";
 import { trpc } from "@/lib/trpc";
-
-const SiteMapView = lazy(() => import("@/components/SiteMapView"));
 
 function resolveInstagramHref(value: string | undefined): string | null {
   if (!value) return null;
@@ -171,44 +168,96 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
   },
   mapa: {
     title: "Mapa de Holambra",
-    subtitle: "Veja os pontos turísticos, restaurantes e atrações no mapa interativo",
+    subtitle: "Navegue pela cidade com o mapa interativo do app Oranje",
     component: (
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-6)" }}>
-        <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)" }}>
-          O mapa abaixo mostra os principais pontos de interesse de Holambra. Use o app para ver todos os lugares com filtros, avaliações e navegação em tempo real.
-        </p>
 
-        {/* Mapa embutido */}
-        <div style={{ borderRadius: "var(--ds-radius-xl)", overflow: "hidden", border: "1px solid rgba(230,81,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}>
-          <Suspense fallback={
-            <div style={{ height: 400, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--ds-color-bg-secondary)" }}>
-              <div style={{ textAlign: "center" }}>
-                <MapPin size={32} style={{ color: "var(--ds-color-accent)", margin: "0 auto 8px" }} />
-                <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)" }}>Carregando mapa...</p>
-              </div>
+        {/* Hero CTA block */}
+        <div style={{
+          background: "#00251A",
+          borderRadius: 20,
+          padding: "40px 36px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 28,
+        }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <MapPin size={22} style={{ color: "#E65100" }} />
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#E65100" }}>
+                Mapa Interativo
+              </span>
             </div>
-          }>
-            <SiteMapView height="420px" />
-          </Suspense>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#fff", margin: "0 0 10px", lineHeight: 1.25, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+              Encontre lugares próximos e explore a cidade
+            </h2>
+            <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.9375rem", margin: 0, lineHeight: 1.65 }}>
+              O mapa do Oranje mostra todos os pontos de interesse de Holambra em tempo real — com filtros por categoria, favoritos e a função "Perto de Mim" para descobrir o que está ao seu redor agora.
+            </p>
+          </div>
+
+          {/* Feature grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16 }}>
+            {[
+              { icon: "📍", label: "Perto de Mim", desc: "Lugares próximos em tempo real" },
+              { icon: "🔍", label: "Filtros", desc: "Por categoria, preço e mais" },
+              { icon: "⭐", label: "Favoritos", desc: "Seus lugares salvos no mapa" },
+              { icon: "🌷", label: "60+ Lugares", desc: "Todo o guia de Holambra" },
+            ].map((f, i) => (
+              <div key={i} style={{
+                background: "rgba(255,255,255,0.07)",
+                borderRadius: 12,
+                padding: "16px 18px",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}>
+                <div style={{ fontSize: "1.375rem", marginBottom: 6 }}>{f.icon}</div>
+                <p style={{ fontWeight: 700, color: "#fff", fontSize: "0.875rem", margin: "0 0 3px", fontFamily: "'Montserrat', system-ui, sans-serif" }}>{f.label}</p>
+                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.75rem", margin: 0, lineHeight: 1.5 }}>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTAs */}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <Link to="/app/mapa" style={{ textDecoration: "none" }}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                height: 50, padding: "0 28px",
+                background: "#E65100", color: "#fff",
+                fontSize: "0.9375rem", fontWeight: 700, borderRadius: 13,
+                fontFamily: "'Montserrat', system-ui, sans-serif",
+              }}>
+                <MapPin size={17} />
+                Abrir mapa no app
+                <ArrowRight size={15} />
+              </div>
+            </Link>
+            <Link to="/app" style={{ textDecoration: "none" }}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                height: 50, padding: "0 24px",
+                background: "transparent", color: "rgba(255,255,255,0.75)",
+                fontSize: "0.875rem", fontWeight: 600, borderRadius: 13,
+                border: "1.5px solid rgba(255,255,255,0.2)",
+              }}>
+                Instalar o app Oranje
+              </div>
+            </Link>
+          </div>
         </div>
 
-        {/* CTA para experiência completa */}
+        {/* Supporting context */}
         <DSCard variant="glass" padding="lg">
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-4)", flexWrap: "wrap" }}>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-2)", marginBottom: "var(--ds-space-1)" }}>
-                <Navigation size={16} style={{ color: "var(--ds-color-accent)" }} />
-                <p style={{ fontWeight: 700, color: "var(--ds-color-text-primary)", fontSize: "var(--ds-text-base)", fontFamily: "var(--ds-font-display)" }}>
-                  Perto de você
-                </p>
-              </div>
-              <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)" }}>
-                Veja lugares próximos à sua localização em tempo real com o mapa interativo do app Oranje.
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "var(--ds-space-4)" }}>
+            <Navigation size={20} style={{ color: "var(--ds-color-accent)", flexShrink: 0, marginTop: 2 }} />
+            <div>
+              <p style={{ fontWeight: 700, color: "var(--ds-color-text-primary)", fontSize: "var(--ds-text-base)", margin: "0 0 6px", fontFamily: "var(--ds-font-display)" }}>
+                Por que o mapa do Oranje é diferente?
+              </p>
+              <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)", margin: 0, lineHeight: 1.65 }}>
+                Cada lugar foi verificado pelo time Oranje — com descrição editorial, avaliações reais e fotos curadas. Não é um mapa genérico: é o guia definitivo de Holambra, navegável.
               </p>
             </div>
-            <Link to="/app" style={{ textDecoration: "none", flexShrink: 0 }}>
-              <DSButton variant="primary" size="md">Abrir no App</DSButton>
-            </Link>
           </div>
         </DSCard>
       </div>

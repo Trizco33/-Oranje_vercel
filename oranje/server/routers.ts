@@ -423,6 +423,7 @@ export const appRouter = router({
         label: z.string().optional(),
         subtitle: z.string().optional(),
         ctaText: z.string().optional(),
+        imageUrl: z.string().optional(),
         isFeatured: z.boolean().optional(),
         isActive: z.boolean().optional(),
         sortOrder: z.number().optional(),

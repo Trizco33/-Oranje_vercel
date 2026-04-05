@@ -18,6 +18,7 @@ type SiteFeature = {
   label: string | null;
   subtitle: string | null;
   ctaText: string | null;
+  imageUrl: string | null;
   isFeatured: boolean;
   isActive: boolean;
   sortOrder: number;
@@ -30,6 +31,7 @@ type FormState = {
   label: string;
   subtitle: string;
   ctaText: string;
+  imageUrl: string;
   isFeatured: boolean;
   isActive: boolean;
   sortOrder: string;
@@ -40,6 +42,7 @@ const emptyForm = (): FormState => ({
   label: "",
   subtitle: "",
   ctaText: "",
+  imageUrl: "",
   isFeatured: false,
   isActive: true,
   sortOrder: "0",
@@ -62,7 +65,7 @@ export function AdminSiteRoutes() {
   const [form, setForm] = useState<FormState>(emptyForm());
   const [error, setError] = useState("");
 
-  const features = allFeaturesRaw as SiteFeature[];
+  const features = allFeaturesRaw as unknown as SiteFeature[];
   const adminRoutes = adminRoutesRaw as RouteItem[];
 
   function openCreate() {
@@ -78,6 +81,7 @@ export function AdminSiteRoutes() {
       label: f.label || "",
       subtitle: f.subtitle || "",
       ctaText: f.ctaText || "",
+      imageUrl: f.imageUrl || "",
       isFeatured: f.isFeatured,
       isActive: f.isActive,
       sortOrder: String(f.sortOrder),
@@ -103,6 +107,7 @@ export function AdminSiteRoutes() {
       label: form.label || undefined,
       subtitle: form.subtitle || undefined,
       ctaText: form.ctaText || undefined,
+      imageUrl: form.imageUrl || undefined,
       isFeatured: form.isFeatured,
       isActive: form.isActive,
       sortOrder: parseInt(form.sortOrder, 10) || 0,
@@ -329,6 +334,25 @@ export function AdminSiteRoutes() {
                   placeholder="ex: Iniciar este roteiro"
                   style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: "1.5px solid rgba(0,37,26,0.15)", fontSize: "0.9rem", color: "#00251A", fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
                 />
+              </div>
+
+              {/* Image URL */}
+              <div>
+                <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "#00251A", marginBottom: 6 }}>
+                  URL da imagem de capa <span style={{ color: "rgba(0,37,26,0.35)", fontWeight: 400 }}>(aparece no card — não use links do Unsplash)</span>
+                </label>
+                <input
+                  type="url"
+                  value={form.imageUrl}
+                  onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
+                  placeholder="https://exemplo.com/foto-do-passeio.jpg"
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: "1.5px solid rgba(0,37,26,0.15)", fontSize: "0.9rem", color: "#00251A", fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
+                />
+                {form.imageUrl && (
+                  <div style={{ marginTop: 8, borderRadius: 8, overflow: "hidden", height: 80 }}>
+                    <img src={form.imageUrl} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                  </div>
+                )}
               </div>
 
               {/* Sort order */}

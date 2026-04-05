@@ -131,7 +131,7 @@ async function main() {
       placeName: "Deck do Amor",
       order: 3,
       narrative: "Vire à esquerda na altura do Deck do Amor e contorne a região. Este é o ponto de virada do percurso — daqui o retorno começa pelo centro da cidade. A subida que existe nesse trecho é suave, nada parecido com a Corrida Puxada: é o tipo de inclinação que você enfrenta sem nem perceber. Continue pela rua principal na direção do Posto Pioneiro e daí de volta ao Boulevard. O circuito fecha sozinho.",
-      tip: "Se quiser fechar o percurso com calma, a região do Posto Pioneiro é uma boa parada para um café expresso e um pão na chapa antes de seguir o dia.",
+      tip: "Se quiser fechar o percurso com calma, a loja de conveniência do Auto Posto Pioneiro é uma boa parada — café expresso e pão na chapa antes de seguir o dia.",
       bestMoment: "Manhã cedo ou fim da tarde",
     },
   ];
@@ -151,17 +151,8 @@ async function main() {
     console.log(`    🏷  Parada ${stop.order}: ${stop.placeName} ✓`);
   }
 
-  // ── Extension: Zoet en Zout (pausa opcional de recuperação) ──────────────
-
-  const zoetId = placeMap["Zoet en Zout"];
-  if (zoetId) {
-    await db.execute(sql`
-      UPDATE guided_tours
-      SET extensionPlaceIds = ${JSON.stringify([zoetId])}, updatedAt = NOW()
-      WHERE id = ${tourId}
-    `);
-    console.log(`    🔗 extensionPlaceIds: [${zoetId}] (Zoet en Zout)`);
-  }
+  // Corrida Leve não tem extensionPlaceIds — o fechamento real é a conveniência
+  // do Auto Posto Pioneiro, referenciada como narrativa na parada 3 (Deck do Amor).
 
   console.log("\n🎉 Corrida Leve em Holambra — seed concluído!");
   console.log("📱 Acesse em: /app/receptivo/corrida-leve-holambra");

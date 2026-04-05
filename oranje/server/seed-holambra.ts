@@ -435,7 +435,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     name: "Martin Holandesa Confeitaria e Restaurante",
     _categorySlug: "restaurantes",
     shortDesc: "Confeitaria histórica do Boulevard Holandês — stroopwafels, pães artesanais e sabores da imigração holandesa",
-    longDesc: null,
+    longDesc: "A Martin Holandesa é uma das mais antigas confeitarias de Holambra e uma referência obrigatória para quem visita o Boulevard Holandês. Fundada pela família Martin, ela mantém viva a tradição da confeitaria holandesa com produtos como stroopwafels, speculaas e pães artesanais de receita original. O ambiente é acolhedor, com decoração que remete à imigração — cada detalhe conta um pedaço da história da cidade. É o lugar ideal para o café da manhã ou para levar um presente típico de Holambra: os stroopwafels embalados são um dos souvenirs mais procurados pelos visitantes.",
     coverImage: "https://martinholandesa.com.br/content/foto4.jpeg",
     address: "Rua Doria Vasconcelos, 144, Boulevard Holandês, Holambra, SP", lat: -22.6395, lng: -47.0608,
     city: "Holambra", state: "SP", country: "Brasil",
@@ -449,7 +449,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     name: "Cervejaria Seo Carneiro",
     _categorySlug: "bares",
     shortDesc: "Cervejaria artesanal com atmosfera autêntica — o bar mais animado e descontraído de Holambra.",
-    longDesc: null,
+    longDesc: "A Cervejaria Seo Carneiro é o ponto de encontro mais autêntico de Holambra para os amantes de cerveja artesanal. Com um cardápio que mescla rótulos próprios e selecionados, o ambiente é descontraído, barulhento do jeito certo e cheio de gente que volta sempre. Os petiscos combinam com as cervejas e o atendimento é aquele estilo de bar de bairro que faz falta nas cidades grandes. É o tipo de lugar que aparece nas histórias de quem visita Holambra e não esperava encontrar um bom bar artesanal por lá.",
     coverImage: "https://seocarneiro.com.br/wp-content/uploads/2023/11/20231102_110640-scaled.jpg",
     address: "Holambra – SP", lat: -22.6400, lng: -47.0610,
     city: "Holambra", state: "SP", country: "Brasil",
@@ -531,13 +531,28 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     dataPending: false,
   },
 
+  // ── Âncoras com longDesc editorial completo ───────────────────────────────
+
+  {
+    name: "Moinho Povos Unidos",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Moinho holandês símbolo de Holambra — o cartão-postal mais fotografado da cidade das flores",
+    longDesc: "O Moinho Povos Unidos é o símbolo mais icônico de Holambra e o ponto de referência de toda a cidade. Construído pelos imigrantes holandeses, ele marca o fim do eixo de passeio do centro — quem percorre a Rua dos Guarda-Chuvas, passa pelo Deck do Amor e segue pela Praça Vitória Régia inevitavelmente chega a ele. É gratuito, está sempre acessível e a qualquer hora do dia oferece uma boa fotografia — ao amanhecer com neblina, ao pôr do sol com luz dourada, ou à noite com iluminação. Em setembro, durante a Expoflora, os campos ao redor ficam tomados por flores e o cenário se torna absolutamente impossível de ignorar.",
+    address: "Praça dos Imigrantes — Holambra, SP", lat: -22.6385, lng: -47.0625,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "free", isFree: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["icone", "ponto_iconico", "fotos", "historico", "gratuito", "primeira_visita", "casal", "familia", "ao_ar_livre", "roteiro_cultura", "eixo_de_passeio", "curadoria_oranje"], status: "active",
+    dataPending: false,
+  },
+
   // ── Migrados do Railway — âncoras com foto real confirmada ────────────────
 
   {
     name: "The Old Dutch",
     _categorySlug: "restaurantes",
     shortDesc: "Restaurante holandês tradicional no Boulevard — cardápio típico, ambiente histórico e boa reputação na cidade",
-    longDesc: null,
+    longDesc: "O The Old Dutch é uma das casas mais tradicionais do Boulevard Holandês, com um cardápio que inclui pratos típicos da culinária holandesa e brasileira em um ambiente que lembra os primeiros anos da colonização de Holambra. A fachada histórica, os detalhes decorativos e o atendimento familiar fazem dele uma parada especialmente valorizada por quem quer entender a alma da cidade. Ideal para o almoço após visitar o Moinho Povos Unidos ou o Museu da Cultura — a localização no eixo central facilita combinar as paradas.",
     coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/e6/d0/72/fachada.jpg?w=900&h=500&s=1",
     address: "Holambra – SP", lat: -22.6385, lng: -47.0610,
     city: "Holambra", state: "SP", country: "Brasil",
@@ -565,7 +580,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     name: "Hana Restaurante Holambra",
     _categorySlug: "restaurantes",
     shortDesc: "Culinária japonesa com qualidade e capricho — o único endereço oriental de Holambra",
-    longDesc: null,
+    longDesc: "O Hana Restaurante é uma surpresa bem-vinda em Holambra: em uma cidade de forte identidade holandesa, encontrar culinária japonesa de qualidade chama a atenção. O cardápio inclui sushis, sashimis e pratos quentes orientais executados com capricho — longe do estilo rodízio apressado das grandes cidades. O ambiente é tranquilo e o atendimento cuidadoso. É o tipo de restaurante que os moradores frequentam regularmente e que os visitantes encontram por recomendação boca a boca.",
     coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/aa/72/b9/sabor-delicadeza-e-amor.jpg?w=900&h=500&s=1",
     address: "Holambra – SP", lat: -22.6395, lng: -47.0615,
     city: "Holambra", state: "SP", country: "Brasil",
@@ -579,7 +594,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     name: "Lago do Holandês",
     _categorySlug: "restaurantes",
     shortDesc: "Restaurante às margens do Lago do Holandês — almoço com vista para o lago central de Holambra",
-    longDesc: null,
+    longDesc: "O Lago do Holandês é um dos raros restaurantes de Holambra com vista privilegiada para o lago central da cidade — o mesmo espelho d'água que se avista do Deck do Amor e da Praça Vitória Régia. O cardápio inclui pratos de almoço com influências da culinária regional e o ambiente ao ar livre é o grande diferencial: mesas à sombra com ventilação natural e uma paisagem que relaxa desde antes de você pedir. Ideal para almoços de família ou casais que querem combinar gastronomia com a vista mais bonita de Holambra.",
     address: "Holambra – SP", lat: -22.6430, lng: -47.0575,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
@@ -608,7 +623,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     name: "Nossa Prainha",
     _categorySlug: "parques",
     shortDesc: "Praia de lago artificial às margens do Lago do Holandês — área de lazer com areia, sombreiros e acesso à água",
-    longDesc: null,
+    longDesc: "A Nossa Prainha é uma das atrações mais inusitadas de Holambra: uma praia de areia às margens do Lago do Holandês, com infraestrutura de lazer, sombreiros e acesso à água. É especialmente procurada no verão por famílias com crianças — a água do lago é tranquila, o espaço é seguro e há opções de alimentação por perto. Para os visitantes que não esperavam encontrar uma praia no interior paulista, a surpresa é total. Um ponto de lazer que une moradores e turistas e que faz parte do eixo de passeio natural ao redor do lago central.",
     coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/44/67/dc/20160514-142534-largejpg.jpg?w=900&h=-1&s=1",
     address: "Holambra – SP", lat: -22.6435, lng: -47.0570,
     city: "Holambra", state: "SP", country: "Brasil",
@@ -939,6 +954,57 @@ export async function seedHolambra() {
   }
 
   console.log(`\n🎉 Seed concluído! ${upserted} lugar(es) inseridos/atualizados via upsert.`);
+
+  // 3. Anchor longDesc enforcement — actualiza longDescs editoriais das páginas âncora
+  // Isso garante que o longDesc seja persistido mesmo em rows já existentes no banco.
+  console.log("\n✍️  Atualizando longDescs das páginas âncora...");
+  const ANCHOR_LONG_DESCS: Array<{ name: string; city: string; longDesc: string }> = [
+    {
+      name: "Moinho Povos Unidos",
+      city: "Holambra",
+      longDesc: "O Moinho Povos Unidos é o símbolo mais icônico de Holambra e o ponto de referência de toda a cidade. Construído pelos imigrantes holandeses, ele marca o fim do eixo de passeio do centro — quem percorre a Rua dos Guarda-Chuvas, passa pelo Deck do Amor e segue pela Praça Vitória Régia inevitavelmente chega a ele. É gratuito, está sempre acessível e a qualquer hora do dia oferece uma boa fotografia — ao amanhecer com neblina, ao pôr do sol com luz dourada, ou à noite com iluminação. Em setembro, durante a Expoflora, os campos ao redor ficam tomados por flores e o cenário se torna absolutamente impossível de ignorar.",
+    },
+    {
+      name: "Martin Holandesa Confeitaria e Restaurante",
+      city: "Holambra",
+      longDesc: "A Martin Holandesa é uma das mais antigas confeitarias de Holambra e uma referência obrigatória para quem visita o Boulevard Holandês. Fundada pela família Martin, ela mantém viva a tradição da confeitaria holandesa com produtos como stroopwafels, speculaas e pães artesanais de receita original. O ambiente é acolhedor, com decoração que remete à imigração — cada detalhe conta um pedaço da história da cidade. É o lugar ideal para o café da manhã ou para levar um presente típico de Holambra: os stroopwafels embalados são um dos souvenirs mais procurados pelos visitantes.",
+    },
+    {
+      name: "The Old Dutch",
+      city: "Holambra",
+      longDesc: "O The Old Dutch é uma das casas mais tradicionais do Boulevard Holandês, com um cardápio que inclui pratos típicos da culinária holandesa e brasileira em um ambiente que lembra os primeiros anos da colonização de Holambra. A fachada histórica, os detalhes decorativos e o atendimento familiar fazem dele uma parada especialmente valorizada por quem quer entender a alma da cidade. Ideal para o almoço após visitar o Moinho Povos Unidos ou o Museu da Cultura — a localização no eixo central facilita combinar as paradas.",
+    },
+    {
+      name: "Hana Restaurante Holambra",
+      city: "Holambra",
+      longDesc: "O Hana Restaurante é uma surpresa bem-vinda em Holambra: em uma cidade de forte identidade holandesa, encontrar culinária japonesa de qualidade chama a atenção. O cardápio inclui sushis, sashimis e pratos quentes orientais executados com capricho — longe do estilo rodízio apressado das grandes cidades. O ambiente é tranquilo e o atendimento cuidadoso. É o tipo de restaurante que os moradores frequentam regularmente e que os visitantes encontram por recomendação boca a boca.",
+    },
+    {
+      name: "Lago do Holandês",
+      city: "Holambra",
+      longDesc: "O Lago do Holandês é um dos raros restaurantes de Holambra com vista privilegiada para o lago central da cidade — o mesmo espelho d'água que se avista do Deck do Amor e da Praça Vitória Régia. O cardápio inclui pratos de almoço com influências da culinária regional e o ambiente ao ar livre é o grande diferencial: mesas à sombra com ventilação natural e uma paisagem que relaxa desde antes de você pedir. Ideal para almoços de família ou casais que querem combinar gastronomia com a vista mais bonita de Holambra.",
+    },
+    {
+      name: "Nossa Prainha",
+      city: "Holambra",
+      longDesc: "A Nossa Prainha é uma das atrações mais inusitadas de Holambra: uma praia de areia às margens do Lago do Holandês, com infraestrutura de lazer, sombreiros e acesso à água. É especialmente procurada no verão por famílias com crianças — a água do lago é tranquila, o espaço é seguro e há opções de alimentação por perto. Para os visitantes que não esperavam encontrar uma praia no interior paulista, a surpresa é total. Um ponto de lazer que une moradores e turistas e que faz parte do eixo de passeio natural ao redor do lago central.",
+    },
+    {
+      name: "Cervejaria Seo Carneiro",
+      city: "Holambra",
+      longDesc: "A Cervejaria Seo Carneiro é o ponto de encontro mais autêntico de Holambra para os amantes de cerveja artesanal. Com um cardápio que mescla rótulos próprios e selecionados, o ambiente é descontraído, barulhento do jeito certo e cheio de gente que volta sempre. Os petiscos combinam com as cervejas e o atendimento é aquele estilo de bar de bairro que faz falta nas cidades grandes. É o tipo de lugar que aparece nas histórias de quem visita Holambra e não esperava encontrar um bom bar artesanal por lá.",
+    },
+  ];
+
+  for (const anchor of ANCHOR_LONG_DESCS) {
+    await db.execute(
+      sql`UPDATE places SET \`longDesc\` = ${anchor.longDesc}, \`updatedAt\` = NOW()
+          WHERE name = ${anchor.name} AND city = ${anchor.city}
+            AND (\`longDesc\` IS NULL OR \`longDesc\` = '')`
+    );
+    console.log(`  ✍️  longDesc → ${anchor.name}`);
+  }
+  console.log("  ✅ longDescs das âncoras atualizados.\n");
 }
 
 if (process.argv[1] && (process.argv[1].endsWith("seed-holambra.ts") || process.argv[1].endsWith("seed-holambra.js"))) {

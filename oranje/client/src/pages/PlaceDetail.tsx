@@ -7,7 +7,7 @@ import {
   MapPin, Phone, Globe, Instagram, AlertCircle, Heart, Share2,
   Star, RefreshCw, ChevronLeft, ChevronRight, Clock, Info,
   MessageCircle, Navigation, Map, ExternalLink, Route, Utensils,
-  Coffee, Beer, Leaf, Building2, Cake, TreePine, IceCream,
+  Coffee, Beer, Leaf, Building2, Cake, TreePine, IceCream, ArrowRight, Compass,
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -133,11 +133,11 @@ function formatInterval(open: string, close: string): string {
 
 function ImageGallery({
   images, placeName, isFavorite, onFavorite, onShare,
-  isFeatured, isRecommended, rating, reviewCount,
+  isFeatured, isRecommended, dataPending, rating, reviewCount,
 }: {
   images: string[]; placeName: string; isFavorite: boolean;
   onFavorite: () => void; onShare: () => void;
-  isFeatured?: boolean; isRecommended?: boolean;
+  isFeatured?: boolean; isRecommended?: boolean; dataPending?: boolean;
   rating?: number; reviewCount?: number;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -194,10 +194,10 @@ function ImageGallery({
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "linear-gradient(to top, rgba(0,37,26,0.8) 0%, transparent 55%)" }} />
 
-      {/* Top-left badges */}
+      {/* Top-left badges — only shown when dataPending=false (quality rule) */}
       <div className="absolute top-4 left-4 flex flex-wrap gap-1.5" style={{ zIndex: 3 }}>
-        {isFeatured && <DSBadge variant="accent">Destaque</DSBadge>}
-        {isRecommended && !isFeatured && <DSBadge variant="success">★ ORANJE</DSBadge>}
+        {isFeatured && !dataPending && <DSBadge variant="accent">Destaque</DSBadge>}
+        {isRecommended && !isFeatured && !dataPending && <DSBadge variant="success">★ ORANJE</DSBadge>}
       </div>
 
       {/* Top-right actions */}
@@ -443,16 +443,16 @@ function RelatedPlacesBlock({ categoryId, categoryName, excludeId }: {
                   )}
                 </div>
                 <div className="px-2.5 py-2">
+                  {p.categoryName && (
+                    <p className="text-xs font-medium mb-0.5"
+                      style={{ color: "var(--ds-color-accent)", opacity: 0.8 }}>
+                      {p.categoryName}
+                    </p>
+                  )}
                   <p className="text-xs font-semibold leading-tight line-clamp-2"
                     style={{ color: "var(--ds-color-text-primary)", fontFamily: "Montserrat, sans-serif" }}>
                     {p.name}
                   </p>
-                  {p.shortDesc && (
-                    <p className="text-xs mt-0.5 leading-tight line-clamp-1"
-                      style={{ color: "var(--ds-color-text-secondary)", opacity: 0.7 }}>
-                      {p.shortDesc}
-                    </p>
-                  )}
                 </div>
               </div>
             </Link>
@@ -476,33 +476,156 @@ function RoutesBlock({ placeId }: { placeId: number }) {
   return (
     <div>
       <SectionDivider />
-      <SectionTitle icon={<Route size={14} />} title="Em roteiros" />
-      <div className="flex flex-col gap-2">
-        {matching.map((r: any) => (
-          <Link
-            key={r.id}
-            to={`/app/roteiro/${r.id}`}
-            style={{ textDecoration: "none" }}
-          >
-            <div
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl"
-              style={{ background: "rgba(230,81,0,0.07)", border: "1px solid rgba(230,81,0,0.14)" }}
+      <SectionTitle icon={<Route size={14} />} title="Este lugar aparece em" />
+      <div className="flex flex-col gap-3">
+        {matching.map((r: any) => {
+          const coverImg = r.coverImage && !r.coverImage.includes("unsplash.com") ? r.coverImage : null;
+          return (
+            <Link
+              key={r.id}
+              to={`/app/roteiro/${r.id}`}
+              style={{ textDecoration: "none" }}
             >
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate"
-                  style={{ color: "var(--ds-color-text-primary)", fontFamily: "Montserrat, sans-serif" }}>
-                  {r.title}
-                </p>
-                {r.duration && (
-                  <p className="text-xs mt-0.5" style={{ color: "var(--ds-color-text-secondary)" }}>
-                    {r.duration}
+              <div
+                className="flex items-center gap-3 rounded-2xl overflow-hidden"
+                style={{ background: "rgba(0,37,26,0.6)", border: "1px solid rgba(230,81,0,0.18)" }}
+              >
+                {/* Cover thumbnail */}
+                <div style={{ width: 72, height: 72, flexShrink: 0, overflow: "hidden", background: "rgba(230,81,0,0.08)" }}>
+                  {coverImg ? (
+                    <img src={coverImg} alt={r.title}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Route size={20} style={{ color: "rgba(230,81,0,0.35)" }} />
+                    </div>
+                  )}
+                </div>
+                {/* Content */}
+                <div className="flex-1 min-w-0 py-3 pr-1">
+                  {r.theme && (
+                    <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full mb-1"
+                      style={{ background: "rgba(230,81,0,0.12)", color: "var(--ds-color-accent)", border: "1px solid rgba(230,81,0,0.2)" }}>
+                      {r.theme}
+                    </span>
+                  )}
+                  <p className="text-sm font-semibold leading-tight line-clamp-2"
+                    style={{ color: "var(--ds-color-text-primary)", fontFamily: "Montserrat, sans-serif" }}>
+                    {r.title}
                   </p>
-                )}
+                  {r.duration && (
+                    <p className="text-xs mt-0.5" style={{ color: "var(--ds-color-text-secondary)" }}>
+                      {r.duration}
+                    </p>
+                  )}
+                </div>
+                {/* CTA */}
+                <div className="pr-3 flex-shrink-0">
+                  <span className="text-xs font-semibold flex items-center gap-1"
+                    style={{ color: "var(--ds-color-accent)" }}>
+                    Ver roteiro
+                    <ArrowRight size={12} />
+                  </span>
+                </div>
               </div>
-              <ExternalLink size={14} style={{ color: "var(--ds-color-accent)", flexShrink: 0 }} />
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Continue Explorando Holambra ──────────────────────────────────────────── */
+
+function ContinueExplorando({
+  placeId,
+  categoryName,
+  categoryId,
+}: {
+  placeId: number;
+  categoryName?: string;
+  categoryId?: number;
+}) {
+  const { data: routes } = trpc.routes.public.useQuery(undefined, { staleTime: 60_000 });
+  const hasRoutes = (routes ?? []).some((r: any) => {
+    const ids: number[] = Array.isArray(r.placeIds) ? r.placeIds : [];
+    return ids.includes(placeId);
+  });
+
+  const CATEGORY_LINKS: Record<number, string> = {
+    1: "/app/lugares?categoria=restaurantes",
+    2: "/app/lugares?categoria=cafes",
+    3: "/app/lugares?categoria=bares",
+    4: "/app/lugares?categoria=pontos-turisticos",
+    5: "/app/lugares?categoria=hoteis",
+    14: "/app/lugares?categoria=bares",
+    15: "/app/lugares?categoria=hoteis",
+    16: "/app/lugares?categoria=parques",
+    17: "/app/lugares?categoria=padarias",
+  };
+  const categoryLink = categoryId ? (CATEGORY_LINKS[categoryId] || "/app/lugares") : "/app/lugares";
+
+  return (
+    <div
+      className="rounded-2xl px-4 py-5 mb-4"
+      style={{
+        background: "linear-gradient(135deg, rgba(0,37,26,0.9) 0%, rgba(0,60,42,0.7) 100%)",
+        border: "1px solid rgba(230,81,0,0.2)",
+      }}
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <Compass size={14} style={{ color: "var(--ds-color-accent)" }} />
+        <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--ds-color-accent)" }}>
+          Continue Explorando Holambra
+        </p>
+      </div>
+      <p className="text-sm mb-4" style={{ color: "var(--ds-color-text-secondary)", lineHeight: 1.5 }}>
+        Descubra mais experiências únicas na cidade das flores.
+      </p>
+
+      <div className="flex flex-col gap-2">
+        {hasRoutes && (
+          <Link to="/app/roteiros" style={{ textDecoration: "none" }}>
+            <div
+              className="flex items-center justify-between px-4 py-3 rounded-xl"
+              style={{ background: "var(--ds-color-accent)", color: "#fff" }}
+            >
+              <span className="text-sm font-semibold">Ver roteiros com este lugar</span>
+              <ArrowRight size={14} />
             </div>
           </Link>
-        ))}
+        )}
+
+        {categoryName && (
+          <Link to={categoryLink} style={{ textDecoration: "none" }}>
+            <div
+              className="flex items-center justify-between px-4 py-3 rounded-xl"
+              style={{
+                background: "transparent",
+                border: "1px solid rgba(230,81,0,0.3)",
+                color: "var(--ds-color-accent)",
+              }}
+            >
+              <span className="text-sm font-semibold">Explorar mais {categoryName}</span>
+              <ArrowRight size={14} />
+            </div>
+          </Link>
+        )}
+
+        <Link to="/app/mapa" style={{ textDecoration: "none" }}>
+          <div
+            className="flex items-center justify-between px-4 py-3 rounded-xl"
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.1)",
+              color: "var(--ds-color-text-secondary)",
+            }}
+          >
+            <span className="text-sm font-medium">Ver todos no mapa</span>
+            <ArrowRight size={14} />
+          </div>
+        </Link>
       </div>
     </div>
   );
@@ -768,6 +891,7 @@ export default function PlaceDetail() {
         onShare={handleShare}
         isFeatured={place.isFeatured}
         isRecommended={place.isRecommended}
+        dataPending={place.dataPending}
         rating={place.rating}
         reviewCount={place.reviewCount}
       />
@@ -1112,6 +1236,15 @@ export default function PlaceDetail() {
             </p>
           </div>
         ) : null}
+
+        {/* ─────────────────────────────────────────────────────────── */}
+        {/* Continue Explorando Holambra                               */}
+        {/* ─────────────────────────────────────────────────────────── */}
+        <ContinueExplorando
+          placeId={placeId}
+          categoryName={place.categoryName}
+          categoryId={place.categoryId}
+        />
 
       </div>
 

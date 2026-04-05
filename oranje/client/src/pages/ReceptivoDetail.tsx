@@ -1184,97 +1184,228 @@ function StopsList({
 
 // ─── Closing Section ──────────────────────────────────────────────────────────
 
-function ClosingSection({ tourName }: { tourName: string }) {
+interface ExtensionPlace {
+  placeId: number;
+  placeName: string;
+  placeShortDesc: string | null;
+  placeAddress: string | null;
+  placeCoverImage: string | null;
+  placeImages: any;
+  placeLat: any;
+  placeLng: any;
+}
+
+function ClosingSection({ tourName, extensionPlaces = [] }: { tourName: string; extensionPlaces?: ExtensionPlace[] }) {
   const navigate = useNavigate();
   return (
-    <div
-      style={{
-        margin: "0 16px 16px",
-        borderRadius: 18,
-        overflow: "hidden",
-        background: "linear-gradient(135deg, #00251A 0%, #004D3A 100%)",
-        padding: "28px 20px",
-        textAlign: "center",
-      }}
-    >
+    <div style={{ margin: "0 16px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* ── Encerramento principal ── */}
       <div
         style={{
-          width: 56,
-          height: 56,
-          borderRadius: "50%",
-          background: "rgba(230,81,0,0.2)",
-          border: "1.5px solid rgba(230,81,0,0.4)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          margin: "0 auto 16px",
+          borderRadius: 18,
+          overflow: "hidden",
+          background: "linear-gradient(135deg, #00251A 0%, #004D3A 100%)",
+          padding: "28px 20px",
+          textAlign: "center",
         }}
       >
-        <Heart size={24} color="#E65100" />
-      </div>
-      <h3
-        style={{
-          color: "#fff",
-          fontSize: 17,
-          fontWeight: 700,
-          fontFamily: "Montserrat, sans-serif",
-          margin: "0 0 8px",
-        }}
-      >
-        Passeio concluído
-      </h3>
-      <p
-        style={{
-          color: "rgba(255,255,255,0.7)",
-          fontSize: 13.5,
-          lineHeight: 1.65,
-          fontFamily: "Montserrat, sans-serif",
-          margin: "0 0 24px",
-        }}
-      >
-        Você viveu o {tourName}. Cada parada foi escolhida a dedo para criar uma experiência que Holambra merece.
-      </p>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <button
-          onClick={() => navigate("/app/explorar")}
+        <div
           style={{
-            width: "100%",
-            padding: "14px",
-            borderRadius: 12,
-            border: "none",
-            background: "#E65100",
-            color: "#fff",
-            fontSize: 13.5,
-            fontWeight: 700,
-            fontFamily: "Montserrat, sans-serif",
-            cursor: "pointer",
+            width: 56,
+            height: 56,
+            borderRadius: "50%",
+            background: "rgba(230,81,0,0.2)",
+            border: "1.5px solid rgba(230,81,0,0.4)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 8,
+            margin: "0 auto 16px",
           }}
         >
-          <Compass size={16} />
-          Explorar mais lugares
-        </button>
-        <button
-          onClick={() => navigate("/app")}
+          <Heart size={24} color="#E65100" />
+        </div>
+        <h3
           style={{
-            width: "100%",
-            padding: "13px",
-            borderRadius: 12,
-            border: "1.5px solid rgba(255,255,255,0.2)",
-            background: "transparent",
-            color: "rgba(255,255,255,0.85)",
-            fontSize: 13,
-            fontWeight: 600,
+            color: "#fff",
+            fontSize: 17,
+            fontWeight: 700,
             fontFamily: "Montserrat, sans-serif",
-            cursor: "pointer",
+            margin: "0 0 8px",
           }}
         >
-          Início do app
-        </button>
+          Passeio concluído
+        </h3>
+        <p
+          style={{
+            color: "rgba(255,255,255,0.7)",
+            fontSize: 13.5,
+            lineHeight: 1.65,
+            fontFamily: "Montserrat, sans-serif",
+            margin: "0 0 24px",
+          }}
+        >
+          Você viveu o {tourName}. Cada parada foi escolhida a dedo para criar uma experiência que Holambra merece.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <button
+            onClick={() => navigate("/app/explorar")}
+            style={{
+              width: "100%",
+              padding: "14px",
+              borderRadius: 12,
+              border: "none",
+              background: "#E65100",
+              color: "#fff",
+              fontSize: 13.5,
+              fontWeight: 700,
+              fontFamily: "Montserrat, sans-serif",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+            }}
+          >
+            <Compass size={16} />
+            Explorar mais lugares
+          </button>
+          <button
+            onClick={() => navigate("/app")}
+            style={{
+              width: "100%",
+              padding: "13px",
+              borderRadius: 12,
+              border: "1.5px solid rgba(255,255,255,0.2)",
+              background: "transparent",
+              color: "rgba(255,255,255,0.85)",
+              fontSize: 13,
+              fontWeight: 600,
+              fontFamily: "Montserrat, sans-serif",
+              cursor: "pointer",
+            }}
+          >
+            Início do app
+          </button>
+        </div>
       </div>
+
+      {/* ── Se quiser ir além ── */}
+      {extensionPlaces.length > 0 && (
+        <div
+          style={{
+            borderRadius: 16,
+            border: "1px solid rgba(0,37,26,0.10)",
+            background: "#fff",
+            padding: "18px 16px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 14 }}>
+            <div style={{ height: 2, width: 14, borderRadius: 2, background: "#E65100", flexShrink: 0 }} />
+            <p
+              style={{
+                fontSize: 10,
+                fontWeight: 800,
+                color: "#E65100",
+                fontFamily: "Montserrat, sans-serif",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                margin: 0,
+              }}
+            >
+              Se quiser ir além
+            </p>
+          </div>
+          <p
+            style={{
+              fontSize: 12.5,
+              color: "rgba(0,37,26,0.55)",
+              fontFamily: "Montserrat, sans-serif",
+              margin: "0 0 14px",
+              lineHeight: 1.55,
+            }}
+          >
+            Lugares próximos que complementam bem a experiência — sem pressa, no seu ritmo.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {extensionPlaces.map((ep) => {
+              const img = getPlaceImage({ coverImage: ep.placeCoverImage, images: ep.placeImages, name: ep.placeName });
+              return (
+                <Link
+                  key={ep.placeId}
+                  to={`/app/lugar/${ep.placeId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: "11px 12px",
+                      borderRadius: 12,
+                      background: "rgba(0,37,26,0.03)",
+                      border: "1px solid rgba(0,37,26,0.07)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 10,
+                        overflow: "hidden",
+                        flexShrink: 0,
+                        background: "linear-gradient(135deg, #00251A 0%, #004D3A 100%)",
+                      }}
+                    >
+                      {img && (
+                        <img
+                          src={img}
+                          alt={ep.placeName}
+                          loading="lazy"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      )}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p
+                        style={{
+                          fontSize: 13.5,
+                          fontWeight: 700,
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#00251A",
+                          margin: "0 0 3px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {ep.placeName}
+                      </p>
+                      {ep.placeShortDesc && (
+                        <p
+                          style={{
+                            fontSize: 11.5,
+                            color: "rgba(0,37,26,0.5)",
+                            fontFamily: "Montserrat, sans-serif",
+                            margin: 0,
+                            lineHeight: 1.45,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {ep.placeShortDesc}
+                        </p>
+                      )}
+                    </div>
+                    <ChevronRight size={14} color="#E65100" flexShrink={0} />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1673,7 +1804,7 @@ export default function ReceptivoDetail() {
       {/* ── Stop panel or closing ── */}
       <div ref={stopPanelRef} style={{ marginTop: 8 }}>
         {finished ? (
-          <ClosingSection tourName={t.name} />
+          <ClosingSection tourName={t.name} extensionPlaces={t.extensionPlaces ?? []} />
         ) : stops.length > 0 ? (
           <StopPanel
             stop={stops[activeIndex]}

@@ -740,7 +740,32 @@ export async function getGuidedTourBySlug(slug: string) {
     .where(eq(guidedTourStops.tourId, tour.id))
     .orderBy(guidedTourStops.stopOrder);
 
-  return { ...tour, stops: stopRows };
+  // Fetch extension places ("Se quiser ir além") if defined
+  const extIds: number[] = Array.isArray(tour.extensionPlaceIds) ? tour.extensionPlaceIds : [];
+  let extensionPlaces: Array<{
+    placeId: number; placeName: string; placeShortDesc: string | null;
+    placeAddress: string | null; placeCoverImage: string | null; placeImages: string | null;
+    placeLat: string | null; placeLng: string | null;
+  }> = [];
+  if (extIds.length > 0) {
+    extensionPlaces = await db
+      .select({
+        placeId: places.id,
+        placeName: places.name,
+        placeShortDesc: places.shortDesc,
+        placeAddress: places.address,
+        placeCoverImage: places.coverImage,
+        placeImages: places.images,
+        placeLat: places.lat,
+        placeLng: places.lng,
+      })
+      .from(places)
+      .where(inArray(places.id, extIds));
+    // preserve original seed order
+    extensionPlaces.sort((a, b) => extIds.indexOf(a.placeId) - extIds.indexOf(b.placeId));
+  }
+
+  return { ...tour, stops: stopRows, extensionPlaces };
 }
 
 export async function upsertGuidedTour(data: InsertGuidedTour) {

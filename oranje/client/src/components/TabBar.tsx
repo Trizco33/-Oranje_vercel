@@ -6,7 +6,7 @@ const tabs = [
   { path: "/app/explorar", icon: Compass, label: "Explorar" },
   { path: "/app/eventos", icon: CalendarDays, label: "Eventos" },
   { path: "/app/favoritos", icon: Heart, label: "Favoritos" },
-  { path: "/app/roteiros", icon: Map, label: "Roteiros" },
+  { path: "/app/receptivo", icon: Map, label: "Passeios" },
 ];
 
 export function TabBar() {

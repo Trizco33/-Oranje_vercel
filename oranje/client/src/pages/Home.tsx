@@ -307,7 +307,7 @@ export default function Home() {
 
       {/* ── Receptivo Oranje ── */}
       <section style={{ padding: "0 20px", marginTop: 32 }}>
-        <Link to="/app/receptivo/holambra-romantica" style={{ textDecoration: "none", display: "block" }}>
+        <Link to="/app/receptivo" style={{ textDecoration: "none", display: "block" }}>
           <div
             style={{
               borderRadius: 18,
@@ -318,7 +318,6 @@ export default function Home() {
               position: "relative",
             }}
           >
-            {/* Decorative dots */}
             <div style={{ position: "absolute", top: 0, right: 0, width: 120, height: 120, background: "radial-gradient(circle at top right, rgba(230,81,0,0.12) 0%, transparent 70%)" }} />
             <div
               style={{
@@ -333,7 +332,7 @@ export default function Home() {
               }}
             >
               <span style={{ fontSize: 9, fontWeight: 800, color: "#E65100", fontFamily: "Montserrat, sans-serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                Receptivo Oranje
+                Novidade · Receptivo Oranje
               </span>
             </div>
             <h2
@@ -346,7 +345,7 @@ export default function Home() {
                 lineHeight: 1.2,
               }}
             >
-              Holambra Romântica
+              Passeios guiados em Holambra
             </h2>
             <p
               style={{
@@ -357,17 +356,17 @@ export default function Home() {
                 lineHeight: 1.5,
               }}
             >
-              Um passeio a pé guiado pelo coração histórico da cidade — com mapa, narrativas e 5 paradas curadas.
+              7 percursos curados com mapa, narrativas e dicas — do romântico ao gastronômico. Venha conferir essa novidade.
             </p>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div style={{ display: "flex", gap: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <MapPin size={12} color="#E65100" />
-                  <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontFamily: "Montserrat, sans-serif", fontWeight: 600 }}>5 paradas</span>
+                  <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontFamily: "Montserrat, sans-serif", fontWeight: 600 }}>7 passeios</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <CalendarDays size={12} color="#E65100" />
-                  <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontFamily: "Montserrat, sans-serif", fontWeight: 600 }}>2–3 horas</span>
+                  <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontFamily: "Montserrat, sans-serif", fontWeight: 600 }}>Holambra, SP</span>
                 </div>
               </div>
               <div
@@ -384,7 +383,7 @@ export default function Home() {
                   fontFamily: "Montserrat, sans-serif",
                 }}
               >
-                Iniciar
+                Ver passeios
                 <ArrowRight size={13} />
               </div>
             </div>

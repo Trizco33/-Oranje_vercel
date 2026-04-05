@@ -441,6 +441,7 @@ export const guidedTours = mysqlTable("guided_tours", {
   theme: varchar("theme", { length: 100 }),                        // 'romantica'
   duration: varchar("duration", { length: 50 }),                   // '3 a 4 horas'
   coverImage: text("coverImage"),
+  extensionPlaceIds: json("extensionPlaceIds").$type<number[]>(),  // IDs para bloco "Se quiser ir além"
   status: varchar("status", { length: 20 }).default("draft").notNull(), // 'active' | 'draft' | 'archived'
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

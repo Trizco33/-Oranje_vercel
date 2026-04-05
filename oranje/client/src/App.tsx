@@ -31,6 +31,7 @@ const RegisterDriver = lazy(() => import("./pages/RegisterDriver"));
 const DriverDetail = lazy(() => import("./pages/DriverDetail"));
 const Guide = lazy(() => import("./pages/Guide"));
 const ReceptivoDetail = lazy(() => import("./pages/ReceptivoDetail"));
+const ReceptivoList = lazy(() => import("./pages/ReceptivoList"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 const Partnerships = lazy(() => import("./pages/Partnerships"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -182,9 +183,10 @@ function Router() {
           <Route path="busca" element={<Suspense fallback={<LoadingFallback />}><SearchPage /></Suspense>} />
           <Route path="lugar/:id" element={<PlaceDetailWrapper />} />
           <Route path="favoritos" element={<Suspense fallback={<LoadingFallback />}><Favorites /></Suspense>} />
+          <Route path="receptivo" element={<Suspense fallback={<LoadingFallback />}><ReceptivoList /></Suspense>} />
+          <Route path="receptivo/:slug" element={<Suspense fallback={<LoadingFallback />}><ReceptivoDetail /></Suspense>} />
           <Route path="roteiros" element={<Suspense fallback={<LoadingFallback />}><RoutesPage /></Suspense>} />
           <Route path="roteiro/:id" element={<RouteDetailWrapper />} />
-          <Route path="receptivo/:slug" element={<Suspense fallback={<LoadingFallback />}><ReceptivoDetail /></Suspense>} />
           <Route path="eventos" element={<Suspense fallback={<LoadingFallback />}><EventsList /></Suspense>} />
           <Route path="evento/:id" element={<EventDetailWrapper />} />
           <Route path="ofertas" element={<Suspense fallback={<LoadingFallback />}><Offers /></Suspense>} />

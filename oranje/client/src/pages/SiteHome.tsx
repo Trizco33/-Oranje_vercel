@@ -212,7 +212,7 @@ export default function SiteHome() {
     { title: "Bares & Drinks", desc: "Vida noturna e drinks", icon: <Wine size={24} strokeWidth={1.5} />, link: "/bares-e-drinks-em-holambra" },
     { title: "Pontos Turísticos", desc: "Atrações imperdíveis", icon: <Camera size={24} strokeWidth={1.5} />, link: "/onde-tirar-fotos-em-holambra" },
     { title: "Eventos", desc: "Agenda de atividades", icon: <Calendar size={24} strokeWidth={1.5} />, link: "/eventos-em-holambra" },
-    { title: "Roteiros", desc: "Passeios planejados", icon: <Map size={24} strokeWidth={1.5} />, link: "/roteiros" },
+    { title: "Passeios", desc: "Receptivo Oranje", icon: <Map size={24} strokeWidth={1.5} />, link: "/app/receptivo" },
   ];
 
   return (
@@ -446,7 +446,7 @@ export default function SiteHome() {
               <ArrowRight size={16} />
             </Link>
             <Link
-              to="/roteiros"
+              to="/app/receptivo"
               className="btn-press"
               style={{
                 display: "inline-flex",
@@ -466,7 +466,7 @@ export default function SiteHome() {
               }}
             >
               <Map size={15} />
-              Ver Roteiros
+              Ver Passeios
             </Link>
             {installPrompt && (
               <button
@@ -498,7 +498,7 @@ export default function SiteHome() {
           <div style={{ display: "flex", gap: 56, justifyContent: "center", flexWrap: "wrap" }}>
             {[
               { number: places.length > 0 ? `${places.length}` : "40", label: "Lugares curados" },
-              { number: publicRoutes.length > 0 ? `${publicRoutes.length}` : "8", label: "Roteiros prontos" },
+              { number: "7", label: "Passeios guiados" },
               { number: "1", label: "Cidade real" },
             ].map((stat) => (
               <div key={stat.label} style={{ textAlign: "center" }}>
@@ -695,7 +695,7 @@ export default function SiteHome() {
               { label: "Bares & Drinks", link: "/bares-e-drinks-em-holambra" },
               { label: "Onde Tirar Fotos", link: "/onde-tirar-fotos-em-holambra" },
               { label: "Ver no Mapa", link: "/mapa" },
-              { label: "Todos os Roteiros →", link: "/roteiros" },
+              { label: "Ver Passeios →", link: "/app/receptivo" },
             ].map((item, i) => (
               <Reveal key={item.label} delay={i * 40}>
                 <Link
@@ -729,9 +729,9 @@ export default function SiteHome() {
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
             <SectionHeader
-              label="Passeios Curados"
-              title="Escolha Seu Passeio em Holambra"
-              subtitle="Roteiros feitos pelo time Oranje — cada parada verificada, cada horário real, cada dica testada"
+              label="Receptivo Oranje"
+              title="Passeios Guiados em Holambra"
+              subtitle="7 percursos curados com mapa, narrativas e dicas — do coração histórico ao entardecer no lago"
             />
           </Reveal>
 
@@ -946,12 +946,12 @@ export default function SiteHome() {
                       Todos os passeios estão no app
                     </p>
                     <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", margin: 0, lineHeight: 1.5 }}>
-                      Mapa interativo, favoritos e roteiros completos — tudo no Oranje.
+                      Mapa interativo, favoritos e 7 passeios guiados — tudo no Oranje.
                     </p>
                   </div>
                   <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                     <Link
-                      to="/app/roteiros"
+                      to="/app/receptivo"
                       style={{
                         display: "inline-flex", alignItems: "center", gap: 7,
                         background: "#E65100", color: "#fff",
@@ -961,7 +961,7 @@ export default function SiteHome() {
                         fontFamily: "'Montserrat', system-ui, sans-serif",
                       }}
                     >
-                      Ver todos os passeios <ArrowRight size={15} />
+                      Ver os passeios <ArrowRight size={15} />
                     </Link>
                     <Link
                       to="/app"
@@ -1029,7 +1029,7 @@ export default function SiteHome() {
               </div>
               <Reveal>
                 <div style={{ textAlign: "center", marginTop: 36 }}>
-                  <Link to="/app/roteiros" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 44, padding: "0 24px", background: "transparent", color: "#00251A", fontSize: "0.875rem", fontWeight: 600, borderRadius: 11, border: "1.5px solid rgba(0,37,26,0.2)", textDecoration: "none", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                  <Link to="/app/receptivo" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 44, padding: "0 24px", background: "transparent", color: "#00251A", fontSize: "0.875rem", fontWeight: 600, borderRadius: 11, border: "1.5px solid rgba(0,37,26,0.2)", textDecoration: "none", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                     Ver todos os passeios <ArrowRight size={15} />
                   </Link>
                 </div>

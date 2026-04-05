@@ -2,10 +2,15 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { AlertTriangle, CheckCircle, Plus, Pencil, Trash2, Star, Eye, EyeOff } from "lucide-react";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   AdminSiteRoutes — Manage which roteiros appear in the SiteHome showcase block
-   Table: site_route_features
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Manages which roteiros appear in the SiteHome showcase block (site_route_features table)
+
+type RouteItem = {
+  id: number;
+  title: string;
+  theme: string | null;
+  duration: string | null;
+  isPublic: boolean;
+};
 
 type SiteFeature = {
   id: number;
@@ -16,7 +21,7 @@ type SiteFeature = {
   isFeatured: boolean;
   isActive: boolean;
   sortOrder: number;
-  route: { id: number; title: string; theme: string | null; duration: string | null; isPublic: boolean } | null;
+  route: RouteItem | null;
 };
 
 type FormState = {
@@ -43,9 +48,8 @@ const emptyForm = (): FormState => ({
 export function AdminSiteRoutes() {
   const utils = trpc.useUtils();
 
-  const { data: allFeatures = [], isLoading } = trpc.routes.allSiteFeatures.useQuery();
-  const { data: adminRoutesRaw = [] } = trpc.routes.adminList.useQuery();
-  const adminRoutes = adminRoutesRaw as any[];
+  const { data: allFeaturesRaw = [], isLoading } = trpc.routes.allSiteFeatures.useQuery();
+  const { data: adminRoutesRaw = [] } = trpc.admin_cms.routes.list.useQuery();
 
   const saveFeature = trpc.routes.saveSiteFeature.useMutation({
     onSuccess: () => { utils.routes.allSiteFeatures.invalidate(); utils.routes.siteFeatures.invalidate(); },
@@ -58,7 +62,8 @@ export function AdminSiteRoutes() {
   const [form, setForm] = useState<FormState>(emptyForm());
   const [error, setError] = useState("");
 
-  const features = allFeatures as SiteFeature[];
+  const features = allFeaturesRaw as SiteFeature[];
+  const adminRoutes = adminRoutesRaw as RouteItem[];
 
   function openCreate() {
     setForm(emptyForm());
@@ -88,7 +93,7 @@ export function AdminSiteRoutes() {
     const routeIdNum = parseInt(form.routeId, 10);
     if (isNaN(routeIdNum)) { setError("Roteiro inválido."); return; }
 
-    const route = adminRoutes.find((r: any) => r.id === routeIdNum);
+    const route = adminRoutes.find((r) => r.id === routeIdNum);
     if (!route) { setError("Roteiro não encontrado."); return; }
     if (!route.isPublic) { setError("Este roteiro não está público — ative-o primeiro."); return; }
 
@@ -276,7 +281,7 @@ export function AdminSiteRoutes() {
                   }}
                 >
                   <option value="">Selecione um roteiro…</option>
-                  {adminRoutes.map((r: any) => (
+                  {adminRoutes.map((r) => (
                     <option key={r.id} value={r.id}>
                       {r.title} {!r.isPublic ? "(não público)" : ""}
                     </option>

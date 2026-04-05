@@ -1,5 +1,6 @@
 import { and, desc, eq, ilike, inArray, like, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import type { ResultSetHeader } from "mysql2";
 import {
   InsertUser, ads, adminLogs, categories, events, favorites, magicLinks, notifications,
   partners, placePhotos, places, routes, users, vouchers, drivers, siteRouteFeatures,
@@ -364,7 +365,18 @@ export async function getAllSiteRouteFeatures() {
   return features.map((f) => ({ ...f, route: routeMap.get(f.routeId) ?? null }));
 }
 
-export async function saveSiteRouteFeature(data: InsertSiteRouteFeature & { id?: number }) {
+export type SaveSiteRouteFeatureInput = {
+  id?: number;
+  routeId: number;
+  label?: string | null;
+  subtitle?: string | null;
+  ctaText?: string | null;
+  isFeatured?: boolean;
+  isActive?: boolean;
+  sortOrder?: number;
+};
+
+export async function saveSiteRouteFeature(data: SaveSiteRouteFeatureInput) {
   const db = await getDb();
   if (!db) throw new Error("DB not available");
   const { id, ...values } = data;
@@ -372,8 +384,8 @@ export async function saveSiteRouteFeature(data: InsertSiteRouteFeature & { id?:
     await db.update(siteRouteFeatures).set({ ...values, updatedAt: new Date() }).where(eq(siteRouteFeatures.id, id));
     return { id };
   }
-  const result = await db.insert(siteRouteFeatures).values(values);
-  return { id: (result as any).insertId };
+  const [result] = await db.insert(siteRouteFeatures).values(values) as unknown as [ResultSetHeader];
+  return { id: result.insertId };
 }
 
 export async function deleteSiteRouteFeature(id: number) {

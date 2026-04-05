@@ -427,7 +427,7 @@ export const appRouter = router({
         isActive: z.boolean().optional(),
         sortOrder: z.number().optional(),
       }))
-      .mutation(({ input }) => db.saveSiteRouteFeature(input as any)),
+      .mutation(({ input }) => db.saveSiteRouteFeature(input)),
     deleteSiteFeature: adminProcedure
       .input(z.object({ id: z.number() }))
       .mutation(({ input }) => db.deleteSiteRouteFeature(input.id)),

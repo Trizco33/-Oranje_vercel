@@ -70,6 +70,27 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   );
 }
 
+type SiteFeatureItem = {
+  id: number;
+  routeId: number;
+  label: string | null;
+  subtitle: string | null;
+  ctaText: string | null;
+  isFeatured: boolean;
+  isActive: boolean;
+  sortOrder: number;
+  route: {
+    id: number;
+    title: string;
+    theme: string | null;
+    duration: string | null;
+    isPublic: boolean;
+    placeIds: unknown;
+    description: string | null;
+    coverImage: string | null;
+  } | null;
+};
+
 // Section header component for consistency
 function SectionHeader({
   label,
@@ -127,7 +148,7 @@ export default function SiteHome() {
   const { data: cats = [] } = useCategoriesList();
   const { data: publicRoutes = [], isLoading: routesLoading } = usePublicRoutes();
   const { data: siteFeatureItems = [], isLoading: siteFeaturesLoading } = trpc.routes.siteFeatures.useQuery(undefined, { staleTime: 60_000 });
-  const siteFeatures = siteFeatureItems as any[];
+  const siteFeatures = siteFeatureItems as SiteFeatureItem[];
   const featuredRoute = siteFeatures.find((f) => f.isFeatured) ?? null;
   const secondaryRoutes = siteFeatures.filter((f) => !f.isFeatured);
   const hasCmsRoutes = siteFeatures.length > 0;
@@ -800,7 +821,7 @@ export default function SiteHome() {
                         </h3>
                         {(featuredRoute.subtitle || featuredRoute.route.description) && (
                           <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.6)", lineHeight: 1.65, margin: 0 }}>
-                            {featuredRoute.subtitle || (featuredRoute.route.description?.slice(0, 120) + (featuredRoute.route.description?.length > 120 ? "…" : ""))}
+                            {featuredRoute.subtitle || (featuredRoute.route.description ? (featuredRoute.route.description.length > 120 ? featuredRoute.route.description.slice(0, 120) + "…" : featuredRoute.route.description) : "")}
                           </p>
                         )}
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
@@ -826,7 +847,7 @@ export default function SiteHome() {
               {/* ── Layer 2: Secondary passeios ── */}
               {secondaryRoutes.length > 0 && (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20, marginBottom: 28 }}>
-                  {secondaryRoutes.map((item: any, i: number) => {
+                  {secondaryRoutes.map((item, i) => {
                     if (!item.route) return null;
                     const stopCount = Array.isArray(item.route.placeIds) ? item.route.placeIds.length : 0;
                     return (

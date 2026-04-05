@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
 import { trpc } from "@/lib/trpc";
@@ -109,6 +110,11 @@ function isRunning(tour: Tour) {
 function TourCard({ tour, featured = false, idx = 0 }: { tour: Tour; featured?: boolean; idx?: number }) {
   const navigate = useNavigate();
   const running = isRunning(tour);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 60 + idx * 90);
+    return () => clearTimeout(t);
+  }, [idx]);
 
   return (
     <div
@@ -123,12 +129,12 @@ function TourCard({ tour, featured = false, idx = 0 }: { tour: Tour; featured?: 
           ? "1px solid rgba(230,81,0,0.28)"
           : "1px solid rgba(255,255,255,0.07)",
         boxShadow: featured
-          ? "0 8px 32px rgba(0,0,0,0.45), 0 0 0 0 rgba(230,81,0,0)"
+          ? "0 8px 32px rgba(0,0,0,0.45)"
           : "0 2px 12px rgba(0,0,0,0.3)",
         cursor: "pointer",
-        animation: `tour-fade-up 0.5s cubic-bezier(0.22,1,0.36,1) both`,
-        animationDelay: `${idx * 80}ms`,
-        transition: "transform 0.18s ease, box-shadow 0.18s ease",
+        opacity: ready ? 1 : 0,
+        transform: ready ? "translateY(0) scale(1)" : "translateY(28px) scale(0.97)",
+        transition: `opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1)`,
         position: "relative",
       }}
       onPointerDown={(e) => {

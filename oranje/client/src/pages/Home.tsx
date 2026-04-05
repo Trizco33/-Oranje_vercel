@@ -88,19 +88,21 @@ const ANIMATIONS = `
    HOOKS
 ───────────────────────────────────────────────────────────────────────────── */
 
-/** Lightweight scroll-reveal hook — disconnects after first trigger */
+/** Lightweight scroll-reveal hook — with 1.2s safety fallback */
 function useReveal(threshold = 0.1, rootMargin = "0px 0px -40px 0px") {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const show = () => setVisible(true);
+    const fallback = setTimeout(show, 1200);
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      ([entry]) => { if (entry.isIntersecting) { show(); obs.disconnect(); clearTimeout(fallback); } },
       { threshold, rootMargin }
     );
     obs.observe(el);
-    return () => obs.disconnect();
+    return () => { obs.disconnect(); clearTimeout(fallback); };
   }, [threshold, rootMargin]);
   return { ref, visible };
 }
@@ -186,6 +188,12 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showNearbyMap, setShowNearbyMap] = useState(false);
   const [inProgressJourney, setInProgressJourney] = useState<ReceptivoProgress | null>(null);
+  const [heroReady, setHeroReady] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setHeroReady(true), 80);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const done = localStorage.getItem("onboarding_completed");
@@ -288,7 +296,9 @@ export default function Home() {
         }}>
           {/* Badge */}
           <div style={{
-            animation: "oranje-fade-up 0.5s cubic-bezier(0.22,1,0.36,1) 0ms both",
+            opacity: heroReady ? 1 : 0,
+            transform: heroReady ? "translateY(0)" : "translateY(14px)",
+            transition: "opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1)",
             marginBottom: 14,
             alignSelf: "flex-start",
           }}>
@@ -328,7 +338,9 @@ export default function Home() {
           }}>
             <span style={{
               display: "block",
-              animation: "oranje-blur-reveal 0.75s cubic-bezier(0.22,1,0.36,1) 120ms both",
+              opacity: heroReady ? 1 : 0,
+              transform: heroReady ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
+              transition: "opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s",
               willChange: "opacity, transform",
             }}>
               Descubra
@@ -336,7 +348,9 @@ export default function Home() {
             <span style={{
               display: "block",
               color: "#E65100",
-              animation: "oranje-blur-reveal 0.75s cubic-bezier(0.22,1,0.36,1) 240ms both",
+              opacity: heroReady ? 1 : 0,
+              transform: heroReady ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
+              transition: "opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.22s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.22s",
               willChange: "opacity, transform",
             }}>
               Holambra
@@ -351,7 +365,9 @@ export default function Home() {
             marginBottom: 24,
             fontFamily: "Montserrat, sans-serif",
             lineHeight: 1.5,
-            animation: "oranje-fade-up 0.6s cubic-bezier(0.22,1,0.36,1) 400ms both",
+            opacity: heroReady ? 1 : 0,
+            transform: heroReady ? "translateY(0)" : "translateY(18px)",
+            transition: "opacity 0.65s cubic-bezier(0.22,1,0.36,1) 0.35s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.35s",
             willChange: "opacity, transform",
           }}>
             A cidade das flores espera por você
@@ -359,7 +375,9 @@ export default function Home() {
 
           {/* Search bar */}
           <div style={{
-            animation: "oranje-fade-up 0.6s cubic-bezier(0.22,1,0.36,1) 560ms both",
+            opacity: heroReady ? 1 : 0,
+            transform: heroReady ? "translateY(0)" : "translateY(18px)",
+            transition: "opacity 0.65s cubic-bezier(0.22,1,0.36,1) 0.48s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.48s",
             willChange: "opacity, transform",
           }}>
             <form onSubmit={handleSearch}>

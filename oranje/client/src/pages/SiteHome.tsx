@@ -125,6 +125,7 @@ export default function SiteHome() {
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
+  const { data: publicRoutes = [], isLoading: routesLoading } = usePublicRoutes();
   const { data: heroData } = trpc.content.getHero.useQuery();
   const [heroVideoError, setHeroVideoError] = useState(false);
   const places = allPlaces.filter((p: any) => p.status !== "inactive");
@@ -457,12 +458,12 @@ export default function SiteHome() {
             )}
           </div>
 
-          {/* Stats */}
+          {/* Stats — dynamic counts from real data */}
           <div style={{ display: "flex", gap: 56, justifyContent: "center", flexWrap: "wrap" }}>
             {[
-              { number: "100+", label: "Lugares" },
-              { number: "50+", label: "Parceiros" },
-              { number: "30+", label: "Roteiros" },
+              { number: places.length > 0 ? `${places.length}` : "40", label: "Lugares curados" },
+              { number: publicRoutes.length > 0 ? `${publicRoutes.length}` : "8", label: "Roteiros prontos" },
+              { number: "1", label: "Cidade real" },
             ].map((stat) => (
               <div key={stat.label} style={{ textAlign: "center" }}>
                 <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "#FFFFFF", lineHeight: 1 }}>{stat.number}</p>
@@ -631,7 +632,7 @@ export default function SiteHome() {
                                 gap: 4,
                               }}
                             >
-                              Ver no app <ArrowRight size={12} />
+                              Conhecer lugar <ArrowRight size={12} />
                             </span>
                           </div>
                         </div>
@@ -643,85 +644,168 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 4) ROTEIROS PRONTOS — White background ═══ */}
-      <section id="roteiros" className="site-section" style={{ background: "#FFFFFF" }}>
+      {/* ═══ 3.5) CONTINUE EXPLORANDO — bridge block ═══ */}
+      <section style={{ background: "#00251A", padding: "40px 24px" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
-            <SectionHeader
-              label="Roteiros"
-              title="Roteiros Prontos"
-              subtitle="Passeios planejados para aproveitar Holambra"
-            />
+            <p style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: 20 }}>
+              Continue Explorando Holambra
+            </p>
           </Reveal>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: 20,
-            }}
-          >
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
             {[
-              {
-                title: "Roteiro de 1 Dia",
-                desc: "Visite os principais pontos turísticos de Holambra em um dia completo.",
-                duration: "8 horas",
-                link: "/roteiro-1-dia-em-holambra",
-              },
-              {
-                title: "Roteiro Romântico",
-                desc: "Experiências especiais para casais em Holambra.",
-                duration: "4 horas",
-                link: "/roteiros",
-              },
-              {
-                title: "Dia Chuvoso",
-                desc: "Atividades cobertas e indoor para dias nublados.",
-                duration: "6 horas",
-                link: "/roteiros",
-              },
-            ].map((roteiro, i) => (
-              <Reveal key={roteiro.title} delay={i * 80}>
-                <Link to={roteiro.link} style={{ textDecoration: "none", display: "block", height: "100%" }}>
-                  <div
-                    className="site-card card-press"
-                    style={{
-                      padding: "28px 24px",
-                      display: "flex",
-                      flexDirection: "column",
-                      height: "100%",
-                      background: "#FFFFFF",
-                    }}
-                  >
-                    <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#00251A", marginBottom: 10 }}>
-                      {roteiro.title}
-                    </h3>
-                    <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6, flex: 1 }}>
-                      {roteiro.desc}
-                    </p>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 20 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <Clock size={14} style={{ color: "#E65100" }} />
-                        <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#E65100" }}>{roteiro.duration}</span>
-                      </div>
-                      <span
-                        style={{
-                          fontSize: "0.8125rem",
-                          fontWeight: 600,
-                          color: "#E65100",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 4,
-                        }}
-                      >
-                        Abrir <ArrowRight size={12} />
-                      </span>
-                    </div>
-                  </div>
+              { label: "Melhores Restaurantes", link: "/melhores-restaurantes-de-holambra" },
+              { label: "Cafés em Holambra", link: "/melhores-cafes-de-holambra" },
+              { label: "Bares & Drinks", link: "/bares-e-drinks-em-holambra" },
+              { label: "Onde Tirar Fotos", link: "/onde-tirar-fotos-em-holambra" },
+              { label: "Ver no Mapa", link: "/mapa" },
+              { label: "Todos os Roteiros →", link: "/roteiros" },
+            ].map((item, i) => (
+              <Reveal key={item.label} delay={i * 40}>
+                <Link
+                  to={item.link}
+                  style={{
+                    display: "inline-block",
+                    padding: "8px 16px",
+                    borderRadius: 8,
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    background: "rgba(255,255,255,0.05)",
+                    color: "rgba(255,255,255,0.8)",
+                    fontSize: "0.8125rem",
+                    fontWeight: 500,
+                    textDecoration: "none",
+                    fontFamily: "'Montserrat', system-ui, sans-serif",
+                    transition: "background 0.2s, border-color 0.2s",
+                  }}
+                  onMouseEnter={(e: any) => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.28)"; }}
+                  onMouseLeave={(e: any) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; }}
+                >
+                  {item.label}
                 </Link>
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══ 4) ROTEIROS — White background — dynamic from DB ═══ */}
+      <section id="roteiros" className="site-section" style={{ background: "#FFFFFF" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <Reveal>
+            <SectionHeader
+              label="Roteiros Curados"
+              title="Roteiros Prontos para Usar"
+              subtitle="Passeios organizados pelo time Oranje — cada um com lugares verificados e dicas reais"
+            />
+          </Reveal>
+
+          {/* Skeleton enquanto carrega */}
+          {routesLoading ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="site-card" style={{ height: 200 }}>
+                  <div className="site-skeleton" style={{ height: "100%", borderRadius: 14 }} />
+                </div>
+              ))}
+            </div>
+          ) : publicRoutes.length > 0 ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+              {publicRoutes.slice(0, 3).map((route: any, i: number) => (
+                <Reveal key={route.id} delay={i * 80}>
+                  <Link to={`/app/roteiro/${route.id}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>
+                    <div
+                      className="site-card card-press"
+                      style={{ display: "flex", flexDirection: "column", height: "100%", background: "#FFFFFF", overflow: "hidden" }}
+                    >
+                      {/* Cover image se disponível */}
+                      {route.coverImage && (
+                        <div style={{ position: "relative", height: 140, overflow: "hidden", borderRadius: "14px 14px 0 0" }}>
+                          <img
+                            src={route.coverImage}
+                            alt={route.title}
+                            loading="lazy"
+                            className="card-img-zoom"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.7) 0%, transparent 60%)" }} />
+                          {route.theme && (
+                            <span style={{
+                              position: "absolute", bottom: 10, left: 12,
+                              fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em",
+                              background: "#E65100", color: "#fff", padding: "3px 10px", borderRadius: 20,
+                              textTransform: "uppercase",
+                            }}>
+                              {route.theme}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
+                        {!route.coverImage && route.theme && (
+                          <span style={{
+                            display: "inline-block", marginBottom: 10,
+                            fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em",
+                            background: "rgba(230,81,0,0.08)", color: "#E65100", padding: "3px 10px", borderRadius: 20,
+                            textTransform: "uppercase",
+                          }}>
+                            {route.theme}
+                          </span>
+                        )}
+                        <h3 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "#00251A", marginBottom: 8, lineHeight: 1.3 }}>
+                          {route.title}
+                        </h3>
+                        {route.description && (
+                          <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6, flex: 1 }}>
+                            {route.description.length > 90 ? route.description.slice(0, 90) + "…" : route.description}
+                          </p>
+                        )}
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 18 }}>
+                          {route.duration ? (
+                            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                              <Clock size={13} style={{ color: "#E65100" }} />
+                              <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#E65100" }}>{route.duration}</span>
+                            </div>
+                          ) : <span />}
+                          <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#E65100", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                            Explorar roteiro <ArrowRight size={12} />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          ) : (
+            <p style={{ textAlign: "center", color: "rgba(0,37,26,0.4)", fontSize: "0.9375rem" }}>
+              Em breve: roteiros curados para Holambra.
+            </p>
+          )}
+
+          {/* CTA: ver todos os roteiros */}
+          {publicRoutes.length > 0 && (
+            <Reveal>
+              <div style={{ textAlign: "center", marginTop: 36 }}>
+                <Link
+                  to="/roteiros"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    height: 44, padding: "0 24px",
+                    background: "transparent", color: "#00251A",
+                    fontSize: "0.875rem", fontWeight: 600,
+                    borderRadius: 11, border: "1.5px solid rgba(0,37,26,0.2)",
+                    textDecoration: "none", fontFamily: "'Montserrat', system-ui, sans-serif",
+                    transition: "border-color 0.2s",
+                  }}
+                  onMouseEnter={(e: any) => (e.currentTarget.style.borderColor = "rgba(0,37,26,0.4)")}
+                  onMouseLeave={(e: any) => (e.currentTarget.style.borderColor = "rgba(0,37,26,0.2)")}
+                >
+                  Ver todos os roteiros
+                  <ArrowRight size={15} />
+                </Link>
+              </div>
+            </Reveal>
+          )}
         </div>
       </section>
 
@@ -809,14 +893,14 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 6) EVENTOS & AGENDA — White background ═══ */}
+      {/* ═══ 6) BLOG & GUIAS — White background ═══ */}
       <section className="site-section" style={{ background: "#FFFFFF" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
             <SectionHeader
-              label="Agenda"
-              title="Eventos & Agenda"
-              subtitle="Não perca o que está acontecendo em Holambra"
+              label="Blog & Guias"
+              title="Guias e Notícias de Holambra"
+              subtitle="Leia antes de ir — dicas editoriais, guias de visita e novidades da cidade"
             />
           </Reveal>
 
@@ -853,7 +937,7 @@ export default function SiteHome() {
           <Reveal>
             <div style={{ textAlign: "center" }}>
               <Link
-                to="/eventos-em-holambra"
+                to="/blog"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -872,7 +956,7 @@ export default function SiteHome() {
                 onMouseEnter={(e: any) => (e.currentTarget.style.background = "#FF6D00")}
                 onMouseLeave={(e: any) => (e.currentTarget.style.background = "#E65100")}
               >
-                Ver Agenda Completa
+                Ver todos os guias
                 <ArrowRight size={16} />
               </Link>
             </div>
@@ -880,14 +964,15 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 7) PARA QUEM É — Beige background ═══ */}
+      {/* ═══ 7) QUAL É O SEU ROTEIRO — Beige background (navegação real) ═══ */}
       <section className="site-section" style={{ background: "#F5F5DC" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
             <SectionHeader
-              label="Público"
+              label="Qual é o seu estilo?"
               labelColor="#00251A"
-              title="Para Quem é o Oranje"
+              title="Escolha o Roteiro Certo para Você"
+              subtitle="Passeios curados para cada tipo de viajante — clique e comece a explorar"
             />
           </Reveal>
 
@@ -899,34 +984,62 @@ export default function SiteHome() {
             }}
           >
             {[
-              { icon: <MapPin size={28} strokeWidth={1.5} />, title: "Turistas de Fim de Semana", desc: "Viajantes que querem aproveitar Holambra ao máximo em poucos dias." },
-              { icon: <Heart size={28} strokeWidth={1.5} />, title: "Casais e Famílias", desc: "Experiências especiais para momentos inesquecíveis com quem você ama." },
-              { icon: <Users size={28} strokeWidth={1.5} />, title: "Experiências Locais Seguras", desc: "Quem busca autenticidade com confiança em parceiros verificados." },
+              {
+                icon: <MapPin size={28} strokeWidth={1.5} />,
+                title: "Fim de semana em Holambra",
+                desc: "Um dia completo pelos principais pontos — do Moinho ao Lago, com paradas nos melhores restaurantes.",
+                cta: "Ver roteiro de 1 dia",
+                link: "/roteiro-1-dia-em-holambra",
+              },
+              {
+                icon: <Heart size={28} strokeWidth={1.5} />,
+                title: "A dois em Holambra",
+                desc: "Experiências românticas com curadoria especial para casais — jardins, vinhos e pôr do sol.",
+                cta: "Ver roteiro romântico",
+                link: "/roteiros",
+              },
+              {
+                icon: <Users size={28} strokeWidth={1.5} />,
+                title: "Com a família",
+                desc: "Passeios ao ar livre, restaurantes pet-friendly e atrações para crianças e adultos juntos.",
+                cta: "Ver roteiro família",
+                link: "/roteiros",
+              },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 80}>
-                <div className="site-card" style={{ padding: "32px 28px", textAlign: "center", background: "#FFFFFF" }}>
-                  <div
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 16,
-                      background: "rgba(0,37,26,0.04)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      margin: "0 auto 20px",
-                      color: "#00251A",
-                    }}
-                  >
-                    {item.icon}
+                <Link to={item.link} style={{ textDecoration: "none", display: "block", height: "100%" }}>
+                  <div className="site-card card-press" style={{ padding: "32px 28px", textAlign: "center", background: "#FFFFFF", display: "flex", flexDirection: "column", height: "100%" }}>
+                    <div
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 16,
+                        background: "rgba(0,37,26,0.04)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 auto 20px",
+                        color: "#00251A",
+                      }}
+                    >
+                      {item.icon}
+                    </div>
+                    <h3 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "#00251A", marginBottom: 10 }}>
+                      {item.title}
+                    </h3>
+                    <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6, flex: 1 }}>
+                      {item.desc}
+                    </p>
+                    <span
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: 4, justifyContent: "center",
+                        marginTop: 20, fontSize: "0.8125rem", fontWeight: 600, color: "#E65100",
+                      }}
+                    >
+                      {item.cta} <ArrowRight size={13} />
+                    </span>
                   </div>
-                  <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#00251A", marginBottom: 10 }}>
-                    {item.title}
-                  </h3>
-                  <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6 }}>
-                    {item.desc}
-                  </p>
-                </div>
+                </Link>
               </Reveal>
             ))}
           </div>

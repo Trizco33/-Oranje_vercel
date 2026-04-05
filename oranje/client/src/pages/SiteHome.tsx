@@ -32,7 +32,7 @@ import {
    Mobile-first, WCAG AAA, No glassmorphism, Generous spacing
    ═══════════════════════════════════════════════════════════════════════════ */
 
-// Scroll reveal hook
+// Scroll reveal hook — with 1.2s safety fallback
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -40,12 +40,14 @@ function useScrollReveal() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const show = () => setVisible(true);
+    const fallback = setTimeout(show, 1200);
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+      ([entry]) => { if (entry.isIntersecting) { show(); observer.disconnect(); clearTimeout(fallback); } },
       { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); clearTimeout(fallback); };
   }, []);
 
   return { ref, visible };
@@ -141,6 +143,11 @@ function SectionHeader({
 export default function SiteHome() {
   const navigate = useNavigate();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [heroReady, setHeroReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setHeroReady(true), 80);
+    return () => clearTimeout(t);
+  }, []);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();
@@ -327,8 +334,13 @@ export default function SiteHome() {
           }}
         >
           <div
-            className="hero-enter hero-enter-d1"
-            style={{ marginBottom: 20, display: "inline-block" }}
+            style={{
+              marginBottom: 20,
+              display: "inline-block",
+              opacity: heroReady ? 1 : 0,
+              transform: heroReady ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.06s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.06s",
+            }}
           >
             <span
               style={{
@@ -352,7 +364,6 @@ export default function SiteHome() {
           </div>
 
           <h1
-            className="hero-enter hero-enter-d2"
             style={{
               fontSize: "clamp(2.25rem, 7vw, 3.75rem)",
               fontWeight: 700,
@@ -361,13 +372,15 @@ export default function SiteHome() {
               letterSpacing: "-0.03em",
               marginBottom: 16,
               fontFamily: "'Montserrat', system-ui, sans-serif",
+              opacity: heroReady ? 1 : 0,
+              transform: heroReady ? "translateY(0) scale(1)" : "translateY(20px) scale(0.97)",
+              transition: "opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.18s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.18s",
             }}
           >
             Descubra Holambra
           </h1>
 
           <p
-            className="hero-enter hero-enter-d3"
             style={{
               fontSize: "clamp(1rem, 2.5vw, 1.125rem)",
               color: "rgba(255,255,255,0.85)",
@@ -376,6 +389,9 @@ export default function SiteHome() {
               maxWidth: "540px",
               marginLeft: "auto",
               marginRight: "auto",
+              opacity: heroReady ? 1 : 0,
+              transform: heroReady ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity 0.65s cubic-bezier(0.22,1,0.36,1) 0.32s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.32s",
             }}
           >
             Roteiros, lugares, eventos e serviços locais — tudo em um só lugar.
@@ -383,10 +399,12 @@ export default function SiteHome() {
 
           {/* Search Bar */}
           <div
-            className="hero-enter hero-enter-d4"
             style={{
               maxWidth: "480px",
               margin: "0 auto 36px",
+              opacity: heroReady ? 1 : 0,
+              transform: heroReady ? "translateY(0)" : "translateY(14px)",
+              transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.46s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.46s",
             }}
           >
             <div
@@ -423,7 +441,12 @@ export default function SiteHome() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="hero-enter hero-enter-d5" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
+          <div style={{
+            display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 48,
+            opacity: heroReady ? 1 : 0,
+            transform: heroReady ? "translateY(0)" : "translateY(14px)",
+            transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s",
+          }}>
             <Link
               to="/app"
               className="btn-press"

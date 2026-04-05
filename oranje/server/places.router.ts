@@ -49,11 +49,11 @@ export const placesRouter = router({
       if (!db) return null;
 
       try {
-        // Get place details
+        // Get place details — nunca retornar lugares pendentes de validação
         const place = await (db
           .select()
           .from(places)
-          .where(eq(places.id, placeId)) as any)
+          .where(and(eq(places.id, placeId), eq(places.dataPending, false), eq(places.status, "active"))) as any)
           .limit(1);
 
         if (!place || place.length === 0) {
@@ -177,11 +177,15 @@ export const placesRouter = router({
       if (!db) return [];
 
       try {
-        // Simple search by name (can be enhanced with full-text search)
+        // Busca por nome — exclui lugares pendentes e inativos
         const results = await db
           .select()
           .from(places)
-          .where(like(places.name, `%${input.query}%`))
+          .where(and(
+            like(places.name, `%${input.query}%`),
+            eq(places.dataPending, false),
+            eq(places.status, "active"),
+          ))
           .limit(input.limit);
 
         return results;

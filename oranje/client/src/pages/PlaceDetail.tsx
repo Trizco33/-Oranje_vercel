@@ -465,12 +465,7 @@ function RelatedPlacesBlock({ categoryId, categoryName, excludeId }: {
 
 /* ─── M11: Routes Block ──────────────────────────────────────────────────────── */
 
-function RoutesBlock({ placeId }: { placeId: number }) {
-  const { data: routes } = trpc.routes.public.useQuery(undefined, { staleTime: 60_000 });
-  const matching = (routes ?? []).filter((r: any) => {
-    const ids: number[] = Array.isArray(r.placeIds) ? r.placeIds : [];
-    return ids.includes(placeId);
-  });
+function RoutesBlock({ matching }: { matching: any[] }) {
   if (matching.length === 0) return null;
 
   return (
@@ -539,19 +534,19 @@ function RoutesBlock({ placeId }: { placeId: number }) {
 /* ─── Continue Explorando Holambra ──────────────────────────────────────────── */
 
 function ContinueExplorando({
-  placeId,
+  matchingRoutes,
   categoryName,
   categoryId,
 }: {
-  placeId: number;
+  matchingRoutes: any[];
   categoryName?: string;
   categoryId?: number;
 }) {
-  const { data: routes } = trpc.routes.public.useQuery(undefined, { staleTime: 60_000 });
-  const hasRoutes = (routes ?? []).some((r: any) => {
-    const ids: number[] = Array.isArray(r.placeIds) ? r.placeIds : [];
-    return ids.includes(placeId);
-  });
+  const hasRoutes = matchingRoutes.length > 0;
+  const routeLink =
+    matchingRoutes.length === 1
+      ? `/app/roteiro/${matchingRoutes[0].id}`
+      : "/app/roteiros";
 
   const CATEGORY_SLUGS: Record<number, string> = {
     1: "restaurantes",
@@ -588,12 +583,16 @@ function ContinueExplorando({
 
       <div className="flex flex-col gap-2">
         {hasRoutes && (
-          <Link to="/app/roteiros" style={{ textDecoration: "none" }}>
+          <Link to={routeLink} style={{ textDecoration: "none" }}>
             <div
               className="flex items-center justify-between px-4 py-3 rounded-xl"
               style={{ background: "var(--ds-color-accent)", color: "#fff" }}
             >
-              <span className="text-sm font-semibold">Ver roteiros com este lugar</span>
+              <span className="text-sm font-semibold">
+                {matchingRoutes.length === 1
+                  ? `Ver roteiro: ${matchingRoutes[0].title}`
+                  : "Ver roteiros com este lugar"}
+              </span>
               <ArrowRight size={14} />
             </div>
           </Link>
@@ -651,6 +650,12 @@ export default function PlaceDetail() {
   const favoriteIds = new Set(
     (favoritesQuery.data ?? []).map((f: { placeId: number }) => f.placeId)
   );
+
+  const { data: allRoutes } = trpc.routes.public.useQuery(undefined, { staleTime: 60_000 });
+  const matchingRoutes = (allRoutes ?? []).filter((r: any) => {
+    const ids: number[] = Array.isArray(r.placeIds) ? r.placeIds : [];
+    return ids.includes(placeId);
+  });
   const addFavoriteMutation = trpc.favorites.add.useMutation({
     onSuccess: () => favoritesQuery.refetch(),
   });
@@ -1150,7 +1155,7 @@ export default function PlaceDetail() {
         {/* ─────────────────────────────────────────────────────────── */}
         {/* M11: In which routes (roteiros)                            */}
         {/* ─────────────────────────────────────────────────────────── */}
-        <RoutesBlock placeId={placeId} />
+        <RoutesBlock matching={matchingRoutes} />
 
         {/* ─────────────────────────────────────────────────────────── */}
         {/* M10: Related places (same category)                        */}
@@ -1243,7 +1248,7 @@ export default function PlaceDetail() {
         {/* Continue Explorando Holambra                               */}
         {/* ─────────────────────────────────────────────────────────── */}
         <ContinueExplorando
-          placeId={placeId}
+          matchingRoutes={matchingRoutes}
           categoryName={place.categoryName}
           categoryId={place.categoryId}
         />

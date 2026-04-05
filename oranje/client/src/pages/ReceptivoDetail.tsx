@@ -28,48 +28,150 @@ interface TourStop {
   placeCategoryId: number | null;
 }
 
+// ─── Haversine distance (meters) ─────────────────────────────────────────────
+
+function haversineMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371000;
+  const φ1 = (lat1 * Math.PI) / 180;
+  const φ2 = (lat2 * Math.PI) / 180;
+  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+  const Δλ = ((lng2 - lng1) * Math.PI) / 180;
+  const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+const ARRIVAL_RADIUS_M = 80; // meters within which we consider "arrived"
+
 // ─── Map Component ────────────────────────────────────────────────────────────
+// Tile: CartoDB Positron (clean light map — orange markers pop dramatically)
+// Markers: 3-state — past (dark/check), active (orange+pulse), upcoming (muted)
+// Polylines: solid orange for walked path, dashed grey for path ahead
+// Overlay: floating pill inside map shows active stop name + distance (if nav active)
+// Geolocation: live user blue dot + haversine distance + arrival callback
+
+const RECEPTIVO_PULSE_STYLE_ID = "receptivo-pulse-keyframes";
+
+function injectPulseStyle() {
+  if (document.getElementById(RECEPTIVO_PULSE_STYLE_ID)) return;
+  const style = document.createElement("style");
+  style.id = RECEPTIVO_PULSE_STYLE_ID;
+  style.textContent = `
+    @keyframes receptivoPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(230,81,0,0.55), 0 3px 12px rgba(0,0,0,0.35); }
+      60%  { box-shadow: 0 0 0 10px rgba(230,81,0,0), 0 3px 12px rgba(0,0,0,0.35); }
+      100% { box-shadow: 0 0 0 0 rgba(230,81,0,0), 0 3px 12px rgba(0,0,0,0.35); }
+    }
+    .receptivo-marker-active {
+      animation: receptivoPulse 1.8s ease-out infinite;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function createMarkerIcon(L: any, number: number, state: "past" | "active" | "upcoming", isFirst: boolean, isLast: boolean) {
+  if (state === "active") {
+    const size = 42;
+    const labelHtml = isFirst
+      ? `<div style="position:absolute;top:${size + 3}px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:#E65100;font-family:Montserrat,sans-serif;letter-spacing:0.05em;white-space:nowrap;text-shadow:0 1px 3px rgba(255,255,255,0.9);">INÍCIO</div>`
+      : isLast
+      ? `<div style="position:absolute;top:${size + 3}px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:#E65100;font-family:Montserrat,sans-serif;letter-spacing:0.05em;white-space:nowrap;text-shadow:0 1px 3px rgba(255,255,255,0.9);">FIM</div>`
+      : "";
+    const html = `
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+        <div class="receptivo-marker-active" style="
+          width:${size}px;height:${size}px;border-radius:50%;
+          background:#E65100;border:3px solid #fff;
+          display:flex;align-items:center;justify-content:center;
+          color:white;font-weight:800;font-size:15px;
+          font-family:Montserrat,sans-serif;
+          position:relative;z-index:2;
+        ">${number}</div>
+        ${labelHtml}
+      </div>`;
+    const anchor = size / 2;
+    return L.divIcon({ html, iconSize: [size, size + (isFirst || isLast ? 18 : 0)], iconAnchor: [anchor, anchor], className: "" });
+  }
+
+  if (state === "past") {
+    const size = 28;
+    const labelHtml = isFirst
+      ? `<div style="position:absolute;top:${size + 2}px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:#00251A;font-family:Montserrat,sans-serif;letter-spacing:0.05em;white-space:nowrap;text-shadow:0 1px 3px rgba(255,255,255,0.9);">INÍCIO</div>`
+      : "";
+    const html = `
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+        <div style="
+          width:${size}px;height:${size}px;border-radius:50%;
+          background:#00251A;border:2px solid rgba(255,255,255,0.8);
+          display:flex;align-items:center;justify-content:center;
+          color:white;font-weight:700;font-size:11px;
+          font-family:Montserrat,sans-serif;
+          box-shadow:0 2px 6px rgba(0,0,0,0.2);
+        ">✓</div>
+        ${labelHtml}
+      </div>`;
+    const anchor = size / 2;
+    return L.divIcon({ html, iconSize: [size, size + (isFirst ? 16 : 0)], iconAnchor: [anchor, anchor], className: "" });
+  }
+
+  // upcoming
+  const size = 28;
+  const labelHtml = isLast
+    ? `<div style="position:absolute;top:${size + 2}px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:#7a9e96;font-family:Montserrat,sans-serif;letter-spacing:0.05em;white-space:nowrap;text-shadow:0 1px 3px rgba(255,255,255,0.9);">FIM</div>`
+    : "";
+  const html = `
+    <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+      <div style="
+        width:${size}px;height:${size}px;border-radius:50%;
+        background:rgba(255,255,255,0.85);border:2px solid rgba(0,77,58,0.35);
+        display:flex;align-items:center;justify-content:center;
+        color:#7a9e96;font-weight:700;font-size:11px;
+        font-family:Montserrat,sans-serif;
+        box-shadow:0 2px 6px rgba(0,0,0,0.12);
+      ">${number}</div>
+      ${labelHtml}
+    </div>`;
+  const anchor = size / 2;
+  return L.divIcon({ html, iconSize: [size, size + (isLast ? 16 : 0)], iconAnchor: [anchor, anchor], className: "" });
+}
 
 function ReceptivoMap({
   stops,
   activeIndex,
+  navActive,
   onStopSelect,
+  onDistanceUpdate,
+  onArrival,
 }: {
   stops: TourStop[];
   activeIndex: number;
+  navActive: boolean;
   onStopSelect: (i: number) => void;
+  onDistanceUpdate: (meters: number | null) => void;
+  onArrival: (stopIndex: number) => void;
 }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletRef = useRef<any>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
-  const polylineRef = useRef<any>(null);
+  const polylineWalkedRef = useRef<any>(null);
+  const polylineAheadRef = useRef<any>(null);
+  const userMarkerRef = useRef<any>(null);
+  const watchIdRef = useRef<number | null>(null);
+  const arrivedRef = useRef<Set<number>>(new Set()); // prevent repeated arrival callbacks
 
   const validStops = stops.filter((s) => s.placeLat != null && s.placeLng != null);
+  const total = validStops.length;
 
-  const createNumberedIcon = useCallback((L: any, number: number, isActive: boolean) => {
-    const color = isActive ? "#E65100" : "#00251A";
-    const border = isActive ? "#fff" : "rgba(255,255,255,0.7)";
-    const size = isActive ? 38 : 30;
-    const fontSize = isActive ? 14 : 11;
-    const shadow = isActive
-      ? "0 0 0 3px rgba(230,81,0,0.25), 0 3px 10px rgba(0,0,0,0.35)"
-      : "0 2px 6px rgba(0,0,0,0.25)";
-    const html = `<div style="
-      width:${size}px;height:${size}px;border-radius:50%;
-      background:${color};border:2px solid ${border};
-      display:flex;align-items:center;justify-content:center;
-      color:white;font-weight:800;font-size:${fontSize}px;
-      font-family:Montserrat,sans-serif;
-      box-shadow:${shadow};
-      transition:all 0.3s ease;
-    ">${number}</div>`;
-    return L.divIcon({ html, iconSize: [size, size], iconAnchor: [size / 2, size / 2], className: "" });
-  }, []);
+  const getState = useCallback((i: number): "past" | "active" | "upcoming" => {
+    if (i < activeIndex) return "past";
+    if (i === activeIndex) return "active";
+    return "upcoming";
+  }, [activeIndex]);
 
-  // Initialize map
+  // Initialize map once
   useEffect(() => {
     if (!mapRef.current || validStops.length === 0) return;
+    injectPulseStyle();
 
     (async () => {
       const L = (await import("leaflet")).default;
@@ -82,82 +184,513 @@ function ReceptivoMap({
         document.head.appendChild(link);
       }
 
-      const center = validStops[0];
       const map = L.map(mapRef.current!, {
-        center: [center.placeLat!, center.placeLng!],
+        center: [validStops[0].placeLat!, validStops[0].placeLng!],
         zoom: 16,
         zoomControl: false,
         attributionControl: false,
       });
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
+      // CartoDB Positron Retina — clean white/grey tiles, orange markers pop dramatically
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        maxZoom: 20,
+        subdomains: "abcd",
       }).addTo(map);
 
       mapInstanceRef.current = map;
 
-      // Draw polyline
-      const coords = validStops.map((s) => [s.placeLat!, s.placeLng!] as [number, number]);
-      polylineRef.current = L.polyline(coords, {
+      const allCoords = validStops.map((s) => [s.placeLat!, s.placeLng!] as [number, number]);
+
+      // Walked path: solid orange from start to active stop
+      polylineWalkedRef.current = L.polyline(allCoords.slice(0, Math.max(activeIndex + 1, 1)), {
         color: "#E65100",
-        weight: 3,
-        opacity: 0.65,
-        dashArray: "8 6",
+        weight: 4,
+        opacity: 0.9,
       }).addTo(map);
 
-      // Add numbered markers
+      // Ahead path: dashed muted from active stop to end
+      polylineAheadRef.current = L.polyline(allCoords.slice(activeIndex), {
+        color: "#7a9e96",
+        weight: 2.5,
+        opacity: 0.5,
+        dashArray: "6 5",
+      }).addTo(map);
+
+      // Numbered stop markers
       validStops.forEach((stop, i) => {
-        const isActive = i === 0;
-        const icon = createNumberedIcon(L, i + 1, isActive);
+        const icon = createMarkerIcon(L, i + 1, getState(i), i === 0, i === total - 1);
         const marker = L.marker([stop.placeLat!, stop.placeLng!], { icon }).addTo(map);
         marker.on("click", () => onStopSelect(i));
         markersRef.current.push(marker);
       });
 
-      // Fit bounds
       if (validStops.length > 1) {
-        map.fitBounds(coords, { padding: [40, 40] });
+        map.fitBounds(allCoords, { padding: [44, 44] });
       }
     })();
 
     return () => {
+      if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
       mapInstanceRef.current?.remove();
       mapInstanceRef.current = null;
       markersRef.current = [];
-      polylineRef.current = null;
+      polylineWalkedRef.current = null;
+      polylineAheadRef.current = null;
+      userMarkerRef.current = null;
+      watchIdRef.current = null;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Update markers when activeIndex changes
+  // Update markers and polylines when activeIndex changes
   useEffect(() => {
     const L = leafletRef.current;
     const map = mapInstanceRef.current;
     if (!L || !map || markersRef.current.length === 0) return;
 
+    const allCoords = validStops.map((s) => [s.placeLat!, s.placeLng!] as [number, number]);
+    if (polylineWalkedRef.current) polylineWalkedRef.current.setLatLngs(allCoords.slice(0, Math.max(activeIndex + 1, 1)));
+    if (polylineAheadRef.current) polylineAheadRef.current.setLatLngs(allCoords.slice(activeIndex));
+
     markersRef.current.forEach((marker, i) => {
-      const isActive = i === activeIndex;
-      const stop = validStops[i];
-      if (!stop) return;
-      marker.setIcon(createNumberedIcon(L, i + 1, isActive));
+      if (!validStops[i]) return;
+      marker.setIcon(createMarkerIcon(L, i + 1, getState(i), i === 0, i === total - 1));
     });
 
-    const activeStop = validStops[activeIndex];
-    if (activeStop) {
-      map.setView([activeStop.placeLat!, activeStop.placeLng!], 16, { animate: true, duration: 0.6 });
+    const active = validStops[activeIndex];
+    if (active) map.setView([active.placeLat!, active.placeLng!], 16, { animate: true, duration: 0.5 });
+
+    // Reset arrival state for new stop
+    arrivedRef.current.delete(activeIndex);
+  }, [activeIndex, getState, total]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Start / stop geolocation watch when navActive changes
+  useEffect(() => {
+    const L = leafletRef.current;
+    const map = mapInstanceRef.current;
+
+    if (!navActive) {
+      // Stop watching, remove user marker, reset distance
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+      if (userMarkerRef.current && map) {
+        userMarkerRef.current.remove();
+        userMarkerRef.current = null;
+      }
+      onDistanceUpdate(null);
+      return;
     }
-  }, [activeIndex, createNumberedIcon]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    if (!navigator.geolocation) {
+      onDistanceUpdate(null);
+      return;
+    }
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude: userLat, longitude: userLng, accuracy } = pos.coords;
+
+        // Create or update user marker (blue pulsing dot)
+        if (L && map) {
+          const latlng = L.latLng(userLat, userLng);
+          const accuracyText = accuracy ? `${Math.round(accuracy)}m` : "";
+          const userIcon = L.divIcon({
+            html: `<div style="
+              width:16px;height:16px;border-radius:50%;
+              background:rgba(30,136,229,0.92);
+              border:2.5px solid #fff;
+              box-shadow:0 0 0 5px rgba(30,136,229,0.18), 0 2px 8px rgba(0,0,0,0.25);
+              position:relative;
+            " title="${accuracyText}"></div>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+            className: "",
+          });
+
+          if (userMarkerRef.current) {
+            userMarkerRef.current.setLatLng(latlng);
+            userMarkerRef.current.setIcon(userIcon);
+          } else {
+            userMarkerRef.current = L.marker(latlng, { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
+          }
+        }
+
+        // Calculate distance to active stop
+        const activeStop = validStops[activeIndex];
+        if (activeStop?.placeLat != null && activeStop?.placeLng != null) {
+          const dist = haversineMeters(userLat, userLng, activeStop.placeLat!, activeStop.placeLng!);
+          onDistanceUpdate(dist);
+
+          // Fire arrival callback once per stop
+          if (dist <= ARRIVAL_RADIUS_M && !arrivedRef.current.has(activeIndex)) {
+            arrivedRef.current.add(activeIndex);
+            onArrival(activeIndex);
+          }
+        }
+      },
+      () => onDistanceUpdate(null),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+    );
+
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+    };
+  }, [navActive, activeIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const activeStop = validStops[activeIndex];
 
   return (
+    <div style={{ position: "relative", width: "100%" }}>
+      <div
+        ref={mapRef}
+        style={{ width: "100%", height: 268, overflow: "hidden" }}
+      />
+      {/* Floating overlay: active stop name + progress/nav indicator */}
+      {activeStop && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 12,
+            left: 12,
+            right: 12,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            background: "rgba(0,37,26,0.85)",
+            backdropFilter: "blur(8px)",
+            borderRadius: 10,
+            padding: "8px 12px",
+            pointerEvents: "none",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+            <div style={{
+              width: 20, height: 20, borderRadius: "50%", background: "#E65100",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 9, fontWeight: 800, color: "#fff", fontFamily: "Montserrat,sans-serif", flexShrink: 0,
+            }}>
+              {activeIndex + 1}
+            </div>
+            <span style={{
+              color: "#fff", fontSize: 12, fontWeight: 700, fontFamily: "Montserrat,sans-serif",
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+            }}>
+              {activeStop.placeName}
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0, marginLeft: 8 }}>
+            {navActive && (
+              <div style={{
+                width: 8, height: 8, borderRadius: "50%",
+                background: "rgba(30,136,229,0.9)",
+                boxShadow: "0 0 4px rgba(30,136,229,0.6)",
+              }} />
+            )}
+            <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 10, fontWeight: 600, fontFamily: "Montserrat,sans-serif" }}>
+              {activeIndex + 1}/{total}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Journey Strip ────────────────────────────────────────────────────────────
+// Horizontal metro-style progress strip showing all stops as connected nodes.
+// Gives the user the feeling of "I'm on a route" rather than "pins on a map".
+
+function JourneyStrip({
+  stops,
+  activeIndex,
+  onSelect,
+}: {
+  stops: TourStop[];
+  activeIndex: number;
+  onSelect: (i: number) => void;
+}) {
+  return (
     <div
-      ref={mapRef}
       style={{
-        width: "100%",
-        height: 260,
-        borderRadius: "0 0 20px 20px",
-        overflow: "hidden",
-        zIndex: 1,
+        background: "#00251A",
+        padding: "14px 20px 16px",
       }}
-    />
+    >
+      {/* Label */}
+      <p
+        style={{
+          color: "rgba(255,255,255,0.4)",
+          fontSize: 9,
+          fontWeight: 700,
+          fontFamily: "Montserrat,sans-serif",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          margin: "0 0 12px",
+        }}
+      >
+        Percurso
+      </p>
+      {/* Nodes + connectors */}
+      <div style={{ display: "flex", alignItems: "flex-start" }}>
+        {stops.map((stop, i) => {
+          const isPast = i < activeIndex;
+          const isActive = i === activeIndex;
+          const isLast = i === stops.length - 1;
+
+          const nodeColor = isPast ? "#00251A" : isActive ? "#E65100" : "transparent";
+          const nodeBorder = isPast ? "rgba(255,255,255,0.45)" : isActive ? "#E65100" : "rgba(255,255,255,0.25)";
+          const nodeInner = isPast ? "✓" : `${i + 1}`;
+          const nodeTextColor = isPast ? "rgba(255,255,255,0.7)" : isActive ? "#fff" : "rgba(255,255,255,0.35)";
+
+          return (
+            <div key={stop.stopId} style={{ display: "flex", alignItems: "flex-start", flex: isLast ? "none" : 1 }}>
+              {/* Node */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
+                <button
+                  onClick={() => onSelect(i)}
+                  style={{
+                    width: isActive ? 28 : 22,
+                    height: isActive ? 28 : 22,
+                    borderRadius: "50%",
+                    background: nodeColor,
+                    border: `2px solid ${nodeBorder}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: nodeTextColor,
+                    fontSize: isActive ? 11 : 9,
+                    fontWeight: 800,
+                    fontFamily: "Montserrat,sans-serif",
+                    cursor: "pointer",
+                    padding: 0,
+                    flexShrink: 0,
+                    transition: "all 0.25s ease",
+                    boxShadow: isActive ? "0 0 0 3px rgba(230,81,0,0.25)" : "none",
+                  }}
+                >
+                  {nodeInner}
+                </button>
+                {/* Stop name truncated */}
+                <span
+                  style={{
+                    fontSize: 8.5,
+                    fontWeight: isActive ? 700 : 500,
+                    color: isActive ? "#E65100" : isPast ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.25)",
+                    fontFamily: "Montserrat,sans-serif",
+                    textAlign: "center",
+                    maxWidth: 52,
+                    lineHeight: 1.25,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {stop.placeName.split(" ").slice(0, 2).join(" ")}
+                </span>
+              </div>
+
+              {/* Connector line */}
+              {!isLast && (
+                <div
+                  style={{
+                    flex: 1,
+                    height: 2,
+                    marginTop: isActive ? 13 : 10,
+                    background: isPast
+                      ? "rgba(255,255,255,0.45)"
+                      : "rgba(255,255,255,0.12)",
+                    backgroundImage: isPast
+                      ? "none"
+                      : "repeating-linear-gradient(to right, rgba(255,255,255,0.15) 0, rgba(255,255,255,0.15) 4px, transparent 4px, transparent 8px)",
+                  }}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Navigation Bar ───────────────────────────────────────────────────────────
+// The "coração" of the Receptivo experience.
+// States:
+//   idle   → "Ativar navegação guiada" call-to-action
+//   locating → GPS signal being acquired
+//   navigating (far) → distance indicator to active stop
+//   navigating (arrived) → "Você chegou!" + advance button
+
+function NavBar({
+  navActive,
+  distanceMeters,
+  arrived,
+  activeStop,
+  isLastStop,
+  onActivate,
+  onAdvance,
+}: {
+  navActive: boolean;
+  distanceMeters: number | null;
+  arrived: boolean;
+  activeStop: TourStop | null;
+  isLastStop: boolean;
+  onActivate: () => void;
+  onAdvance: () => void;
+}) {
+  const distLabel = distanceMeters != null
+    ? distanceMeters >= 1000
+      ? `${(distanceMeters / 1000).toFixed(1)} km`
+      : `${Math.round(distanceMeters)} m`
+    : null;
+
+  // Idle state — invite to activate navigation
+  if (!navActive) {
+    return (
+      <div
+        style={{
+          margin: "0 16px 4px",
+          borderRadius: 14,
+          background: "linear-gradient(135deg, #00251A 0%, #004D3A 100%)",
+          padding: "14px 16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          boxShadow: "0 2px 12px rgba(0,37,26,0.18)",
+        }}
+      >
+        <div>
+          <p style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "Montserrat,sans-serif", margin: "0 0 2px" }}>
+            Modo navegação guiada
+          </p>
+          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0 }}>
+            Use sua localização para acompanhar o passeio ao vivo
+          </p>
+        </div>
+        <button
+          onClick={onActivate}
+          style={{
+            background: "#E65100",
+            border: "none",
+            borderRadius: 10,
+            padding: "10px 14px",
+            color: "#fff",
+            fontSize: 12,
+            fontWeight: 700,
+            fontFamily: "Montserrat,sans-serif",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            whiteSpace: "nowrap",
+            flexShrink: 0,
+          }}
+        >
+          <Compass size={14} />
+          Ativar
+        </button>
+      </div>
+    );
+  }
+
+  // Arrived state — celebration + advance button
+  if (arrived) {
+    return (
+      <div
+        style={{
+          margin: "0 16px 4px",
+          borderRadius: 14,
+          background: "linear-gradient(135deg, #E65100 0%, #BF360C 100%)",
+          padding: "14px 16px",
+          boxShadow: "0 2px 16px rgba(230,81,0,0.35)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <CheckCircle2 size={20} color="#fff" />
+          <div>
+            <p style={{ color: "#fff", fontSize: 13, fontWeight: 800, fontFamily: "Montserrat,sans-serif", margin: 0 }}>
+              Você chegou!
+            </p>
+            <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0 }}>
+              {activeStop?.placeName}
+            </p>
+          </div>
+        </div>
+        {!isLastStop ? (
+          <button
+            onClick={onAdvance}
+            style={{
+              width: "100%",
+              background: "rgba(255,255,255,0.18)",
+              border: "1.5px solid rgba(255,255,255,0.35)",
+              borderRadius: 10,
+              padding: "10px 0",
+              color: "#fff",
+              fontSize: 13,
+              fontWeight: 700,
+              fontFamily: "Montserrat,sans-serif",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 7,
+            }}
+          >
+            Próxima parada
+            <ArrowRight size={15} />
+          </button>
+        ) : (
+          <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 12.5, fontFamily: "Montserrat,sans-serif", textAlign: "center", margin: 0, fontWeight: 600 }}>
+            Parabéns — passeio concluído! 🎉
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // Navigating state — distance display
+  return (
+    <div
+      style={{
+        margin: "0 16px 4px",
+        borderRadius: 14,
+        background: "#00251A",
+        padding: "12px 16px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        {/* Live blue dot */}
+        <div style={{
+          width: 10, height: 10, borderRadius: "50%",
+          background: "rgba(30,136,229,0.9)",
+          boxShadow: "0 0 0 3px rgba(30,136,229,0.2)",
+          flexShrink: 0,
+        }} />
+        <div>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 9, fontWeight: 700, fontFamily: "Montserrat,sans-serif", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 1px" }}>
+            Navegação ativa
+          </p>
+          <p style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "Montserrat,sans-serif", margin: 0 }}>
+            {activeStop?.placeName ?? "Aguardando sinal..."}
+          </p>
+        </div>
+      </div>
+      {distLabel != null ? (
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 9, fontFamily: "Montserrat,sans-serif", margin: "0 0 1px", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>distância</p>
+          <p style={{ color: "#E65100", fontSize: 18, fontWeight: 800, fontFamily: "Montserrat,sans-serif", margin: 0, lineHeight: 1 }}>{distLabel}</p>
+        </div>
+      ) : (
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, fontFamily: "Montserrat,sans-serif", margin: 0 }}>Localizando...</p>
+      )}
+    </div>
   );
 }
 
@@ -379,16 +912,16 @@ function StopPanel({
         )}
 
         {/* Action buttons */}
-        <div style={{ display: "flex", gap: 8, padding: "14px 16px" }}>
+        <div style={{ padding: "14px 16px 10px" }}>
+          {/* Primary: explore place detail within Oranje */}
           <Link
             to={`/app/lugar/${stop.placeId}`}
             style={{
-              flex: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: 6,
-              padding: "10px 8px",
+              padding: "11px 8px",
               borderRadius: 10,
               background: "#00251A",
               color: "#fff",
@@ -396,34 +929,32 @@ function StopPanel({
               fontWeight: 600,
               fontFamily: "Montserrat, sans-serif",
               textDecoration: "none",
+              width: "100%",
             }}
           >
             <ExternalLink size={13} />
             Ver lugar completo
           </Link>
+          {/* Fallback: Google Maps as a small secondary text link */}
           <a
             href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              flex: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: 6,
-              padding: "10px 8px",
-              borderRadius: 10,
-              background: "rgba(0,37,26,0.06)",
-              border: "1px solid rgba(0,37,26,0.12)",
-              color: "#00251A",
-              fontSize: 12.5,
+              gap: 4,
+              marginTop: 8,
+              color: "rgba(0,37,26,0.4)",
+              fontSize: 11,
               fontWeight: 600,
               fontFamily: "Montserrat, sans-serif",
               textDecoration: "none",
             }}
           >
-            <Navigation size={13} />
-            Abrir rota
+            <Navigation size={11} />
+            Abrir no Maps (externo)
           </a>
         </div>
       </div>
@@ -706,6 +1237,11 @@ export default function ReceptivoDetail() {
   const [finished, setFinished] = useState(false);
   const stopPanelRef = useRef<HTMLDivElement>(null);
 
+  // ── Navigation mode state ──────────────────────────────────────────────────
+  const [navActive, setNavActive] = useState(false);
+  const [distanceToActive, setDistanceToActive] = useState<number | null>(null);
+  const [arrivedAtActive, setArrivedAtActive] = useState(false);
+
   const { data: tour, isLoading, error } = trpc.receptivo.bySlug.useQuery(
     { slug: slug ?? "" },
     { enabled: !!slug }
@@ -716,6 +1252,8 @@ export default function ReceptivoDetail() {
   const handleNext = useCallback(() => {
     if (activeIndex < stops.length - 1) {
       setActiveIndex((i) => i + 1);
+      setArrivedAtActive(false);
+      setDistanceToActive(null);
       stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       setFinished(true);
@@ -726,6 +1264,8 @@ export default function ReceptivoDetail() {
   const handlePrev = useCallback(() => {
     if (activeIndex > 0) {
       setActiveIndex((i) => i - 1);
+      setArrivedAtActive(false);
+      setDistanceToActive(null);
       stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [activeIndex]);
@@ -733,8 +1273,29 @@ export default function ReceptivoDetail() {
   const handleSelectStop = useCallback((i: number) => {
     setActiveIndex(i);
     setFinished(false);
+    setArrivedAtActive(false);
+    setDistanceToActive(null);
     stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
+
+  // ── Navigation mode handlers ───────────────────────────────────────────────
+  const handleActivateNav = useCallback(() => {
+    setNavActive(true);
+  }, []);
+
+  const handleDistanceUpdate = useCallback((meters: number | null) => {
+    setDistanceToActive(meters);
+  }, []);
+
+  const handleArrival = useCallback((_stopIndex: number) => {
+    setArrivedAtActive(true);
+    // Scroll to navBar so user sees "Você chegou!"
+    stopPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const handleAdvanceFromNav = useCallback(() => {
+    handleNext();
+  }, [handleNext]);
 
   if (isLoading) {
     return (
@@ -958,13 +1519,32 @@ export default function ReceptivoDetail() {
           <ReceptivoMap
             stops={stops}
             activeIndex={activeIndex}
+            navActive={navActive}
             onStopSelect={handleSelectStop}
+            onDistanceUpdate={handleDistanceUpdate}
+            onArrival={handleArrival}
+          />
+          <JourneyStrip stops={stops} activeIndex={activeIndex} onSelect={handleSelectStop} />
+        </div>
+      )}
+
+      {/* ── Navigation Bar ── */}
+      {!finished && stops.length > 0 && (
+        <div style={{ marginTop: 12, marginBottom: 4 }}>
+          <NavBar
+            navActive={navActive}
+            distanceMeters={distanceToActive}
+            arrived={arrivedAtActive}
+            activeStop={stops[activeIndex] ?? null}
+            isLastStop={activeIndex === stops.length - 1}
+            onActivate={handleActivateNav}
+            onAdvance={handleAdvanceFromNav}
           />
         </div>
       )}
 
       {/* ── Stop panel or closing ── */}
-      <div ref={stopPanelRef} style={{ marginTop: 16 }}>
+      <div ref={stopPanelRef} style={{ marginTop: 8 }}>
         {finished ? (
           <ClosingSection tourName={t.name} />
         ) : stops.length > 0 ? (

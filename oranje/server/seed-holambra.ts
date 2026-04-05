@@ -97,9 +97,11 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   {
     name: "Dolce Flor Holambra",
     _categorySlug: "docerias",
-    shortDesc: "Doceria com sorvetes e doces artesanais de apelo visual forte — pausa doce clássica de Holambra.",
+    shortDesc: "Doceria conhecida em Holambra pelo gelato de flores — uma das experiências mais instagramáveis da cidade. Ambiente pet friendly, com gelatos artesanais feitos com flores e ingredientes locais. Ideal para uma pausa doce a qualquer hora da tarde.",
     longDesc: "A Dolce Flor tem aquele apelo visual que funciona bem tanto para quem busca doces quanto para quem quer uma boa foto. Sorvetes artesanais, doces bem elaborados e um ambiente que conversa com o imaginário floral de Holambra. Abre a partir do meio-dia, todos os dias — boa parada para a tarde depois da Macena Flores ou antes de encerrar o dia no Parque Van Gogh. Fica no Morada das Flores, a cerca de 10 minutos do centro.",
-    address: "R. Solidagos, 125 – Morada das Flores, Holambra, SP, 13825-000", lat: -22.6395, lng: -47.0620,
+    address: "Rua Solidagos, 125 - Morada das Flores, Holambra - SP",
+    openingHours: "Segunda a Sexta: 13h às 18h30 | Sábado: 11h às 19h | Domingo: 11h às 18h30",
+    lat: null, lng: null, // coordenada a confirmar no Maps — anterior era duplicata do Zoet en Zout
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: false,
     isRecommended: true, isFeatured: false, isPartner: false,
@@ -990,16 +992,13 @@ export async function seedHolambra() {
       .values(insertValues)
       .onDuplicateKeyUpdate({
         set: {
-          // Apenas campos estruturais/geográficos — campos editoriais
-          // (shortDesc, longDesc, tags, dataPending) nunca são sobrescritos
-          // pelo seed de inicialização para preservar a curadoria do Oranje.
+          // REGRA: apenas campos estritamente estruturais são atualizados no upsert.
+          // isFeatured, isRecommended, dataPending, lat, lng NÃO são atualizados aqui —
+          // essas decisões são curatoriais/geográficas e só devem ser alteradas
+          // via scripts de curadoria explícitos, nunca pelo seed de boot.
           categoryId: insertValues.categoryId,
           priceRange: insertValues.priceRange,
           isFree: insertValues.isFree,
-          isRecommended: insertValues.isRecommended,
-          isFeatured: insertValues.isFeatured,
-          lat: insertValues.lat,
-          lng: insertValues.lng,
           updatedAt: new Date(),
         },
       });

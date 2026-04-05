@@ -18,8 +18,9 @@ import { AdminRoutes } from "@/components/AdminRoutes";
 import { AdminCategories } from "@/components/AdminCategories";
 import { AdminDriversMarketplace } from "@/components/AdminDriversMarketplace";
 import { AdminArticles } from "@/components/AdminArticles";
+import { AdminSiteRoutes } from "@/components/AdminSiteRoutes";
 
-type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles";
+type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes";
 
 const NAV_GROUPS = [
   {
@@ -36,6 +37,12 @@ const NAV_GROUPS = [
       { id: "routes" as AdminTab, icon: Map, label: "Roteiros" },
       { id: "articles" as AdminTab, icon: Edit, label: "Artigos" },
       { id: "partners" as AdminTab, icon: Tag, label: "Parceiros" },
+    ],
+  },
+  {
+    label: "Site",
+    items: [
+      { id: "site-routes" as AdminTab, icon: Sparkles, label: "Passeios no Site" },
     ],
   },
   {
@@ -303,6 +310,7 @@ export default function Admin() {
           {activeTab === "partners" && <AdminPartners />}
           {activeTab === "drivers" && <AdminDriversMarketplace />}
           {activeTab === "routes" && <AdminRoutes />}
+          {activeTab === "site-routes" && <AdminSiteRoutes />}
           {activeTab === "categories" && <AdminCategories />}
           {activeTab === "articles" && <AdminArticles />}
           {activeTab === "logs" && <AdminLogs />}

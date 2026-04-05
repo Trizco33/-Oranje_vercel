@@ -2,9 +2,10 @@ import { and, desc, eq, ilike, inArray, like, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser, ads, adminLogs, categories, events, favorites, magicLinks, notifications,
-  partners, placePhotos, places, routes, users, vouchers, drivers,
+  partners, placePhotos, places, routes, users, vouchers, drivers, siteRouteFeatures,
   type InsertAdminLog, type InsertCategory, type InsertEvent, type InsertMagicLink, type InsertPartner,
   type InsertPlace, type InsertRoute, type InsertVoucher, type MagicLink, type InsertDriver,
+  type InsertSiteRouteFeature,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -329,6 +330,56 @@ export async function deleteRoute(id: number) {
   const db = await getDb();
   if (!db) throw new Error("DB not available");
   await db.delete(routes).where(eq(routes.id, id));
+}
+
+// ─── Site Route Features (CMS-controlled site roteiro showcase) ──────────────
+export async function getSiteRouteFeatures() {
+  const db = await getDb();
+  if (!db) return [];
+  const features = await db
+    .select()
+    .from(siteRouteFeatures)
+    .where(eq(siteRouteFeatures.isActive, true))
+    .orderBy(desc(siteRouteFeatures.isFeatured), siteRouteFeatures.sortOrder);
+  if (features.length === 0) return [];
+  const routeIds = features.map((f) => f.routeId);
+  const routeRows = await db.select().from(routes).where(inArray(routes.id, routeIds));
+  const routeMap = new Map(routeRows.map((r) => [r.id, r]));
+  return features
+    .map((f) => ({ ...f, route: routeMap.get(f.routeId) ?? null }))
+    .filter((f) => f.route && f.route.isPublic);
+}
+
+export async function getAllSiteRouteFeatures() {
+  const db = await getDb();
+  if (!db) return [];
+  const features = await db
+    .select()
+    .from(siteRouteFeatures)
+    .orderBy(siteRouteFeatures.sortOrder);
+  if (features.length === 0) return [];
+  const routeIds = features.map((f) => f.routeId);
+  const routeRows = await db.select().from(routes).where(inArray(routes.id, routeIds));
+  const routeMap = new Map(routeRows.map((r) => [r.id, r]));
+  return features.map((f) => ({ ...f, route: routeMap.get(f.routeId) ?? null }));
+}
+
+export async function saveSiteRouteFeature(data: InsertSiteRouteFeature & { id?: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const { id, ...values } = data;
+  if (id) {
+    await db.update(siteRouteFeatures).set({ ...values, updatedAt: new Date() }).where(eq(siteRouteFeatures.id, id));
+    return { id };
+  }
+  const result = await db.insert(siteRouteFeatures).values(values);
+  return { id: (result as any).insertId };
+}
+
+export async function deleteSiteRouteFeature(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  await db.delete(siteRouteFeatures).where(eq(siteRouteFeatures.id, id));
 }
 
 // ─── Notifications ────────────────────────────────────────────────────────────

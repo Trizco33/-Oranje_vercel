@@ -395,6 +395,25 @@ export const siteSeo = mysqlTable("site_seo", {
 export type SiteSeo = typeof siteSeo.$inferSelect;
 export type InsertSiteSeo = typeof siteSeo.$inferInsert;
 
+// ─── Site Route Features (CMS-controlled site roteiro showcase) ──────────────
+// Each row pins a real app route to the site's "Passeios" block.
+// Admins pick the route, write optional editorial copy, set order & flags.
+export const siteRouteFeatures = mysqlTable("site_route_features", {
+  id: int("id").autoincrement().primaryKey(),
+  routeId: int("routeId").notNull().references(() => routes.id),
+  label: varchar("label", { length: 200 }),       // Override title shown on site (falls back to route.title)
+  subtitle: text("subtitle"),                       // Short editorial line (optional)
+  ctaText: varchar("ctaText", { length: 100 }),   // Button label (optional, fallback to default)
+  isFeatured: boolean("isFeatured").default(false).notNull(), // Single featured/hero slot
+  isActive: boolean("isActive").default(true).notNull(),      // Show on site
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SiteRouteFeature = typeof siteRouteFeatures.$inferSelect;
+export type InsertSiteRouteFeature = typeof siteRouteFeatures.$inferInsert;
+
 // ─── Push Subscriptions ───────────────────────────────────────────────────────
 export const pushSubscriptions = mysqlTable("push_subscriptions", {
   id: int("id").autoincrement().primaryKey(),

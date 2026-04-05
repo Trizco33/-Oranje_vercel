@@ -412,6 +412,25 @@ export const appRouter = router({
     adminDelete: adminProcedure.input(z.object({ id: z.number() })).mutation(({ input }) =>
       db.deleteRoute(input.id)
     ),
+
+    // ── Site Route Features — CMS-controlled showcase block on site ──────────
+    siteFeatures: publicProcedure.query(() => db.getSiteRouteFeatures()),
+    allSiteFeatures: adminProcedure.query(() => db.getAllSiteRouteFeatures()),
+    saveSiteFeature: adminProcedure
+      .input(z.object({
+        id: z.number().optional(),
+        routeId: z.number(),
+        label: z.string().optional(),
+        subtitle: z.string().optional(),
+        ctaText: z.string().optional(),
+        isFeatured: z.boolean().optional(),
+        isActive: z.boolean().optional(),
+        sortOrder: z.number().optional(),
+      }))
+      .mutation(({ input }) => db.saveSiteRouteFeature(input as any)),
+    deleteSiteFeature: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(({ input }) => db.deleteSiteRouteFeature(input.id)),
   }),
 
   // ── Notifications ─────────────────────────────────────────────────────────

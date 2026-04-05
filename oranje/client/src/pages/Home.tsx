@@ -40,10 +40,10 @@ const ANIMATIONS = `
     70%  { transform: translate(14px, -10px) scale(0.92); }
     100% { transform: translate(0px, 0px) scale(1); }
   }
-  /* Hero text: blur → sharp reveal */
+  /* Hero text: fade + slide reveal (mobile-safe, no filter) */
   @keyframes oranje-blur-reveal {
-    from { opacity: 0; filter: blur(10px); transform: translateY(16px); }
-    to   { opacity: 1; filter: blur(0);    transform: translateY(0); }
+    from { opacity: 0; transform: translateY(22px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
   }
   /* General fade + slide */
   @keyframes oranje-fade-up {
@@ -329,7 +329,7 @@ export default function Home() {
             <span style={{
               display: "block",
               animation: "oranje-blur-reveal 0.75s cubic-bezier(0.22,1,0.36,1) 120ms both",
-              willChange: "opacity, filter, transform",
+              willChange: "opacity, transform",
             }}>
               Descubra
             </span>
@@ -337,7 +337,7 @@ export default function Home() {
               display: "block",
               color: "#E65100",
               animation: "oranje-blur-reveal 0.75s cubic-bezier(0.22,1,0.36,1) 240ms both",
-              willChange: "opacity, filter, transform",
+              willChange: "opacity, transform",
             }}>
               Holambra
             </span>

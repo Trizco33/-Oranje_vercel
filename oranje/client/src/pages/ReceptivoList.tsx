@@ -223,10 +223,9 @@ function TourCard({ tour, featured = false, idx = 0 }: { tour: Tour; featured?: 
               fontWeight: 800,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.9)",
-              background: "rgba(0,0,0,0.45)",
-              border: "1px solid rgba(255,255,255,0.18)",
-              backdropFilter: "blur(8px)",
+              color: "rgba(255,255,255,0.92)",
+              background: "rgba(0,0,0,0.62)",
+              border: "1px solid rgba(255,255,255,0.22)",
               borderRadius: 6,
               padding: "3px 9px",
               fontFamily: "Montserrat, sans-serif",
@@ -268,11 +267,10 @@ function TourCard({ tour, featured = false, idx = 0 }: { tour: Tour; featured?: 
               display: "flex",
               alignItems: "center",
               gap: 4,
-              background: "rgba(0,0,0,0.5)",
-              backdropFilter: "blur(8px)",
+              background: "rgba(0,0,0,0.62)",
               borderRadius: 20,
               padding: "4px 10px",
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.14)",
             }}>
               <Clock size={10} color="rgba(255,255,255,0.7)" />
               <span style={{
@@ -289,11 +287,10 @@ function TourCard({ tour, featured = false, idx = 0 }: { tour: Tour; featured?: 
             display: "flex",
             alignItems: "center",
             gap: 4,
-            background: "rgba(0,0,0,0.5)",
-            backdropFilter: "blur(8px)",
+            background: "rgba(0,0,0,0.62)",
             borderRadius: 20,
             padding: "4px 10px",
-            border: "1px solid rgba(255,255,255,0.1)",
+            border: "1px solid rgba(255,255,255,0.14)",
           }}>
             <MapPin size={10} color="#E65100" />
             <span style={{ fontSize: 11, color: "#fff", fontWeight: 700, fontFamily: "Montserrat, sans-serif" }}>
@@ -304,7 +301,12 @@ function TourCard({ tour, featured = false, idx = 0 }: { tour: Tour; featured?: 
       </div>
 
       {/* ── Info section ── */}
-      <div style={{ padding: featured ? "16px 18px 18px" : "14px 16px 16px" }}>
+      <div style={{
+        padding: featured ? "16px 18px 18px" : "14px 16px 16px",
+        background: featured
+          ? "linear-gradient(145deg, #0D2E22 0%, #102918 50%, #091F17 100%)"
+          : "linear-gradient(145deg, #0B2920 0%, #091F17 100%)",
+      }}>
         <h3 style={{
           fontSize: featured ? 17 : 15,
           fontWeight: 800,

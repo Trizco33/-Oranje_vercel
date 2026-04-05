@@ -20,7 +20,10 @@ export const placesRouter = router({
       try {
         let query = db.select().from(places);
 
-        const conditions: any[] = [eq(places.status, "active")];
+        const conditions: any[] = [
+          eq(places.status, "active"),
+          eq(places.dataPending, false),   // nunca retornar lugares pendentes de validação
+        ];
         if (input.categoryId) {
           conditions.push(eq(places.categoryId, input.categoryId));
         }

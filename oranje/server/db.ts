@@ -111,12 +111,13 @@ export async function getPlaces(opts?: {
 }) {
   const db = await getDb();
   if (!db) return [];
-  const conditions = [eq(places.status, "active")];
+  const conditions = [
+    eq(places.status, "active"),
+    eq(places.dataPending, false),  // sempre excluir lugares pendentes de validação
+  ];
   if (opts?.categoryId) conditions.push(eq(places.categoryId, opts.categoryId));
   if (opts?.featured) conditions.push(eq(places.isFeatured, true));
   if (opts?.recommended) conditions.push(eq(places.isRecommended, true));
-  // Structural safeguard: dataPending=true places are NEVER returned in featured/recommended queries
-  if (opts?.featured || opts?.recommended) conditions.push(eq(places.dataPending, false));
   if (opts?.partner) conditions.push(eq(places.isPartner, true));
   if (opts?.search) {
     conditions.push(

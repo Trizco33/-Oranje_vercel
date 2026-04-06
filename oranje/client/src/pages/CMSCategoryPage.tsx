@@ -221,6 +221,11 @@ function CafesContent() {
         café com confeitaria de qualidade. As sobremesas fazem jus ao cuidado com que o café é preparado — e o visual
         do lugar é bonito o suficiente para merecer umas fotos.
       </Para>
+      <Para>
+        E a <PlaceLink href="/app/lugar/6428">Oma Beppie</PlaceLink> é parada obrigatória para quem quer experimentar
+        a confeitaria holandesa mais tradicional de Holambra. As famosas stroopwafels — biscoitos de caramelo
+        característicos da Holanda — saem frescos de lá. Um sabor que resume bem a herança cultural da cidade.
+      </Para>
       <SectionTitle>O que pedir</SectionTitle>
       <Para>
         Em Holambra, os cafés costumam ter opções que vão além do básico. Pergunte sempre sobre a bebida do dia ou a
@@ -236,6 +241,7 @@ function CafesContent() {
       <PlaceCard name="Zoet en Zout" desc="Café artesanal e vitrine holandesa — referência atual dos cafés de Holambra" href="/app/lugar/4212" />
       <PlaceCard name="Lotus Café" desc="Ambiente contemporâneo, ideal para trabalhar ou relaxar" href="/app/lugar/27" />
       <PlaceCard name="Kéndi Confeitaria" desc="Confeitaria de qualidade unida a um café cuidadoso" href="/app/lugar/29" />
+      <PlaceCard name="Oma Beppie" desc="Confeitaria tradicional holandesa — stroopwafels e doces típicos de Holambra" href="/app/lugar/6428" />
     </div>
   );
 }

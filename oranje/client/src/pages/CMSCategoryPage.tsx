@@ -204,7 +204,7 @@ function CafesContent() {
       <Para>
         Não espere volume. Espere qualidade e autenticidade — que é o que Holambra entrega quando está no seu melhor.
       </Para>
-      <SectionTitle>O café que vale a visita</SectionTitle>
+      <SectionTitle>Os cafés que valem a visita</SectionTitle>
       <Para>
         O <PlaceLink href="/app/lugar/4212">Zoet en Zout</PlaceLink> é a referência atual da cena de cafés em Holambra.
         O nome em holandês — que significa "doce e salgado" — já diz a proposta: um espaço que cruza bem o café
@@ -212,25 +212,30 @@ function CafesContent() {
         lugar que faz você querer chegar cedo e sair tarde.
       </Para>
       <Para>
-        Para o café da manhã ou um almoço leve com alma local, o{" "}
-        <PlaceLink href="/app/lugar/36">De Immigrant Gastro Café</PlaceLink> abre todos os dias a partir das 8h —
-        com cardápio que conta a história dos imigrantes que fundaram Holambra. Não é um café no sentido estrito,
-        mas é um dos melhores lugares da cidade para começar o dia com calma.
+        Para uma experiência mais contemporânea, o <PlaceLink href="/app/lugar/27">Lotus Café</PlaceLink> traz um
+        ambiente que equilibra tranquilidade e estilo. Ótimo para trabalhar remotamente, encontrar alguém ou
+        simplesmente passar a tarde lendo.
+      </Para>
+      <Para>
+        Já a <PlaceLink href="/app/lugar/29">Kéndi Confeitaria</PlaceLink> é a escolha perfeita para quem quer unir
+        café com confeitaria de qualidade. As sobremesas fazem jus ao cuidado com que o café é preparado — e o visual
+        do lugar é bonito o suficiente para merecer umas fotos.
       </Para>
       <SectionTitle>O que pedir</SectionTitle>
       <Para>
-        Pergunte sempre sobre a especialidade do dia — em Holambra, os lugares menores costumam ter preparos que
-        não estão no cardápio fixo. Se for no inverno, os drinks quentes com especiarias são difíceis de resistir.
-        No calor da Expoflora, o café gelado é o melhor companheiro de tarde.
+        Em Holambra, os cafés costumam ter opções que vão além do básico. Pergunte sempre sobre a bebida do dia ou a
+        especialidade da casa — você vai descobrir preparos que não encontra em grandes redes. Se for no inverno,
+        aposte nos drinks quentes com especiarias. Se for no calor da Expoflora, o café gelado é o melhor amigo.
       </Para>
       <SectionTitle>Quando ir</SectionTitle>
       <Para>
-        O melhor horário é entre 8h e 10h — frescor do dia, menos movimento, atendimento mais cuidadoso. Nos fins de
-        semana da Expoflora, os espaços enchem cedo. Chegue antes das 9h ou prefira o período da tarde, quando o
-        movimento cai e a experiência fica mais tranquila.
+        O horário da manhã, entre 8h e 10h, é o melhor para quem quer evitar filas e aproveitar o frescor do dia. Nos
+        fins de semana de Expoflora, os cafés ficam cheios já antes das 9h — chegue cedo ou escolha o período da tarde,
+        quando o movimento cai um pouco.
       </Para>
-      <PlaceCard name="Zoet en Zout" desc="Café artesanal e vitrine holandesa — o melhor café de Holambra" href="/app/lugar/4212" />
-      <PlaceCard name="De Immigrant Gastro Café" desc="Café da manhã e almoço com alma local — aberto todos os dias a partir das 8h" href="/app/lugar/36" />
+      <PlaceCard name="Zoet en Zout" desc="Café artesanal e vitrine holandesa — referência atual dos cafés de Holambra" href="/app/lugar/4212" />
+      <PlaceCard name="Lotus Café" desc="Ambiente contemporâneo, ideal para trabalhar ou relaxar" href="/app/lugar/27" />
+      <PlaceCard name="Kéndi Confeitaria" desc="Confeitaria de qualidade unida a um café cuidadoso" href="/app/lugar/29" />
     </div>
   );
 }
@@ -267,6 +272,12 @@ function BaresContent() {
         autorais e uma seleção de música que transforma qualquer noite em um programa especial. Um dos endereços mais
         diferentes que Holambra oferece para quem quer algo além do comum.
       </Para>
+      <SectionTitle>Para noites mais longas</SectionTitle>
+      <Para>
+        O <PlaceLink href="/app/lugar/43">Quintal dos Avós Gastrobar</PlaceLink> une gastronomia e drinks num espaço
+        com cara de casa de família — rústico, caloroso e com cardápio que vai muito além do petisco comum. Um dos
+        endereços mais queridos de Holambra para quem quer passar a noite bem.
+      </Para>
       <SectionTitle>Dicas para a noite em Holambra</SectionTitle>
       <Para>
         Holambra não é cidade de virada de madrugada — os bares costumam fechar antes de meia-noite. A experiência
@@ -275,6 +286,7 @@ function BaresContent() {
       </Para>
       <PlaceCard name="Restaurante e Cervejaria Holambier" desc="Produção própria, rótulos exclusivos e espaço completo — o bar mais completo de Holambra" href="/app/lugar/26" />
       <PlaceCard name="Fratelli Wine Bar" desc="Vinhos bem selecionados, ambiente intimista e drinks autorais" href="/app/lugar/6418" />
+      <PlaceCard name="Quintal dos Avós Gastrobar" desc="Gastronomia e drinks num ambiente rústico e acolhedor — um dos mais queridos da cidade" href="/app/lugar/43" />
       <PlaceCard name="Tulipa's Lounge" desc="Ambiente sofisticado, drinks autorais e boa música" href="/app/lugar/44" />
     </div>
   );
@@ -332,6 +344,16 @@ function PontosTuristicosContent() {
         <PlaceLink href="/app/lugar/6424">Museu da Cultura e História de Holambra</PlaceLink> é o ponto de partida
         certo — acervo que conta a imigração holandesa, o desenvolvimento da cidade e a identidade que permanece.
       </Para>
+      <SectionTitle>Para ir com crianças e família</SectionTitle>
+      <Para>
+        A <PlaceLink href="/app/lugar/21">Cidade das Crianças</PlaceLink> é a atração mais indicada para famílias com
+        os pequenos. O espaço tem infraestrutura pensada para crianças, com brinquedos, segurança e muito espaço para
+        correr — enquanto os adultos respiram e tomam aquele café merecido.
+      </Para>
+      <Para>
+        A <PlaceLink href="/app/lugar/23">Nossa Prainha</PlaceLink> completa o leque de opções ao ar livre, com área
+        de lazer à beira d'água, espaço para piqueniques e momentos em família num ambiente tranquilo.
+      </Para>
       <SectionTitle>Como se planejar</SectionTitle>
       <Para>
         A maioria dos parques de Holambra tem horários de visitação e, em alguns casos, cobrança de entrada. Confira
@@ -350,6 +372,8 @@ function PontosTuristicosContent() {
       <PlaceCard name="Parque Van Gogh" desc="Jardins temáticos e cenário único inspirado no pintor holandês" href="/app/lugar/19" />
       <PlaceCard name="Bloemen Park" desc="Flores, jardins e tranquilidade no coração de Holambra" href="/app/lugar/32" />
       <PlaceCard name="Macena Flores" desc="Canteiros coloridos, beleza simples e abundante" href="/app/lugar/34" />
+      <PlaceCard name="Cidade das Crianças" desc="Atração ideal para famílias com crianças — brinquedos, segurança e muito espaço" href="/app/lugar/21" />
+      <PlaceCard name="Nossa Prainha" desc="Espaço de lazer à beira d'água, perfeito para relaxar em família" href="/app/lugar/23" />
       <PlaceCard name="Museu da Cultura e História de Holambra" desc="Acervo sobre a imigração holandesa e a história da cidade" href="/app/lugar/6424" />
     </div>
   );
@@ -447,7 +471,7 @@ const STATIC_CONFIG: Record<string, {
     h1: "Melhores Cafés em Holambra",
     subtitle: "Café artesanal e pausas com identidade — os espaços que valem a parada em Holambra",
     seoTitle: "Melhores Cafés em Holambra — Guia Oranje",
-    seoDescription: "Os melhores cafés de Holambra: Zoet en Zout e De Immigrant Gastro Café — descubra onde tomar um bom café na cidade das flores com curadoria do Oranje.",
+    seoDescription: "Os melhores cafés de Holambra: Zoet en Zout, Lotus Café e Kéndi Confeitaria — descubra onde tomar um bom café na cidade das flores com curadoria do Oranje.",
     cta: { label: "Ver cafés no App", href: "/app" },
     FallbackContent: CafesContent,
   },
@@ -455,7 +479,7 @@ const STATIC_CONFIG: Record<string, {
     h1: "Bares & Drinks em Holambra",
     subtitle: "Cerveja artesanal, vinhos autorais e lounges para noites memoráveis em Holambra",
     seoTitle: "Bares e Drinks em Holambra — Guia Oranje",
-    seoDescription: "Guia completo dos melhores bares de Holambra: Cervejaria Holambier, Fratelli Wine Bar, Tulipa's Lounge e mais. Vida noturna com identidade local.",
+    seoDescription: "Guia completo dos melhores bares de Holambra: Cervejaria Holambier, Quintal dos Avós Gastrobar, Fratelli Wine Bar, Tulipa's Lounge e mais. Vida noturna com identidade local.",
     cta: { label: "Ver bares no App", href: "/app" },
     FallbackContent: BaresContent,
   },

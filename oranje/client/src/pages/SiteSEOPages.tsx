@@ -34,10 +34,10 @@ const roteiroContent = `
 Um dia em Holambra é tempo suficiente para sair diferente de como entrou. A cidade é compacta, bonita e surpreendentemente generosa com quem chega disposto a descobrí-la sem pressa.
 
 ## Manhã (8h - 12h)
-Comece o dia com um bom café da manhã. A recomendação é escolher entre o Lotus Café, o Café Moinho, a Kéndi Confeitaria ou a Oma Beppie — onde você encontra as famosas stroopwafels, aquele biscoito holandês de caramelo que vicia. É uma forma deliciosa de entrar no clima da cidade logo cedo, antes do movimento do dia começar de verdade.
+Comece o dia com um bom café da manhã. A recomendação do Oranje é o Zoet en Zout — café artesanal com vitrine holandesa, um espaço que reflete perfeitamente o espírito da cidade. Outra boa opção é o De Immigrant Gastro Café, aberto a partir das 8h, com cardápio que conta a história dos imigrantes que fundaram Holambra. É uma forma deliciosa de entrar no clima cedo, antes do movimento do dia começar de verdade.
 
 ## Almoço (12h - 14h)
-Na hora do almoço, siga para o Boulevard Holandês, uma das áreas mais agradáveis da cidade para comer bem sem pressa. Entre as indicações do Oranje estão o Casa Bela Restaurante, o Martin Holandesa, o Villa Girassol, o De Immigrant Garden e o Di Komê Garage Bistrô. São lugares com personalidade própria, que combinam bem com a proposta de um passeio desacelerado por Holambra.
+Na hora do almoço, siga para o Boulevard Holandês, uma das áreas mais agradáveis da cidade para comer bem sem pressa. Entre as indicações do Oranje estão o Casa Bela Restaurante, o Martin Holandesa, o Villa Girassol e o De Immigrant Restaurante Garden. São lugares com personalidade própria, que combinam bem com a proposta de um passeio desacelerado por Holambra.
 
 ## Tarde (14h - 18h)
 A tarde pede ritmo contemplativo. Visite o moinho — um dos símbolos mais fotografados da cidade — ou siga direto para o Bloemen Park. Lá, a plantação de girassóis voltada para o pôr do sol rende fotos que não têm preço e cria uma das cenas mais bonitas que Holambra oferece ao longo do dia. Chegue com tempo para apreciar sem correria.

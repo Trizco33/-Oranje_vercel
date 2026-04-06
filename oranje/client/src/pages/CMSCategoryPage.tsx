@@ -137,10 +137,10 @@ function RestaurantesContent() {
       </Para>
       <SectionTitle>Onde comer bem em Holambra</SectionTitle>
       <Para>
-        Para um almoço tranquilo com vista para o lago, o{" "}
-        <PlaceLink href="/app/lugar/6">Deck do Lago</PlaceLink> é referência. As mesas à beira d'água e o cardápio
-        descomplicado fazem dele um dos favoritos de quem visita Holambra pela primeira vez — e de quem já volta pela
-        décima.
+        Para um almoço tranquilo com ambiente descontraído, o{" "}
+        <PlaceLink href="/app/lugar/2614">Lago do Holandês</PlaceLink> é referência. Com cardápio acessível e
+        atmosfera de cidade pequena, é um dos favoritos de quem visita Holambra pela primeira vez — e de quem já
+        volta pela décima.
       </Para>
       <Para>
         Quem busca culinária holandesa de verdade encontra no{" "}
@@ -161,13 +161,15 @@ function RestaurantesContent() {
         cardápio autoral em ambiente garden. Os dois juntos formam um dos endereços mais ricos da cidade.
       </Para>
       <Para>
-        Se a fome for por hambúrguer artesanal de qualidade, o{" "}
+        Para hambúrguer artesanal, o{" "}
         <PlaceLink href="/app/lugar/42">Cowburguer</PlaceLink> entrega exatamente isso — sem firulas, com muito sabor.
+        E o recém-chegado <PlaceLink href="/app/lugar/13946">Don Hamburgo</PlaceLink> já está conquistando quem busca
+        hambúrguer de qualidade em Holambra.
       </Para>
       <Para>
-        E a{" "}
-        <PlaceLink href="/app/lugar/3824">De Immigrant Restaurante Garden</PlaceLink> fecha essa lista com um ambiente arborizado e
-        agradável, ideal para quem quer comer bem num ambiente que combina com a natureza da cidade.
+        Para esfiha e comida árabe num endereço descontraído,{" "}
+        <PlaceLink href="/app/lugar/13952">Casa da Esfiha</PlaceLink> é a novidade que cabe bem no roteiro —
+        funcionando diariamente a partir das 17h.
       </Para>
       <SectionTitle>Dicas de quem conhece</SectionTitle>
       <Para>
@@ -180,11 +182,14 @@ function RestaurantesContent() {
         antes do pico e pedir a recomendação do dia ao garçom. Em Holambra, isso costuma render as melhores surpresas.
       </Para>
       <PlaceCard name="Martin Holandesa" desc="Confeitaria e restaurante holandês — referência histórica no Boulevard Holandês" href="/app/lugar/2613" />
-      <PlaceCard name="Deck do Lago" desc="Vista para o lago, cardápio descomplicado, excelente para almoço" href="/app/lugar/6" />
+      <PlaceCard name="Lago do Holandês" desc="Cardápio acessível, atmosfera de cidade pequena — ótimo para almoço" href="/app/lugar/2614" />
       <PlaceCard name="Casa Bela Restaurante" desc="Ambiente familiar, farto e acolhedor" href="/app/lugar/24" />
+      <PlaceCard name="Restaurante Villa Girassol" desc="Culinária regional e ambiente agradável no coração de Holambra" href="/app/lugar/25" />
       <PlaceCard name="De Immigrant Gastro Café" desc="Café da manhã, almoço e história da imigração holandesa — desde as 8h" href="/app/lugar/36" />
       <PlaceCard name="De Immigrant Restaurante Garden" desc="Cardápio autoral em ambiente garden — vizinho ao Gastro Café" href="/app/lugar/3824" />
       <PlaceCard name="Cowburguer" desc="Hambúrguer artesanal de qualidade em Holambra" href="/app/lugar/42" />
+      <PlaceCard name="Don Hamburgo" desc="Novo hambúrgueria artesanal — já conquistando quem visita Holambra" href="/app/lugar/13946" />
+      <PlaceCard name="Casa da Esfiha" desc="Esfiha e opções árabes — aberto diariamente a partir das 17h" href="/app/lugar/13952" />
     </div>
   );
 }
@@ -193,48 +198,39 @@ function CafesContent() {
   return (
     <div>
       <Para>
-        Holambra e o café têm uma relação especial. Não é só por causa do clima ameno ou das ruas floridas — é porque
-        os cafés da cidade entenderam que o momento do café importa tanto quanto a bebida em si. Aqui, sentar para
-        tomar um café é uma pausa de verdade, não uma corrida.
+        Holambra é uma cidade que sabe desacelerar — e o café é parte essencial dessa experiência. A cena de cafés
+        na cidade é enxuta mas com identidade própria: são lugares onde a pausa é intencional e o detalhe conta.
       </Para>
       <Para>
-        Se você veio a Holambra e não parou em nenhum café, você perdeu uma parte importante da experiência.
+        Não espere volume. Espere qualidade e autenticidade — que é o que Holambra entrega quando está no seu melhor.
       </Para>
-      <SectionTitle>Os cafés que valem a visita</SectionTitle>
+      <SectionTitle>O café que vale a visita</SectionTitle>
       <Para>
-        O <PlaceLink href="/app/lugar/2">Café Moinho</PlaceLink> é parada obrigatória. O espaço remete à arquitetura
-        holandesa, o café é bem feito e os acompanhamentos saem frescos da cozinha. É o tipo de lugar que faz você
-        querer ficar mais uma hora do que havia planejado.
-      </Para>
-      <Para>
-        Para uma experiência mais contemporânea, o <PlaceLink href="/app/lugar/27">Lotus Café</PlaceLink> traz um
-        ambiente que equilibra tranquilidade e estilo. Ótimo para trabalhar remotamente, encontrar alguém ou
-        simplesmente passar a tarde lendo.
+        O <PlaceLink href="/app/lugar/4212">Zoet en Zout</PlaceLink> é a referência atual da cena de cafés em Holambra.
+        O nome em holandês — que significa "doce e salgado" — já diz a proposta: um espaço que cruza bem o café
+        artesanal com opções de vitrine, num ambiente que traduz o charme da herança holandesa da cidade. É o tipo de
+        lugar que faz você querer chegar cedo e sair tarde.
       </Para>
       <Para>
-        Já a <PlaceLink href="/app/lugar/29">Kéndi Confeitaria</PlaceLink> é a escolha perfeita para quem quer unir
-        café com confeitaria de qualidade. As sobremesas fazem jus ao cuidado com que o café é preparado — e o visual
-        do lugar é bonito o suficiente para merecer umas fotos.
+        Para o café da manhã ou um almoço leve com alma local, o{" "}
+        <PlaceLink href="/app/lugar/36">De Immigrant Gastro Café</PlaceLink> abre todos os dias a partir das 8h —
+        com cardápio que conta a história dos imigrantes que fundaram Holambra. Não é um café no sentido estrito,
+        mas é um dos melhores lugares da cidade para começar o dia com calma.
       </Para>
       <SectionTitle>O que pedir</SectionTitle>
       <Para>
-        Em Holambra, os cafés costumam ter opções que vão além do básico. Pergunte sempre sobre a bebida do dia ou a
-        especialidade da casa — você vai descobrir preparos que não encontra em grandes redes. Se for no inverno,
-        aposte nos drinks quentes com especiarias. Se for no calor da Expoflora, o café gelado é o melhor amigo.
-      </Para>
-      <Para>
-        Quase todos os cafés da cidade também servem algum tipo de comida — de torradas e bolos caseiros a sanduíches
-        leves. Não hesite em combinar o café da manhã com um passeio pelo jardim mais próximo.
+        Pergunte sempre sobre a especialidade do dia — em Holambra, os lugares menores costumam ter preparos que
+        não estão no cardápio fixo. Se for no inverno, os drinks quentes com especiarias são difíceis de resistir.
+        No calor da Expoflora, o café gelado é o melhor companheiro de tarde.
       </Para>
       <SectionTitle>Quando ir</SectionTitle>
       <Para>
-        O horário da manhã, entre 8h e 10h, é o melhor para quem quer evitar filas e aproveitar o frescor do dia. Nos
-        fins de semana de Expoflora, os cafés ficam cheios já antes das 9h — chegue cedo ou escolha o período da tarde,
-        quando o movimento cai um pouco.
+        O melhor horário é entre 8h e 10h — frescor do dia, menos movimento, atendimento mais cuidadoso. Nos fins de
+        semana da Expoflora, os espaços enchem cedo. Chegue antes das 9h ou prefira o período da tarde, quando o
+        movimento cai e a experiência fica mais tranquila.
       </Para>
-      <PlaceCard name="Café Moinho" desc="Arquitetura holandesa, café bem feito e acompanhamentos frescos" href="/app/lugar/2" />
-      <PlaceCard name="Lotus Café" desc="Ambiente contemporâneo, ideal para trabalhar ou relaxar" href="/app/lugar/27" />
-      <PlaceCard name="Kéndi Confeitaria" desc="Confeitaria de qualidade unida a um café cuidadoso" href="/app/lugar/29" />
+      <PlaceCard name="Zoet en Zout" desc="Café artesanal e vitrine holandesa — o melhor café de Holambra" href="/app/lugar/4212" />
+      <PlaceCard name="De Immigrant Gastro Café" desc="Café da manhã e almoço com alma local — aberto todos os dias a partir das 8h" href="/app/lugar/36" />
     </div>
   );
 }
@@ -248,50 +244,37 @@ function BaresContent() {
         conhecem, a conversa flui e o tempo passa sem que ninguém perceba.
       </Para>
       <Para>
-        De botequins descontraídos a lounges mais sofisticados, a cidade tem opções para noites tranquilas ou programas
-        em grupo com muito mais sabor do que o esperado.
-      </Para>
-      <SectionTitle>Bares com identidade</SectionTitle>
-      <Para>
-        O <PlaceLink href="/app/lugar/4">Boteco do Holandês</PlaceLink> é o jeito mais honesto de começar essa lista.
-        Sem pretensão, com chopp gelado, petiscos caprichados e aquela atmosfera de boteco de bairro que você quer
-        encontrar em cada cidade que visita — e raramente acha.
-      </Para>
-      <Para>
-        Para quem prefere algo mais tranquilo e com drinks bem executados, o{" "}
-        <PlaceLink href="/app/lugar/13">Quintal Yah</PlaceLink> entrega um ambiente aconchegante com cardápio de drinks
-        criativos que combinam com o ritmo leve de Holambra.
-      </Para>
-      <Para>
-        O <PlaceLink href="/app/lugar/12">Deck 237</PlaceLink> traz um espaço ao ar livre que funciona especialmente
-        bem nas noites mais frescas — boa música, boa companhia e uma vista que vale o deslocamento.
+        A oferta de bares em Holambra é enxuta mas bem escolhida — cada um com proposta diferente, todos com
+        identidade local.
       </Para>
       <SectionTitle>Cerveja artesanal em Holambra</SectionTitle>
       <Para>
         A cultura cervejeira tem raízes fortes em Holambra — afinal, a herança holandesa e belga está no DNA da cidade.
         O <PlaceLink href="/app/lugar/26">Restaurante e Cervejaria Holambier</PlaceLink> é a expressão mais completa
-        disso: produção própria, rótulos exclusivos e um espaço que convida a ficar.
+        disso: produção própria, rótulos exclusivos e um espaço que convida a ficar. É o bar mais completo da cidade
+        — gastronomia, cerveja e atmosfera num só endereço.
       </Para>
+      <SectionTitle>Para vinhos e drinks autorais</SectionTitle>
       <Para>
-        A <PlaceLink href="/app/lugar/11">Cervejaria Seo Carneiro</PlaceLink> também merece atenção — um dos mais queridos
-        pelos moradores locais, com ambiente descontraído e o tipo de petisco que combina com qualquer cerveja.
+        A <PlaceLink href="/app/lugar/6418">Fratelli Wine Bar</PlaceLink> é a opção certa para quem prefere vinhos bem
+        selecionados e um ambiente mais intimista. Endereço relativamente novo em Holambra, mas já com frequentadores
+        fiéis — principalmente em noites de semana, quando a experiência fica ainda mais tranquila.
       </Para>
-      <SectionTitle>Para noites mais longas</SectionTitle>
+      <SectionTitle>Para noites mais elegantes</SectionTitle>
       <Para>
-        O <PlaceLink href="/app/lugar/43">Quintal dos Avós Gastrobar</PlaceLink> une gastronomia e drinks num espaço
-        com cara de casa de família — rústico, caloroso e com cardápio que vai muito além do petisco comum.
+        Se a noite pedir um clima mais sofisticado, a{" "}
+        <PlaceLink href="/app/lugar/44">Tulipa's Lounge</PlaceLink> é a resposta certa: ambiente cuidado, drinks
+        autorais e uma seleção de música que transforma qualquer noite em um programa especial. Um dos endereços mais
+        diferentes que Holambra oferece para quem quer algo além do comum.
       </Para>
+      <SectionTitle>Dicas para a noite em Holambra</SectionTitle>
       <Para>
-        E se a noite pedir um clima mais elegante, a{" "}
-        <PlaceLink href="/app/lugar/44">Tulipa's Lounge</PlaceLink> é a resposta certa: ambiente sofisticado, drinks
-        autorais e uma seleção de música que transforma qualquer terça em um programa especial.
+        Holambra não é cidade de virada de madrugada — os bares costumam fechar antes de meia-noite. A experiência
+        noturna aqui é mais sobre ritmo do que sobre horário: chegar cedo, pedir com calma e deixar a conversa
+        conduzir o tempo. Nos fins de semana, confirme o horário de funcionamento antes de sair.
       </Para>
-      <PlaceCard name="Boteco do Holandês" desc="Botequim autêntico, chopp gelado e petiscos caprichados" href="/app/lugar/4" />
-      <PlaceCard name="Cervejaria Seo Carneiro" desc="Querida pelos locais, cervejaria artesanal com ambiente leve e descontraído" href="/app/lugar/11" />
-      <PlaceCard name="Deck 237" desc="Espaço ao ar livre, boa música e view agradável" href="/app/lugar/12" />
-      <PlaceCard name="Quintal Yah" desc="Drinks criativos, ambiente tranquilo" href="/app/lugar/13" />
-      <PlaceCard name="Cervejaria Holambier" desc="Produção própria, rótulos exclusivos e espaço completo" href="/app/lugar/26" />
-      <PlaceCard name="Quintal dos Avós Gastrobar" desc="Gastronomia e drinks num ambiente rústico e acolhedor" href="/app/lugar/43" />
+      <PlaceCard name="Restaurante e Cervejaria Holambier" desc="Produção própria, rótulos exclusivos e espaço completo — o bar mais completo de Holambra" href="/app/lugar/26" />
+      <PlaceCard name="Fratelli Wine Bar" desc="Vinhos bem selecionados, ambiente intimista e drinks autorais" href="/app/lugar/6418" />
       <PlaceCard name="Tulipa's Lounge" desc="Ambiente sofisticado, drinks autorais e boa música" href="/app/lugar/44" />
     </div>
   );
@@ -331,16 +314,23 @@ function PontosTuristicosContent() {
         perto, em canteiros cuidados e com opção de compra. A beleza do lugar está na simplicidade e na abundância de
         cor.
       </Para>
-      <SectionTitle>Para ir com crianças</SectionTitle>
+      <SectionTitle>Cultura, história e os pontos que definem a cidade</SectionTitle>
       <Para>
-        A <PlaceLink href="/app/lugar/21">Cidade das Crianças</PlaceLink> é a atração mais indicada para famílias com
-        os pequenos. O espaço tem infraestrutura pensada para crianças, com brinquedos, segurança e muito espaço para
-        correr — enquanto os adultos respiram e tomam aquele café merecido.
+        O <PlaceLink href="/app/lugar/2616">Moinho Povos Unidos</PlaceLink> é um dos símbolos mais fotografados de
+        Holambra — o moinho holandês que ficou famoso como cenário e como representação da herança cultural dos
+        imigrantes que fundaram a cidade. É parada obrigatória.
       </Para>
       <Para>
-        O <PlaceLink href="/app/lugar/22">Parque Vitória</PlaceLink> e a{" "}
-        <PlaceLink href="/app/lugar/23">Nossa Prainha</PlaceLink> completam o leque de opções ao ar livre, com área
-        verde, água e espaço para piqueniques e momentos em família.
+        A <PlaceLink href="/app/lugar/4215">Rua dos Guarda-Chuvas</PlaceLink> — com seus guarda-chuvas coloridos
+        suspensos sobre a rua — é um dos pontos mais instagramáveis de Holambra. Simples, bonito e completamente
+        único. A <PlaceLink href="/app/lugar/4213">Deck do Amor</PlaceLink> e a{" "}
+        <PlaceLink href="/app/lugar/4214">Praça Vitória Régia</PlaceLink> completam um circuito de pontos fotográficos
+        que fazem parte do mesmo trajeto romântico pelo centro da cidade.
+      </Para>
+      <Para>
+        Para quem quer entender de onde Holambra veio, o{" "}
+        <PlaceLink href="/app/lugar/6424">Museu da Cultura e História de Holambra</PlaceLink> é o ponto de partida
+        certo — acervo que conta a imigração holandesa, o desenvolvimento da cidade e a identidade que permanece.
       </Para>
       <SectionTitle>Como se planejar</SectionTitle>
       <Para>
@@ -353,12 +343,14 @@ function PontosTuristicosContent() {
         sol de Holambra pede respeito.
       </Para>
       <PlaceCard name="Expoflora" desc="O maior festival de flores da América Latina — acontece todo setembro em Holambra" href="/app/lugar/5" />
+      <PlaceCard name="Moinho Povos Unidos" desc="Símbolo de Holambra — o moinho holandês mais fotografado da cidade" href="/app/lugar/2616" />
+      <PlaceCard name="Rua dos Guarda-Chuvas" desc="O ponto mais instagramável de Holambra — guarda-chuvas coloridos suspensos" href="/app/lugar/4215" />
+      <PlaceCard name="Deck do Amor" desc="Mirante romântico — um dos pontos mais bonitos do circuito central" href="/app/lugar/4213" />
+      <PlaceCard name="Praça Vitória Régia" desc="Praça central do circuito fotográfico de Holambra" href="/app/lugar/4214" />
       <PlaceCard name="Parque Van Gogh" desc="Jardins temáticos e cenário único inspirado no pintor holandês" href="/app/lugar/19" />
-      <PlaceCard name="Cidade das Crianças" desc="Atração ideal para famílias com crianças" href="/app/lugar/21" />
-      <PlaceCard name="Parque Vitória" desc="Área verde com lago, ótimo para piquenique" href="/app/lugar/22" />
-      <PlaceCard name="Nossa Prainha" desc="Espaço de lazer à beira d'água, perfeito para relaxar" href="/app/lugar/23" />
       <PlaceCard name="Bloemen Park" desc="Flores, jardins e tranquilidade no coração de Holambra" href="/app/lugar/32" />
       <PlaceCard name="Macena Flores" desc="Canteiros coloridos, beleza simples e abundante" href="/app/lugar/34" />
+      <PlaceCard name="Museu da Cultura e História de Holambra" desc="Acervo sobre a imigração holandesa e a história da cidade" href="/app/lugar/6424" />
     </div>
   );
 }
@@ -447,31 +439,31 @@ const STATIC_CONFIG: Record<string, {
     h1: "Melhores Restaurantes em Holambra",
     subtitle: "Uma curadoria real dos lugares para comer bem na capital brasileira das flores",
     seoTitle: "Melhores Restaurantes em Holambra — Guia Oranje",
-    seoDescription: "Descubra os melhores restaurantes de Holambra com curadoria do Oranje. Do Deck do Lago ao Martin Holandesa, veja onde comer bem com avaliações reais.",
+    seoDescription: "Descubra os melhores restaurantes de Holambra com curadoria do Oranje. Do Lago do Holandês ao Martin Holandesa, veja onde comer bem com avaliações reais.",
     cta: { label: "Ver restaurantes no App", href: "/app" },
     FallbackContent: RestaurantesContent,
   },
   "melhores-cafes-de-holambra": {
     h1: "Melhores Cafés em Holambra",
-    subtitle: "De bistrôs aconchegantes a confeitarias autorais — os cafés que valem a parada",
+    subtitle: "Café artesanal e pausas com identidade — os espaços que valem a parada em Holambra",
     seoTitle: "Melhores Cafés em Holambra — Guia Oranje",
-    seoDescription: "Os melhores cafés de Holambra em um só lugar. Café Moinho, Lotus Café, Kéndi Confeitaria e mais — descubra onde tomar um bom café na cidade das flores.",
+    seoDescription: "Os melhores cafés de Holambra: Zoet en Zout e De Immigrant Gastro Café — descubra onde tomar um bom café na cidade das flores com curadoria do Oranje.",
     cta: { label: "Ver cafés no App", href: "/app" },
     FallbackContent: CafesContent,
   },
   "bares-e-drinks-em-holambra": {
     h1: "Bares & Drinks em Holambra",
-    subtitle: "Botequins com personalidade, cerveja artesanal e lounges para noites memoráveis",
+    subtitle: "Cerveja artesanal, vinhos autorais e lounges para noites memoráveis em Holambra",
     seoTitle: "Bares e Drinks em Holambra — Guia Oranje",
-    seoDescription: "Guia completo dos melhores bares de Holambra: Boteco do Holandês, Cervejaria Holambier, Tulipa's Lounge e mais. Vida noturna com identidade local.",
+    seoDescription: "Guia completo dos melhores bares de Holambra: Cervejaria Holambier, Fratelli Wine Bar, Tulipa's Lounge e mais. Vida noturna com identidade local.",
     cta: { label: "Ver bares no App", href: "/app" },
     FallbackContent: BaresContent,
   },
   "onde-tirar-fotos-em-holambra": {
     h1: "Pontos Turísticos de Holambra",
-    subtitle: "Parques, flores e experiências que só existem aqui — os lugares que definem a cidade",
+    subtitle: "Parques, flores, o moinho e a Rua dos Guarda-Chuvas — os lugares que definem a cidade",
     seoTitle: "Pontos Turísticos de Holambra — Guia Oranje",
-    seoDescription: "Os principais pontos turísticos de Holambra: Expoflora, Parque Van Gogh, Cidade das Crianças e mais. Saiba o que visitar, quando ir e como se planejar.",
+    seoDescription: "Os principais pontos turísticos de Holambra: Expoflora, Moinho Povos Unidos, Rua dos Guarda-Chuvas, Parque Van Gogh e mais. Saiba o que visitar e como se planejar.",
     cta: { label: "Explorar pontos turísticos", href: "/app" },
     FallbackContent: PontosTuristicosContent,
   },

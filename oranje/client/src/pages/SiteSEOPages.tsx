@@ -34,7 +34,7 @@ const roteiroContent = `
 Um dia em Holambra é tempo suficiente para sair diferente de como entrou. A cidade é compacta, bonita e surpreendentemente generosa com quem chega disposto a descobrí-la sem pressa.
 
 ## Manhã (8h - 12h)
-Comece o dia com um bom café da manhã. A recomendação do Oranje é o Zoet en Zout — café artesanal com vitrine holandesa, um dos espaços mais característicos da cidade. Outras boas opções são o Lotus Café, a Kéndi Confeitaria e a Oma Beppie — confeitaria tradicional onde você encontra as famosas stroopwafels, aquele biscoito holandês de caramelo que vicia. É uma forma deliciosa de entrar no clima da cidade logo cedo.
+Comece o dia com um bom café da manhã. A recomendação do Oranje é o Zoet en Zout — café artesanal com vitrine holandesa, um dos espaços mais característicos da cidade. Outras boas opções são o Lotus Café, a Kéndi Cafeteria e a Oma Beppie — confeitaria tradicional onde você encontra as famosas stroopwafels, aquele biscoito holandês de caramelo que vicia. É uma forma deliciosa de entrar no clima da cidade logo cedo.
 
 ## Almoço (12h - 14h)
 Na hora do almoço, siga para o Boulevard Holandês, uma das áreas mais agradáveis da cidade para comer bem sem pressa. Entre as indicações do Oranje estão o Casa Bela Restaurante, o Martin Holandesa, o Villa Girassol e o De Immigrant Restaurante Garden. São lugares com personalidade própria, que combinam bem com a proposta de um passeio desacelerado por Holambra.

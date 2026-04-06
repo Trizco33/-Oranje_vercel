@@ -217,9 +217,10 @@ function CafesContent() {
         simplesmente passar a tarde lendo.
       </Para>
       <Para>
-        Já a <PlaceLink href="/app/lugar/29">Kéndi Confeitaria</PlaceLink> é a escolha perfeita para quem quer unir
-        café com confeitaria de qualidade. As sobremesas fazem jus ao cuidado com que o café é preparado — e o visual
-        do lugar é bonito o suficiente para merecer umas fotos.
+        Já a <PlaceLink href="/app/lugar/29">Kéndi Cafeteria</PlaceLink> é a escolha perfeita para quem quer unir
+        café com confeitaria de qualidade. Os brigadeiros gourmet são a referência da casa — especialmente o recheado
+        com morango — e o croissant é um dos mais elogiados da cidade. Nos cafés, destaque para o método japonês
+        Hario V60. Ambiente climatizado e charmoso, ótimo para uma pausa ou encomendas.
       </Para>
       <Para>
         E a <PlaceLink href="/app/lugar/6428">Oma Beppie</PlaceLink> é parada obrigatória para quem quer experimentar
@@ -240,7 +241,7 @@ function CafesContent() {
       </Para>
       <PlaceCard name="Zoet en Zout" desc="Café artesanal e vitrine holandesa — referência atual dos cafés de Holambra" href="/app/lugar/4212" />
       <PlaceCard name="Lotus Café" desc="Ambiente contemporâneo, ideal para trabalhar ou relaxar" href="/app/lugar/27" />
-      <PlaceCard name="Kéndi Confeitaria" desc="Confeitaria de qualidade unida a um café cuidadoso" href="/app/lugar/29" />
+      <PlaceCard name="Kéndi Cafeteria" desc="Brigadeiros gourmet, croissant premiado e método Hario V60 — confeitaria fina em Holambra" href="/app/lugar/29" />
       <PlaceCard name="Oma Beppie" desc="Confeitaria tradicional holandesa — stroopwafels e doces típicos de Holambra" href="/app/lugar/6428" />
     </div>
   );
@@ -485,7 +486,7 @@ const STATIC_CONFIG: Record<string, {
     h1: "Melhores Cafés em Holambra",
     subtitle: "Café artesanal e pausas com identidade — os espaços que valem a parada em Holambra",
     seoTitle: "Melhores Cafés em Holambra — Guia Oranje",
-    seoDescription: "Os melhores cafés de Holambra: Zoet en Zout, Lotus Café e Kéndi Confeitaria — descubra onde tomar um bom café na cidade das flores com curadoria do Oranje.",
+    seoDescription: "Os melhores cafés de Holambra: Zoet en Zout, Lotus Café, Kéndi Cafeteria e Oma Beppie — descubra onde tomar um bom café na cidade das flores com curadoria do Oranje.",
     cta: { label: "Ver cafés no App", href: "/app" },
     FallbackContent: CafesContent,
   },

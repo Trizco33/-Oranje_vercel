@@ -19,7 +19,6 @@ import {
   Map,
   Clock,
   Heart,
-  Users,
   Search,
   ChevronDown,
   Navigation,
@@ -174,20 +173,6 @@ export default function SiteHome() {
     ),
     [allPlaces]
   );
-
-  // Resolve specific curated route links by title keyword — falls back to /roteiros
-  const routeLinkByKeyword = useMemo(() => {
-    const find = (keywords: string[]): string => {
-      const match = (publicRoutes as any[]).find((r: any) =>
-        keywords.some((kw) => r.title?.toLowerCase().includes(kw.toLowerCase()))
-      );
-      return match ? `/app/roteiro/${match.id}` : "/roteiros";
-    };
-    return {
-      romantico: find(["romântic", "romantic", "casal"]),
-      familia: find(["família", "familia", "família"]),
-    };
-  }, [publicRoutes]);
 
   // Build categoryId → name map for display
   const catMap = useMemo(() => {
@@ -1288,89 +1273,7 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 7) QUAL É O SEU ROTEIRO — Beige background (navegação real) ═══ */}
-      <section className="site-section" style={{ background: "#F5F5DC" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <Reveal>
-            <SectionHeader
-              label="Qual é o seu estilo?"
-              labelColor="#00251A"
-              title="Escolha o Roteiro Certo para Você"
-              subtitle="Passeios curados para cada tipo de viajante — clique e comece a explorar"
-            />
-          </Reveal>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: 20,
-            }}
-          >
-            {[
-              {
-                icon: <MapPin size={28} strokeWidth={1.5} />,
-                title: "Fim de semana em Holambra",
-                desc: "Um dia completo pelos principais pontos — do Moinho ao Lago, com paradas nos melhores restaurantes.",
-                cta: "Ver roteiro de 1 dia",
-                link: "/roteiro-1-dia-em-holambra",
-              },
-              {
-                icon: <Heart size={28} strokeWidth={1.5} />,
-                title: "A dois em Holambra",
-                desc: "Experiências românticas com curadoria especial para casais — jardins, vinhos e pôr do sol.",
-                cta: "Ver roteiro romântico",
-                link: routeLinkByKeyword.romantico,
-              },
-              {
-                icon: <Users size={28} strokeWidth={1.5} />,
-                title: "Com a família",
-                desc: "Passeios ao ar livre, restaurantes pet-friendly e atrações para crianças e adultos juntos.",
-                cta: "Ver roteiro família",
-                link: routeLinkByKeyword.familia,
-              },
-            ].map((item, i) => (
-              <Reveal key={item.title} delay={i * 80}>
-                <Link to={item.link} style={{ textDecoration: "none", display: "block", height: "100%" }}>
-                  <div className="site-card card-press" style={{ padding: "32px 28px", textAlign: "center", background: "#FFFFFF", display: "flex", flexDirection: "column", height: "100%" }}>
-                    <div
-                      style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 16,
-                        background: "rgba(0,37,26,0.04)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 auto 20px",
-                        color: "#00251A",
-                      }}
-                    >
-                      {item.icon}
-                    </div>
-                    <h3 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "#00251A", marginBottom: 10 }}>
-                      {item.title}
-                    </h3>
-                    <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6, flex: 1 }}>
-                      {item.desc}
-                    </p>
-                    <span
-                      style={{
-                        display: "inline-flex", alignItems: "center", gap: 4, justifyContent: "center",
-                        marginTop: 20, fontSize: "0.8125rem", fontWeight: 600, color: "#E65100",
-                      }}
-                    >
-                      {item.cta} <ArrowRight size={13} />
-                    </span>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ 8) PARCEIROS — White background ═══ */}
+      {/* ═══ 7) PARCEIROS — White background ═══ */}
       <section className="site-section" style={{ background: "#FFFFFF" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>

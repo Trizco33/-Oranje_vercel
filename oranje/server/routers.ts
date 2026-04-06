@@ -157,7 +157,7 @@ export const appRouter = router({
 
   // ── Categories ────────────────────────────────────────────────────────────
   categories: router({
-    list: publicProcedure.query(() => db.getCategories()),
+    list: publicProcedure.query(() => db.getCategoriesPublic()),
     bySlug: publicProcedure.input(z.object({ slug: z.string() })).query(({ input }) =>
       db.getCategoryBySlug(input.slug)
     ),

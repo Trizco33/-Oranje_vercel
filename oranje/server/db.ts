@@ -73,6 +73,18 @@ export async function getCategories() {
   return db.select().from(categories).orderBy(categories.name);
 }
 
+/** Returns only categories that have at least 1 confirmed, non-pending public place. */
+export async function getCategoriesPublic() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(categories).where(
+    sql`${categories.id} IN (
+      SELECT categoryId FROM places
+      WHERE dataPending = 0 AND status = 'active' AND categoryId IS NOT NULL
+    )`
+  ).orderBy(categories.name);
+}
+
 export async function getCategoryBySlug(slug: string) {
   const db = await getDb();
   if (!db) return undefined;

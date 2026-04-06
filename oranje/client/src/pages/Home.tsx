@@ -1,5 +1,5 @@
 import { getLoginUrl } from "@/const";
-import { CalendarDays, ChevronRight, MapPin, Search, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight, Play, Sparkles, TrendingUp } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Search, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight, Play, Sparkles, TrendingUp, Sandwich } from "lucide-react";
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAnyReceptivoProgress, type ReceptivoProgress } from "@/lib/receptivoAnalytics";
@@ -169,13 +169,14 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  restaurantes: <UtensilsCrossed size={20} />,
-  pizzarias:    <Pizza size={20} />,
-  bares:        <Wine size={20} />,
-  cafes:        <Coffee size={20} />,
-  turistico:    <Flower2 size={20} />,
-  hospedagem:   <Hotel size={20} />,
-  eventos:      <Calendar size={20} />,
+  restaurantes:   <UtensilsCrossed size={20} />,
+  pizzarias:      <Pizza size={20} />,
+  bares:          <Wine size={20} />,
+  cafes:          <Coffee size={20} />,
+  turistico:      <Flower2 size={20} />,
+  hospedagem:     <Hotel size={20} />,
+  eventos:        <Calendar size={20} />,
+  hamburguerias:  <Sandwich size={20} />,
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────

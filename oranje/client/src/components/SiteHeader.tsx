@@ -17,13 +17,13 @@ const ICON_MAP: Record<string, React.ElementType> = {
 };
 
 const DEFAULT_NAV_ITEMS = [
-  { label: "Início", href: "/", icon: "Compass", visible: true, order: 0 },
-  { label: "O que fazer", href: "/o-que-fazer-em-holambra", icon: "MapPin", visible: true, order: 1 },
-  { label: "Roteiros", href: "/roteiros", icon: "Calendar", visible: true, order: 2 },
-  { label: "Mapa", href: "/mapa", icon: "MapPin", visible: true, order: 3 },
-  { label: "Blog", href: "/blog", icon: "BookOpen", visible: true, order: 4 },
-  { label: "Parceiros", href: "/parceiros", icon: "Users", visible: true, order: 5 },
-  { label: "Contato", href: "/contato", icon: "MessageCircle", visible: true, order: 6 },
+  { label: "Início",             href: "/",                        icon: "Compass",     visible: true, order: 0 },
+  { label: "Receptivo Oranje",   href: "/app/receptivo",           icon: "MapPin",      visible: true, order: 1 },
+  { label: "Explorar",           href: "/app/explorar",            icon: "Compass",     visible: true, order: 2 },
+  { label: "O que fazer",        href: "/o-que-fazer-em-holambra", icon: "MapPin",      visible: true, order: 3 },
+  { label: "Mapa",               href: "/mapa",                    icon: "MapPin",      visible: true, order: 4 },
+  { label: "Blog",               href: "/blog",                    icon: "BookOpen",    visible: true, order: 5 },
+  { label: "Contato",            href: "/contato",                 icon: "MessageCircle", visible: true, order: 6 },
 ];
 
 export default function SiteHeader() {

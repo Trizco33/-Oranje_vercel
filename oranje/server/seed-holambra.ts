@@ -21,13 +21,14 @@ import { categories, places, type InsertCategory, type InsertPlace } from "../dr
 
 // ─── Categorias necessárias para os 21 lugares ────────────────────────────────
 const HOLAMBRA_CATEGORIES: InsertCategory[] = [
-  { name: "Restaurantes",          slug: "restaurantes", icon: "🍽️", description: "Restaurantes, lanchonetes e culinária local", isActive: true },
-  { name: "Bares & Cervejarias",   slug: "bares",        icon: "🍺", description: "Bares, cervejarias e pubs", isActive: true },
-  { name: "Cafés & Confeitarias",  slug: "cafes",        icon: "☕", description: "Cafeterias, confeitarias e padarias", isActive: true },
-  { name: "Docerias",              slug: "docerias",     icon: "🎂", description: "Docerias, bombonerias e chocolaterias", isActive: true },
-  { name: "Pizzarias",             slug: "pizzarias",    icon: "🍕", description: "Pizzarias e delivery de pizza", isActive: true },
-  { name: "Hotéis & Pousadas",     slug: "hoteis",       icon: "🏨", description: "Hotéis, pousadas e hospedagem", isActive: true },
-  { name: "Parques & Atrações",    slug: "parques",      icon: "🌳", description: "Parques, jardins e atrações turísticas", isActive: true },
+  { name: "Restaurantes",          slug: "restaurantes",   icon: "🍽️", description: "Restaurantes, lanchonetes e culinária local", isActive: true },
+  { name: "Bares & Cervejarias",   slug: "bares",          icon: "🍺", description: "Bares, cervejarias e pubs", isActive: true },
+  { name: "Cafés & Confeitarias",  slug: "cafes",          icon: "☕", description: "Cafeterias, confeitarias e padarias", isActive: true },
+  { name: "Docerias",              slug: "docerias",       icon: "🎂", description: "Docerias, bombonerias e chocolaterias", isActive: true },
+  { name: "Pizzarias",             slug: "pizzarias",      icon: "🍕", description: "Pizzarias e delivery de pizza", isActive: true },
+  { name: "Hamburguerias",         slug: "hamburguerias",  icon: "🍔", description: "Hamburguerias artesanais em Holambra", isActive: true },
+  { name: "Hotéis & Pousadas",     slug: "hoteis",         icon: "🏨", description: "Hotéis, pousadas e hospedagem", isActive: true },
+  { name: "Parques & Atrações",    slug: "parques",        icon: "🌳", description: "Parques, jardins e atrações turísticas", isActive: true },
   { name: "Pontos Turísticos",     slug: "pontos-turisticos", icon: "🌸", description: "Pontos de interesse e patrimônio histórico", isActive: true },
 ];
 
@@ -867,6 +868,83 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["igreja", "religiao", "cultura", "historia", "arquitetura", "holandes"], status: "active",
     dataPending: true,
+  },
+
+  // ── Novos lugares gastronômicos — entorno do Holambra Garden Hotel ────────
+
+  {
+    name: "Don Hamburgo",
+    _categorySlug: "hamburguerias",
+    shortDesc: "Hamburgueria artesanal no centro de Holambra — opção forte para almoço e jantar perto do Garden Hotel",
+    longDesc: "O Don Hamburgo é a referência em hambúrgueres artesanais de Holambra, localizado no centro da cidade na Av. das Tulipas. Cardápio focado em combinações generosas, com ingredientes de qualidade e montagem caprichada. Funciona tanto no almoço quanto no jantar, com atendimento constante — o que o torna uma das melhores opções para hóspedes do entorno que querem algo sólido sem buscar o boulevard. Ambiente descontraído, preço justo e fácil acesso de quem está hospedado na região central.",
+    address: "Av. das Tulipas, 44 – Centro, Holambra – SP", lat: null, lng: null,
+    city: "Holambra", state: "SP", country: "Brasil",
+    phone: "+55 19 97100-7176",
+    openingHours: "Diariamente 10h30–15h e 18h–23h",
+    priceRange: "$$", isFree: false,
+    isRecommended: true, isFeatured: false, isPartner: false,
+    tags: ["hamburguer", "artesanal", "central", "almoco", "jantar", "lanche", "casual", "perto_do_garden"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Fiore Forneria",
+    _categorySlug: "pizzarias",
+    shortDesc: "Forneria com pizzas e massas artesanais em quiosque aconchegante — noites de Qui a Dom",
+    longDesc: "A Fiore Forneria opera num quiosque charmoso no Seção A de Holambra, com proposta de forno a lenha artesanal. O cardápio gira em torno de pizzas e fornadas autorais, com ingredientes frescos e receitas que fogem do padrão das pizzarias de bairro. Funciona de quinta a domingo no período noturno — uma boa opção para jantar em noites que a demanda nos restaurantes maiores está alta.",
+    address: "R. Iris, Quiosque 1 – Secção A, Holambra – SP", lat: null, lng: null,
+    city: "Holambra", state: "SP", country: "Brasil",
+    phone: "+55 19 99402-5403",
+    openingHours: "Qui–Sab 18h–22h | Dom 18h–21h",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["pizza", "forneria", "jantar", "artesanal", "forno_a_lenha", "seccao_a"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Vecchio Onofre",
+    _categorySlug: "pizzarias",
+    shortDesc: "Pizzaria tradicional no bairro Groot — de terça a domingo no jantar",
+    longDesc: "O Vecchio Onofre é uma pizzaria de bairro com personalidade, instalada no bairro Groot de Holambra. O cardápio segue a linha italiana clássica — massas, pizzas e antepastos — com ambiente familiar e atendimento acolhedor. Funciona de terça a domingo no período noturno. Uma boa alternativa para quem quer fugir do centro e encontrar algo mais tranquilo no jantar.",
+    address: "Av. das Dálias, 753 – Groot, Holambra – SP", lat: null, lng: null,
+    city: "Holambra", state: "SP", country: "Brasil",
+    phone: "+55 19 3802-5270",
+    openingHours: "Ter–Dom 18h–22h30",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["pizza", "italiano", "jantar", "groot", "bairro", "familia", "massas"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Casa da Esfiha",
+    _categorySlug: "restaurantes",
+    shortDesc: "Esfihas e salgados árabes frescos — opção rápida de jantar todos os dias da semana",
+    longDesc: "A Casa da Esfiha é uma das poucas opções de culinária árabe em Holambra, com foco em esfihas, kibe e salgados frescos preparados diariamente. Funciona no período noturno todos os dias, com atendimento ágil — ideal para uma refeição rápida antes ou depois de passear pelo centro. Preço acessível e boa para grupos pequenos ou refeições informais.",
+    address: "R. Campo do Pouso, 826, Holambra – SP", lat: null, lng: null,
+    city: "Holambra", state: "SP", country: "Brasil",
+    phone: "+55 19 98961-0366",
+    openingHours: "Diariamente 17h–22h40",
+    priceRange: "$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["esfiha", "arabe", "lanche", "jantar", "rapido", "acessivel", "diario"], status: "active",
+    dataPending: false,
+  },
+
+  {
+    name: "Italia No Box Holambra",
+    _categorySlug: "pizzarias",
+    shortDesc: "Culinária italiana em formato casual — massas e pizzas de Ter a Sáb, almoço e jantar",
+    longDesc: "O Italia No Box Holambra traz culinária italiana num formato descomplicado, com cardápio de massas e pizzas para consumo no local ou retirada. Funciona em dois turnos de terça a sábado — almoço e jantar — o que facilita encaixar no roteiro de quem está na cidade por mais de um dia. Boa opção complementar às pizzarias tradicionais do centro, com uma proposta mais prática e acessível.",
+    address: "Holambra – SP", lat: null, lng: null,
+    city: "Holambra", state: "SP", country: "Brasil",
+    phone: "+55 19 98101-1798",
+    openingHours: "Ter–Sab 11h–16h e 18h–21h30",
+    priceRange: "$$", isFree: false,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["italiano", "massas", "pizza", "almoco", "jantar", "casual", "dois_turnos"], status: "active",
+    dataPending: false,
   },
 ];
 

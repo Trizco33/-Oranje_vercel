@@ -265,6 +265,13 @@ function BaresContent() {
         disso: produção própria, rótulos exclusivos e um espaço que convida a ficar. É o bar mais completo da cidade
         — gastronomia, cerveja e atmosfera num só endereço.
       </Para>
+      <Para>
+        Para um clima mais intimista e ao ar livre, a{" "}
+        <PlaceLink href="/app/lugar/6334">Cervejaria Seo Carneiro</PlaceLink> é um achado. Funciona no próprio jardim
+        da moradia dos proprietários — um biergarten premiado, com mais de 10 tipos de cervejas artesanais como IPA e
+        Fada Azul, tábuas de degustação e o famoso Croquete Holandês. Pet friendly e com área kids, é ideal para
+        grupos e tardes de domingo.
+      </Para>
       <SectionTitle>Para vinhos e drinks autorais</SectionTitle>
       <Para>
         A <PlaceLink href="/app/lugar/6418">Fratelli Wine Bar</PlaceLink> é a opção certa para quem prefere vinhos bem
@@ -291,6 +298,7 @@ function BaresContent() {
         conduzir o tempo. Nos fins de semana, confirme o horário de funcionamento antes de sair.
       </Para>
       <PlaceCard name="Restaurante e Cervejaria Holambier" desc="Produção própria, rótulos exclusivos e espaço completo — o bar mais completo de Holambra" href="/app/lugar/26" />
+      <PlaceCard name="Cervejaria Seo Carneiro" desc="Biergarten premiado, mais de 10 cervejas artesanais, ambiente jardim e Croquete Holandês" href="/app/lugar/6334" />
       <PlaceCard name="Fratelli Wine Bar" desc="Vinhos bem selecionados, ambiente intimista e drinks autorais" href="/app/lugar/6418" />
       <PlaceCard name="Quintal dos Avós Gastrobar" desc="Gastronomia e drinks num ambiente rústico e acolhedor — um dos mais queridos da cidade" href="/app/lugar/43" />
       <PlaceCard name="Tulipa's Lounge" desc="Ambiente sofisticado, drinks autorais e boa música" href="/app/lugar/44" />
@@ -485,7 +493,7 @@ const STATIC_CONFIG: Record<string, {
     h1: "Bares & Drinks em Holambra",
     subtitle: "Cerveja artesanal, vinhos autorais e lounges para noites memoráveis em Holambra",
     seoTitle: "Bares e Drinks em Holambra — Guia Oranje",
-    seoDescription: "Guia completo dos melhores bares de Holambra: Cervejaria Holambier, Quintal dos Avós Gastrobar, Fratelli Wine Bar, Tulipa's Lounge e mais. Vida noturna com identidade local.",
+    seoDescription: "Guia completo dos melhores bares de Holambra: Cervejaria Holambier, Cervejaria Seo Carneiro, Fratelli Wine Bar, Quintal dos Avós Gastrobar, Tulipa's Lounge e mais.",
     cta: { label: "Ver bares no App", href: "/app" },
     FallbackContent: BaresContent,
   },

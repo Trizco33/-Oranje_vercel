@@ -111,11 +111,42 @@ Feature de **passeios turísticos guiados** — independente dos roteiros existe
 **Mapa:** Leaflet com marcadores numerados, polyline do percurso, parada ativa em laranja
 **UX:** Cover → Mapa + painel da parada ativa → Navegação (próxima/anterior) → Encerramento elegante
 
+### Base de Lugares (atualizada abr/2026)
+
+**40 lugares públicos** (dataPending=false, status=active) em **9 categorias**:
+- Restaurantes (1): 9 lugares + Casa da Esfiha
+- Hotéis (15): 9 lugares
+- Pontos Turísticos (4): 6 lugares
+- Pizzarias (13): 3 + Fiore Forneria + Vecchio Onofre + Italia No Box Holambra
+- Parques (16): 3 lugares
+- Bares (14): 3 lugares
+- **Hamburguerias (18): Don Hamburgo** ← nova categoria + 1 lugar
+- Docerias (17): 1 lugar
+- Cafés (2): 1 lugar
+
+**Categorias OCULTAS** (0 lugares públicos — filtradas pelo getCategoriesPublic()):
+- Bares & Drinks, Compras, Hospedagem
+
+### Regras de Navegação (site e app)
+
+**Menu hamburger site (SiteHeader.tsx DEFAULT_NAV_ITEMS):**
+- Início → /
+- Receptivo Oranje → /app/receptivo
+- Explorar → /app/explorar
+- O que fazer → /o-que-fazer-em-holambra
+- Mapa → /mapa
+- Blog → /blog
+- Contato → /contato
+(Removidos: "Roteiros", "Parceiros")
+
+**Tab bar do app (TabBar.tsx):** Home / Explorar / Eventos / Favoritos / Passeios
+
 ### Problemas Conhecidos
 
 1. **Hero do CMS** — validação muito rígida (`subtitle` obrigatório, `buttonUrl`/`imageUrl` exigem URL absoluta)
 2. **Mock data** — algumas páginas ainda usam `useMockData.ts` para dados secundários
 3. **Sem banco MySQL local** — DATABASE_URL precisa ser MySQL de produção (Railway)
+4. **lat/lng dos novos lugares** — Don Hamburgo, Fiore Forneria, Vecchio Onofre, Casa da Esfiha, Italia No Box Holambra têm lat/lng=null (precisam de verificação no Maps)
 
 ---
 

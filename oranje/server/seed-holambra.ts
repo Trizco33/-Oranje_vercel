@@ -678,7 +678,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
   },
 
   {
-    name: "Di Komê",
+    name: "Di Komê Garage Bistrô",
     _categorySlug: "restaurantes",
     shortDesc: "Restaurante casual com culinária variada — almoço e jantar no centro de Holambra",
     longDesc: null,
@@ -858,11 +858,11 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     dataPending: true,
   },
   {
-    name: "Igreja Nossa Senhora das Flores",
+    name: "Igreja Matriz do Divino Espírito Santo",
     _categorySlug: "pontos-turisticos",
-    shortDesc: "Igreja matriz de Holambra com arquitetura holandesa — símbolo religioso e cultural da cidade",
+    shortDesc: "Principal templo católico de Holambra com arquitetura moderna decorada com flores — símbolo religioso e cultural da cidade",
     longDesc: null,
-    address: "Rua dos Imigrantes, Holambra – SP", lat: -22.6285, lng: -47.0593,
+    address: "Alameda Maurício de Nassau, 688 - Centro, Holambra - SP", lat: -22.6285, lng: -47.0593,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$", isFree: true,
     isRecommended: false, isFeatured: false, isPartner: false,
@@ -1182,9 +1182,9 @@ export async function seedHolambra() {
       longDesc: "O Parque Linear do Lago é o pulmão verde de Holambra — uma faixa de área pública à beira do Lago do Holandês com pista de caminhada, bancos, iluminação e vegetação nativa. É onde os moradores caminham de manhã, onde as famílias levam as crianças no fim de tarde e onde você consegue uma vista do lago mais tranquila do que na Praça Vitória Régia. O parque se estende do Deck do Amor até a Nossa Prainha, conectando os dois pontos mais visitados do eixo do lago. Entrada livre, sempre aberto.",
     },
     {
-      name: "Igreja Nossa Senhora das Flores",
+      name: "Igreja Matriz do Divino Espírito Santo",
       city: "Holambra",
-      longDesc: "A Igreja Nossa Senhora das Flores é a igreja matriz de Holambra e um dos pontos de referência mais reconhecíveis da cidade. A arquitetura com elementos holandeses, o sino alto e o adro amplo contam a história de uma comunidade que construiu sua identidade religiosa junto com a identidade cultural. É um dos pontos de encontro da vida comunitária de Holambra: missas frequentes, festas religiosas e eventos que mobilizam a cidade ao longo do ano. Para quem visita, a fachada e o entorno são uma parada fotográfica natural e gratuita — dois minutos a pé do centro histórico.",
+      longDesc: "A Igreja Matriz do Divino Espírito Santo é o principal templo católico de Holambra, conhecida por sua arquitetura moderna e minimalista, decorada com muitas flores. Localizada na Alameda Maurício de Nassau, 688, fica próxima ao Deck do Amor e à Expoflora. Missas aos sábados às 19h30 e domingos às 10h — programação pode variar em datas festivas, recomenda-se verificar o Instagram da paróquia para atualizações.",
     },
   ];
 

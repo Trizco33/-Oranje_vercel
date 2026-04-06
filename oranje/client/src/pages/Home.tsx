@@ -1,5 +1,5 @@
 import { getLoginUrl } from "@/const";
-import { CalendarDays, ChevronRight, MapPin, Search, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight, Play, Sparkles, TrendingUp, Sandwich } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Search, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight, Play, TrendingUp, Sandwich } from "lucide-react";
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAnyReceptivoProgress, type ReceptivoProgress } from "@/lib/receptivoAnalytics";
@@ -251,10 +251,16 @@ export default function Home() {
       }}>
         {/* dark overlay over photo (only when image present) */}
         {heroImageUrl && (
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to bottom, rgba(0,24,18,0.72) 0%, rgba(0,24,18,0.38) 40%, rgba(0,24,18,0.88) 100%)",
-          }} />
+          <>
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to right, rgba(0,24,18,0.92) 0%, rgba(0,24,18,0.65) 60%, rgba(0,24,18,0.3) 100%)",
+            }} />
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to top, #001812 0%, transparent 55%)",
+            }} />
+          </>
         )}
 
         {/* Ambient orb 1 — top-right orange */}
@@ -300,78 +306,73 @@ export default function Home() {
             opacity: heroReady ? 1 : 0,
             transform: heroReady ? "translateY(0)" : "translateY(14px)",
             transition: "opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1)",
-            marginBottom: 14,
+            marginBottom: 18,
             alignSelf: "flex-start",
           }}>
             <span style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: 5,
-              padding: "4px 11px",
-              borderRadius: 7,
-              background: "rgba(230,81,0,0.18)",
-              border: "1px solid rgba(230,81,0,0.35)",
-              fontSize: 9,
-              fontWeight: 800,
-              letterSpacing: "0.12em",
+              gap: 7,
+              padding: "6px 14px",
+              borderRadius: 20,
+              background: "rgba(0,77,64,0.45)",
+              border: "1px solid rgba(245,245,220,0.2)",
+              fontSize: "0.68rem",
+              fontWeight: 600,
+              letterSpacing: "0.16em",
               textTransform: "uppercase",
-              color: "#E65100",
+              color: "rgba(245,245,220,0.9)",
               fontFamily: "Montserrat, sans-serif",
-              /* shimmer sweep */
-              backgroundImage: "linear-gradient(90deg, rgba(230,81,0,0.18) 0%, rgba(255,120,30,0.45) 50%, rgba(230,81,0,0.18) 100%)",
-              backgroundSize: "200% 100%",
-              animation: "oranje-shimmer 3.5s linear 1.2s infinite",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
             }}>
-              <Sparkles size={9} />
-              Guia Cultural
+              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#E65100", flexShrink: 0 }} />
+              O novo jeito de explorar Holambra
             </span>
           </div>
 
-          {/* Title line 1 */}
+          {/* Título */}
           <h1 style={{
             fontFamily: "'Montserrat', system-ui, sans-serif",
-            fontSize: "clamp(1.85rem, 8vw, 2.6rem)",
-            fontWeight: 800,
+            fontSize: "clamp(2rem, 9vw, 2.8rem)",
+            fontWeight: 300,
             lineHeight: 1.08,
             color: "#FFFFFF",
             margin: 0,
-            letterSpacing: "-0.025em",
-          }}>
-            <span style={{
-              display: "block",
-              opacity: heroReady ? 1 : 0,
-              transform: heroReady ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
-              transition: "opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s",
-              willChange: "opacity, transform",
-            }}>
-              Descubra
-            </span>
-            <span style={{
-              display: "block",
-              color: "#E65100",
-              opacity: heroReady ? 1 : 0,
-              transform: heroReady ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
-              transition: "opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.22s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.22s",
-              willChange: "opacity, transform",
-            }}>
-              Holambra
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <p style={{
-            fontSize: 14,
-            color: "rgba(255,255,255,0.72)",
-            marginTop: 10,
-            marginBottom: 24,
-            fontFamily: "Montserrat, sans-serif",
-            lineHeight: 1.5,
+            letterSpacing: "-0.02em",
             opacity: heroReady ? 1 : 0,
-            transform: heroReady ? "translateY(0)" : "translateY(18px)",
-            transition: "opacity 0.65s cubic-bezier(0.22,1,0.36,1) 0.35s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.35s",
+            transform: heroReady ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
+            transition: "opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s",
             willChange: "opacity, transform",
           }}>
-            A cidade das flores espera por você
+            Descubra Holambra
+            <br />
+            <em style={{
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: "rgba(255,255,255,0.9)",
+              fontSize: "0.92em",
+            }}>
+              de um jeito mais vivo
+            </em>
+          </h1>
+
+          {/* Subtítulo */}
+          <p style={{
+            fontSize: 14,
+            color: "rgba(255,255,255,0.7)",
+            marginTop: 14,
+            marginBottom: 24,
+            fontFamily: "Montserrat, sans-serif",
+            lineHeight: 1.6,
+            maxWidth: 320,
+            opacity: heroReady ? 1 : 0,
+            transform: heroReady ? "translateY(0)" : "translateY(18px)",
+            transition: "opacity 0.65s cubic-bezier(0.22,1,0.36,1) 0.28s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.28s",
+            willChange: "opacity, transform",
+          }}>
+            Passeios guiados, lugares curados e experiências locais em Holambra.
           </p>
 
           {/* Search bar */}

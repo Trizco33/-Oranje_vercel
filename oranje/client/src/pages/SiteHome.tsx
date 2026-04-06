@@ -215,10 +215,9 @@ export default function SiteHome() {
       <section
         style={{
           position: "relative",
-          minHeight: "min(85vh, 680px)",
+          minHeight: "min(90vh, 720px)",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
           overflow: "hidden",
           backgroundColor: "#00251A",
         }}
@@ -277,12 +276,19 @@ export default function SiteHome() {
             />
           );
         })()}
-        {/* Gradient overlay — legibilidade */}
+        {/* Gradient overlay — direcional (legibilidade editorial) */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(to bottom, rgba(0,37,26,0.45) 0%, rgba(0,37,26,0.65) 100%)",
+            background: "linear-gradient(to right, #00251A 0%, rgba(0,37,26,0.82) 45%, rgba(0,37,26,0.35) 100%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to top, #00251A 0%, transparent 50%)",
           }}
         />
         {/* Floating orbs — continuous ambient motion */}
@@ -307,21 +313,26 @@ export default function SiteHome() {
           }} />
         </div>
 
-        {/* Hero Content */}
+        {/* Hero Content — editorial, left-aligned */}
         <div
           style={{
             position: "relative",
             zIndex: 2,
-            textAlign: "center",
-            padding: "0 24px",
-            maxWidth: "720px",
             width: "100%",
+            maxWidth: "1200px",
+            padding: "0 clamp(24px, 4vw, 48px)",
+            margin: "0 auto",
           }}
         >
+          <div style={{ maxWidth: "680px" }}>
+
+          {/* Badge */}
           <div
             style={{
-              marginBottom: 20,
-              display: "inline-block",
+              marginBottom: 24,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
               opacity: heroReady ? 1 : 0,
               transform: heroReady ? "translateY(0)" : "translateY(16px)",
               transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.06s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.06s",
@@ -329,33 +340,35 @@ export default function SiteHome() {
           >
             <span
               style={{
-                display: "inline-block",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
                 fontSize: "0.72rem",
                 fontWeight: 600,
-                letterSpacing: "0.12em",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                padding: "5px 14px",
+                padding: "6px 16px",
                 borderRadius: 20,
-                border: "1px solid rgba(255,255,255,0.18)",
-                background: "linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%)",
-                backgroundSize: "200% auto",
-                color: "rgba(255,255,255,0.85)",
-                animation: "hero-badge-shimmer 4s linear infinite",
-                backdropFilter: "blur(4px)",
+                border: "1px solid rgba(245,245,220,0.2)",
+                background: "rgba(0,77,64,0.4)",
+                color: "rgba(245,245,220,0.9)",
+                backdropFilter: "blur(8px)",
               }}
             >
-              Curadoria local • Parceiros verificados
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#E65100", flexShrink: 0 }} />
+              O novo jeito de explorar Holambra
             </span>
           </div>
 
+          {/* Título */}
           <h1
             style={{
-              fontSize: "clamp(2.25rem, 7vw, 3.75rem)",
-              fontWeight: 700,
+              fontSize: "clamp(2.5rem, 6.5vw, 4.5rem)",
+              fontWeight: 300,
               color: "#FFFFFF",
-              lineHeight: 1.1,
-              letterSpacing: "-0.03em",
-              marginBottom: 16,
+              lineHeight: 1.08,
+              letterSpacing: "-0.02em",
+              marginBottom: 20,
               fontFamily: "'Montserrat', system-ui, sans-serif",
               opacity: heroReady ? 1 : 0,
               transform: heroReady ? "translateY(0) scale(1)" : "translateY(20px) scale(0.97)",
@@ -363,30 +376,32 @@ export default function SiteHome() {
             }}
           >
             Descubra Holambra
+            <br />
+            <em style={{ fontStyle: "italic", fontWeight: 400, fontFamily: "Georgia, 'Times New Roman', serif", color: "rgba(255,255,255,0.92)" }}>
+              de um jeito mais vivo
+            </em>
           </h1>
 
           <p
             style={{
-              fontSize: "clamp(1rem, 2.5vw, 1.125rem)",
-              color: "rgba(255,255,255,0.85)",
-              lineHeight: 1.6,
+              fontSize: "clamp(1rem, 2.2vw, 1.125rem)",
+              color: "rgba(255,255,255,0.78)",
+              lineHeight: 1.7,
               marginBottom: 36,
-              maxWidth: "540px",
-              marginLeft: "auto",
-              marginRight: "auto",
+              maxWidth: "520px",
               opacity: heroReady ? 1 : 0,
               transform: heroReady ? "translateY(0)" : "translateY(16px)",
               transition: "opacity 0.65s cubic-bezier(0.22,1,0.36,1) 0.32s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.32s",
             }}
           >
-            Roteiros, lugares, eventos e serviços locais — tudo em um só lugar.
+            Passeios guiados, lugares curados e experiências locais para viver a cidade com mais beleza, contexto e praticidade.
           </p>
 
           {/* Search Bar */}
           <div
             style={{
               maxWidth: "480px",
-              margin: "0 auto 36px",
+              margin: "0 0 36px",
               opacity: heroReady ? 1 : 0,
               transform: heroReady ? "translateY(0)" : "translateY(14px)",
               transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.46s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.46s",
@@ -427,7 +442,7 @@ export default function SiteHome() {
 
           {/* CTA Buttons */}
           <div style={{
-            display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 48,
+            display: "flex", gap: 12, justifyContent: "flex-start", flexWrap: "wrap", marginBottom: 48,
             opacity: heroReady ? 1 : 0,
             transform: heroReady ? "translateY(0)" : "translateY(14px)",
             transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s",
@@ -505,17 +520,45 @@ export default function SiteHome() {
           </div>
 
           {/* Stats — dynamic counts from real data */}
-          <div style={{ display: "flex", gap: 56, justifyContent: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 40, justifyContent: "flex-start", flexWrap: "wrap" }}>
             {[
               { number: places.length > 0 ? `${places.length}` : "40", label: "Lugares curados" },
-              { number: "7", label: "Passeios guiados" },
+              { number: "9", label: "Passeios guiados" },
               { number: "1", label: "Cidade real" },
             ].map((stat) => (
-              <div key={stat.label} style={{ textAlign: "center" }}>
+              <div key={stat.label}>
                 <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "#FFFFFF", lineHeight: 1 }}>{stat.number}</p>
-                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.6)", marginTop: 4 }}>{stat.label}</p>
+                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.55)", marginTop: 4, letterSpacing: "0.04em" }}>{stat.label}</p>
               </div>
             ))}
+          </div>
+
+          </div>{/* /maxWidth 680px */}
+        </div>
+
+        {/* Localização decorativa — desktop only */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 56,
+            right: 48,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: 4,
+            borderRight: "2px solid #E65100",
+            paddingRight: 20,
+            textAlign: "right",
+            opacity: heroReady ? 0.85 : 0,
+            transition: "opacity 1s cubic-bezier(0.22,1,0.36,1) 0.9s",
+          }}
+          className="hero-location-badge"
+        >
+          <p style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(245,245,220,0.5)", margin: 0 }}>Localização</p>
+          <p style={{ fontSize: "0.8125rem", fontWeight: 500, color: "rgba(245,245,220,0.9)", margin: 0 }}>Holambra, São Paulo — Brasil</p>
+          <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+            <div style={{ height: 2, width: 32, background: "rgba(245,245,220,0.25)" }} />
+            <div style={{ height: 2, width: 16, background: "rgba(245,245,220,0.25)" }} />
           </div>
         </div>
 

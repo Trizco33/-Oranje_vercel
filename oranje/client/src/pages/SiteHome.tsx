@@ -442,7 +442,7 @@ export default function SiteHome() {
 
           {/* CTA Buttons */}
           <div style={{
-            display: "flex", gap: 12, justifyContent: "flex-start", flexWrap: "wrap", marginBottom: 48,
+            display: "flex", gap: 12, justifyContent: "flex-start", flexWrap: "wrap", marginBottom: 0,
             opacity: heroReady ? 1 : 0,
             transform: heroReady ? "translateY(0)" : "translateY(14px)",
             transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s",
@@ -517,20 +517,6 @@ export default function SiteHome() {
                 Instalar
               </button>
             )}
-          </div>
-
-          {/* Stats — dynamic counts from real data */}
-          <div style={{ display: "flex", gap: 40, justifyContent: "flex-start", flexWrap: "wrap" }}>
-            {[
-              { number: places.length > 0 ? `${places.length}` : "40", label: "Lugares curados" },
-              { number: "9", label: "Passeios guiados" },
-              { number: "1", label: "Cidade real" },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <p style={{ fontSize: "1.5rem", fontWeight: 700, color: "#FFFFFF", lineHeight: 1 }}>{stat.number}</p>
-                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.55)", marginTop: 4, letterSpacing: "0.04em" }}>{stat.label}</p>
-              </div>
-            ))}
           </div>
 
           </div>{/* /maxWidth 680px */}

@@ -576,7 +576,7 @@ export default function SiteHome() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
               gap: 20,
             }}
           >
@@ -584,45 +584,38 @@ export default function SiteHome() {
               <Reveal key={cat.title} delay={i * 60}>
                 <Link to={cat.link} style={{ textDecoration: "none", display: "block" }}>
                   <div
-                    className="site-card card-press"
+                    className="card-press"
                     style={{
-                      padding: "28px 24px",
-                      textAlign: "center",
+                      padding: "26px 22px",
                       background: "#FFFFFF",
+                      borderRadius: 16,
+                      borderTop: "2px solid #E65100",
+                      boxShadow: "0 2px 14px rgba(0,37,26,0.06)",
+                      transition: "transform 0.22s ease, box-shadow 0.22s ease",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
                     }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.boxShadow = "0 12px 32px rgba(0,37,26,0.12)"; }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 2px 14px rgba(0,37,26,0.06)"; }}
                   >
-                    <div
-                      style={{
-                        width: 52,
-                        height: 52,
-                        borderRadius: 14,
-                        background: "rgba(0,37,26,0.04)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 auto 16px",
-                        color: "#00251A",
-                      }}
-                    >
+                    <div style={{
+                      width: 48, height: 48, borderRadius: 13,
+                      background: "linear-gradient(135deg, rgba(230,81,0,0.1), rgba(230,81,0,0.04))",
+                      border: "1px solid rgba(230,81,0,0.16)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      marginBottom: 16, color: "#E65100",
+                    }}>
                       {cat.icon}
                     </div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 6 }}>
+                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 6, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                       {cat.title}
                     </h3>
-                    <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", marginBottom: 20, lineHeight: 1.6 }}>
+                    <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", marginBottom: 18, lineHeight: 1.6, flex: 1 }}>
                       {cat.desc}
                     </p>
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 4,
-                        fontSize: "0.8125rem",
-                        fontWeight: 600,
-                        color: "#E65100",
-                      }}
-                    >
-                      Explorar <ArrowRight size={14} />
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.8125rem", fontWeight: 700, color: "#E65100" }}>
+                      Explorar <ArrowRight size={13} />
                     </span>
                   </div>
                 </Link>
@@ -1297,22 +1290,29 @@ export default function SiteHome() {
             />
           </Reveal>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 40 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 40 }}>
             {articles.slice(0, 3).map((article: any, i: number) => (
               <Reveal key={article.id} delay={i * 60}>
                 <Link to={`/blog/${article.slug}`} style={{ textDecoration: "none", display: "block" }}>
                   <div
-                    className="site-card card-press"
+                    className="card-press"
                     style={{
-                      padding: "18px 24px",
+                      padding: "18px 22px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                       gap: 16,
+                      background: "#FFFFFF",
+                      borderRadius: 14,
+                      borderLeft: "3px solid #E65100",
+                      boxShadow: "0 2px 12px rgba(0,37,26,0.06)",
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
                     }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateX(4px)"; el.style.boxShadow = "0 6px 22px rgba(0,37,26,0.11)"; }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 2px 12px rgba(0,37,26,0.06)"; }}
                   >
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#00251A", marginBottom: 4 }}>
+                      <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 4, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                         {article.title}
                       </h3>
                       <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.4)" }}>
@@ -1320,7 +1320,13 @@ export default function SiteHome() {
                           new Date(article.publishedAt).toLocaleDateString("pt-BR")}
                       </p>
                     </div>
-                    <ArrowRight size={18} style={{ color: "#E65100", flexShrink: 0 }} />
+                    <div style={{
+                      width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+                      background: "rgba(230,81,0,0.08)", border: "1px solid rgba(230,81,0,0.16)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <ArrowRight size={15} style={{ color: "#E65100" }} />
+                    </div>
                   </div>
                 </Link>
               </Reveal>
@@ -1371,26 +1377,43 @@ export default function SiteHome() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: 20,
+              gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+              gap: 18,
               marginBottom: 48,
             }}
           >
             {[
-              { icon: <CheckCircle size={24} strokeWidth={1.5} />, title: "Visibilidade", desc: "Alcance turistas e locais" },
-              { icon: <Star size={24} strokeWidth={1.5} />, title: "Destaque", desc: "Apareça em roteiros curados" },
-              { icon: <Download size={24} strokeWidth={1.5} />, title: "Vouchers", desc: "Ofertas exclusivas" },
-              { icon: <CheckCircle size={24} strokeWidth={1.5} />, title: "Verificado", desc: "Selo de confiança" },
+              { icon: <CheckCircle size={22} strokeWidth={1.8} />, title: "Visibilidade", desc: "Alcance turistas e locais que buscam Holambra", accent: "#E65100" },
+              { icon: <Star size={22} strokeWidth={1.8} />, title: "Destaque", desc: "Apareça em roteiros curados pelo Oranje", accent: "#FF8C42" },
+              { icon: <Download size={22} strokeWidth={1.8} />, title: "Vouchers", desc: "Ofertas exclusivas para visitantes do app", accent: "#FFB347" },
+              { icon: <CheckCircle size={22} strokeWidth={1.8} />, title: "Verificado", desc: "Selo de curadoria e confiança Oranje", accent: "#E65100" },
             ].map((vantagem, i) => (
               <Reveal key={vantagem.title} delay={i * 60}>
-                <div className="site-card" style={{ padding: "24px 20px", textAlign: "center" }}>
-                  <div style={{ color: "#E65100", margin: "0 auto 12px", display: "flex", justifyContent: "center" }}>
+                <div
+                  style={{
+                    padding: "24px 20px",
+                    background: "#FFFFFF",
+                    borderRadius: 16,
+                    borderTop: `2px solid ${vantagem.accent}`,
+                    boxShadow: "0 2px 14px rgba(0,37,26,0.06)",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.boxShadow = "0 10px 28px rgba(0,37,26,0.11)"; }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 2px 14px rgba(0,37,26,0.06)"; }}
+                >
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12, marginBottom: 14,
+                    background: `linear-gradient(135deg, ${vantagem.accent}18, ${vantagem.accent}08)`,
+                    border: `1px solid ${vantagem.accent}28`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: vantagem.accent,
+                  }}>
                     {vantagem.icon}
                   </div>
-                  <h3 style={{ fontWeight: 700, color: "#00251A", marginBottom: 4, fontSize: "0.9375rem" }}>
+                  <h3 style={{ fontWeight: 800, color: "#00251A", marginBottom: 6, fontSize: "0.9375rem", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                     {vantagem.title}
                   </h3>
-                  <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)" }}>
+                  <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6 }}>
                     {vantagem.desc}
                   </p>
                 </div>
@@ -1428,114 +1451,105 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 9) INSTALAR O APP — Dark green section ═══ */}
-      <section
-        style={{
-          background: "#00251A",
-          padding: "80px 24px",
-        }}
-      >
-        <div style={{ maxWidth: "680px", margin: "0 auto", textAlign: "center" }}>
+      {/* ═══ 9) INSTALAR O APP — Dark glass section ═══ */}
+      <section style={{
+        background: "linear-gradient(160deg, #001A12 0%, #00251A 60%, #002E1F 100%)",
+        padding: "72px 24px",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        {/* decorative glows */}
+        <div style={{ position: "absolute", top: -80, right: -80, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle, rgba(230,81,0,0.1) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: -60, left: -60, width: 240, height: 240, borderRadius: "50%", background: "radial-gradient(circle, rgba(230,81,0,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+        <div style={{ maxWidth: "760px", margin: "0 auto", textAlign: "center", position: "relative" }}>
           <Reveal>
-            <h2
-              style={{
-                fontSize: "clamp(1.5rem, 4vw, 2.25rem)",
-                fontWeight: 700,
-                color: "#FFFFFF",
-                marginBottom: 12,
-                lineHeight: 1.2,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Instale o Oranje
+            <p style={{ fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.38)", marginBottom: 14, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+              App Oranje
+            </p>
+            <h2 style={{
+              fontSize: "clamp(1.5rem, 4vw, 2.25rem)",
+              fontWeight: 800, color: "#FFFFFF", marginBottom: 12,
+              lineHeight: 1.2, letterSpacing: "-0.02em",
+              fontFamily: "'Montserrat', system-ui, sans-serif",
+            }}>
+              Tenha o Oranje no seu celular
             </h2>
-            <p
-              style={{
-                fontSize: "clamp(0.9375rem, 2.5vw, 1.0625rem)",
-                color: "rgba(255,255,255,0.7)",
-                marginBottom: 48,
-                lineHeight: 1.6,
-              }}
-            >
-              Use Oranje como um app nativo no seu celular — sem ocupar espaço e sempre atualizado.
+            <p style={{
+              fontSize: "clamp(0.9rem, 2.5vw, 1rem)",
+              color: "rgba(255,255,255,0.6)", marginBottom: 48, lineHeight: 1.65,
+            }}>
+              Use como app nativo — sem ocupar espaço, sempre atualizado, direto da tela inicial.
             </p>
           </Reveal>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
-              gap: 16,
-              marginBottom: 48,
-            }}
-          >
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+            gap: 14, marginBottom: 48, textAlign: "left",
+          }}>
             {[
-              { num: "1", title: "Abra o Oranje", desc: "Acesse a plataforma" },
-              { num: "2", title: "Toque em Instalar", desc: "Procure o botão de instalação" },
-              { num: "3", title: "Use como App", desc: "Acesse direto da tela inicial" },
+              { num: "1", accent: "#E65100", title: "Abra o Oranje", desc: "Acesse oranjeapp.com.br no navegador do celular" },
+              { num: "2", accent: "#FF8C42", title: "Toque em Instalar", desc: "Aparece no navegador ou nas instruções abaixo" },
+              { num: "3", accent: "#FFB347", title: "Use como App", desc: "Fica na tela inicial, abre sem navegador" },
             ].map((step, i) => (
               <Reveal key={step.num} delay={i * 80}>
-                <div
-                  style={{
-                    background: "rgba(255,255,255,0.05)",
-                    borderRadius: 12,
-                    padding: 24,
-                    border: "1px solid rgba(255,255,255,0.06)",
-                  }}
-                >
-                  <p style={{ fontSize: "1.75rem", fontWeight: 700, color: "#E65100", marginBottom: 10 }}>
+                <div style={{
+                  background: "rgba(255,255,255,0.05)",
+                  borderRadius: 16, padding: "22px 20px",
+                  border: "1px solid rgba(255,255,255,0.09)",
+                  borderTop: `2px solid ${step.accent}`,
+                }}>
+                  <p style={{ fontSize: "1.5rem", fontWeight: 800, color: step.accent, marginBottom: 10, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                     {step.num}
                   </p>
-                  <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, color: "#FFFFFF", marginBottom: 4 }}>
+                  <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "#FFFFFF", marginBottom: 6, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                     {step.title}
                   </h3>
-                  <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8125rem" }}>{step.desc}</p>
+                  <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8125rem", lineHeight: 1.6 }}>{step.desc}</p>
                 </div>
               </Reveal>
             ))}
           </div>
 
           {installPrompt ? (
-            <button
-              onClick={handleInstall}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                height: 48,
-                padding: "0 28px",
-                background: "#FFFFFF",
-                color: "#E65100",
-                fontSize: "0.9375rem",
-                fontWeight: 600,
-                borderRadius: 12,
-                border: "none",
-                cursor: "pointer",
-                fontFamily: "'Montserrat', system-ui, sans-serif",
-              }}
-            >
-              <Download size={18} />
-              Instalar Agora
-            </button>
+            <Reveal>
+              <button
+                onClick={handleInstall}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  height: 50, padding: "0 32px",
+                  background: "linear-gradient(135deg, #E65100, #FF6D00)",
+                  color: "#FFFFFF", fontSize: "0.9375rem", fontWeight: 700,
+                  borderRadius: 14, border: "none", cursor: "pointer",
+                  fontFamily: "'Montserrat', system-ui, sans-serif",
+                  boxShadow: "0 6px 24px rgba(230,81,0,0.4)",
+                }}
+              >
+                <Download size={18} />
+                Instalar o App Agora
+              </button>
+            </Reveal>
           ) : (
-            <div
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                borderRadius: 12,
-                padding: "20px 24px",
-                border: "1px solid rgba(255,255,255,0.06)",
-                textAlign: "left",
-                maxWidth: "480px",
-                margin: "0 auto",
-              }}
-            >
-              <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: 10, fontSize: "0.875rem" }}>
-                📱 <strong>iPhone:</strong> Toque em Compartilhar → Adicionar à Tela de Início
-              </p>
-              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.875rem" }}>
-                🤖 <strong>Android:</strong> Toque no menu (⋮) → Instalar app
-              </p>
-            </div>
+            <Reveal>
+              <div style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: 16, padding: "22px 28px",
+                border: "1px solid rgba(255,255,255,0.09)",
+                borderTop: "2px solid rgba(230,81,0,0.5)",
+                textAlign: "left", maxWidth: "520px", margin: "0 auto",
+              }}>
+                <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 14 }}>
+                  Como instalar
+                </p>
+                <p style={{ color: "rgba(255,255,255,0.75)", marginBottom: 10, fontSize: "0.875rem", lineHeight: 1.65 }}>
+                  📱 <strong style={{ color: "#fff" }}>iPhone:</strong> Toque em Compartilhar → "Adicionar à Tela de Início"
+                </p>
+                <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.875rem", lineHeight: 1.65 }}>
+                  🤖 <strong style={{ color: "#fff" }}>Android:</strong> Toque no menu (⋮) → "Instalar app"
+                </p>
+              </div>
+            </Reveal>
           )}
         </div>
       </section>

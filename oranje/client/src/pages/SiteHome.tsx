@@ -776,197 +776,187 @@ export default function SiteHome() {
 
           {/* Loading skeleton */}
           {(siteFeaturesLoading || (routesLoading && !hasCmsRoutes)) ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              <div className="site-skeleton" style={{ height: 260, borderRadius: 14 }} />
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
-                {[1, 2].map((i) => (
-                  <div key={i} className="site-skeleton" style={{ height: 160, borderRadius: 14 }} />
+            <div style={{
+              background: "linear-gradient(160deg, #001A12 0%, #00251A 60%, #002E1F 100%)",
+              borderRadius: 24, padding: "40px 32px", display: "flex", flexDirection: "column", gap: 20,
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}>
+              <div className="site-skeleton" style={{ height: 120, borderRadius: 16, background: "rgba(255,255,255,0.06)" }} />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="site-skeleton" style={{ height: 140, borderRadius: 16, background: "rgba(255,255,255,0.06)" }} />
                 ))}
               </div>
             </div>
           ) : hasCmsRoutes ? (
             /* ── CMS-driven 3-layer block ───────────────────────────────── */
             <>
-              {/* ── Layer 1: Featured passeio (hero card) ── */}
-              {featuredRoute && featuredRoute.route && (
-                <Reveal>
-                  <Link
-                    to={`/app/roteiro/${featuredRoute.routeId}`}
-                    style={{ textDecoration: "none", display: "block", marginBottom: 20 }}
-                  >
-                    <div
-                      className="site-card card-press"
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr",
-                        overflow: "hidden",
-                        background: "#FFFFFF",
-                      }}
-                    >
-                      {/* Cover — taller for hero */}
-                      <div style={{ position: "relative", height: 240, background: "linear-gradient(135deg, #00251A 0%, #003828 100%)", overflow: "hidden" }}>
-                        {(() => {
-                          const src =
-                            featuredRoute.imageUrl ||
-                            (featuredRoute.route.coverImage && !featuredRoute.route.coverImage.includes("unsplash.com")
-                              ? featuredRoute.route.coverImage
-                              : null);
-                          return src ? (
-                            <img
-                              src={src}
-                              alt={featuredRoute.label || featuredRoute.route.title}
-                              loading="lazy"
-                              className="card-img-zoom"
-                              style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
-                            />
-                          ) : null;
-                        })()}
-                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.85) 0%, rgba(0,37,26,0.2) 60%, transparent 100%)" }} />
-                        {/* Badges */}
-                        <div style={{ position: "absolute", top: 16, left: 16, display: "flex", gap: 8 }}>
-                          <span style={{
-                            fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em",
-                            background: "#E65100", color: "#fff", padding: "4px 12px", borderRadius: 20,
-                            textTransform: "uppercase",
-                          }}>
-                            ★ Destaque
-                          </span>
-                          {featuredRoute.route.theme && (
-                            <span style={{
-                              fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em",
-                              background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)",
-                              color: "#fff", padding: "4px 12px", borderRadius: 20,
-                              border: "1px solid rgba(255,255,255,0.3)",
-                            }}>
-                              {featuredRoute.route.theme}
-                            </span>
-                          )}
-                        </div>
-                        {/* Meta bottom-left */}
-                        <div style={{ position: "absolute", bottom: 16, left: 20, display: "flex", gap: 12 }}>
-                          {featuredRoute.route.duration && (
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "rgba(255,255,255,0.9)", fontSize: "0.8125rem", fontWeight: 600 }}>
-                              <Clock size={13} /> {featuredRoute.route.duration}
-                            </span>
-                          )}
-                          {Array.isArray(featuredRoute.route.placeIds) && featuredRoute.route.placeIds.length > 0 && (
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "rgba(255,255,255,0.9)", fontSize: "0.8125rem", fontWeight: 600 }}>
-                              <MapPin size={13} /> {featuredRoute.route.placeIds.length} paradas
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      {/* Info */}
-                      <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 8 }}>
-                        <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#00251A", lineHeight: 1.25, margin: 0, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                          {featuredRoute.label || featuredRoute.route.title}
-                        </h3>
-                        {(featuredRoute.subtitle || featuredRoute.route.description) && (
-                          <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.6)", lineHeight: 1.65, margin: 0 }}>
-                            {featuredRoute.subtitle || (featuredRoute.route.description ? (featuredRoute.route.description.length > 120 ? featuredRoute.route.description.slice(0, 120) + "…" : featuredRoute.route.description) : "")}
-                          </p>
-                        )}
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-                          <span style={{ fontSize: "0.75rem", color: "rgba(0,37,26,0.4)", fontWeight: 500 }}>
-                            Roteiro verificado pelo time Oranje
-                          </span>
-                          <span style={{
-                            display: "inline-flex", alignItems: "center", gap: 6,
-                            background: "#E65100", color: "#fff",
-                            fontSize: "0.875rem", fontWeight: 700,
-                            padding: "10px 20px", borderRadius: 10,
-                          }}>
-                            {featuredRoute.ctaText || "Fazer este passeio"}
-                            <ArrowRight size={14} />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </Reveal>
-              )}
+              {/* ── Dark glass container — wraps Layer 1 + Layer 2 ── */}
+              <Reveal>
+                <div style={{
+                  background: "linear-gradient(160deg, #001A12 0%, #00251A 60%, #002E1F 100%)",
+                  borderRadius: 24,
+                  padding: "32px 28px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 16,
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  position: "relative",
+                  overflow: "hidden",
+                  marginBottom: 20,
+                }}>
+                  {/* decorative glow */}
+                  <div style={{
+                    position: "absolute", top: -80, right: -80,
+                    width: 300, height: 300, borderRadius: "50%",
+                    background: "radial-gradient(circle, rgba(230,81,0,0.1) 0%, transparent 70%)",
+                    pointerEvents: "none",
+                  }} />
 
-              {/* ── Layer 2: Secondary passeios ── */}
-              {secondaryRoutes.length > 0 && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20, marginBottom: 28 }}>
-                  {secondaryRoutes.map((item, i) => {
-                    if (!item.route) return null;
-                    const stopCount = Array.isArray(item.route.placeIds) ? item.route.placeIds.length : 0;
-                    return (
-                      <Reveal key={item.id} delay={i * 80}>
-                        <Link to={`/app/roteiro/${item.routeId}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>
-                          <div
-                            className="site-card card-press"
-                            style={{ display: "flex", flexDirection: "column", height: "100%", background: "#FFFFFF", overflow: "hidden" }}
-                          >
-                            {/* Cover */}
-                            <div style={{ position: "relative", height: 140, overflow: "hidden", borderRadius: "14px 14px 0 0", background: "linear-gradient(135deg, #00251A 0%, #004D40 100%)" }}>
-                              {(() => {
-                                const src =
-                                  item.imageUrl ||
-                                  (item.route.coverImage && !item.route.coverImage.includes("unsplash.com")
-                                    ? item.route.coverImage
-                                    : null);
-                                return src ? (
-                                  <img
-                                    src={src}
-                                    alt={item.label || item.route.title}
-                                    loading="lazy"
-                                    className="card-img-zoom"
-                                    style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
-                                  />
-                                ) : null;
-                              })()}
-                              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.75) 0%, transparent 55%)" }} />
-                              {item.route.theme && (
+                  {/* ── Layer 1: Featured passeio ── */}
+                  {featuredRoute && featuredRoute.route && (
+                    <Link to={`/app/roteiro/${featuredRoute.routeId}`} style={{ textDecoration: "none", display: "block" }}>
+                      <div
+                        style={{
+                          background: "rgba(255,255,255,0.05)",
+                          borderRadius: 16,
+                          padding: "24px 22px",
+                          border: "1px solid rgba(255,255,255,0.09)",
+                          borderTop: "2px solid #E65100",
+                          transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
+                          cursor: "pointer",
+                          position: "relative",
+                        }}
+                        onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.background = "rgba(255,255,255,0.08)"; el.style.boxShadow = "0 12px 32px rgba(0,0,0,0.35)"; }}
+                        onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.background = "rgba(255,255,255,0.05)"; el.style.boxShadow = ""; }}
+                      >
+                        <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+                          {/* Icon accent */}
+                          <div style={{
+                            width: 48, height: 48, borderRadius: 13, flexShrink: 0,
+                            background: "linear-gradient(135deg, rgba(230,81,0,0.25), rgba(230,81,0,0.1))",
+                            border: "1px solid rgba(230,81,0,0.35)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            color: "#E65100",
+                          }}>
+                            <Map size={22} strokeWidth={1.8} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            {/* Badges */}
+                            <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+                              <span style={{
+                                fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+                                background: "#E65100", color: "#fff", padding: "3px 10px", borderRadius: 20,
+                              }}>★ Destaque</span>
+                              {featuredRoute.route.theme && (
                                 <span style={{
-                                  position: "absolute", bottom: 10, left: 12,
-                                  fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.06em",
-                                  background: "#E65100", color: "#fff", padding: "3px 10px", borderRadius: 20,
-                                  textTransform: "uppercase",
-                                }}>
-                                  {item.route.theme}
-                                </span>
-                              )}
-                              {!item.imageUrl && !item.route.coverImage && (
-                                <Map size={28} style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", color: "rgba(255,255,255,0.25)" }} />
+                                  fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase",
+                                  background: "rgba(255,255,255,0.1)", backdropFilter: "blur(4px)",
+                                  color: "rgba(255,255,255,0.8)", padding: "3px 10px", borderRadius: 20,
+                                  border: "1px solid rgba(255,255,255,0.2)",
+                                }}>{featuredRoute.route.theme}</span>
                               )}
                             </div>
-                            {/* Info */}
-                            <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", flex: 1 }}>
-                              <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 6, lineHeight: 1.3, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                            <h3 style={{ fontSize: "1.0625rem", fontWeight: 800, color: "#fff", lineHeight: 1.25, margin: "0 0 6px", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                              {featuredRoute.label || featuredRoute.route.title}
+                            </h3>
+                            {(featuredRoute.subtitle || featuredRoute.route.description) && (
+                              <p style={{ fontSize: "0.8125rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.65, margin: "0 0 14px" }}>
+                                {(() => { const t = featuredRoute.subtitle || featuredRoute.route.description || ""; return t.length > 100 ? t.slice(0, 100) + "…" : t; })()}
+                              </p>
+                            )}
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+                              <div style={{ display: "flex", gap: 14 }}>
+                                {featuredRoute.route.duration && (
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: "#E65100" }}>
+                                    <Clock size={12} /> {featuredRoute.route.duration}
+                                  </span>
+                                )}
+                                {Array.isArray(featuredRoute.route.placeIds) && featuredRoute.route.placeIds.length > 0 && (
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: "rgba(255,255,255,0.45)" }}>
+                                    <MapPin size={12} /> {featuredRoute.route.placeIds.length} paradas
+                                  </span>
+                                )}
+                              </div>
+                              <span style={{
+                                display: "inline-flex", alignItems: "center", gap: 6,
+                                background: "#E65100", color: "#fff",
+                                fontSize: "0.8125rem", fontWeight: 700,
+                                padding: "8px 18px", borderRadius: 10,
+                                boxShadow: "0 4px 14px rgba(230,81,0,0.35)",
+                                flexShrink: 0,
+                              }}>
+                                {featuredRoute.ctaText || "Fazer este passeio"} <ArrowRight size={13} />
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  )}
+
+                  {/* ── Layer 2: Secondary passeios — same glass style ── */}
+                  {secondaryRoutes.length > 0 && (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 14 }}>
+                      {secondaryRoutes.map((item, i) => {
+                        if (!item.route) return null;
+                        const stopCount = Array.isArray(item.route.placeIds) ? item.route.placeIds.length : 0;
+                        const accent = i % 3 === 0 ? "#E65100" : i % 3 === 1 ? "#FF8C42" : "#FFB347";
+                        return (
+                          <Link key={item.id} to={`/app/roteiro/${item.routeId}`} style={{ textDecoration: "none", display: "block" }}>
+                            <div
+                              style={{
+                                background: "rgba(255,255,255,0.05)",
+                                borderRadius: 16, padding: "22px 20px",
+                                border: "1px solid rgba(255,255,255,0.09)",
+                                borderTop: `2px solid ${accent}`,
+                                height: "100%",
+                                transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
+                                cursor: "pointer",
+                              }}
+                              onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.background = "rgba(255,255,255,0.08)"; el.style.boxShadow = "0 12px 32px rgba(0,0,0,0.35)"; }}
+                              onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.background = "rgba(255,255,255,0.05)"; el.style.boxShadow = ""; }}
+                            >
+                              {/* Icon */}
+                              <div style={{
+                                width: 44, height: 44, borderRadius: 12, marginBottom: 14, flexShrink: 0,
+                                background: `linear-gradient(135deg, ${accent}28, ${accent}10)`,
+                                border: `1px solid ${accent}40`,
+                                display: "flex", alignItems: "center", justifyContent: "center", color: accent,
+                              }}>
+                                <Navigation size={20} strokeWidth={1.8} />
+                              </div>
+                              <h3 style={{ fontSize: "0.9375rem", fontWeight: 800, color: "#fff", margin: "0 0 7px", lineHeight: 1.25, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                                 {item.label || item.route.title}
                               </h3>
                               {item.subtitle && (
-                                <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6, flex: 1, margin: 0 }}>
-                                  {item.subtitle.length > 80 ? item.subtitle.slice(0, 80) + "…" : item.subtitle}
+                                <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.8125rem", margin: "0 0 14px", lineHeight: 1.65 }}>
+                                  {item.subtitle.length > 70 ? item.subtitle.slice(0, 70) + "…" : item.subtitle}
                                 </p>
                               )}
-                              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14 }}>
-                                <div style={{ display: "flex", gap: 10 }}>
-                                  {item.route.duration && (
-                                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: "#E65100" }}>
-                                      <Clock size={12} /> {item.route.duration}
-                                    </span>
-                                  )}
-                                  {stopCount > 0 && (
-                                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: "rgba(0,37,26,0.5)" }}>
-                                      <MapPin size={12} /> {stopCount} paradas
-                                    </span>
-                                  )}
-                                </div>
-                                <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#E65100", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                                  {item.ctaText || "Explorar passeio"} <ArrowRight size={12} />
-                                </span>
+                              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                                {item.route.duration && (
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: accent }}>
+                                    <Clock size={11} /> {item.route.duration}
+                                  </span>
+                                )}
+                                {stopCount > 0 && (
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: "rgba(255,255,255,0.4)" }}>
+                                    <MapPin size={11} /> {stopCount} paradas
+                                  </span>
+                                )}
                               </div>
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.8125rem", fontWeight: 700, color: accent, marginTop: 12 }}>
+                                {item.ctaText || "Explorar passeio"} <ArrowRight size={12} />
+                              </span>
                             </div>
-                          </div>
-                        </Link>
-                      </Reveal>
-                    );
-                  })}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
+              </Reveal>
 
               {/* ── Layer 3: CTA to app ── */}
               <Reveal>

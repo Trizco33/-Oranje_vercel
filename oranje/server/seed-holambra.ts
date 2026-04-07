@@ -1186,6 +1186,21 @@ export async function seedHolambra() {
       city: "Holambra",
       longDesc: "A Igreja Matriz do Divino Espírito Santo é o principal templo católico de Holambra, conhecida por sua arquitetura moderna e minimalista, decorada com muitas flores. Localizada na Alameda Maurício de Nassau, 688, fica próxima ao Deck do Amor e à Expoflora. Missas aos sábados às 19h30 e domingos às 10h — programação pode variar em datas festivas, recomenda-se verificar o Instagram da paróquia para atualizações.",
     },
+    {
+      name: "De Immigrant Restaurante Garden",
+      city: "Holambra",
+      longDesc: "O De Immigrant Restaurante Garden ocupa um espaço garden que combina gastronomia da imigração holandesa com ambiente aberto e culturalmente rico. Na Rua Dória Vasconcelos, 229, vizinho ao Gastro Café, tem proposta mais voltada ao almoço e jantar — cardápio autoral com raízes na colônia. Um dos endereços mais importantes do corredor gastronômico de Holambra.",
+    },
+    {
+      name: "Holambra Garden Hotel",
+      city: "Holambra",
+      longDesc: "O Holambra Garden Hotel é uma das escolhas mais equilibradas da cidade: localização central, jardins bem cuidados, quartos confortáveis e um café da manhã com ingredientes locais que já vale a estadia. Atende bem tanto casais em fim de semana quanto viajantes a trabalho.",
+    },
+    {
+      name: "Fratelli Wine Bar",
+      city: "Holambra",
+      longDesc: "O Fratelli Wine Bar é o único wine bar de Holambra com proposta realmente focada em vinho de qualidade. Carta cuidadosa, petiscos que combinam com a seleção e um ambiente que funciona muito bem para jantares de casal ou encontros com amigos que valorizam a experiência. É o tipo de lugar que faz falta em cidades menores e que Holambra tem sorte de ter.",
+    },
   ];
 
   for (const anchor of ANCHOR_LONG_DESCS) {

@@ -518,7 +518,7 @@ function RoutesBlock({ matching }: { matching: any[] }) {
                 <div className="pr-3 flex-shrink-0">
                   <span className="text-xs font-semibold flex items-center gap-1"
                     style={{ color: "var(--ds-color-accent)" }}>
-                    Ver roteiro
+                    Explorar roteiro completo
                     <ArrowRight size={12} />
                   </span>
                 </div>
@@ -590,8 +590,8 @@ function ContinueExplorando({
             >
               <span className="text-sm font-semibold">
                 {matchingRoutes.length === 1
-                  ? `Ver roteiro: ${matchingRoutes[0].title}`
-                  : "Ver roteiros com este lugar"}
+                  ? `Explorar roteiro: ${matchingRoutes[0].title}`
+                  : "Explorar roteiros com este lugar"}
               </span>
               <ArrowRight size={14} />
             </div>

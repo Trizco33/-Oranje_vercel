@@ -666,7 +666,19 @@ export default function SiteHome() {
               : featuredPlaces.slice(0, 3).map((place: any, i: number) => (
                   <Reveal key={place.id} delay={i * 80}>
                     <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block" }}>
-                      <div className="card-press site-card" style={{ background: "#FFFFFF" }}>
+                      <div
+                        className="card-press"
+                        style={{
+                          background: "#FFFFFF",
+                          borderRadius: 16,
+                          overflow: "hidden",
+                          borderTop: "2px solid #E65100",
+                          boxShadow: "0 4px 18px rgba(0,37,26,0.07)",
+                          transition: "transform 0.22s ease, box-shadow 0.22s ease",
+                        }}
+                        onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.boxShadow = "0 14px 36px rgba(0,37,26,0.14)"; }}
+                        onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 4px 18px rgba(0,37,26,0.07)"; }}
+                      >
                         {/* 3:2 aspect ratio image */}
                         <div style={{ position: "relative", paddingBottom: "66.67%", overflow: "hidden" }}>
                           <img
@@ -674,40 +686,38 @@ export default function SiteHome() {
                             alt={place.name}
                             loading="lazy"
                             className="card-img-zoom"
-                            style={{
-                              position: "absolute",
-                              inset: 0,
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
+                            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
                           />
+                          {/* gradient overlay */}
+                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.55) 0%, transparent 50%)" }} />
+                          {/* category chip */}
+                          <span style={{
+                            position: "absolute", bottom: 12, left: 14,
+                            fontSize: "0.6875rem", fontWeight: 600,
+                            background: "rgba(0,37,26,0.75)", backdropFilter: "blur(6px)",
+                            color: "rgba(255,255,255,0.92)", padding: "4px 10px", borderRadius: 20,
+                            border: "1px solid rgba(255,255,255,0.15)",
+                          }}>
+                            {catMap[(place as any).categoryId] || "Holambra"}
+                          </span>
                         </div>
-                        <div style={{ padding: "16px 20px" }}>
-                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 4 }}>
+                        <div style={{ padding: "16px 18px" }}>
+                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 10, lineHeight: 1.25, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                             {place.name}
                           </h3>
-                          <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", marginBottom: 12 }}>
-                            {catMap[(place as any).categoryId] || "Holambra"}
-                          </p>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                              <Star size={14} style={{ color: "#E65100", fill: "#E65100" }} />
-                              <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#00251A" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                              <Star size={13} style={{ color: "#E65100", fill: "#E65100", flexShrink: 0 }} />
+                              <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#00251A" }}>
                                 {place.rating || "4.5"}
                               </span>
                             </div>
-                            <span
-                              style={{
-                                fontSize: "0.75rem",
-                                fontWeight: 600,
-                                color: "#E65100",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 4,
-                              }}
-                            >
-                              Conhecer lugar <ArrowRight size={12} />
+                            <span style={{
+                              fontSize: "0.75rem", fontWeight: 700, color: "#fff",
+                              display: "inline-flex", alignItems: "center", gap: 4,
+                              background: "#E65100", padding: "5px 12px", borderRadius: 8,
+                            }}>
+                              Visitar <ArrowRight size={11} />
                             </span>
                           </div>
                         </div>
@@ -719,43 +729,98 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 3.5) CONTINUE EXPLORANDO — bridge block ═══ */}
-      <section style={{ background: "#00251A", padding: "40px 24px" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      {/* ═══ 3.5) CONTINUE EXPLORANDO — glass icon-card grid ═══ */}
+      <section style={{
+        background: "linear-gradient(160deg, #001A12 0%, #00251A 60%, #002E1F 100%)",
+        padding: "44px 24px",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        {/* decorative glow */}
+        <div style={{
+          position: "absolute", bottom: -60, left: -60,
+          width: 260, height: 260, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(230,81,0,0.09) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
+        <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }}>
           <Reveal>
-            <p style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginBottom: 20 }}>
+            <p style={{
+              fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.38)", marginBottom: 22,
+              fontFamily: "'Montserrat', system-ui, sans-serif",
+            }}>
               Continue Explorando Holambra
             </p>
           </Reveal>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))",
+            gap: 12,
+          }}>
             {[
-              { label: "Melhores Restaurantes", link: "/melhores-restaurantes-de-holambra" },
-              { label: "Cafés em Holambra", link: "/melhores-cafes-de-holambra" },
-              { label: "Bares & Drinks", link: "/bares-e-drinks-em-holambra" },
-              { label: "Onde Tirar Fotos", link: "/onde-tirar-fotos-em-holambra" },
-              { label: "Ver no Mapa", link: "/mapa" },
-              { label: "Ver Passeios →", link: "/app/receptivo" },
+              { label: "Melhores Restaurantes", icon: <Utensils size={18} strokeWidth={1.8} />, link: "/melhores-restaurantes-de-holambra", accent: "#E65100" },
+              { label: "Cafés em Holambra",      icon: <Coffee    size={18} strokeWidth={1.8} />, link: "/melhores-cafes-de-holambra",       accent: "#FF8C42" },
+              { label: "Bares & Drinks",          icon: <Wine      size={18} strokeWidth={1.8} />, link: "/bares-e-drinks-em-holambra",        accent: "#FFB347" },
+              { label: "Onde Tirar Fotos",        icon: <Camera    size={18} strokeWidth={1.8} />, link: "/onde-tirar-fotos-em-holambra",      accent: "#FF8C42" },
+              { label: "Ver no Mapa",             icon: <Map       size={18} strokeWidth={1.8} />, link: "/mapa",                              accent: "#E65100" },
+              { label: "Ver Passeios",            icon: <Navigation size={18} strokeWidth={1.8} />, link: "/app/receptivo",                    accent: "#E65100", cta: true },
             ].map((item, i) => (
-              <Reveal key={item.label} delay={i * 40}>
-                <Link
-                  to={item.link}
-                  style={{
-                    display: "inline-block",
-                    padding: "8px 16px",
-                    borderRadius: 8,
-                    border: "1px solid rgba(255,255,255,0.14)",
-                    background: "rgba(255,255,255,0.05)",
-                    color: "rgba(255,255,255,0.8)",
-                    fontSize: "0.8125rem",
-                    fontWeight: 500,
-                    textDecoration: "none",
-                    fontFamily: "'Montserrat', system-ui, sans-serif",
-                    transition: "background 0.2s, border-color 0.2s",
-                  }}
-                  onMouseEnter={(e: any) => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.28)"; }}
-                  onMouseLeave={(e: any) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; }}
-                >
-                  {item.label}
+              <Reveal key={item.label} delay={i * 45}>
+                <Link to={item.link} style={{ textDecoration: "none", display: "block" }}>
+                  <div
+                    style={{
+                      background: item.cta
+                        ? `linear-gradient(135deg, ${item.accent}22, ${item.accent}10)`
+                        : "rgba(255,255,255,0.05)",
+                      borderRadius: 14,
+                      padding: "16px 16px",
+                      border: `1px solid ${item.cta ? item.accent + "44" : "rgba(255,255,255,0.08)"}`,
+                      borderTop: `2px solid ${item.accent}`,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      transition: "transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.transform = "translateY(-3px)";
+                      el.style.background = item.cta
+                        ? `linear-gradient(135deg, ${item.accent}35, ${item.accent}18)`
+                        : "rgba(255,255,255,0.09)";
+                      el.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)";
+                    }}
+                    onMouseLeave={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.transform = "";
+                      el.style.background = item.cta
+                        ? `linear-gradient(135deg, ${item.accent}22, ${item.accent}10)`
+                        : "rgba(255,255,255,0.05)";
+                      el.style.boxShadow = "";
+                    }}
+                  >
+                    {/* icon accent square */}
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                      background: `linear-gradient(135deg, ${item.accent}30, ${item.accent}12)`,
+                      border: `1px solid ${item.accent}40`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: item.accent,
+                    }}>
+                      {item.icon}
+                    </div>
+                    <span style={{
+                      fontSize: "0.8125rem", fontWeight: 700,
+                      color: item.cta ? item.accent : "rgba(255,255,255,0.85)",
+                      fontFamily: "'Montserrat', system-ui, sans-serif",
+                      lineHeight: 1.25,
+                      flex: 1,
+                    }}>
+                      {item.label}
+                    </span>
+                    <ArrowRight size={13} style={{ color: item.cta ? item.accent : "rgba(255,255,255,0.3)", flexShrink: 0 }} />
+                  </div>
                 </Link>
               </Reveal>
             ))}

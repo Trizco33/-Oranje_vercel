@@ -421,7 +421,7 @@ export default function NearbyMap({ onClose }: NearbyMapProps) {
       {directionsPlace && (
         <DirectionsSheet
           name={directionsPlace.name}
-          address={(directionsPlace as any).address as string | null}
+          address={directionsPlace.address ?? null}
           lat={directionsPlace.lat ?? null}
           lng={directionsPlace.lng ?? null}
           onClose={() => setDirectionsPlace(null)}

@@ -25,6 +25,7 @@ export function formatDistance(km: number): string {
 export interface PlaceWithDistance {
   id: number;
   name: string;
+  address?: string | null;
   shortDesc?: string | null;
   categoryName?: string | null;
   images?: string[] | null;

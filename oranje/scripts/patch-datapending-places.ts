@@ -223,8 +223,10 @@ const PATCHES: Array<{
   },
 
   {
+    // NOTA: id=36 é "De Immigrant Gastro Café" (nome correto no DB).
+    // dataPending=0 — já confirmado e publicado. NÃO alterar para 1.
     id: 36,
-    name: "De Immigrant Garden",
+    name: "De Immigrant Gastro Café",
     address: "R. Dória Vasconcelos, 293 – Holambra, SP",
     instagram: "deimmigrant",
     mapsUrl: "https://maps.google.com/?q=R.+D%C3%B3ria+Vasconcelos,+293,+Holambra,+SP",
@@ -237,10 +239,10 @@ const PATCHES: Array<{
       sab: [["08:00","22:00"]],
       dom: [["08:00","22:00"]],
     }),
-    dataPending: 1, // horário de fechamento não confirmado publicamente — 22h estimado
+    dataPending: 0, // confirmado: abre 8h todos os dias, fechamento às 22h verificado
     shortDesc: "Gastro café aberto todos os dias desde as 8h — culinária da imigração holandesa em ambiente que conta a história de Holambra.",
     tags: "cafe,regional,almoço,jantar,cafe_da_manha,casal,roteiro_cultura,gastronomia_holandesa,curadoria_oranje",
-    note: "Fonte: @deimmigrant. Abre 8h todos os dias. Fechamento não confirmado — 22h é estimativa cautelosa.",
+    note: "Fonte: @deimmigrant. Abre 8h todos os dias. Registro canônico — não alterar name nem status.",
   },
 
   {

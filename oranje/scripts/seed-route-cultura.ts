@@ -10,11 +10,11 @@
  *   esse fio condutor: de ícone em ícone, de história em história.
  *
  * Lugares (ordem do dia):
- *   1. Moinho Povos Unidos (2616)  — o símbolo, o ponto de partida
- *   2. De Immigrant Garden (36)    — almoço com história e temática
- *   3. Martin Holandesa (2613)     — culinária holandesa autêntica
- *   4. Expoflora Park (5)          — a história floral, o evento que define a cidade
- *   5. Parque Van Gogh (19)        — arte europeia no espaço público
+ *   1. Moinho Povos Unidos (2616)       — o símbolo, o ponto de partida
+ *   2. De Immigrant Gastro Café (36)    — café e almoço com história e temática
+ *   3. Martin Holandesa (2613)          — culinária holandesa autêntica
+ *   4. Expoflora Park (5)               — a história floral, o evento que define a cidade
+ *   5. Parque Van Gogh (19)             — arte europeia no espaço público
  *
  * Run: npx tsx scripts/seed-route-cultura.ts
  */
@@ -33,7 +33,7 @@ const ROUTE = {
 
   highlights: [
     "Moinho Povos Unidos: o ponto de partida obrigatório. Antes de qualquer restaurante ou parque, venha aqui entender visualmente por que Holambra é o que é. Foto, contexto e espírito da cidade — tudo num só lugar.",
-    "De Immigrant Garden: o almoço que conta uma história. Culinária inspirada nos imigrantes que fundaram Holambra, em um ambiente que traduz com elegância o que significa ser holambrano.",
+    "De Immigrant Gastro Café: o almoço que conta uma história. Culinária inspirada nos imigrantes que fundaram Holambra, em um ambiente que traduz com elegância o que significa ser holambrano.",
     "Martin Holandesa: o sabor mais autêntico da cidade. Uma confeitaria e restaurante que existe há anos no Boulevard Holandês e que resume, em cada prato, a herança culinária dos colonos holandeses.",
     "Expoflora Park: onde a cultura vira espetáculo. O parque que sedia a maior festa de flores do Brasil conta a história de Holambra através de jardins, exposições e a grandiosidade das flores que definiram a cidade.",
     "Parque Van Gogh: arte europeia no espaço público de uma cidade brasileira. Um presente à paisagem — e o encerramento perfeito para um roteiro sobre identidade e cultura.",
@@ -42,7 +42,7 @@ const ROUTE = {
 
   placeNotes: {
     "2616": "O ponto de partida de qualquer conversa sobre Holambra. O Moinho Povos Unidos não é apenas um símbolo fotográfico — é o argumento central da identidade da cidade. Construído para celebrar as raízes holandesas dos fundadores, ele organiza o sentido de tudo que vem depois no roteiro. Chegue cedo, reserve tempo para caminhar ao redor e sentir a escala do lugar.",
-    "36": "O almoço com mais alma do roteiro. O De Immigrant Garden traduz a história da imigração holandesa em culinária e ambiente — uma escolha intencional, não apenas gastronômica. Pratos inspirados nos colonos que fundaram Holambra, servidos em um jardim que parece ter crescido da mesma narrativa. É onde o roteiro cultural se torna uma experiência sensorial.",
+    "36": "O De Immigrant Gastro Café conta a história da imigração holandesa através do cardápio e do ambiente — uma escolha intencional, não apenas gastronômica. Pratos inspirados nos colonos que fundaram Holambra, servidos com identidade e curadoria. É onde o roteiro cultural se torna uma experiência sensorial.",
     "2613": "A Martin Holandesa está no Boulevard Holandês há anos e isso não é acidente — é presença conquistada. Confeitaria fina, culinária holandesa com qualidade e um ambiente que sintetiza o imaginário dos imigrantes. Entre para um café, um doce ou um lanche da tarde — qualquer escolha aqui diz algo sobre quem construiu esta cidade.",
     "5": "A Expoflora não é apenas um festival — é o evento que colocou Holambra no mapa do Brasil. O parque que o sedia guarda parte dessa história ao longo do ano: jardins de exposição, estrutura permanente e aquele cenário que, nas temporadas de festival, recebe mais de 200 mil visitantes. Mesmo fora da Expoflora, vale a visita para entender a dimensão do que as flores representam para a cidade.",
     "19": "Um presente silencioso ao final do roteiro. O Parque Van Gogh — com o nome do pintor que eternizou os campos de girassol — fecha o dia com a linguagem da arte europeia integrada ao espaço público de uma cidade brasileira. Nenhuma escolha foi mais Holambra do que esta: um parque com esse nome, nessa cidade, diz tudo sobre a identidade que seus fundadores quiseram construir.",

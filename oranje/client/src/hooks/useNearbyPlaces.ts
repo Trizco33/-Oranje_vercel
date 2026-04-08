@@ -39,15 +39,25 @@ export interface PlaceWithDistance {
   [key: string]: unknown;
 }
 
+// Holambra region bounding box — reject bogus or out-of-region coordinates
+const LAT_MIN = -22.70, LAT_MAX = -22.58;
+const LNG_MIN = -47.12, LNG_MAX = -46.98;
+
+function hasValidCoords(p: { lat?: number | null; lng?: number | null }): boolean {
+  const { lat, lng } = p;
+  if (lat == null || lng == null) return false;
+  if (typeof lat !== "number" || typeof lng !== "number") return false;
+  if (lat === 0 && lng === 0) return false;
+  return lat >= LAT_MIN && lat <= LAT_MAX && lng >= LNG_MIN && lng <= LNG_MAX;
+}
+
 export function useNearbyPlaces(position: GeoPosition | null, limit = 6) {
   const { data: places, isLoading } = usePlacesList({ limit: 100, offset: 0 });
 
   const nearby = useMemo<PlaceWithDistance[]>(() => {
     if (!places || !position) return [];
 
-    const withCoords = (places as PlaceWithDistance[]).filter(
-      (p) => typeof p.lat === "number" && typeof p.lng === "number" && p.lat !== null && p.lng !== null
-    );
+    const withCoords = (places as PlaceWithDistance[]).filter(hasValidCoords);
 
     return withCoords
       .map((place) => {

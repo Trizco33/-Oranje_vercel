@@ -373,13 +373,13 @@ const TOURS: Array<{
   },
 ];
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Exported seed function (safe to call at server startup) ──────────────────
 
-async function main() {
+export async function seedReceptivoExpand() {
   const db = await getDb();
   if (!db) {
-    console.error("❌ DATABASE_URL não configurado ou banco indisponível.");
-    process.exit(1);
+    console.warn("⚠️  seedReceptivoExpand: DATABASE_URL não configurado — pulando.");
+    return;
   }
 
   console.log("🌷 Receptivo Oranje — seed de expansão iniciado\n");
@@ -431,10 +431,14 @@ async function main() {
 
   console.log("\n🎉 Receptivo Oranje — seed de expansão concluído!");
   console.log("📱 Tours disponíveis em /app/receptivo");
-  process.exit(0);
 }
 
-main().catch((err) => {
-  console.error("❌ Erro no seed:", err);
-  process.exit(1);
-});
+// Execução direta via tsx (não via import)
+if (process.argv[1] && process.argv[1].includes("seed-receptivo-expand")) {
+  seedReceptivoExpand()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error("❌ Erro no seed:", err);
+      process.exit(1);
+    });
+}

@@ -9,6 +9,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite, setupSPAFallback } from "./vite";
 import { seedDatabase } from "../seed";
 import { seedHolambra } from "../seed-holambra";
+import { seedReceptivoExpand } from "../seed-receptivo-expand";
 import { sitemapRouter } from "../sitemap-route";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -58,6 +59,8 @@ async function startServer() {
   await seedDatabase();
   // Seed real Holambra places (idempotent upsert — safe to run on every startup)
   await seedHolambra();
+  // Seed Receptivo Oranje tours + coverImages (idempotent — safe on every startup)
+  await seedReceptivoExpand();
   
   // ============================================================================
   // CRITICAL: Register static file serving FIRST

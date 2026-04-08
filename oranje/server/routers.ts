@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { randomBytes } from "crypto";
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { sdk } from "./_core/sdk";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { sendMagicLinkEmail } from "./_core/email";
 import { systemRouter } from "./_core/systemRouter";
@@ -76,7 +77,8 @@ export const appRouter = router({
       if (!user?.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create user" });
       await db.createMagicLink(token, user.id, expiresAt);
       const origin = process.env.APP_ORIGIN ?? input.origin ?? "http://localhost:5173";
-      const url = `${origin}/#/login/callback?token=${token}`;
+      // BrowserRouter — path real, sem hash
+      const url = `${origin}/app/login/callback?token=${token}`;
       await sendMagicLinkEmail({ to: input.email, url });
       return { success: true };
     }),
@@ -85,22 +87,34 @@ export const appRouter = router({
     })).mutation(async ({ input, ctx }) => {
       const magicLink = await db.getMagicLink(input.token);
       if (!magicLink) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Link invalido ou expirado" });
+        throw new TRPCError({ code: "NOT_FOUND", message: "Link inválido ou expirado" });
       }
       if (magicLink.usedAt) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Link ja foi utilizado" });
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Link já foi utilizado" });
       }
       if (new Date() > magicLink.expiresAt) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Link expirou" });
       }
       await db.markMagicLinkAsUsed(input.token);
+
+      // Busca o usuário pelo id do magic link para obter o openId
+      const user = await db.getUserById(magicLink.userId);
+      if (!user?.openId) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Usuário não encontrado" });
+      }
+
+      // Cria JWT assinado — o mesmo formato que o OAuth flow usa
+      // SDK rejeita name vazio — usa email como fallback para usuários sem nome
+      const sessionToken = await sdk.createSessionToken(user.openId, {
+        name: user.name || user.email || "oranje-user",
+        expiresInMs: ONE_YEAR_MS,
+      });
+
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.cookie(COOKIE_NAME, String(magicLink.userId), {
+      ctx.res.cookie(COOKIE_NAME, sessionToken, {
         ...cookieOptions,
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
+        maxAge: ONE_YEAR_MS,
       });
       return { success: true };
     }),

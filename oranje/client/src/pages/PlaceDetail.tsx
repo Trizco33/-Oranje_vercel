@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
 import { trpc } from "@/lib/trpc";
@@ -10,7 +10,6 @@ import {
   Coffee, Beer, Leaf, Building2, Cake, TreePine, IceCream, ArrowRight, Compass,
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewForm } from "@/components/ReviewForm";
 import { DSButton, DSBadge } from "@/components/ds";
@@ -637,7 +636,13 @@ function ContinueExplorando({
 export default function PlaceDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const placeId = Number(id) || 0;
+
+  function goToLogin() {
+    sessionStorage.setItem("oranje_auth_return", window.location.pathname);
+    navigate("/app/login");
+  }
 
   const { data: placeData, isLoading, error, refetch } = trpc.places.byId.useQuery(
     { id: placeId },
@@ -675,7 +680,7 @@ export default function PlaceDetail() {
   const isFavorite = favoriteIds.has(placeId);
 
   function handleToggleFavorite() {
-    if (!user) { window.open(getLoginUrl(), "_blank"); return; }
+    if (!user) { goToLogin(); return; }
     if (isFavorite) removeFavoriteMutation.mutate({ placeId });
     else addFavoriteMutation.mutate({ placeId });
   }
@@ -765,7 +770,7 @@ export default function PlaceDetail() {
   }, [place]);
 
   function handleReviewSubmit(rating: number, comment: string) {
-    if (!user) { window.open(getLoginUrl(), "_blank"); return; }
+    if (!user) { goToLogin(); return; }
     createReviewMutation.mutate(
       { placeId, rating, comment },
       { onSuccess: () => { setReviewKey(k => k + 1); reviewsQuery.refetch(); } }
@@ -1193,7 +1198,7 @@ export default function PlaceDetail() {
           <ReviewForm
             onSubmit={handleReviewSubmit}
             isAuthenticated={!!user}
-            onLoginClick={() => window.open(getLoginUrl(), "_blank")}
+            onLoginClick={goToLogin}
           />
 
           {placeReviews && placeReviews.length > 0 ? (

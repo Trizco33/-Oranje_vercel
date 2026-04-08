@@ -28,6 +28,14 @@ sitemapRouter.get("/robots.txt", (req, res) => {
   const robotsTxt = `User-agent: *
 Allow: /
 
+Disallow: /admin
+Disallow: /adm
+Disallow: /api
+Disallow: /app/login
+Disallow: /app/perfil
+Disallow: /app/mapa
+Disallow: /app/configuracoes
+
 Sitemap: ${baseUrl}/sitemap.xml
 `;
   res.type("text/plain").send(robotsTxt);

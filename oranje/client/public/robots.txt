@@ -1,23 +1,12 @@
 User-agent: *
 Allow: /
-Allow: /o-que-fazer-em-holambra
-Allow: /melhores-restaurantes-de-holambra
-Allow: /melhores-cafes-de-holambra
-Allow: /bares-e-drinks-em-holambra
-Allow: /roteiro-1-dia-em-holambra
-Allow: /onde-tirar-fotos-em-holambra
-Allow: /eventos-em-holambra
-Allow: /roteiros
-Allow: /mapa
-Allow: /blog
-Allow: /sobre
-Allow: /contato
-Allow: /parceiros
-Allow: /seja-um-parceiro
-Allow: /privacidade
-Allow: /termos
-Disallow: /app
+
 Disallow: /admin
 Disallow: /adm
+Disallow: /api
+Disallow: /app/login
+Disallow: /app/perfil
+Disallow: /app/mapa
+Disallow: /app/configuracoes
 
 Sitemap: https://oranjeapp.com.br/sitemap.xml

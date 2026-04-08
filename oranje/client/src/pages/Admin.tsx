@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   BarChart3, Bell, Building2, CalendarDays, ChevronRight, Edit, ImagePlus,
-  Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car
+  Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car, Award
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,8 +19,9 @@ import { AdminCategories } from "@/components/AdminCategories";
 import { AdminDriversMarketplace } from "@/components/AdminDriversMarketplace";
 import { AdminArticles } from "@/components/AdminArticles";
 import { AdminSiteRoutes } from "@/components/AdminSiteRoutes";
+import { AdminClaims } from "@/components/AdminClaims";
 
-type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes";
+type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes" | "claims";
 
 const NAV_GROUPS = [
   {
@@ -43,6 +44,12 @@ const NAV_GROUPS = [
     label: "Site",
     items: [
       { id: "site-routes" as AdminTab, icon: Sparkles, label: "Passeios no Site" },
+    ],
+  },
+  {
+    label: "Negócios",
+    items: [
+      { id: "claims" as AdminTab, icon: Award, label: "Reivindicações" },
     ],
   },
   {
@@ -313,6 +320,7 @@ export default function Admin() {
           {activeTab === "site-routes" && <AdminSiteRoutes />}
           {activeTab === "categories" && <AdminCategories />}
           {activeTab === "articles" && <AdminArticles />}
+          {activeTab === "claims" && <AdminClaims />}
           {activeTab === "logs" && <AdminLogs />}
         </div>
       </div>

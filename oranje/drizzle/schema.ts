@@ -91,6 +91,7 @@ export const places = mysqlTable("places", {
   isFeatured: boolean("isFeatured").default(false).notNull(),
   dataPending: boolean("dataPending").default(false).notNull(),
   status: mysqlEnum("status", ["active", "inactive"]).default("active").notNull(),
+  claimStatus: mysqlEnum("claimStatus", ["unclaimed", "claimed", "selo_oranje"]).default("unclaimed").notNull(),
   rating: float("rating").default(0),
   reviewCount: int("reviewCount").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -464,3 +465,42 @@ export const guidedTourStops = mysqlTable("guided_tour_stops", {
 
 export type GuidedTourStop = typeof guidedTourStops.$inferSelect;
 export type InsertGuidedTourStop = typeof guidedTourStops.$inferInsert;
+
+// ─── Profile Claims (Reivindicação de Perfil) ────────────────────────────────
+// Businesses can claim their listing. All claims require manual admin review.
+// No public profile changes happen automatically.
+export const profileClaims = mysqlTable("profile_claims", {
+  id: int("id").autoincrement().primaryKey(),
+  placeId: int("placeId").notNull().references(() => places.id),
+  // Requester contact
+  contactName: varchar("contactName", { length: 200 }).notNull(),
+  contactPhone: varchar("contactPhone", { length: 30 }),
+  contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
+  contactRole: varchar("contactRole", { length: 200 }),
+  // Business info submitted by requester
+  businessName: varchar("businessName", { length: 200 }),
+  instagram: varchar("instagram", { length: 100 }),
+  website: text("website"),
+  openingHours: text("openingHours"),
+  address: text("address"),
+  category: varchar("category", { length: 100 }),
+  description: text("description"),
+  differentials: text("differentials"),
+  message: text("message"),
+  // Media uploads (stored as object storage URLs)
+  photos: json("photos").$type<string[]>(),
+  logoUrl: text("logoUrl"),
+  coverImageUrl: text("coverImageUrl"),
+  // Claim status — always starts pending, admin must approve manually
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  adminNote: text("adminNote"),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  placeIdIdx: index("profile_claims_place_id_idx").on(table.placeId),
+  statusIdx: index("profile_claims_status_idx").on(table.status),
+}));
+
+export type ProfileClaim = typeof profileClaims.$inferSelect;
+export type InsertProfileClaim = typeof profileClaims.$inferInsert;

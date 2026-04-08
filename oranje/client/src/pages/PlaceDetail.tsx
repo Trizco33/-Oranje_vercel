@@ -14,6 +14,7 @@ import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewForm } from "@/components/ReviewForm";
 import { DSButton, DSBadge } from "@/components/ds";
 import { DirectionsSheet } from "@/components/DirectionsSheet";
+import { ClaimBlock } from "@/components/ClaimBlock";
 import { getAllPlaceImages, getPlaceImage } from "@/components/PlaceCard";
 import { isBlockedCoverUrl } from "@/constants/placeImages";
 import { useBusinessHours, getBusinessStatus } from "@/hooks/useBusinessHours";
@@ -1237,6 +1238,11 @@ export default function PlaceDetail() {
             </p>
           </div>
         ) : null}
+
+        {/* ─────────────────────────────────────────────────────────── */}
+        {/* Claim Block — Este negócio é seu?                         */}
+        {/* ─────────────────────────────────────────────────────────── */}
+        <ClaimBlock placeId={place.id} placeName={place.name} />
 
         {/* ─────────────────────────────────────────────────────────── */}
         {/* Continue Explorando Holambra                               */}

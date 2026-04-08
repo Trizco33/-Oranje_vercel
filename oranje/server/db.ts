@@ -4,10 +4,11 @@ import type { ResultSetHeader } from "mysql2";
 import {
   InsertUser, ads, adminLogs, categories, events, favorites, magicLinks, notifications,
   partners, placePhotos, places, routes, users, vouchers, drivers, siteRouteFeatures,
-  guidedTours, guidedTourStops,
+  guidedTours, guidedTourStops, profileClaims,
   type InsertAdminLog, type InsertCategory, type InsertEvent, type InsertMagicLink, type InsertPartner,
   type InsertPlace, type InsertRoute, type InsertVoucher, type MagicLink, type InsertDriver,
   type InsertSiteRouteFeature, type InsertGuidedTour, type InsertGuidedTourStop,
+  type InsertProfileClaim,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -812,4 +813,80 @@ export async function upsertGuidedTourStop(data: InsertGuidedTourStop) {
   } else {
     await db.insert(guidedTourStops).values(data);
   }
+}
+
+// ─── Profile Claims ────────────────────────────────────────────────────────────
+export async function createProfileClaim(data: InsertProfileClaim) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const result = await db.insert(profileClaims).values(data);
+  return result;
+}
+
+export async function getClaimsByPlaceId(placeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(profileClaims)
+    .where(eq(profileClaims.placeId, placeId))
+    .orderBy(desc(profileClaims.createdAt));
+}
+
+export async function listAllClaims(opts?: { status?: "pending" | "approved" | "rejected"; limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [];
+  if (opts?.status) conditions.push(eq(profileClaims.status, opts.status));
+  const q = db
+    .select({
+      id: profileClaims.id,
+      placeId: profileClaims.placeId,
+      placeName: places.name,
+      contactName: profileClaims.contactName,
+      contactEmail: profileClaims.contactEmail,
+      contactPhone: profileClaims.contactPhone,
+      contactRole: profileClaims.contactRole,
+      businessName: profileClaims.businessName,
+      instagram: profileClaims.instagram,
+      website: profileClaims.website,
+      openingHours: profileClaims.openingHours,
+      address: profileClaims.address,
+      category: profileClaims.category,
+      description: profileClaims.description,
+      differentials: profileClaims.differentials,
+      message: profileClaims.message,
+      photos: profileClaims.photos,
+      logoUrl: profileClaims.logoUrl,
+      coverImageUrl: profileClaims.coverImageUrl,
+      status: profileClaims.status,
+      adminNote: profileClaims.adminNote,
+      reviewedAt: profileClaims.reviewedAt,
+      createdAt: profileClaims.createdAt,
+    })
+    .from(profileClaims)
+    .leftJoin(places, eq(profileClaims.placeId, places.id));
+  if (conditions.length > 0) q.where(conditions[0]);
+  return q
+    .orderBy(desc(profileClaims.createdAt))
+    .limit(opts?.limit ?? 100)
+    .offset(opts?.offset ?? 0);
+}
+
+export async function updateClaimStatus(
+  id: number,
+  status: "pending" | "approved" | "rejected",
+  adminNote?: string
+) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  await db
+    .update(profileClaims)
+    .set({
+      status,
+      adminNote: adminNote ?? null,
+      reviewedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(profileClaims.id, id));
 }

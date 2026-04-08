@@ -601,7 +601,7 @@ function ContinueExplorando({
           </Link>
         )}
 
-        <Link to="/app/mapa" style={{ textDecoration: "none" }}>
+        <Link to="/mapa" style={{ textDecoration: "none" }}>
           <div
             className="flex items-center justify-between px-4 py-3 rounded-xl"
             style={{

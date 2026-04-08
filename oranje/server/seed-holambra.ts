@@ -869,6 +869,18 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     tags: ["igreja", "religiao", "cultura", "historia", "arquitetura", "holandes"], status: "active",
     dataPending: true,
   },
+  {
+    name: "Igreja Nossa Senhora das Flores",
+    _categorySlug: "pontos-turisticos",
+    shortDesc: "Santuário dedicado à padroeira de Holambra — Nossa Senhora das Flores — símbolo da devoção e da identidade floral da cidade",
+    longDesc: "A Igreja Nossa Senhora das Flores é o santuário dedicado à padroeira de Holambra — a Nossa Senhora das Flores, cuja devoção está no coração da identidade cultural e religiosa da cidade. A relação entre a fé e as flores não é acidente: os imigrantes holandeses trouxeram tanto as sementes das flores quanto a devoção mariana, e os dois ficaram. A data festiva de Nossa Senhora das Flores é celebrada com procissões decoradas com flores frescas — uma das cerimônias mais bonitas do calendário religioso da cidade. Uma visita ao santuário complementa bem o passeio cultural pelo Museu da Cultura e pela Igreja Matriz.",
+    address: "Holambra - SP", lat: -22.6289, lng: -47.0598,
+    city: "Holambra", state: "SP", country: "Brasil",
+    priceRange: "$", isFree: true,
+    isRecommended: false, isFeatured: false, isPartner: false,
+    tags: ["igreja", "religiao", "cultura", "flores", "padroeira", "historia"], status: "active",
+    dataPending: true,
+  },
 
   // ── Novos lugares gastronômicos — entorno do Holambra Garden Hotel ────────
 
@@ -1185,6 +1197,11 @@ export async function seedHolambra() {
       name: "Igreja Matriz do Divino Espírito Santo",
       city: "Holambra",
       longDesc: "A Igreja Matriz do Divino Espírito Santo é o principal templo católico de Holambra, conhecida por sua arquitetura moderna e minimalista, decorada com muitas flores. Localizada na Alameda Maurício de Nassau, 688, fica próxima ao Deck do Amor e à Expoflora. Missas aos sábados às 19h30 e domingos às 10h — programação pode variar em datas festivas, recomenda-se verificar o Instagram da paróquia para atualizações.",
+    },
+    {
+      name: "Igreja Nossa Senhora das Flores",
+      city: "Holambra",
+      longDesc: "A Igreja Nossa Senhora das Flores é o santuário dedicado à padroeira de Holambra — a Nossa Senhora das Flores, cuja devoção está no coração da identidade cultural e religiosa da cidade. A relação entre a fé e as flores não é acidente: os imigrantes holandeses trouxeram tanto as sementes das flores quanto a devoção mariana, e os dois ficaram. A data festiva de Nossa Senhora das Flores é celebrada com procissões decoradas com flores frescas — uma das cerimônias mais bonitas do calendário religioso da cidade. Uma visita ao santuário complementa bem o passeio cultural pelo Museu da Cultura e pela Igreja Matriz.",
     },
     {
       name: "De Immigrant Restaurante Garden",

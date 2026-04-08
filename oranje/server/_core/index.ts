@@ -10,6 +10,7 @@ import { serveStatic, setupVite, setupSPAFallback } from "./vite";
 import { seedDatabase } from "../seed";
 import { seedHolambra } from "../seed-holambra";
 import { seedReceptivoExpand } from "../seed-receptivo-expand";
+import { runMigrations } from "../run-migrations";
 import { sitemapRouter } from "../sitemap-route";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -55,6 +56,8 @@ async function startServer() {
     });
   }
   
+  // Run DB migrations first (idempotent — safe on every startup)
+  await runMigrations();
   // Seed database with default content on startup
   await seedDatabase();
   // Seed real Holambra places (idempotent upsert — safe to run on every startup)

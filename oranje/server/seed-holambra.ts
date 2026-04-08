@@ -682,7 +682,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "restaurantes",
     shortDesc: "Restaurante casual com culinária variada — almoço e jantar no centro de Holambra",
     longDesc: null,
-    address: "Holambra – SP", lat: -22.6385, lng: -47.0608,
+    address: "Rua Camélias, 365 - Centro, Holambra - SP", lat: -22.630367, lng: -47.050839,
     city: "Holambra", state: "SP", country: "Brasil",
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,

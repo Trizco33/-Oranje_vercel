@@ -190,7 +190,7 @@ const TOURS: Array<{
     description: "Holambra é a capital das flores do Brasil — mas poucos visitantes veem flores de verdade. Este passeio muda isso. Começa num campo de produção real, onde flores nascem do campo não para enfeitar, mas para abastecer o país inteiro. Passa pelo parque à beira do lago, termina com sorvete artesanal num bairro tranquilo. É o passeio que a cidade merece mais do que qualquer outro.",
     theme: "Flores e Natureza",
     duration: "3 a 4 horas",
-    coverImage: "https://images.unsplash.com/photo-1490750967868-88df5691cc30?w=900&q=80",
+    coverImage: "https://i.ytimg.com/vi/JB52rZeRgR0/maxresdefault.jpg",
     stops: [
       {
         placeName: "Macena Flores", order: 1,
@@ -222,7 +222,7 @@ const TOURS: Array<{
     description: "Em 1948, 92 famílias holandesas chegaram a uma fazenda no interior de São Paulo com a intenção de recomeçar. O que construíram ao longo de décadas é Holambra — uma cidade com identidade cultural rara no Brasil. Este passeio percorre os lugares que guardam essa história: a confeitaria fundada por imigrantes, o restaurante que mantém a culinária da colônia e o moinho que se tornou símbolo.",
     theme: "Cultural e Histórico",
     duration: "3 horas",
-    coverImage: "https://images.unsplash.com/photo-1569236515745-2b373acef5a6?w=900&q=80",
+    coverImage: "https://upload.wikimedia.org/wikipedia/commons/1/18/Montagem_Holambra.jpg",
     stops: [
       {
         placeName: "Martin Holandesa Confeitaria e Restaurante", order: 1,

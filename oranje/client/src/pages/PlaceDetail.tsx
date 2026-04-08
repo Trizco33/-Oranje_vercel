@@ -442,10 +442,10 @@ function RelatedPlacesBlock({ categoryId, categoryName, excludeId }: {
                   )}
                 </div>
                 <div className="px-2.5 py-2">
-                  {p.categoryName && (
+                  {categoryName && (
                     <p className="text-xs font-medium mb-0.5"
                       style={{ color: "var(--ds-color-accent)", opacity: 0.8 }}>
-                      {p.categoryName}
+                      {categoryName}
                     </p>
                   )}
                   <p className="text-xs font-semibold leading-tight line-clamp-2"
@@ -535,11 +535,11 @@ function RoutesBlock({ matching }: { matching: any[] }) {
 function ContinueExplorando({
   matchingRoutes,
   categoryName,
-  categoryId,
+  categorySlug,
 }: {
   matchingRoutes: any[];
   categoryName?: string;
-  categoryId?: number;
+  categorySlug?: string | null;
 }) {
   const hasRoutes = matchingRoutes.length > 0;
   const routeLink =
@@ -547,19 +547,6 @@ function ContinueExplorando({
       ? `/app/roteiro/${matchingRoutes[0].id}`
       : "/app/roteiros";
 
-  const CATEGORY_SLUGS: Record<number, string> = {
-    1: "restaurantes",
-    2: "cafes",
-    3: "bares",
-    4: "pontos-turisticos",
-    5: "hoteis",
-    13: "pizzarias",
-    14: "bares",
-    15: "hoteis",
-    16: "parques",
-    17: "docerias",
-  };
-  const categorySlug = categoryId ? (CATEGORY_SLUGS[categoryId] ?? null) : null;
   const categoryLink = categorySlug ? `/app/explorar/${categorySlug}` : "/app/explorar";
 
   return (
@@ -1255,7 +1242,7 @@ export default function PlaceDetail() {
         <ContinueExplorando
           matchingRoutes={matchingRoutes}
           categoryName={place.categoryName}
-          categoryId={place.categoryId}
+          categorySlug={place.categorySlug}
         />
 
       </div>

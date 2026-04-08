@@ -67,8 +67,9 @@ export const placesRouter = router({
           .where(eq(placePhotos.placeId, placeId)) as any)
           .orderBy(placePhotos.order);
 
-        // Get category name if exists
+        // Get category name and slug if exists
         let categoryName = null;
+        let categorySlug = null;
         if (place[0].categoryId) {
           const category = await (db
             .select()
@@ -78,6 +79,7 @@ export const placesRouter = router({
           
           if (category && category.length > 0) {
             categoryName = category[0].name;
+            categorySlug = category[0].slug;
           }
         }
 
@@ -85,6 +87,7 @@ export const placesRouter = router({
           ...place[0],
           photos: photos || [],
           categoryName,
+          categorySlug,
         };
       } catch (error) {
         console.error("[Places] Error getting place details:", error);

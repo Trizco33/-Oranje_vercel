@@ -13,6 +13,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewForm } from "@/components/ReviewForm";
 import { DSButton, DSBadge } from "@/components/ds";
+import { DirectionsSheet } from "@/components/DirectionsSheet";
 import { getAllPlaceImages, getPlaceImage } from "@/components/PlaceCard";
 import { isBlockedCoverUrl } from "@/constants/placeImages";
 import { useBusinessHours, getBusinessStatus } from "@/hooks/useBusinessHours";
@@ -662,6 +663,7 @@ export default function PlaceDetail() {
   const createReviewMutation = trpc.reviews.create.useMutation();
   const markHelpfulMutation = trpc.reviews.markHelpful.useMutation();
   const [, setReviewKey] = useState(0);
+  const [showDirections, setShowDirections] = useState(false);
 
   const place = placeData as any;
   const isFavorite = favoriteIds.has(placeId);
@@ -1022,21 +1024,21 @@ export default function PlaceDetail() {
                   {hasAddress ? place.address : "Holambra, SP"}
                 </p>
               </div>
-              {hasMapLink && (
-                <a
-                  href={mapsUrl!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold flex-shrink-0 no-underline"
+              {(hasMapLink || hasAddress) && (
+                <button
+                  onClick={() => setShowDirections(true)}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold flex-shrink-0"
                   style={{
                     background: "var(--ds-color-accent)",
                     color: "#fff",
                     whiteSpace: "nowrap",
+                    border: "none",
+                    cursor: "pointer",
                   }}
                 >
                   <Navigation size={12} />
                   Como chegar
-                </a>
+                </button>
               )}
             </div>
           </>
@@ -1249,6 +1251,16 @@ export default function PlaceDetail() {
 
       <div style={{ height: 100 }} />
       <TabBar />
+
+      {showDirections && (
+        <DirectionsSheet
+          name={place.name}
+          address={place.address || null}
+          lat={place.lat ?? null}
+          lng={place.lng ?? null}
+          onClose={() => setShowDirections(false)}
+        />
+      )}
     </div>
   );
 }

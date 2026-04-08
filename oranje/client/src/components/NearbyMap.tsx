@@ -3,6 +3,7 @@ import { X, Navigation, MapPin, Loader2, AlertTriangle } from "lucide-react";
 import { useNearbyPlaces, formatDistance } from "@/hooks/useNearbyPlaces";
 import type { PlaceWithDistance } from "@/hooks/useNearbyPlaces";
 import type { GeoPosition } from "@/hooks/useGeolocation";
+import { DirectionsSheet } from "@/components/DirectionsSheet";
 
 const HOLAMBRA_CENTER: [number, number] = [-22.6389, -47.0600];
 
@@ -24,6 +25,7 @@ export default function NearbyMap({ onClose }: NearbyMapProps) {
   const [geoStatus, setGeoStatus] = useState<"loading" | "granted" | "denied">("loading");
   const [mapReady, setMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<PlaceWithDistance | null>(null);
+  const [directionsPlace, setDirectionsPlace] = useState<PlaceWithDistance | null>(null);
 
   const geoPosition = userPos ?? { lat: HOLAMBRA_CENTER[0], lng: HOLAMBRA_CENTER[1], isFallback: true };
   const { nearby: nearbyPlaces, isLoading: placesLoading } = useNearbyPlaces(geoPosition, 12);
@@ -340,62 +342,91 @@ export default function NearbyMap({ onClose }: NearbyMapProps) {
             nearbyPlaces.map((place, idx) => {
               const isSelected = selectedPlace?.id === place.id;
               return (
-                <button
-                  key={place.id}
-                  className="nearby-map-item"
-                  onClick={() => selectPlace(place)}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 12,
-                    width: "100%", textAlign: "left", border: "none", cursor: "pointer",
-                    padding: "12px 16px",
-                    background: isSelected ? "rgba(230,81,0,0.06)" : "transparent",
-                    borderLeft: isSelected ? "3px solid #E65100" : "3px solid transparent",
-                    transition: "background 0.15s ease",
-                  }}
-                >
-                  {/* Rank badge */}
-                  <div style={{
-                    width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                    background: isSelected ? "#E65100" : "rgba(0,37,26,0.08)",
-                    color: isSelected ? "#fff" : "rgba(0,37,26,0.5)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "0.75rem", fontWeight: 700,
-                    transition: "background 0.15s, color 0.15s",
-                  }}>
-                    {idx + 1}
-                  </div>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{
-                      fontFamily: "'Montserrat', system-ui, sans-serif",
-                      fontWeight: 600, fontSize: "0.875rem",
-                      color: "#00251A", margin: 0,
-                      whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                <div key={place.id}>
+                  <button
+                    className="nearby-map-item"
+                    onClick={() => selectPlace(place)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 12,
+                      width: "100%", textAlign: "left", border: "none", cursor: "pointer",
+                      padding: "12px 16px",
+                      background: isSelected ? "rgba(230,81,0,0.06)" : "transparent",
+                      borderLeft: isSelected ? "3px solid #E65100" : "3px solid transparent",
+                      transition: "background 0.15s ease",
+                    }}
+                  >
+                    {/* Rank badge */}
+                    <div style={{
+                      width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+                      background: isSelected ? "#E65100" : "rgba(0,37,26,0.08)",
+                      color: isSelected ? "#fff" : "rgba(0,37,26,0.5)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "0.75rem", fontWeight: 700,
+                      transition: "background 0.15s, color 0.15s",
                     }}>
-                      {place.name}
-                    </p>
-                    {place.categoryName && (
-                      <p style={{ fontSize: "0.75rem", color: "rgba(0,37,26,0.4)", margin: 0, marginTop: 1 }}>
-                        {place.categoryName}
+                      {idx + 1}
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{
+                        fontFamily: "'Montserrat', system-ui, sans-serif",
+                        fontWeight: 600, fontSize: "0.875rem",
+                        color: "#00251A", margin: 0,
+                        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                      }}>
+                        {place.name}
                       </p>
-                    )}
-                  </div>
+                      {place.categoryName && (
+                        <p style={{ fontSize: "0.75rem", color: "rgba(0,37,26,0.4)", margin: 0, marginTop: 1 }}>
+                          {place.categoryName}
+                        </p>
+                      )}
+                    </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-                    <MapPin size={12} style={{ color: "#E65100" }} />
-                    <span style={{
-                      fontSize: "0.8125rem", fontWeight: 700,
-                      color: isSelected ? "#E65100" : "#00251A",
-                    }}>
-                      {place.distanceFormatted}
-                    </span>
-                  </div>
-                </button>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                      <MapPin size={12} style={{ color: "#E65100" }} />
+                      <span style={{
+                        fontSize: "0.8125rem", fontWeight: 700,
+                        color: isSelected ? "#E65100" : "#00251A",
+                      }}>
+                        {place.distanceFormatted}
+                      </span>
+                    </div>
+                  </button>
+                  {isSelected && (
+                    <button
+                      onClick={e => { e.stopPropagation(); setDirectionsPlace(place); }}
+                      style={{
+                        display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                        width: "calc(100% - 32px)", margin: "0 16px 12px",
+                        background: "#E65100", color: "#fff",
+                        border: "none", borderRadius: 10, cursor: "pointer",
+                        padding: "10px 16px",
+                        fontFamily: "'Montserrat', system-ui, sans-serif",
+                        fontWeight: 700, fontSize: "0.8125rem",
+                        WebkitTapHighlightColor: "transparent",
+                      }}
+                    >
+                      <Navigation size={13} />
+                      Como chegar
+                    </button>
+                  )}
+                </div>
               );
             })
           )}
         </div>
       </div>
+
+      {directionsPlace && (
+        <DirectionsSheet
+          name={directionsPlace.name}
+          address={(directionsPlace as any).address as string | null}
+          lat={directionsPlace.lat ?? null}
+          lng={directionsPlace.lng ?? null}
+          onClose={() => setDirectionsPlace(null)}
+        />
+      )}
     </>
   );
 }

@@ -291,5 +291,26 @@ export async function runMigrations(): Promise<void> {
     console.log("[Migrations] ✓ operation_events already exists.");
   }
 
+  // ─── Migration 008: operationCode em oranje_operations ───────────────────
+  if (await tableExists(db, "oranje_operations")) {
+    const colExists = await columnExists(db, "oranje_operations", "operationCode");
+    if (!colExists) {
+      console.log("[Migrations] Adding operationCode to oranje_operations...");
+      await db.execute(`
+        ALTER TABLE \`oranje_operations\`
+          ADD COLUMN \`operationCode\` varchar(20) NULL UNIQUE
+      `);
+      // Preenche retroativamente os registros sem código
+      await db.execute(`
+        UPDATE \`oranje_operations\`
+          SET \`operationCode\` = CONCAT('ORJ-', YEAR(\`createdAt\`), '-', LPAD(\`id\`, 4, '0'))
+          WHERE \`operationCode\` IS NULL
+      `);
+      console.log("[Migrations] ✅ operationCode adicionado e preenchido retroativamente.");
+    } else {
+      console.log("[Migrations] ✓ operationCode já existe em oranje_operations.");
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

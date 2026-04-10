@@ -582,6 +582,7 @@ export type InsertTourOperationPartner = typeof tourOperationPartners.$inferInse
 // Criada em paralelo às tabelas específicas — não substitui, complementa.
 export const oranjeOperations = mysqlTable("oranje_operations", {
   id: int("id").autoincrement().primaryKey(),
+  operationCode: varchar("operationCode", { length: 20 }).unique(),  // ex: ORJ-2026-0042
 
   // ── Tipo e origem ─────────────────────────────────────────────────────────
   operationType: mysqlEnum("operationType", [

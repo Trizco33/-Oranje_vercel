@@ -35,6 +35,14 @@ const STATUS_META: Record<string, { label: string; color: string; bg: string }> 
 const ALL_STATUSES = Object.keys(STATUS_META);
 const ALL_TYPES    = Object.keys(TYPE_META);
 
+// Espelha o STATUS_FLOW do backend — determina quais status são válidos por tipo
+const STATUS_FLOW_FRONTEND: Record<string, string[]> = {
+  profile_claim:      ["pending", "confirmed", "rejected"],
+  premium_tour:       ["pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"],
+  transfer_request:   ["pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"],
+  receptive_request:  ["pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"],
+};
+
 function TypeBadge({ type }: { type: string }) {
   const m = TYPE_META[type] ?? { label: type, color: "#666", bg: "rgba(0,0,0,0.06)", icon: LayoutGrid };
   const Icon = m.icon;
@@ -198,7 +206,10 @@ function OperationRow({ op }: { op: any }) {
             <TypeBadge type={op.operationType} />
             <StatusBadge status={op.status} />
             <span style={{ fontSize: 10, color: "rgba(0,37,26,0.4)", fontFamily: "Montserrat, sans-serif" }}>
-              #{op.id} · {op.scheduledDate ?? new Date(op.createdAt).toLocaleDateString("pt-BR")}
+              <span style={{ fontWeight: 700, color: "#E65100", fontFamily: "Montserrat, sans-serif" }}>
+                {op.operationCode ?? `#${op.id}`}
+              </span>
+              {" "}· {op.scheduledDate ?? new Date(op.createdAt).toLocaleDateString("pt-BR")}
             </span>
           </div>
           <p style={{ fontSize: 13, fontWeight: 700, color: "#00251A", fontFamily: "Montserrat, sans-serif", margin: "0 0 2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -226,6 +237,7 @@ function OperationRow({ op }: { op: any }) {
         <div style={{ padding: "0 14px 16px", borderTop: "1px solid rgba(0,37,26,0.06)" }}>
           {/* Info grid */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, margin: "14px 0 12px" }}>
+            {op.operationCode && <InfoCell label="Código" value={op.operationCode} />}
             <InfoCell label="Tipo" value={TYPE_META[op.operationType]?.label ?? op.operationType} />
             <InfoCell label="Origem" value={op.requestOrigin ?? "web"} />
             <InfoCell label="Email" value={op.customerEmail ?? "—"} />
@@ -262,7 +274,7 @@ function OperationRow({ op }: { op: any }) {
             <div style={{ flex: "1 1 140px" }}>
               <label style={labelStyle}>Status</label>
               <select value={editStatus} onChange={e => setEditStatus(e.target.value as any)} style={selectStyle}>
-                {ALL_STATUSES.map(s => (
+                {(STATUS_FLOW_FRONTEND[op.operationType] ?? ALL_STATUSES).map(s => (
                   <option key={s} value={s}>{STATUS_META[s]?.label ?? s}</option>
                 ))}
               </select>
@@ -376,7 +388,7 @@ export function AdminOperationsCenter() {
       return;
     }
     const header = [
-      "ID", "Tipo", "Status", "Cliente", "Email", "Telefone",
+      "ID", "Código", "Tipo", "Status", "Cliente", "Email", "Telefone",
       "Data Agendada", "Horário", "Pessoas",
       "Valor Cliente (R$)", "Repasse Operador (R$)", "Valor Parceiro (R$)", "Margem (R$)",
       "Status Faturamento", "Status Repasse", "Origem", "Criado em",
@@ -384,6 +396,7 @@ export function AdminOperationsCenter() {
 
     const rows = operations.map((op: any) => [
       op.id,
+      op.operationCode ?? "",
       TYPE_META[op.operationType]?.label ?? op.operationType,
       STATUS_META[op.status]?.label ?? op.status,
       `"${op.customerName.replace(/"/g, "'")}"`,

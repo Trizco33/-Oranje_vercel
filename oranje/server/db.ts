@@ -1120,12 +1120,18 @@ export async function updateGuidedTourPremiumSettings(
 // ─── Central de Operações Oranje ──────────────────────────────────────────────
 
 export async function createOranjeOperation(
-  data: Omit<InsertOranjeOperation, "id" | "createdAt" | "updatedAt">
-): Promise<{ id: number }> {
+  data: Omit<InsertOranjeOperation, "id" | "operationCode" | "createdAt" | "updatedAt">
+): Promise<{ id: number; operationCode: string }> {
   const db = await getDb();
   if (!db) throw new Error("DB not available");
   const result = await db.insert(oranjeOperations).values(data as any);
   const id = (result[0] as ResultSetHeader).insertId;
+  // Gera código legível: ORJ-AAAA-NNNN
+  const year = new Date().getFullYear();
+  const operationCode = `ORJ-${year}-${String(id).padStart(4, "0")}`;
+  await db.update(oranjeOperations)
+    .set({ operationCode } as any)
+    .where(eq(oranjeOperations.id, id));
   // Registra evento de criação automaticamente
   await db.insert(operationEvents).values({
     operationId: id,
@@ -1133,7 +1139,7 @@ export async function createOranjeOperation(
     toValue: "pending",
     actorName: data.createdBy ?? "sistema",
   } as any);
-  return { id };
+  return { id, operationCode };
 }
 
 export async function listOranjeOperations(filters?: {

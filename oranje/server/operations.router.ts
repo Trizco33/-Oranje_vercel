@@ -15,6 +15,18 @@ const OP_STATUS = z.enum([
   "completed", "cancelled", "rejected", "no_show",
 ]);
 
+/**
+ * Fluxos de status válidos por tipo de operação.
+ * profile_claim é um fluxo de aprovação simples — não compartilha ciclo logístico.
+ * Operações logísticas (passeio, transfer, receptivo) têm ciclo operacional completo.
+ */
+const STATUS_FLOW: Record<string, string[]> = {
+  profile_claim:      ["pending", "confirmed", "rejected"],
+  premium_tour:       ["pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"],
+  transfer_request:   ["pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"],
+  receptive_request:  ["pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"],
+};
+
 const BILLING_STATUS = z.enum(["not_applicable", "pending", "billed", "paid"]);
 const PAYOUT_STATUS  = z.enum(["not_applicable", "pending", "ready_to_pay", "paid"]);
 
@@ -72,8 +84,20 @@ export const operationsRouter = router({
       assignedToName:z.string().optional(),
     }))
     .mutation(async ({ input, ctx }) => {
-      const { id, ...data } = input;
-      await db.updateOranjeOperation(id, data as any, ctx.user.name ?? ctx.user.email ?? "admin");
+      const { id, status, ...rest } = input;
+      // Valida se o status é permitido para o tipo desta operação
+      if (status) {
+        const op = await db.getOranjeOperationById(id);
+        if (!op) throw new TRPCError({ code: "NOT_FOUND", message: "Operação não encontrada." });
+        const allowed = STATUS_FLOW[op.operationType] ?? [];
+        if (!allowed.includes(status)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Status "${status}" não é válido para operações do tipo "${op.operationType}". Permitidos: ${allowed.join(", ")}.`,
+          });
+        }
+      }
+      await db.updateOranjeOperation(id, { status, ...rest } as any, ctx.user.name ?? ctx.user.email ?? "admin");
       return { ok: true };
     }),
 

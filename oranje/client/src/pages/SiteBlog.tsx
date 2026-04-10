@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useArticlesListPublished, useArticleCategories } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
 import { Link } from "react-router-dom";
@@ -8,6 +8,16 @@ import { DSBadge } from "@/components/ds/Badge";
 
 export default function SiteBlog() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    document.title = "Blog — ORANJE Holambra";
+    const descTag = document.querySelector('meta[name="description"]');
+    if (descTag) descTag.setAttribute("content", "Artigos, dicas e guias sobre Holambra. Descubra o melhor da cidade das flores com o blog da ORANJE.");
+    return () => {
+      document.title = "ORANJE — Holambra em um só lugar";
+      if (descTag) descTag.setAttribute("content", "Guia cultural e gastronômico de Holambra, SP. Descubra restaurantes, pontos turísticos, eventos e muito mais.");
+    };
+  }, []);
 
   const { data: articles = [] } = useArticlesListPublished({
     category: selectedCategory,

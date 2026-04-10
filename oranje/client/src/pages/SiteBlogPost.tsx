@@ -27,8 +27,10 @@ export default function SiteBlogPost() {
     const siteName = "ORANJE — Holambra em um só lugar";
     const postUrl = `${window.location.origin}/blog/${article.slug}`;
     const description = (article as any).seoDescription || (article as any).excerpt || (article as any).description || "";
+    const seoTitle = (article as any).seoTitle || article.title;
+    const keywords = (article as any).seoKeywords || "";
 
-    document.title = `${article.title} — ${siteName}`;
+    document.title = `${seoTitle} — ${siteName}`;
 
     const setMeta = (property: string, content: string) => {
       let tag = document.querySelector(`meta[property="${property}"]`);
@@ -40,7 +42,20 @@ export default function SiteBlogPost() {
       tag.setAttribute("content", content);
     };
 
-    setMeta("og:title", article.title);
+    const setNameMeta = (name: string, content: string) => {
+      let tag = document.querySelector(`meta[name="${name}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("name", name);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    };
+
+    if (description) setNameMeta("description", description);
+    if (keywords) setNameMeta("keywords", keywords);
+
+    setMeta("og:title", seoTitle);
     setMeta("og:description", description);
     setMeta("og:type", "article");
     setMeta("og:url", postUrl);
@@ -84,6 +99,8 @@ export default function SiteBlogPost() {
 
     return () => {
       document.title = siteName;
+      const descTag = document.querySelector('meta[name="description"]');
+      if (descTag) descTag.setAttribute("content", "Guia cultural e gastronômico de Holambra, SP. Descubra restaurantes, pontos turísticos, eventos e muito mais.");
     };
   }, [article]);
 

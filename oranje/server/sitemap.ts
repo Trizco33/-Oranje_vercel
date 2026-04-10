@@ -45,6 +45,7 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     // ─── Páginas estáticas principais ────────────────────────────────
     { loc: baseUrl, lastmod: today, priority: 1.0, changefreq: "weekly" },
     { loc: `${baseUrl}/guia`, lastmod: today, priority: 0.8, changefreq: "weekly" },
+    { loc: `${baseUrl}/blog`, lastmod: today, priority: 0.8, changefreq: "daily" },
     { loc: `${baseUrl}/app/explorar`, lastmod: today, priority: 0.9, changefreq: "daily" },
     { loc: `${baseUrl}/app/eventos`, lastmod: today, priority: 0.8, changefreq: "daily" },
     { loc: `${baseUrl}/app/roteiros`, lastmod: today, priority: 0.8, changefreq: "weekly" },
@@ -57,9 +58,9 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
 
     // ─── Artigos publicados ───────────────────────────────────────────
     ...publishedArticles.map((article) => ({
-      loc: `${baseUrl}/guia/${article.slug}`,
+      loc: `${baseUrl}/blog/${article.slug}`,
       lastmod: (article.updatedAt || article.createdAt).toISOString().split("T")[0],
-      priority: 0.7 as const,
+      priority: 0.8 as const,
       changefreq: "monthly" as const,
     })),
 

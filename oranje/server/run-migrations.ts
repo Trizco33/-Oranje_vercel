@@ -312,5 +312,37 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 009: configurar campos de transporte nos guided_tours ────────
+  // Tours curados (1-7): recommendedWithDriver = true (CTA do motorista aparece)
+  // Tours de corrida (8-9): walkOnly = true (CTA não aparece)
+  // Idempotente: só atualiza se o tour já está todos em 0 (nunca configurado)
+  if (await tableExists(db, "guided_tours") && await columnExists(db, "guided_tours", "recommendedWithDriver")) {
+    const [check] = await db.execute(`
+      SELECT COUNT(*) as cnt FROM \`guided_tours\`
+      WHERE (slug LIKE 'holambra-%') AND recommendedWithDriver = 1
+    `) as any;
+    const alreadySet = (check[0]?.cnt ?? 0) > 0;
+    if (!alreadySet) {
+      console.log("[Migrations] Configurando campos de transporte nos guided_tours...");
+      await db.execute(`
+        UPDATE \`guided_tours\`
+          SET recommendedWithDriver = 1, walkOnly = 0, requiresTransport = 0
+          WHERE slug IN (
+            'holambra-romantica','holambra-de-manha','holambra-das-flores',
+            'holambra-da-imigracao','holambra-gourmet','holambra-familiar',
+            'holambra-ao-entardecer'
+          )
+      `);
+      await db.execute(`
+        UPDATE \`guided_tours\`
+          SET walkOnly = 1, recommendedWithDriver = 0, requiresTransport = 0
+          WHERE slug IN ('corrida-puxada-holambra','corrida-leve-holambra')
+      `);
+      console.log("[Migrations] ✅ Campos de transporte configurados nos 7 passeios curados.");
+    } else {
+      console.log("[Migrations] ✓ Campos de transporte dos guided_tours já configurados.");
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

@@ -26,31 +26,43 @@ async function findPlaceId(db: any, name: string, city = "Holambra"): Promise<nu
 async function upsertTour(db: any, tour: {
   slug: string; name: string; tagline: string; description: string;
   theme: string; duration: string; coverImage: string; status: string;
+  recommendedWithDriver?: boolean; walkOnly?: boolean; requiresTransport?: boolean;
 }): Promise<number> {
   const existing = await db.execute(sql`SELECT id FROM guided_tours WHERE slug = ${tour.slug} LIMIT 1`);
   const rows = (existing as any)[0] as any[];
+
+  const rwd = tour.recommendedWithDriver ? 1 : 0;
+  const wo  = tour.walkOnly             ? 1 : 0;
+  const rt  = tour.requiresTransport    ? 1 : 0;
 
   if (rows.length > 0) {
     const id = rows[0].id;
     await db.execute(sql`
       UPDATE guided_tours SET
-        name        = ${tour.name},
-        tagline     = ${tour.tagline},
-        description = ${tour.description},
-        theme       = ${tour.theme},
-        duration    = ${tour.duration},
-        coverImage  = ${tour.coverImage},
-        status      = ${tour.status},
-        updatedAt   = NOW()
+        name                  = ${tour.name},
+        tagline               = ${tour.tagline},
+        description           = ${tour.description},
+        theme                 = ${tour.theme},
+        duration              = ${tour.duration},
+        coverImage            = ${tour.coverImage},
+        status                = ${tour.status},
+        recommendedWithDriver = ${rwd},
+        walkOnly              = ${wo},
+        requiresTransport     = ${rt},
+        updatedAt             = NOW()
       WHERE id = ${id}
     `);
     console.log(`  ✅ Tour atualizado: "${tour.name}" (id ${id})`);
     return id;
   } else {
     const result = await db.execute(sql`
-      INSERT INTO guided_tours (slug, name, tagline, description, theme, duration, coverImage, status)
-      VALUES (${tour.slug}, ${tour.name}, ${tour.tagline}, ${tour.description},
-              ${tour.theme}, ${tour.duration}, ${tour.coverImage}, ${tour.status})
+      INSERT INTO guided_tours
+        (slug, name, tagline, description, theme, duration, coverImage, status,
+         recommendedWithDriver, walkOnly, requiresTransport)
+      VALUES
+        (${tour.slug}, ${tour.name}, ${tour.tagline}, ${tour.description},
+         ${tour.theme}, ${tour.duration}, ${tour.coverImage}, ${tour.status},
+         ${rwd}, ${wo}, ${rt})
     `);
     const id = (result as any)[0].insertId;
     console.log(`  ✅ Tour criado: "${tour.name}" (id ${id})`);
@@ -96,6 +108,7 @@ async function setExtensionPlaceIds(db: any, tourId: number, ids: number[]) {
 const TOURS: Array<{
   slug: string; name: string; tagline: string; description: string;
   theme: string; duration: string; coverImage: string;
+  recommendedWithDriver?: boolean; walkOnly?: boolean; requiresTransport?: boolean;
   stops: Array<{ placeName: string; order: number; narrative: string; tip: string | null; bestMoment: string | null }>;
   extensionPlaceNames?: string[];
 }> = [
@@ -103,6 +116,7 @@ const TOURS: Array<{
   // ── 1. Holambra Romântica (atualiza coverImage) ────────────────────────────
   {
     slug: "holambra-romantica",
+    recommendedWithDriver: true,
     name: "Holambra Romântica",
     tagline: "O percurso mais bonito do centro histórico",
     description: "Existe um jeito de percorrer Holambra que transforma o passeio em memória. Começa com cor e termina com atmosfera — e no meio do caminho, o lago, os cadeados e o moinho que deu nome à cidade. Este passeio foi desenhado para casais, mas qualquer pessoa que queira entender o coração de Holambra vai encontrar o que procura.",
@@ -147,6 +161,7 @@ const TOURS: Array<{
   // ── 2. Holambra de Manhã ───────────────────────────────────────────────────
   {
     slug: "holambra-de-manha",
+    recommendedWithDriver: true,
     name: "Holambra de Manhã",
     tagline: "Café, história e a cidade acordando",
     description: "A melhor versão de Holambra tem cheiro de café com leite e stroopwafel recém-saído do forno. Este passeio começa ainda cedo — quando as padarias abrem, as ruas estão vazias e a luz de manhã cedo faz de qualquer esquina uma boa foto. Um percurso curto pelo Boulevard Holandês e arredores, pensado para quem quer começar bem o dia antes que a cidade encha.",
@@ -185,6 +200,7 @@ const TOURS: Array<{
   // ── 3. Holambra das Flores ─────────────────────────────────────────────────
   {
     slug: "holambra-das-flores",
+    recommendedWithDriver: true,
     name: "Holambra das Flores",
     tagline: "A rota da natureza, das cores e da identidade floral",
     description: "Holambra é a capital das flores do Brasil — mas poucos visitantes veem flores de verdade. Este passeio muda isso. Começa num campo de produção real, onde flores nascem do campo não para enfeitar, mas para abastecer o país inteiro. Passa pelo parque à beira do lago, termina com sorvete artesanal num bairro tranquilo. É o passeio que a cidade merece mais do que qualquer outro.",
@@ -217,6 +233,7 @@ const TOURS: Array<{
   // ── 4. Holambra da Imigração ───────────────────────────────────────────────
   {
     slug: "holambra-da-imigracao",
+    recommendedWithDriver: true,
     name: "Holambra da Imigração",
     tagline: "Onde a história holandesa virou cidade brasileira",
     description: "Em 1948, 92 famílias holandesas chegaram a uma fazenda no interior de São Paulo com a intenção de recomeçar. O que construíram ao longo de décadas é Holambra — uma cidade com identidade cultural rara no Brasil. Este passeio percorre os lugares que guardam essa história: a confeitaria fundada por imigrantes, o restaurante que mantém a culinária da colônia e o moinho que se tornou símbolo.",
@@ -255,6 +272,7 @@ const TOURS: Array<{
   // ── 5. Holambra Gourmet ────────────────────────────────────────────────────
   {
     slug: "holambra-gourmet",
+    recommendedWithDriver: true,
     name: "Holambra Gourmet",
     tagline: "Um dia inteiro comendo bem — do café ao último drink",
     description: "Holambra tem uma cena gastronômica surpreendente para uma cidade de 13 mil habitantes. Do café da manhã com identidade holandesa ao lounge que serve os melhores drinks da cidade à noite — passando por italiana no food park e hambúrguer artesanal —, este passeio foi desenhado para quem veio comer bem. Não é um roteiro de museus: é um roteiro de garfo e faca.",
@@ -299,6 +317,7 @@ const TOURS: Array<{
   // ── 6. Holambra Familiar ──────────────────────────────────────────────────
   {
     slug: "holambra-familiar",
+    recommendedWithDriver: true,
     name: "Holambra Familiar",
     tagline: "O roteiro perfeito para curtir com crianças",
     description: "Holambra tem muito mais para famílias do que o imaginário de flores e casais sugere. Este passeio foi desenhado especificamente para quem viaja com crianças: começa num parque com tirolesa e pedalinhos à beira do lago, passa pelos campos de flores reais e termina com sorvete artesanal. Cada parada tem espaço aberto, entrada acessível e ritmo que respeita a energia infantil.",
@@ -337,6 +356,7 @@ const TOURS: Array<{
   // ── 7. Holambra ao Entardecer ──────────────────────────────────────────────
   {
     slug: "holambra-ao-entardecer",
+    recommendedWithDriver: true,
     name: "Holambra ao Entardecer",
     tagline: "Quando a luz muda tudo — o passeio que começa às 16h",
     description: "Existe uma versão de Holambra que a maioria dos visitantes não vê: a que começa às 16h, quando a luz baixa e o centro fica dourado. Este passeio foi desenhado para ser feito no final da tarde — um percurso curto pelo eixo do lago e arredores, aproveitando o horário em que cada ponto de Holambra está no seu melhor. Termina com drinks num lounge que só acorda quando o sol já vai embora.",
@@ -396,6 +416,9 @@ export async function seedReceptivoExpand() {
       duration: tour.duration,
       coverImage: tour.coverImage,
       status: "active",
+      recommendedWithDriver: tour.recommendedWithDriver,
+      walkOnly: tour.walkOnly,
+      requiresTransport: tour.requiresTransport,
     });
 
     // Upsert stops

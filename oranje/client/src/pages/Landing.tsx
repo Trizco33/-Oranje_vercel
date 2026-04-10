@@ -118,14 +118,14 @@ export default function Landing() {
       {/* ─── HERO SECTION ─── */}
       <DSHeroSection
         id="inicio"
-        title="Seu guia definitivo de Holambra"
-        subtitle="Restaurantes, eventos, cafés e transporte premium — tudo em um só lugar. Descubra o melhor da cidade das flores."
+        title="Holambra em um só lugar"
+        subtitle="Experiências, roteiros, eventos e parceiros curados — tudo em um só lugar."
         size="lg"
         align="center"
         backgroundImage="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Montagem_Holambra.jpg/960px-Montagem_Holambra.jpg"
         eyebrow={
           <DSBadge variant="accent" size="md" icon={<Sparkles size={14} />}>
-            Descubra Holambra
+            Curadoria premium · Holambra
           </DSBadge>
         }
         cta={
@@ -604,7 +604,7 @@ export default function Landing() {
                 className="text-sm leading-relaxed"
                 style={{ color: "var(--ds-color-text-muted)" }}
               >
-                Seu guia definitivo para descobrir o melhor de Holambra.
+                Holambra em um só lugar — com curadoria premium.
               </p>
             </div>
 

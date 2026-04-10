@@ -255,7 +255,7 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
                 Por que o mapa do Oranje é diferente?
               </p>
               <p style={{ color: "var(--ds-color-text-muted)", fontSize: "var(--ds-text-sm)", margin: 0, lineHeight: 1.65 }}>
-                Cada lugar foi verificado pelo time Oranje — com descrição editorial, avaliações reais e fotos curadas. Não é um mapa genérico: é o guia definitivo de Holambra, navegável.
+                Cada lugar foi verificado pelo time Oranje — com descrição editorial, avaliações reais e fotos curadas. Holambra em um só lugar, organizado e navegável.
               </p>
             </div>
           </div>
@@ -396,12 +396,12 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
     component: (
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-8)" }}>
         <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)" }}>
-          Oranje é um guia completo de Holambra, desenvolvido para ajudar visitantes e moradores a descobrir o melhor que a cidade tem a oferecer.
+          Oranje reúne o melhor de Holambra em um só lugar — experiências curadas, roteiros premium, parceiros locais e passeios com motorista.
         </p>
 
         {[
           { badge: "Missão", title: "Nossa Missão", text: "Conectar pessoas com as melhores experiências em Holambra, promovendo turismo sustentável e apoiando negócios locais." },
-          { badge: "Visão", title: "Nossa Visão", text: "Ser o guia definitivo de Holambra, oferecendo informações precisas, atualizadas e úteis para todos os visitantes." },
+          { badge: "Visão", title: "Nossa Visão", text: "Ser a plataforma de referência de Holambra — reunindo em um só lugar tudo que a cidade tem de melhor, com curadoria premium." },
         ].map((section) => (
           <div key={section.badge}>
             <DSBadge variant="accent" size="md">{section.badge}</DSBadge>

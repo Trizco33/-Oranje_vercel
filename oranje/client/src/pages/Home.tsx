@@ -327,7 +327,7 @@ export default function Home() {
               WebkitBackdropFilter: "blur(8px)",
             }}>
               <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#E65100", flexShrink: 0 }} />
-              O novo jeito de explorar Holambra
+              Holambra em um só lugar
             </span>
           </div>
 
@@ -345,7 +345,7 @@ export default function Home() {
             transition: "opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s",
             willChange: "opacity, transform",
           }}>
-            Descubra Holambra
+            Holambra
             <br />
             <em style={{
               fontStyle: "italic",
@@ -354,7 +354,7 @@ export default function Home() {
               color: "rgba(255,255,255,0.9)",
               fontSize: "0.92em",
             }}>
-              de um jeito mais vivo
+              em um só lugar
             </em>
           </h1>
 
@@ -372,7 +372,7 @@ export default function Home() {
             transition: "opacity 0.65s cubic-bezier(0.22,1,0.36,1) 0.28s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.28s",
             willChange: "opacity, transform",
           }}>
-            Passeios guiados, lugares curados e experiências locais em Holambra.
+            Experiências, roteiros, parceiros e descobertas com curadoria.
           </p>
 
           {/* Search bar */}

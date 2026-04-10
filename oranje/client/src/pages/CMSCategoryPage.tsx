@@ -604,7 +604,7 @@ export default function CMSCategoryPage() {
 
   useEffect(() => {
     if (!staticCfg) return;
-    const SITE = "ORANJE — Guia Cultural de Holambra";
+    const SITE = "ORANJE — Holambra em um só lugar";
     const pageUrl = `https://oranjeapp.com.br${location.pathname}`;
     document.title = seoTitle;
     setMeta("og:title", seoTitle);

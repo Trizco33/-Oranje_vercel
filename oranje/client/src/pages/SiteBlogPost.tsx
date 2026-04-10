@@ -24,7 +24,7 @@ export default function SiteBlogPost() {
   useEffect(() => {
     if (!article) return;
 
-    const siteName = "ORANJE — Guia Cultural de Holambra";
+    const siteName = "ORANJE — Holambra em um só lugar";
     const postUrl = `${window.location.origin}/blog/${article.slug}`;
     const description = (article as any).seoDescription || (article as any).excerpt || (article as any).description || "";
 

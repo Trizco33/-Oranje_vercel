@@ -411,7 +411,7 @@ export default function SiteHeader() {
               color: "rgba(255,255,255,0.3)",
               marginTop: "0.75rem",
             }}>
-              Guia cultural de Holambra
+              Holambra em um só lugar
             </p>
           </div>
         </nav>

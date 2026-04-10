@@ -77,7 +77,7 @@ export default function SiteSEOPages() {
 
   useEffect(() => {
     if (!seo) return;
-    const SITE = "ORANJE — Guia Cultural de Holambra";
+    const SITE = "ORANJE — Holambra em um só lugar";
     document.title = seo.title;
     const pageUrl = `https://oranjeapp.com.br${location.pathname}`;
 

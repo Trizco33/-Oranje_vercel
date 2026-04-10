@@ -26,7 +26,7 @@ export default function About() {
       <DSHeroSection
         eyebrow="Sobre Nós"
         title="Conheça o Oranje"
-        subtitle="Transformamos a forma como as pessoas descobrem, exploram e vivem Holambra. Somos mais que um guia — somos o companheiro de viagem que conecta você às melhores experiências."
+        subtitle="Reunimos o melhor de Holambra em um só lugar — experiências, roteiros, parceiros e descobertas com curadoria premium."
         size="md"
         align="center"
       />
@@ -58,9 +58,9 @@ export default function About() {
                   margin: "0 auto",
                 }}
               >
-                Oranje existe para transformar a forma como as pessoas descobrem, exploram e vivem Holambra.
-                Somos mais que um guia turístico — somos o seu companheiro de viagem, conectando você aos
-                melhores lugares, eventos, experiências e serviços que a cidade das flores tem a oferecer.
+                Oranje reúne o melhor de Holambra em um só lugar. Somos a plataforma que conecta você a
+                experiências curadas, roteiros premium, parceiros locais e passeios com motorista —
+                tudo com o contexto e o cuidado que a cidade das flores merece.
               </p>
             </div>
           </div>

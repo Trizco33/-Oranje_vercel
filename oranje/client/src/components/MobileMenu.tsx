@@ -303,7 +303,7 @@ export function MobileMenu() {
                 </span>
               </div>
               <p style={{ fontSize: 11, color: "var(--ds-color-text-muted)", lineHeight: 1.4 }}>
-                Guia cultural e turístico local
+                Holambra em um só lugar
               </p>
             </div>
           </div>

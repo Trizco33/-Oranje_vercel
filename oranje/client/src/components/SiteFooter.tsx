@@ -43,7 +43,7 @@ export default function SiteFooter() {
           <div>
             <img
               src="/logo-white.png"
-              alt="Oranje - Guia Cultural de Holambra"
+              alt="Oranje — Holambra em um só lugar"
               style={{ height: "32px", width: "auto", maxWidth: "130px", marginBottom: "16px", opacity: 0.9, objectFit: "contain" }}
               loading="lazy"
             />
@@ -53,7 +53,7 @@ export default function SiteFooter() {
               lineHeight: 1.7,
               maxWidth: "280px",
             }}>
-              O guia definitivo de Holambra. Descubra os melhores lugares, eventos e experiências da cidade das flores.
+              Experiências, roteiros, parceiros e descobertas — reunidos com curadoria premium.
             </p>
           </div>
 

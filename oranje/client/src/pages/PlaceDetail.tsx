@@ -684,7 +684,7 @@ export default function PlaceDetail() {
   /* ── SEO effect ── */
   useEffect(() => {
     if (!place) return;
-    const siteName = "ORANJE — Guia Cultural de Holambra";
+    const siteName = "ORANJE — Holambra em um só lugar";
     const placeUrl = `${window.location.origin}/app/lugar/${place.id}`;
     const description = place.shortDesc || place.longDesc || `Conheça ${place.name} em Holambra, SP.`;
     const rawCover = (!isBlockedCoverUrl(place.coverImage || "") && place.coverImage) || "";

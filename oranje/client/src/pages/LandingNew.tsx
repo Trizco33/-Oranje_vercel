@@ -22,8 +22,8 @@ export default function LandingNew() {
 
   // Dados padrão (fallback se CMS não tiver dados)
   const defaultHero = {
-    title: "Seu guia definitivo de Holambra",
-    subtitle: "Restaurantes, eventos, experiências e transporte premium em um só lugar",
+    title: "Holambra em um só lugar",
+    subtitle: "Experiências, roteiros, eventos e parceiros curados — tudo em um só lugar.",
     buttonText: "Explorar Agora",
     image: "/pontos-turisticos.jpg",
   };
@@ -75,7 +75,7 @@ export default function LandingNew() {
   const faqItems = [
     {
       question: "Como funciona o Oranje?",
-      answer: "Oranje é um guia completo de Holambra que conecta turistas e residentes com os melhores lugares, eventos, restaurantes e serviços de transporte.",
+      answer: "Oranje é a plataforma que reúne o melhor de Holambra em um só lugar — experiências curadas, roteiros premium, parceiros locais e passeios com motorista.",
     },
     {
       question: "Como me tornar um parceiro?",
@@ -277,7 +277,7 @@ export default function LandingNew() {
       <footer className="bg-[#004D40] text-white py-12 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-gray-300">
-            © 2026 Oranje - Guia Cultural de Holambra. Todos os direitos reservados.
+            © 2026 Oranje — Holambra em um só lugar. Todos os direitos reservados.
           </p>
         </div>
       </footer>

@@ -19,6 +19,7 @@ import { placesRouter } from "./places.router";
 import { reviewsRouter } from "./reviews.router";
 import { pushRouter } from "./push.router";
 import { claimsRouter } from "./claims.router";
+import { tourOperationsRouter } from "./tour-operations.router";
 import { generateSitemap } from "./sitemap";
 import * as db from "./db";
 import { getDb } from "./db";
@@ -46,6 +47,7 @@ export const appRouter = router({
   reviews: reviewsRouter,
   push: pushRouter,
   claims: claimsRouter,
+  tourOperations: tourOperationsRouter,
 
   // ── SEO ────────────────────────────────────────────────────────────────────
   seo: router({

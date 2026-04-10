@@ -444,6 +444,13 @@ export const guidedTours = mysqlTable("guided_tours", {
   coverImage: text("coverImage"),
   extensionPlaceIds: json("extensionPlaceIds").$type<number[]>(),  // IDs para bloco "Se quiser ir além"
   status: varchar("status", { length: 20 }).default("draft").notNull(), // 'active' | 'draft' | 'archived'
+  // ── Passeios Premium com Motorista ─────────────────────────────────────────
+  requiresTransport: boolean("requiresTransport").default(false).notNull(),
+  walkOnly: boolean("walkOnly").default(false).notNull(),
+  recommendedWithDriver: boolean("recommendedWithDriver").default(false).notNull(),
+  clientPrice: float("clientPrice"),          // Valor cobrado do cliente (R$)
+  driverPayout: float("driverPayout"),        // Repasse fixo ao motorista (R$)
+  partnerFee: float("partnerFee"),            // Valor faturado do parceiro por execução (R$)
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -504,3 +511,67 @@ export const profileClaims = mysqlTable("profile_claims", {
 
 export type ProfileClaim = typeof profileClaims.$inferSelect;
 export type InsertProfileClaim = typeof profileClaims.$inferInsert;
+
+// ─── Tour Operations (Passeios Premium com Motorista Oranje) ─────────────────
+// Cada registro representa uma execução real de um passeio curado.
+// Criado quando o cliente confirma a solicitação de passeio com motorista.
+export const tourOperations = mysqlTable("tour_operations", {
+  id: int("id").autoincrement().primaryKey(),
+  tourId: int("tourId").notNull().references(() => guidedTours.id),
+  driverId: varchar("driverId", { length: 36 }).references(() => drivers.id),  // UUID FK
+  // ── Cliente ──────────────────────────────────────────────────────────────
+  clientName: varchar("clientName", { length: 200 }).notNull(),
+  clientEmail: varchar("clientEmail", { length: 320 }),
+  clientPhone: varchar("clientPhone", { length: 30 }),
+  // ── Logística ─────────────────────────────────────────────────────────────
+  scheduledDate: varchar("scheduledDate", { length: 20 }).notNull(), // 'YYYY-MM-DD'
+  scheduledTime: varchar("scheduledTime", { length: 10 }),           // 'HH:MM'
+  partySize: int("partySize").default(1).notNull(),
+  departurePoint: text("departurePoint"),
+  notes: text("notes"),          // Observações do cliente
+  internalNotes: text("internalNotes"),  // Notas internas do admin
+  requestOrigin: varchar("requestOrigin", { length: 50 }).default("web"), // 'web' | 'whatsapp' | 'admin'
+  // ── Financeiro (snapshot dos valores no momento da operação) ──────────────
+  clientPrice: float("clientPrice").notNull().default(0),   // Valor cobrado ao cliente
+  driverPayout: float("driverPayout").notNull().default(0), // Repasse ao motorista
+  partnerFee: float("partnerFee").notNull().default(0),     // Faturamento do parceiro
+  oranjeMargin: float("oranjeMargin").notNull().default(0), // Margem calculada (clientPrice - driverPayout - partnerFee)
+  // ── Status ────────────────────────────────────────────────────────────────
+  operationStatus: mysqlEnum("operationStatus", [
+    "pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"
+  ]).default("pending").notNull(),
+  driverPayoutStatus: mysqlEnum("driverPayoutStatus", [
+    "pending", "ready_to_pay", "paid"
+  ]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  tourIdIdx: index("tour_ops_tour_id_idx").on(table.tourId),
+  driverIdIdx: index("tour_ops_driver_id_idx").on(table.driverId),
+  scheduledDateIdx: index("tour_ops_scheduled_date_idx").on(table.scheduledDate),
+  operationStatusIdx: index("tour_ops_status_idx").on(table.operationStatus),
+}));
+
+export type TourOperation = typeof tourOperations.$inferSelect;
+export type InsertTourOperation = typeof tourOperations.$inferInsert;
+
+// ─── Tour Operation Partners (Parceiros por Execução) ────────────────────────
+// Vincula parceiros a uma operação específica para controle de faturamento mensal.
+export const tourOperationPartners = mysqlTable("tour_operation_partners", {
+  id: int("id").autoincrement().primaryKey(),
+  operationId: int("operationId").notNull().references(() => tourOperations.id),
+  partnerId: int("partnerId").references(() => partners.id),
+  placeId: int("placeId").references(() => places.id),
+  feeAmount: float("feeAmount").notNull().default(0),  // Snapshot do valor cobrado no momento
+  partnerBillingStatus: mysqlEnum("partnerBillingStatus", [
+    "pending", "billable", "invoiced", "paid"
+  ]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  operationIdIdx: index("top_operation_id_idx").on(table.operationId),
+  partnerIdIdx: index("top_partner_id_idx").on(table.partnerId),
+  billingStatusIdx: index("top_billing_status_idx").on(table.partnerBillingStatus),
+}));
+
+export type TourOperationPartner = typeof tourOperationPartners.$inferSelect;
+export type InsertTourOperationPartner = typeof tourOperationPartners.$inferInsert;

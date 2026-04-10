@@ -14,6 +14,7 @@ import {
   loadReceptivoProgress,
   clearReceptivoProgress,
 } from "@/lib/receptivoAnalytics";
+import { TourDriverCTA } from "@/components/TourDriverCTA";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1850,6 +1851,17 @@ export default function ReceptivoDetail() {
           </div>
         </div>
       )}
+
+      <TourDriverCTA
+        tourId={(tour as any)?.id}
+        tourName={(tour as any)?.name ?? ""}
+        requiresTransport={(tour as any)?.requiresTransport}
+        walkOnly={(tour as any)?.walkOnly}
+        recommendedWithDriver={(tour as any)?.recommendedWithDriver}
+        clientPrice={(tour as any)?.clientPrice}
+        driverPayout={(tour as any)?.driverPayout}
+        partnerFee={(tour as any)?.partnerFee}
+      />
 
       <TabBar />
     </div>

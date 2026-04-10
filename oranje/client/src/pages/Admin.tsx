@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   BarChart3, Bell, Building2, CalendarDays, ChevronRight, Edit, ImagePlus,
-  Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car, Award
+  Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car, Award, Star
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,8 +20,9 @@ import { AdminDriversMarketplace } from "@/components/AdminDriversMarketplace";
 import { AdminArticles } from "@/components/AdminArticles";
 import { AdminSiteRoutes } from "@/components/AdminSiteRoutes";
 import { AdminClaims } from "@/components/AdminClaims";
+import { AdminPremiumTours } from "@/components/AdminPremiumTours";
 
-type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes" | "claims";
+type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes" | "claims" | "premium-tours";
 
 const NAV_GROUPS = [
   {
@@ -50,6 +51,7 @@ const NAV_GROUPS = [
     label: "Negócios",
     items: [
       { id: "claims" as AdminTab, icon: Award, label: "Reivindicações" },
+      { id: "premium-tours" as AdminTab, icon: Star, label: "Passeios Premium" },
     ],
   },
   {
@@ -321,6 +323,7 @@ export default function Admin() {
           {activeTab === "categories" && <AdminCategories />}
           {activeTab === "articles" && <AdminArticles />}
           {activeTab === "claims" && <AdminClaims />}
+          {activeTab === "premium-tours" && <AdminPremiumTours />}
           {activeTab === "logs" && <AdminLogs />}
         </div>
       </div>

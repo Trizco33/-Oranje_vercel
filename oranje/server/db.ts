@@ -1,14 +1,15 @@
-import { and, desc, eq, ilike, inArray, like, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, like, or, sql, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import type { ResultSetHeader } from "mysql2";
 import {
   InsertUser, ads, adminLogs, categories, events, favorites, magicLinks, notifications,
   partners, placePhotos, places, routes, users, vouchers, drivers, siteRouteFeatures,
-  guidedTours, guidedTourStops, profileClaims,
+  guidedTours, guidedTourStops, profileClaims, tourOperations, tourOperationPartners,
   type InsertAdminLog, type InsertCategory, type InsertEvent, type InsertMagicLink, type InsertPartner,
   type InsertPlace, type InsertRoute, type InsertVoucher, type MagicLink, type InsertDriver,
   type InsertSiteRouteFeature, type InsertGuidedTour, type InsertGuidedTourStop,
-  type InsertProfileClaim,
+  type InsertProfileClaim, type InsertTourOperation, type InsertTourOperationPartner,
+  type TourOperation, type TourOperationPartner,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -889,4 +890,227 @@ export async function updateClaimStatus(
       updatedAt: new Date(),
     })
     .where(eq(profileClaims.id, id));
+}
+
+// ─── Tour Operations ──────────────────────────────────────────────────────────
+
+export async function createTourOperation(data: Omit<InsertTourOperation, "id" | "createdAt" | "updatedAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const result = await db.insert(tourOperations).values(data as any);
+  return { id: (result[0] as ResultSetHeader).insertId };
+}
+
+export async function listTourOperations(filters?: {
+  tourId?: number;
+  driverId?: string;
+  operationStatus?: string;
+  scheduledDateFrom?: string;
+  scheduledDateTo?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const conditions: any[] = [];
+  if (filters?.tourId) conditions.push(eq(tourOperations.tourId, filters.tourId));
+  if (filters?.driverId) conditions.push(eq(tourOperations.driverId, filters.driverId));
+  if (filters?.operationStatus) conditions.push(eq(tourOperations.operationStatus, filters.operationStatus as any));
+  if (filters?.scheduledDateFrom) conditions.push(gte(tourOperations.scheduledDate, filters.scheduledDateFrom));
+  if (filters?.scheduledDateTo) conditions.push(lte(tourOperations.scheduledDate, filters.scheduledDateTo));
+
+  const q = db
+    .select({
+      id: tourOperations.id,
+      tourId: tourOperations.tourId,
+      tourName: guidedTours.name,
+      tourSlug: guidedTours.slug,
+      driverId: tourOperations.driverId,
+      driverName: drivers.name,
+      driverPhone: drivers.whatsapp,
+      clientName: tourOperations.clientName,
+      clientEmail: tourOperations.clientEmail,
+      clientPhone: tourOperations.clientPhone,
+      scheduledDate: tourOperations.scheduledDate,
+      scheduledTime: tourOperations.scheduledTime,
+      partySize: tourOperations.partySize,
+      departurePoint: tourOperations.departurePoint,
+      notes: tourOperations.notes,
+      internalNotes: tourOperations.internalNotes,
+      requestOrigin: tourOperations.requestOrigin,
+      clientPrice: tourOperations.clientPrice,
+      driverPayout: tourOperations.driverPayout,
+      partnerFee: tourOperations.partnerFee,
+      oranjeMargin: tourOperations.oranjeMargin,
+      operationStatus: tourOperations.operationStatus,
+      driverPayoutStatus: tourOperations.driverPayoutStatus,
+      createdAt: tourOperations.createdAt,
+      updatedAt: tourOperations.updatedAt,
+    })
+    .from(tourOperations)
+    .leftJoin(guidedTours, eq(tourOperations.tourId, guidedTours.id))
+    .leftJoin(drivers, eq(tourOperations.driverId, drivers.id));
+
+  if (conditions.length > 0) {
+    q.where(conditions.length === 1 ? conditions[0] : and(...conditions));
+  }
+  return q
+    .orderBy(desc(tourOperations.scheduledDate), desc(tourOperations.createdAt))
+    .limit(filters?.limit ?? 200)
+    .offset(filters?.offset ?? 0);
+}
+
+export async function getTourOperationById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const rows = await db
+    .select({
+      id: tourOperations.id,
+      tourId: tourOperations.tourId,
+      tourName: guidedTours.name,
+      tourSlug: guidedTours.slug,
+      driverId: tourOperations.driverId,
+      driverName: drivers.name,
+      driverPhone: drivers.whatsapp,
+      clientName: tourOperations.clientName,
+      clientEmail: tourOperations.clientEmail,
+      clientPhone: tourOperations.clientPhone,
+      scheduledDate: tourOperations.scheduledDate,
+      scheduledTime: tourOperations.scheduledTime,
+      partySize: tourOperations.partySize,
+      departurePoint: tourOperations.departurePoint,
+      notes: tourOperations.notes,
+      internalNotes: tourOperations.internalNotes,
+      requestOrigin: tourOperations.requestOrigin,
+      clientPrice: tourOperations.clientPrice,
+      driverPayout: tourOperations.driverPayout,
+      partnerFee: tourOperations.partnerFee,
+      oranjeMargin: tourOperations.oranjeMargin,
+      operationStatus: tourOperations.operationStatus,
+      driverPayoutStatus: tourOperations.driverPayoutStatus,
+      createdAt: tourOperations.createdAt,
+      updatedAt: tourOperations.updatedAt,
+    })
+    .from(tourOperations)
+    .leftJoin(guidedTours, eq(tourOperations.tourId, guidedTours.id))
+    .leftJoin(drivers, eq(tourOperations.driverId, drivers.id))
+    .where(eq(tourOperations.id, id))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+export async function updateTourOperationStatus(
+  id: number,
+  data: {
+    operationStatus?: "pending" | "confirmed" | "assigned" | "in_progress" | "completed" | "cancelled" | "no_show";
+    driverPayoutStatus?: "pending" | "ready_to_pay" | "paid";
+    driverId?: string | null;
+    internalNotes?: string;
+    scheduledDate?: string;
+    scheduledTime?: string;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  await db.update(tourOperations).set({ ...data, updatedAt: new Date() } as any).where(eq(tourOperations.id, id));
+}
+
+export async function updateTourOperationPartnerBilling(
+  id: number,
+  status: "pending" | "billable" | "invoiced" | "paid"
+) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  await db.update(tourOperationPartners).set({ partnerBillingStatus: status }).where(eq(tourOperationPartners.id, id));
+}
+
+export async function getTourOperationPartners(operationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  return db
+    .select({
+      id: tourOperationPartners.id,
+      operationId: tourOperationPartners.operationId,
+      partnerId: tourOperationPartners.partnerId,
+      partnerName: partners.name,
+      placeId: tourOperationPartners.placeId,
+      placeName: places.name,
+      feeAmount: tourOperationPartners.feeAmount,
+      partnerBillingStatus: tourOperationPartners.partnerBillingStatus,
+      createdAt: tourOperationPartners.createdAt,
+    })
+    .from(tourOperationPartners)
+    .leftJoin(partners, eq(tourOperationPartners.partnerId, partners.id))
+    .leftJoin(places, eq(tourOperationPartners.placeId, places.id))
+    .where(eq(tourOperationPartners.operationId, operationId));
+}
+
+export async function createTourOperationPartner(data: Omit<InsertTourOperationPartner, "id" | "createdAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  return db.insert(tourOperationPartners).values(data as any);
+}
+
+export async function getTourFinancialSummary(filters?: {
+  month?: string;   // 'YYYY-MM'
+  tourId?: number;
+  driverId?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const conditions: any[] = [eq(tourOperations.operationStatus, "completed")];
+  if (filters?.month) {
+    conditions.push(like(tourOperations.scheduledDate, `${filters.month}%`));
+  }
+  if (filters?.tourId) conditions.push(eq(tourOperations.tourId, filters.tourId));
+  if (filters?.driverId) conditions.push(eq(tourOperations.driverId, filters.driverId));
+
+  const ops = await db
+    .select({
+      id: tourOperations.id,
+      tourId: tourOperations.tourId,
+      tourName: guidedTours.name,
+      driverId: tourOperations.driverId,
+      driverName: drivers.name,
+      scheduledDate: tourOperations.scheduledDate,
+      clientPrice: tourOperations.clientPrice,
+      driverPayout: tourOperations.driverPayout,
+      partnerFee: tourOperations.partnerFee,
+      oranjeMargin: tourOperations.oranjeMargin,
+      driverPayoutStatus: tourOperations.driverPayoutStatus,
+    })
+    .from(tourOperations)
+    .leftJoin(guidedTours, eq(tourOperations.tourId, guidedTours.id))
+    .leftJoin(drivers, eq(tourOperations.driverId, drivers.id))
+    .where(conditions.length === 1 ? conditions[0] : and(...conditions))
+    .orderBy(tourOperations.scheduledDate);
+
+  const totals = ops.reduce(
+    (acc, op) => ({
+      totalRevenue: acc.totalRevenue + (op.clientPrice ?? 0),
+      totalDriverPayout: acc.totalDriverPayout + (op.driverPayout ?? 0),
+      totalPartnerFee: acc.totalPartnerFee + (op.partnerFee ?? 0),
+      totalMargin: acc.totalMargin + (op.oranjeMargin ?? 0),
+      totalExecutions: acc.totalExecutions + 1,
+    }),
+    { totalRevenue: 0, totalDriverPayout: 0, totalPartnerFee: 0, totalMargin: 0, totalExecutions: 0 }
+  );
+
+  return { operations: ops, totals };
+}
+
+export async function updateGuidedTourPremiumSettings(
+  id: number,
+  data: {
+    requiresTransport?: boolean;
+    walkOnly?: boolean;
+    recommendedWithDriver?: boolean;
+    clientPrice?: number | null;
+    driverPayout?: number | null;
+    partnerFee?: number | null;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  await db.update(guidedTours).set({ ...data, updatedAt: new Date() } as any).where(eq(guidedTours.id, id));
 }

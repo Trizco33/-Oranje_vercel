@@ -87,6 +87,27 @@ export const driversRouter = router({
         throw new Error("Falha ao salvar cadastro. Tente novamente.");
       }
 
+      // Registrar na Central de Operações Oranje como transfer_request (não crítico)
+      // sourceId é null porque drivers.id é UUID varchar (não int)
+      try {
+        await db.createOranjeOperation({
+          operationType: "transfer_request",
+          sourceId:      null,
+          sourceTable:   "drivers",
+          customerName:  input.name,
+          customerPhone: normalizeWhatsApp(input.whatsapp),
+          billingStatus: "not_applicable",
+          payoutStatus:  "not_applicable",
+          createdBy:     input.name,
+          metaJson: {
+            serviceType:  input.serviceType,
+            region:       input.region,
+            vehicleModel: input.vehicleModel ?? null,
+            plate:        input.plate ?? null,
+          },
+        });
+      } catch (e) { console.warn("[Operations Central] Failed to sync driver registration:", e); }
+
       notifyOwner({
         title: "Novo Motorista Cadastrado",
         content: `${input.name} se cadastrou como motorista.\n\nTipo de Serviço: ${input.serviceType}\nRegião: ${input.region}\nWhatsApp: ${input.whatsapp}\n\nAcesse o ADMIN para revisar o cadastro.`,

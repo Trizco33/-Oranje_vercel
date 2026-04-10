@@ -202,5 +202,94 @@ export async function runMigrations(): Promise<void> {
     console.log("[Migrations] ✓ tour_operation_partners already exists.");
   }
 
+  // ─── Migration 006: oranje_operations — Central de Operações ────────────────
+  if (!(await tableExists(db, "oranje_operations"))) {
+    console.log("[Migrations] Creating table: oranje_operations...");
+    await db.execute(`
+      CREATE TABLE \`oranje_operations\` (
+        \`id\`              int AUTO_INCREMENT NOT NULL,
+        \`operationType\`   enum('premium_tour','receptive_request','transfer_request','profile_claim') NOT NULL,
+        \`sourceId\`        int NULL,
+        \`sourceTable\`     varchar(60) NULL,
+        \`customerName\`    varchar(200) NOT NULL,
+        \`customerEmail\`   varchar(320) NULL,
+        \`customerPhone\`   varchar(30) NULL,
+        \`assignedToId\`    varchar(36) NULL,
+        \`assignedToName\`  varchar(200) NULL,
+        \`partnerId\`       int NULL,
+        \`scheduledDate\`   varchar(20) NULL,
+        \`scheduledTime\`   varchar(10) NULL,
+        \`partySize\`       int NULL DEFAULT 1,
+        \`notes\`           text NULL,
+        \`internalNotes\`   text NULL,
+        \`requestOrigin\`   varchar(50) DEFAULT 'web',
+        \`status\`          enum('pending','confirmed','assigned','in_progress','completed','cancelled','rejected','no_show') NOT NULL DEFAULT 'pending',
+        \`customerAmount\`  float NULL DEFAULT 0,
+        \`partnerAmount\`   float NULL DEFAULT 0,
+        \`operatorAmount\`  float NULL DEFAULT 0,
+        \`oranjeMargin\`    float NULL DEFAULT 0,
+        \`billingStatus\`   enum('not_applicable','pending','billed','paid') DEFAULT 'not_applicable',
+        \`payoutStatus\`    enum('not_applicable','pending','ready_to_pay','paid') DEFAULT 'not_applicable',
+        \`metaJson\`        json NULL,
+        \`createdBy\`       varchar(200) NULL,
+        \`lastActionAt\`    timestamp NULL,
+        \`lastActionBy\`    varchar(200) NULL,
+        \`createdAt\`       timestamp NOT NULL DEFAULT (now()),
+        \`updatedAt\`       timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+        CONSTRAINT \`oranje_operations_pk\` PRIMARY KEY(\`id\`)
+      )
+    `);
+    if (!(await indexExists(db, "oranje_operations", "oranje_ops_type_idx"))) {
+      await db.execute(`CREATE INDEX \`oranje_ops_type_idx\` ON \`oranje_operations\` (\`operationType\`)`);
+    }
+    if (!(await indexExists(db, "oranje_operations", "oranje_ops_status_idx"))) {
+      await db.execute(`CREATE INDEX \`oranje_ops_status_idx\` ON \`oranje_operations\` (\`status\`)`);
+    }
+    if (!(await indexExists(db, "oranje_operations", "oranje_ops_date_idx"))) {
+      await db.execute(`CREATE INDEX \`oranje_ops_date_idx\` ON \`oranje_operations\` (\`scheduledDate\`)`);
+    }
+    if (!(await indexExists(db, "oranje_operations", "oranje_ops_source_idx"))) {
+      await db.execute(`CREATE INDEX \`oranje_ops_source_idx\` ON \`oranje_operations\` (\`sourceId\`, \`sourceTable\`)`);
+    }
+    console.log("[Migrations] ✅ oranje_operations table created.");
+  } else {
+    console.log("[Migrations] ✓ oranje_operations already exists.");
+  }
+
+  // ─── Migration 007: operation_events — Histórico por Operação ─────────────
+  if (!(await tableExists(db, "operation_events"))) {
+    console.log("[Migrations] Creating table: operation_events...");
+    await db.execute(`
+      CREATE TABLE \`operation_events\` (
+        \`id\`           int AUTO_INCREMENT NOT NULL,
+        \`operationId\`  int NOT NULL,
+        \`eventType\`    varchar(50) NOT NULL,
+        \`fromValue\`    varchar(100) NULL,
+        \`toValue\`      varchar(100) NULL,
+        \`note\`         text NULL,
+        \`actorName\`    varchar(200) NULL,
+        \`createdAt\`    timestamp NOT NULL DEFAULT (now()),
+        CONSTRAINT \`operation_events_pk\` PRIMARY KEY(\`id\`)
+      )
+    `);
+    try {
+      await db.execute(`
+        ALTER TABLE \`operation_events\`
+          ADD CONSTRAINT \`op_events_operation_id_fk\`
+          FOREIGN KEY (\`operationId\`) REFERENCES \`oranje_operations\`(\`id\`)
+          ON DELETE CASCADE ON UPDATE NO ACTION
+      `);
+    } catch (_) { console.warn("[Migrations] FK operation_events.operationId skipped."); }
+    if (!(await indexExists(db, "operation_events", "op_events_operation_id_idx"))) {
+      await db.execute(`CREATE INDEX \`op_events_operation_id_idx\` ON \`operation_events\` (\`operationId\`)`);
+    }
+    if (!(await indexExists(db, "operation_events", "op_events_type_idx"))) {
+      await db.execute(`CREATE INDEX \`op_events_type_idx\` ON \`operation_events\` (\`eventType\`)`);
+    }
+    console.log("[Migrations] ✅ operation_events table created.");
+  } else {
+    console.log("[Migrations] ✓ operation_events already exists.");
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

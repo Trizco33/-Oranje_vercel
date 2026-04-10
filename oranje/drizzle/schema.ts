@@ -575,3 +575,100 @@ export const tourOperationPartners = mysqlTable("tour_operation_partners", {
 
 export type TourOperationPartner = typeof tourOperationPartners.$inferSelect;
 export type InsertTourOperationPartner = typeof tourOperationPartners.$inferInsert;
+
+// ─── Central de Operações Oranje ─────────────────────────────────────────────
+// Tabela central compartilhada por todos os fluxos operacionais reais:
+// premium_tour, receptive_request, transfer_request, profile_claim.
+// Criada em paralelo às tabelas específicas — não substitui, complementa.
+export const oranjeOperations = mysqlTable("oranje_operations", {
+  id: int("id").autoincrement().primaryKey(),
+
+  // ── Tipo e origem ─────────────────────────────────────────────────────────
+  operationType: mysqlEnum("operationType", [
+    "premium_tour",
+    "receptive_request",
+    "transfer_request",
+    "profile_claim",
+  ]).notNull(),
+  sourceId:    int("sourceId"),                         // FK para tabela específica (tour_operations.id, profile_claims.id, drivers.id)
+  sourceTable: varchar("sourceTable", { length: 60 }),  // "tour_operations" | "profile_claims" | "drivers"
+
+  // ── Cliente ───────────────────────────────────────────────────────────────
+  customerName:  varchar("customerName",  { length: 200 }).notNull(),
+  customerEmail: varchar("customerEmail", { length: 320 }),
+  customerPhone: varchar("customerPhone", { length: 30 }),
+
+  // ── Atribuição ────────────────────────────────────────────────────────────
+  assignedToId:   varchar("assignedToId",   { length: 36 }),   // driverId UUID ou userId
+  assignedToName: varchar("assignedToName", { length: 200 }),
+  partnerId:      int("partnerId").references(() => partners.id),
+
+  // ── Logística ─────────────────────────────────────────────────────────────
+  scheduledDate: varchar("scheduledDate", { length: 20 }),  // 'YYYY-MM-DD'
+  scheduledTime: varchar("scheduledTime", { length: 10 }),  // 'HH:MM'
+  partySize:     int("partySize").default(1),
+  notes:         text("notes"),          // observações do solicitante
+  internalNotes: text("internalNotes"),  // notas internas do admin
+  requestOrigin: varchar("requestOrigin", { length: 50 }).default("web"),
+
+  // ── Status unificado ─────────────────────────────────────────────────────
+  status: mysqlEnum("status", [
+    "pending",
+    "confirmed",
+    "assigned",
+    "in_progress",
+    "completed",
+    "cancelled",
+    "rejected",
+    "no_show",
+  ]).default("pending").notNull(),
+
+  // ── Financeiro base ───────────────────────────────────────────────────────
+  customerAmount: float("customerAmount").default(0),   // Valor cobrado ao cliente
+  partnerAmount:  float("partnerAmount").default(0),    // Faturamento do parceiro
+  operatorAmount: float("operatorAmount").default(0),   // Repasse ao motorista/operador
+  oranjeMargin:   float("oranjeMargin").default(0),     // Margem Oranje calculada
+  billingStatus: mysqlEnum("billingStatus", [
+    "not_applicable", "pending", "billed", "paid",
+  ]).default("not_applicable"),
+  payoutStatus: mysqlEnum("payoutStatus", [
+    "not_applicable", "pending", "ready_to_pay", "paid",
+  ]).default("not_applicable"),
+
+  // ── Campos extras por tipo (JSON livre) ───────────────────────────────────
+  metaJson: json("metaJson").$type<Record<string, unknown>>(),
+
+  // ── Auditoria ─────────────────────────────────────────────────────────────
+  createdBy:    varchar("createdBy",    { length: 200 }),  // nome/email do criador
+  lastActionAt: timestamp("lastActionAt"),
+  lastActionBy: varchar("lastActionBy", { length: 200 }),
+  createdAt:    timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:    timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx:          index("oranje_ops_type_idx").on(table.operationType),
+  statusIdx:        index("oranje_ops_status_idx").on(table.status),
+  scheduledDateIdx: index("oranje_ops_date_idx").on(table.scheduledDate),
+  sourceIdx:        index("oranje_ops_source_idx").on(table.sourceId, table.sourceTable),
+}));
+
+export type OranjeOperation    = typeof oranjeOperations.$inferSelect;
+export type InsertOranjeOperation = typeof oranjeOperations.$inferInsert;
+
+// ─── Histórico de Eventos por Operação ───────────────────────────────────────
+// Trilha de auditoria imutável: cada mudança de status, nota ou atribuição.
+export const operationEvents = mysqlTable("operation_events", {
+  id:          int("id").autoincrement().primaryKey(),
+  operationId: int("operationId").notNull().references(() => oranjeOperations.id, { onDelete: "cascade" }),
+  eventType:   varchar("eventType",   { length: 50 }).notNull(), // "created" | "status_change" | "note" | "assignment" | "financial"
+  fromValue:   varchar("fromValue",   { length: 100 }),
+  toValue:     varchar("toValue",     { length: 100 }),
+  note:        text("note"),
+  actorName:   varchar("actorName",   { length: 200 }),
+  createdAt:   timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  operationIdIdx: index("op_events_operation_id_idx").on(table.operationId),
+  eventTypeIdx:   index("op_events_type_idx").on(table.eventType),
+}));
+
+export type OperationEvent    = typeof operationEvents.$inferSelect;
+export type InsertOperationEvent = typeof operationEvents.$inferInsert;

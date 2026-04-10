@@ -35,7 +35,7 @@ export const claimsRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      await db.createProfileClaim({
+      const claim = await db.createProfileClaim({
         placeId: input.placeId,
         contactName: input.contactName,
         contactPhone: input.contactPhone ?? null,
@@ -55,6 +55,27 @@ export const claimsRouter = router({
         coverImageUrl: input.coverImageUrl ?? null,
         status: "pending",
       });
+
+      // Registrar na Central de Operações Oranje (não crítico)
+      try {
+        await db.createOranjeOperation({
+          operationType: "profile_claim",
+          sourceId:      (claim as any)?.[0]?.insertId ?? null,
+          sourceTable:   "profile_claims",
+          customerName:  input.contactName,
+          customerEmail: input.contactEmail,
+          customerPhone: input.contactPhone ?? null,
+          billingStatus: "not_applicable",
+          payoutStatus:  "not_applicable",
+          createdBy:     input.contactName,
+          metaJson:      {
+            placeId: input.placeId,
+            businessName: input.businessName ?? null,
+            contactRole:  input.contactRole ?? null,
+          },
+        });
+      } catch (e) { console.warn("[Operations Central] Failed to sync profile claim:", e); }
+
       return { ok: true };
     }),
 

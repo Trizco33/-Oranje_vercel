@@ -61,6 +61,31 @@ export const tourOperationsRouter = router({
         driverPayoutStatus: "pending",
       });
 
+      // Registrar na Central de Operações Oranje (não crítico — falha silenciosa)
+      try {
+        await db.createOranjeOperation({
+          operationType:  "premium_tour",
+          sourceId:       result.id,
+          sourceTable:    "tour_operations",
+          customerName:   input.clientName,
+          customerEmail:  input.clientEmail ?? null,
+          customerPhone:  input.clientPhone ?? null,
+          scheduledDate:  input.scheduledDate,
+          scheduledTime:  input.scheduledTime ?? null,
+          partySize:      input.partySize,
+          notes:          input.notes ?? null,
+          requestOrigin:  input.requestOrigin,
+          customerAmount: clientPrice,
+          operatorAmount: driverPayout,
+          partnerAmount:  partnerFee,
+          oranjeMargin:   oranjeMargin,
+          billingStatus:  clientPrice > 0 ? "pending" : "not_applicable",
+          payoutStatus:   driverPayout > 0 ? "pending" : "not_applicable",
+          createdBy:      input.clientName,
+          metaJson:       { tourId: input.tourId, tourName: (tour as any).name, departurePoint: input.departurePoint ?? null },
+        });
+      } catch (e) { console.warn("[Operations Central] Failed to sync tour operation:", e); }
+
       // Notificar o admin sobre nova solicitação
       try {
         await notifyOwner({

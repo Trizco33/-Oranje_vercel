@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   BarChart3, Bell, Building2, CalendarDays, ChevronRight, Edit, ImagePlus,
-  Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car, Award, Star
+  LayoutGrid, Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car, Award, Star
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,10 +21,17 @@ import { AdminArticles } from "@/components/AdminArticles";
 import { AdminSiteRoutes } from "@/components/AdminSiteRoutes";
 import { AdminClaims } from "@/components/AdminClaims";
 import { AdminPremiumTours } from "@/components/AdminPremiumTours";
+import { AdminOperationsCenter } from "@/components/AdminOperationsCenter";
 
-type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes" | "claims" | "premium-tours";
+type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes" | "claims" | "premium-tours" | "operations-center";
 
 const NAV_GROUPS = [
+  {
+    label: "Central",
+    items: [
+      { id: "operations-center" as AdminTab, icon: LayoutGrid, label: "Central de Operações" },
+    ],
+  },
   {
     label: "Gestão",
     items: [
@@ -324,6 +331,7 @@ export default function Admin() {
           {activeTab === "articles" && <AdminArticles />}
           {activeTab === "claims" && <AdminClaims />}
           {activeTab === "premium-tours" && <AdminPremiumTours />}
+          {activeTab === "operations-center" && <AdminOperationsCenter />}
           {activeTab === "logs" && <AdminLogs />}
         </div>
       </div>

@@ -5,11 +5,13 @@ import {
   InsertUser, ads, adminLogs, categories, events, favorites, magicLinks, notifications,
   partners, placePhotos, places, routes, users, vouchers, drivers, siteRouteFeatures,
   guidedTours, guidedTourStops, profileClaims, tourOperations, tourOperationPartners,
+  oranjeOperations, operationEvents,
   type InsertAdminLog, type InsertCategory, type InsertEvent, type InsertMagicLink, type InsertPartner,
   type InsertPlace, type InsertRoute, type InsertVoucher, type MagicLink, type InsertDriver,
   type InsertSiteRouteFeature, type InsertGuidedTour, type InsertGuidedTourStop,
   type InsertProfileClaim, type InsertTourOperation, type InsertTourOperationPartner,
   type TourOperation, type TourOperationPartner,
+  type InsertOranjeOperation, type OranjeOperation, type InsertOperationEvent,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1113,4 +1115,171 @@ export async function updateGuidedTourPremiumSettings(
   const db = await getDb();
   if (!db) throw new Error("DB not available");
   await db.update(guidedTours).set({ ...data, updatedAt: new Date() } as any).where(eq(guidedTours.id, id));
+}
+
+// ─── Central de Operações Oranje ──────────────────────────────────────────────
+
+export async function createOranjeOperation(
+  data: Omit<InsertOranjeOperation, "id" | "createdAt" | "updatedAt">
+): Promise<{ id: number }> {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const result = await db.insert(oranjeOperations).values(data as any);
+  const id = (result[0] as ResultSetHeader).insertId;
+  // Registra evento de criação automaticamente
+  await db.insert(operationEvents).values({
+    operationId: id,
+    eventType: "created",
+    toValue: "pending",
+    actorName: data.createdBy ?? "sistema",
+  } as any);
+  return { id };
+}
+
+export async function listOranjeOperations(filters?: {
+  operationType?: OranjeOperation["operationType"];
+  status?: OranjeOperation["status"];
+  partnerId?: number;
+  scheduledDateFrom?: string;
+  scheduledDateTo?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<OranjeOperation[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions: any[] = [];
+  if (filters?.operationType) {
+    conditions.push(eq(oranjeOperations.operationType, filters.operationType));
+  }
+  if (filters?.status) {
+    conditions.push(eq(oranjeOperations.status, filters.status));
+  }
+  if (filters?.partnerId) {
+    conditions.push(eq(oranjeOperations.partnerId, filters.partnerId));
+  }
+  if (filters?.scheduledDateFrom) {
+    conditions.push(gte(oranjeOperations.scheduledDate, filters.scheduledDateFrom));
+  }
+  if (filters?.scheduledDateTo) {
+    conditions.push(lte(oranjeOperations.scheduledDate, filters.scheduledDateTo));
+  }
+
+  const query = db
+    .select()
+    .from(oranjeOperations)
+    .orderBy(desc(oranjeOperations.createdAt))
+    .limit(filters?.limit ?? 200)
+    .offset(filters?.offset ?? 0);
+
+  if (conditions.length > 0) {
+    return query.where(conditions.length === 1 ? conditions[0] : and(...conditions));
+  }
+  return query;
+}
+
+export async function getOranjeOperationById(id: number): Promise<OranjeOperation | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(oranjeOperations).where(eq(oranjeOperations.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function updateOranjeOperation(
+  id: number,
+  data: Partial<InsertOranjeOperation>,
+  actorName?: string
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+
+  const before = await getOranjeOperationById(id);
+  await db.update(oranjeOperations).set({
+    ...data,
+    lastActionAt: new Date(),
+    lastActionBy: actorName ?? "admin",
+    updatedAt: new Date(),
+  } as any).where(eq(oranjeOperations.id, id));
+
+  // Registra evento de mudança de status
+  if (data.status && before?.status !== data.status) {
+    await db.insert(operationEvents).values({
+      operationId: id,
+      eventType: "status_change",
+      fromValue: before?.status,
+      toValue: data.status,
+      actorName: actorName ?? "admin",
+    } as any);
+  }
+  if (data.internalNotes && before?.internalNotes !== data.internalNotes) {
+    await db.insert(operationEvents).values({
+      operationId: id,
+      eventType: "note",
+      note: data.internalNotes,
+      actorName: actorName ?? "admin",
+    } as any);
+  }
+}
+
+export async function addOperationEvent(
+  data: Omit<InsertOperationEvent, "id" | "createdAt">
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  await db.insert(operationEvents).values(data as any);
+}
+
+export async function getOperationEvents(operationId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(operationEvents)
+    .where(eq(operationEvents.operationId, operationId))
+    .orderBy(desc(operationEvents.createdAt));
+}
+
+export async function getOranjeOperationsFinancialSummary(filters?: {
+  scheduledDateFrom?: string;
+  scheduledDateTo?: string;
+  operationType?: OranjeOperation["operationType"];
+}) {
+  const db = await getDb();
+  if (!db) return { totals: { totalRevenue: 0, totalOperatorPayout: 0, totalPartnerFee: 0, totalMargin: 0, totalCount: 0 } };
+
+  const conditions: any[] = [
+    eq(oranjeOperations.status, "completed"),
+  ];
+  if (filters?.operationType) {
+    conditions.push(eq(oranjeOperations.operationType, filters.operationType));
+  }
+  if (filters?.scheduledDateFrom) {
+    conditions.push(gte(oranjeOperations.scheduledDate, filters.scheduledDateFrom));
+  }
+  if (filters?.scheduledDateTo) {
+    conditions.push(lte(oranjeOperations.scheduledDate, filters.scheduledDateTo));
+  }
+
+  const ops = await db
+    .select({
+      customerAmount: oranjeOperations.customerAmount,
+      partnerAmount:  oranjeOperations.partnerAmount,
+      operatorAmount: oranjeOperations.operatorAmount,
+      oranjeMargin:   oranjeOperations.oranjeMargin,
+    })
+    .from(oranjeOperations)
+    .where(and(...conditions));
+
+  const totals = ops.reduce(
+    (acc, op) => ({
+      totalRevenue:       acc.totalRevenue       + (op.customerAmount ?? 0),
+      totalOperatorPayout:acc.totalOperatorPayout + (op.operatorAmount ?? 0),
+      totalPartnerFee:    acc.totalPartnerFee    + (op.partnerAmount  ?? 0),
+      totalMargin:        acc.totalMargin        + (op.oranjeMargin   ?? 0),
+      totalCount:         acc.totalCount         + 1,
+    }),
+    { totalRevenue: 0, totalOperatorPayout: 0, totalPartnerFee: 0, totalMargin: 0, totalCount: 0 }
+  );
+
+  return { totals };
 }

@@ -344,5 +344,54 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 010: article_slug_redirects + corrigir slug do artigo Festival ─
+  if (!(await tableExists(db, "article_slug_redirects"))) {
+    console.log("[Migrations] Criando tabela article_slug_redirects...");
+    await db.execute(`
+      CREATE TABLE \`article_slug_redirects\` (
+        \`id\`        INT AUTO_INCREMENT PRIMARY KEY,
+        \`oldSlug\`   VARCHAR(255) NOT NULL UNIQUE,
+        \`articleId\` INT NOT NULL,
+        \`createdAt\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX \`asr_old_slug_idx\` (\`oldSlug\`),
+        INDEX \`asr_article_id_idx\` (\`articleId\`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+    console.log("[Migrations] ✅ article_slug_redirects criada.");
+  } else {
+    console.log("[Migrations] ✓ article_slug_redirects já existe.");
+  }
+
+  // Corrigir slug do artigo "Festival do Rei em Holambra" para o slug desejado
+  if (await tableExists(db, "articles") && await tableExists(db, "article_slug_redirects")) {
+    const newSlug = "festival-do-rei-holambra-circuito-gastronomico";
+    const [targetCheck] = await db.execute(
+      `SELECT id, slug FROM \`articles\` WHERE title LIKE '%Festival do Rei%' AND title LIKE '%gastron%' LIMIT 1`
+    ) as any;
+    const target = targetCheck[0];
+    if (target && target.slug !== newSlug) {
+      const oldSlug = (target.slug as string).replace(/'/g, "''");
+      const artId   = Number(target.id);
+      console.log(`[Migrations] Corrigindo slug do artigo id=${artId}: "${target.slug}" → "${newSlug}"`);
+      // Verifica se newSlug já está em uso por outro artigo (sem parâmetros — valores controlados)
+      const [conflictCheck] = await db.execute(
+        `SELECT id FROM \`articles\` WHERE slug = '${newSlug}' AND id <> ${artId} LIMIT 1`
+      ) as any;
+      if (conflictCheck[0]) {
+        console.warn(`[Migrations] ⚠️  Slug "${newSlug}" já pertence ao artigo id=${conflictCheck[0].id} — pulando.`);
+      } else {
+        await db.execute(`UPDATE \`articles\` SET slug = '${newSlug}' WHERE id = ${artId}`);
+        await db.execute(
+          `INSERT IGNORE INTO \`article_slug_redirects\` (oldSlug, articleId) VALUES ('${oldSlug}', ${artId})`
+        );
+        console.log(`[Migrations] ✅ Slug atualizado. Redirect "${target.slug}" → artigo id=${artId} registrado.`);
+      }
+    } else if (target && target.slug === newSlug) {
+      console.log(`[Migrations] ✓ Artigo "Festival do Rei" já tem o slug correto.`);
+    } else {
+      console.log(`[Migrations] ⚠️  Artigo "Festival do Rei" não encontrado no banco — sem ação.`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

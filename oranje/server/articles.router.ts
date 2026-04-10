@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { adminProcedure, cmsProcedure, publicProcedure, router } from "./_core/trpc";
-import { articles, articleBackups } from "../drizzle/schema";
+import { articles, articleBackups, articleSlugRedirects } from "../drizzle/schema";
 import { eq, and, desc, isNotNull } from "drizzle-orm";
 import * as db from "./db";
 
@@ -120,21 +120,46 @@ export const articlesRouter = router({
       }
     }),
 
-  // PUBLIC: Get article by slug
+  // PUBLIC: Get article by slug (with redirect fallback for changed slugs)
   bySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
       try {
         const database = await db.getDb();
         if (!database) return null;
-        
+
+        // Primary lookup by slug
         const data = await database
           .select()
           .from(articles)
           .where(and(eq(articles.slug, input.slug), eq(articles.published, true)))
           .limit(1);
 
-        return data[0] || null;
+        if (data[0]) return { ...data[0], redirectedFrom: null };
+
+        // Fallback: check if slug was renamed (redirect)
+        try {
+          const redirect = await database
+            .select({ articleId: articleSlugRedirects.articleId })
+            .from(articleSlugRedirects)
+            .where(eq(articleSlugRedirects.oldSlug, input.slug))
+            .limit(1);
+
+          if (redirect[0]) {
+            const redirected = await database
+              .select()
+              .from(articles)
+              .where(and(eq(articles.id, redirect[0].articleId), eq(articles.published, true)))
+              .limit(1);
+            if (redirected[0]) {
+              return { ...redirected[0], redirectedFrom: input.slug };
+            }
+          }
+        } catch (_) {
+          // article_slug_redirects table may not exist yet
+        }
+
+        return null;
       } catch (error) {
         console.error("[Articles] bySlug error:", error);
         return null;
@@ -305,6 +330,7 @@ export const articlesRouter = router({
       z.object({
         id: z.number().int(),
         title: z.string().optional(),
+        slug: z.string().optional(),
         excerpt: z.string().optional(),
         content: z.string().optional(),
         coverImageUrl: z.string().optional(),
@@ -337,8 +363,49 @@ export const articlesRouter = router({
       try {
         const database = await db.getDb();
         if (!database) throw new Error("Database connection failed");
-        
+
+        // ── Slug update: validate uniqueness + register redirect ──────────────
+        let oldSlug: string | null = null;
+        if (data.slug !== undefined) {
+          const newSlug = data.slug.trim().toLowerCase()
+            .replace(/[^\w\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
+          if (newSlug) {
+            // Fetch current article to get old slug
+            const current = await database.select({ slug: articles.slug })
+              .from(articles).where(eq(articles.id, id)).limit(1);
+            if (current[0] && current[0].slug !== newSlug) {
+              // Check uniqueness — conflicts with another article?
+              const conflict = await database.select({ id: articles.id })
+                .from(articles)
+                .where(and(eq(articles.slug, newSlug), eq(articles.id, id)))
+                .limit(1);
+              // (the above checks if slug belongs to THIS article already — fine)
+              // Check if ANY other article already has this slug
+              const conflictOther = await database
+                .select({ id: articles.id })
+                .from(articles)
+                .where(eq(articles.slug, newSlug))
+                .limit(1);
+              if (conflictOther[0] && conflictOther[0].id !== id) {
+                throw new Error(`Slug "${newSlug}" já está em uso por outro artigo (id=${conflictOther[0].id}).`);
+              }
+              oldSlug = current[0].slug;
+              updateData.slug = newSlug;
+            }
+          }
+        }
+
         await database.update(articles).set(updateData).where(eq(articles.id, id));
+
+        // Register old slug as redirect so old URLs keep working
+        if (oldSlug) {
+          try {
+            await database.insert(articleSlugRedirects).values({ oldSlug, articleId: id })
+              .onDuplicateKeyUpdate({ set: { articleId: id } });
+          } catch (e) {
+            console.warn("[Articles] Could not register slug redirect:", e);
+          }
+        }
 
         // Auto-backup after update — fetch full article snapshot
         const updated = await database
@@ -351,7 +418,7 @@ export const articlesRouter = router({
           await createBackup(updated[0], "update");
         }
 
-        return { success: true };
+        return { success: true, slug: updateData.slug };
       } catch (error) {
         console.error("[Articles] update error:", error);
         throw error;

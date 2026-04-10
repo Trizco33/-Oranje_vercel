@@ -12,6 +12,15 @@ export default function SiteBlogPost() {
   const navigate = useNavigate();
   const { data: article, isLoading } = useArticleBySlug(slug || "");
 
+  // If the slug was renamed, silently update the browser URL to the current one
+  useEffect(() => {
+    if (!article) return;
+    const redirectedFrom = (article as any).redirectedFrom;
+    if (redirectedFrom && article.slug && article.slug !== slug) {
+      navigate(`/blog/${article.slug}`, { replace: true });
+    }
+  }, [article, slug, navigate]);
+
   useEffect(() => {
     if (!article) return;
 

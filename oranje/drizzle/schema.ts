@@ -342,6 +342,20 @@ export const articleBackups = mysqlTable("article_backups", {
 export type ArticleBackup = typeof articleBackups.$inferSelect;
 export type InsertArticleBackup = typeof articleBackups.$inferInsert;
 
+// ─── Article Slug Redirects ───────────────────────────────────────────────────
+// When a slug is changed, the old slug is saved here so old URLs still resolve.
+export const articleSlugRedirects = mysqlTable("article_slug_redirects", {
+  id: int("id").autoincrement().primaryKey(),
+  oldSlug: varchar("oldSlug", { length: 255 }).notNull().unique(),
+  articleId: int("articleId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  oldSlugIdx: index("asr_old_slug_idx").on(table.oldSlug),
+  articleIdIdx: index("asr_article_id_idx").on(table.articleId),
+}));
+
+export type ArticleSlugRedirect = typeof articleSlugRedirects.$inferSelect;
+
 // ─── Site Content (CMS) ──────────────────────────────────────────────────────
 export const siteContent = mysqlTable("site_content", {
   id: int("id").autoincrement().primaryKey(),

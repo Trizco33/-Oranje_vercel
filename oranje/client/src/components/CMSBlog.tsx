@@ -141,6 +141,7 @@ export default function CMSBlog() {
       updateMutation.mutate({
         id: editingId,
         title: formData.title,
+        slug,
         excerpt: formData.excerpt,
         content: formData.content,
         coverImageUrl: formData.coverImageUrl,

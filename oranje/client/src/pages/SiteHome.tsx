@@ -143,6 +143,9 @@ export default function SiteHome() {
   const navigate = useNavigate();
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const [heroReady, setHeroReady] = useState(false);
+  const isPWA = typeof window !== "undefined" &&
+    (window.matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone === true);
+  const isMobile = typeof navigator !== "undefined" && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   useEffect(() => {
     const t = setTimeout(() => setHeroReady(true), 80);
     return () => clearTimeout(t);
@@ -356,7 +359,7 @@ export default function SiteHome() {
               }}
             >
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#E65100", flexShrink: 0 }} />
-              Holambra em um só lugar
+              Curadoria premium · Holambra
             </span>
           </div>
 
@@ -413,7 +416,7 @@ export default function SiteHome() {
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") navigate("/app/busca"); }}
               role="button"
               tabIndex={0}
-              aria-label="Buscar restaurantes, eventos, roteiros"
+              aria-label="Encontre restaurantes, eventos e roteiros em Holambra"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -435,41 +438,72 @@ export default function SiteHome() {
                   fontFamily: "'Montserrat', system-ui, sans-serif",
                 }}
               >
-                Busque restaurantes, eventos ou roteiros em Holambra
+                Encontre restaurantes, eventos e roteiros em Holambra
               </span>
             </div>
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons — context-aware */}
           <div style={{
             display: "flex", gap: 12, justifyContent: "flex-start", flexWrap: "wrap", marginBottom: 0,
             opacity: heroReady ? 1 : 0,
             transform: heroReady ? "translateY(0)" : "translateY(14px)",
             transition: "opacity 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s, transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.58s",
           }}>
-            <Link
-              to="/app"
-              className="btn-press"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                height: 50,
-                padding: "0 30px",
-                background: "#E65100",
-                color: "#FFFFFF",
-                fontSize: "0.9375rem",
-                fontWeight: 700,
-                borderRadius: 13,
-                textDecoration: "none",
-                fontFamily: "'Montserrat', system-ui, sans-serif",
-                animation: "hero-cta-breathe 3s ease-in-out infinite",
-                boxShadow: "0 4px 20px rgba(230,81,0,0.35)",
-              }}
-            >
-              Explorar Holambra
-              <ArrowRight size={16} />
-            </Link>
+            {/* Primary CTA:
+                installPrompt  → "Baixar app" (triggers PWA install)
+                isPWA/desktop  → "Explorar Holambra" (already in app context)
+                mobile/web     → "Acessar o app" (opens web app, clear expectation) */}
+            {installPrompt ? (
+              <button
+                className="btn-press"
+                onClick={handleInstall}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  height: 50,
+                  padding: "0 30px",
+                  background: "#E65100",
+                  color: "#FFFFFF",
+                  fontSize: "0.9375rem",
+                  fontWeight: 700,
+                  borderRadius: 13,
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "'Montserrat', system-ui, sans-serif",
+                  animation: "hero-cta-breathe 3s ease-in-out infinite",
+                  boxShadow: "0 4px 20px rgba(230,81,0,0.35)",
+                }}
+              >
+                <Download size={16} />
+                Baixar app
+              </button>
+            ) : (
+              <Link
+                to="/app"
+                className="btn-press"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  height: 50,
+                  padding: "0 30px",
+                  background: "#E65100",
+                  color: "#FFFFFF",
+                  fontSize: "0.9375rem",
+                  fontWeight: 700,
+                  borderRadius: 13,
+                  textDecoration: "none",
+                  fontFamily: "'Montserrat', system-ui, sans-serif",
+                  animation: "hero-cta-breathe 3s ease-in-out infinite",
+                  boxShadow: "0 4px 20px rgba(230,81,0,0.35)",
+                }}
+              >
+                {(!isPWA && isMobile) ? "Acessar o app" : "Explorar Holambra"}
+                <ArrowRight size={16} />
+              </Link>
+            )}
             <Link
               to="/app/receptivo"
               className="btn-press"
@@ -491,32 +525,8 @@ export default function SiteHome() {
               }}
             >
               <Map size={15} />
-              Ver Passeios
+              Ver experiências
             </Link>
-            {installPrompt && (
-              <button
-                className="btn-press"
-                onClick={handleInstall}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: 50,
-                  padding: "0 24px",
-                  background: "rgba(255,255,255,0.08)",
-                  color: "rgba(255,255,255,0.8)",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  borderRadius: 13,
-                  border: "1.5px solid rgba(255,255,255,0.2)",
-                  cursor: "pointer",
-                  fontFamily: "'Montserrat', system-ui, sans-serif",
-                }}
-              >
-                <Download size={15} />
-                Instalar
-              </button>
-            )}
           </div>
 
           </div>{/* /maxWidth 680px */}

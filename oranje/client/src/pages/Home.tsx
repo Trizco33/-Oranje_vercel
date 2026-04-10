@@ -327,7 +327,7 @@ export default function Home() {
               WebkitBackdropFilter: "blur(8px)",
             }}>
               <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#E65100", flexShrink: 0 }} />
-              Holambra em um só lugar
+              Curadoria premium · Holambra
             </span>
           </div>
 
@@ -398,7 +398,7 @@ export default function Home() {
                 <Search size={18} style={{ color: "#E65100", flexShrink: 0 }} />
                 <input
                   type="text"
-                  placeholder="Buscar restaurantes, eventos, lugares..."
+                  placeholder="Encontre restaurantes, eventos e roteiros em Holambra"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   style={{

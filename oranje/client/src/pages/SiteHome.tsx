@@ -150,6 +150,10 @@ export default function SiteHome() {
     const t = setTimeout(() => setHeroReady(true), 80);
     return () => clearTimeout(t);
   }, []);
+  useEffect(() => {
+    document.title = "ORANJE — Holambra em um só lugar";
+    return () => { document.title = "ORANJE — Holambra em um só lugar"; };
+  }, []);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
   const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
   const { data: cats = [] } = useCategoriesList();

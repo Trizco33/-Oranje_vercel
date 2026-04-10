@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import SiteLayout from "@/components/SiteLayout";
 import { Mail, Phone, MapPin, MessageCircle, ArrowRight, CheckCircle, Instagram, Navigation } from "lucide-react";
@@ -130,8 +131,8 @@ function ContatoSection() {
 
 const pages: Record<string, { title: string; subtitle: string; component: React.ReactNode }> = {
   roteiros: {
-    title: "Roteiros em Holambra",
-    subtitle: "Explore a cidade com roteiros planejados",
+    title: "Passeios e Experiências em Holambra",
+    subtitle: "Explore a cidade com roteiros curados pela Oranje",
     component: (
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-6)" }}>
         <p style={{ color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)" }}>
@@ -536,10 +537,18 @@ const pages: Record<string, { title: string; subtitle: string; component: React.
   },
 };
 
+const SITE = "ORANJE — Holambra em um só lugar";
+
 export default function SiteSecondaryPages() {
   const location = useLocation();
   const pageKey = location.pathname.replace(/^\//, "");
   const pageData = pages[pageKey || ""];
+
+  useEffect(() => {
+    const title = pageData ? `${pageData.title} — ORANJE` : SITE;
+    document.title = title;
+    return () => { document.title = SITE; };
+  }, [pageKey, pageData]);
 
   if (!pageData) {
     return (

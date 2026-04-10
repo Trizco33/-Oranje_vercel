@@ -73,7 +73,7 @@ export default function SiteFooter() {
               {[
                 { label: "Início", to: "/" },
                 { label: "O que fazer", to: "/o-que-fazer-em-holambra" },
-                { label: "Roteiros", to: "/roteiros" },
+                { label: "Passeios", to: "/roteiros" },
                 { label: "Blog", to: "/blog" },
                 { label: "Parceiros", to: "/parceiros" },
               ].map((item) => (

@@ -66,7 +66,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["regional", "almoço", "natureza"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -79,7 +79,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["cerveja artesanal", "petiscos", "boteco", "música ao vivo"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -92,7 +92,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["café especial", "bolos", "tortas"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -244,7 +244,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["flores", "família", "eventos", "holandês", "turismo"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -394,7 +394,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["gastrobar", "petiscos", "coquetéis", "nostalgia"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -461,7 +461,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["cervejaria", "artesanal", "bar", "petiscos", "casual", "animado"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -605,7 +605,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["lago", "vista", "almoco", "familia", "romantico", "ao_ar_livre"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -635,7 +635,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["praia", "lago", "lazer", "familia", "criancas", "verao", "agua", "ao_ar_livre"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {
@@ -648,7 +648,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["cafe", "confeitaria", "doceria", "gastronomia_holandesa", "cultura_holandesa", "para_levar"], status: "active",
-    dataPending: true,
+    dataPending: false,
   },
 
   {

@@ -525,5 +525,19 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 013: publicar 9 lugares com links hardcoded em CMSCategoryPage ──
+  {
+    const [row] = await db.execute(`SHOW COLUMNS FROM \`places\` LIKE 'dataPending'`);
+    if (row) {
+      await db.execute(`
+        UPDATE \`places\`
+        SET dataPending = 0, updatedAt = NOW()
+        WHERE id IN (23, 25, 26, 27, 32, 43, 2614, 6334, 6428)
+          AND dataPending = 1
+      `);
+      console.log("[Migrations] ✅ 013: 9 lugares publicados (dataPending=0) — Nossa Prainha, Villa Girassol, Holambier, Lotus Café, Bloemen Park, Quintal dos Avós, Lago do Holandês, Seo Carneiro, Oma Beppie");
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

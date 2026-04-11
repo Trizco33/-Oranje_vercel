@@ -280,7 +280,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "De Immigrant Gastro Café",
-    _categorySlug: "restaurantes",
+    _categorySlug: "cafes",
     shortDesc: "Gastro café desde as 8h — café da manhã, almoço e a história da imigração holandesa no mesmo endereço",
     longDesc: "O De Immigrant Gastro Café é um dos lugares mais carregados de identidade em Holambra. A proposta mistura café da manhã refinado, almoço regional e a história dos imigrantes holandeses que fundaram a cidade. Aberto todos os dias a partir das 8h, funciona como ponto de partida natural para quem chega à Rua Dória Vasconcelos.",
     address: "Rua Dória Vasconcelos, 293, Holambra – SP", lat: -22.6360, lng: -47.0615,

@@ -768,8 +768,8 @@ export async function getGuidedTourBySlug(slug: string) {
   const extIds: number[] = Array.isArray(tour.extensionPlaceIds) ? tour.extensionPlaceIds : [];
   let extensionPlaces: Array<{
     placeId: number; placeName: string; placeShortDesc: string | null;
-    placeAddress: string | null; placeCoverImage: string | null; placeImages: string | null;
-    placeLat: string | null; placeLng: string | null;
+    placeAddress: string | null; placeCoverImage: string | null; placeImages: string[] | null;
+    placeLat: number | null; placeLng: number | null;
   }> = [];
   if (extIds.length > 0) {
     extensionPlaces = await db

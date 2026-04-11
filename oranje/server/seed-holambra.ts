@@ -638,14 +638,14 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "Oma Beppie",
-    _categorySlug: "pontos-turisticos",
-    shortDesc: "Ponto turístico cultural com referências à imigração holandesa — memória afetiva da colonização em Holambra",
+    _categorySlug: "cafes",
+    shortDesc: "Confeitaria holandesa artesanal — stroopwafels, biscoitos amanteigados e doces típicos da imigração em Holambra",
     longDesc: null,
     address: "Holambra – SP", lat: -22.6388, lng: -47.0612,
     city: "Holambra", state: "SP", country: "Brasil",
-    priceRange: null, isFree: true,
+    priceRange: "$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
-    tags: ["cultura_holandesa", "historia", "imigracao", "ponto_turistico"], status: "active",
+    tags: ["cafe", "confeitaria", "doceria", "gastronomia_holandesa", "cultura_holandesa", "para_levar"], status: "active",
     dataPending: true,
   },
 

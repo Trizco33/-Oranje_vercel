@@ -347,10 +347,10 @@ function WeeklySchedule({ openingHours }: { openingHours: string | null | undefi
         {DAY_ORDER.map((day, idx) => {
           const intervals = schedule[day];
           const isToday = day === nowDayPt;
-          const isClosed = intervals === null || (Array.isArray(intervals) && intervals.length === 0);
+          const isClosed = intervals == null || (Array.isArray(intervals) && intervals.length === 0);
           const hoursText = isClosed
             ? "Fechado"
-            : intervals!.map(([o, c]) => formatInterval(o, c)).join("  ·  ");
+            : (Array.isArray(intervals) ? intervals : []).map(([o, c]) => formatInterval(o, c)).join("  ·  ");
 
           return (
             <div

@@ -1089,13 +1089,17 @@ export async function seedHolambra() {
       .values(insertValues)
       .onDuplicateKeyUpdate({
         set: {
-          // REGRA: apenas campos estritamente estruturais são atualizados no upsert.
-          // isFeatured, isRecommended, dataPending, lat, lng NÃO são atualizados aqui —
-          // essas decisões são curatoriais/geográficas e só devem ser alteradas
-          // via scripts de curadoria explícitos, nunca pelo seed de boot.
+          // Campos estruturais: sempre refletem o seed canônico.
           categoryId: insertValues.categoryId,
           priceRange: insertValues.priceRange,
           isFree: insertValues.isFree,
+          // dataPending: seed é fonte de verdade para verificação pública.
+          // Se o seed diz false (dados confirmados), garante que o DB também fica false.
+          // Isso corrige lugares renomeados que herdaram dataPending=true do nome antigo.
+          dataPending: insertValues.dataPending,
+          // shortDesc e longDesc: atualizados quando o seed tem texto canônico.
+          shortDesc: insertValues.shortDesc,
+          longDesc: insertValues.longDesc,
           updatedAt: new Date(),
         },
       });

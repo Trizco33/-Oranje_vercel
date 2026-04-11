@@ -113,10 +113,53 @@ export const PLACE_IMAGES: Record<string, string[]> = {
 
   // ─── RESTAURANTES DE IMIGRANTES ───────────────────────────────
   "De Immigrant Gastro Café": [
-    // foto oficial pendente — @deimmigrant no Instagram
+    "https://recomendonacidade.com.br/wp-content/uploads/2025/12/De-Immigrant-Gastro-Cafe-em-Holambra-SP-1024x683.webp",
   ],
   "De Immigrant Restaurante Garden": [
-    // foto oficial pendente — @restaurantegardenholambra no Instagram
+    // garden restaurant ao ar livre — Rua Dória Vasconcelos, 229, Holambra
+    "https://recomendonacidade.com.br/wp-content/uploads/2025/12/De-Immigrant-Gastro-Cafe-em-Holambra-SP-1024x683.webp",
+  ],
+
+  // ─── HAMBURGUERIAS ─────────────────────────────────────────────
+  "Don Hamburgo": [
+    // hamburgueria artesanal — Av. das Tulipas, Holambra
+    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&h=600&fit=crop",
+  ],
+  "Cow Burguer": [
+    // hamburgueria temática Velho Oeste — Rua Campo do Pouso, 1139, Holambra
+    "https://images.unsplash.com/photo-1586816001966-79b736744398?w=900&h=600&fit=crop",
+  ],
+  "Houtskool Steak & Burger": [
+    // steakhouse e burgers — Holambra
+    "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=900&h=600&fit=crop",
+  ],
+  "Di Komê Garage Bistrô": [
+    // bistrô garage — Holambra
+    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=600&fit=crop",
+  ],
+  "Villa Milani": [
+    // culinária italiana — Holambra
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&h=600&fit=crop",
+  ],
+  "Op! Sorvetes Artesanais": [
+    // sorveteria artesanal — Holambra
+    "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=900&h=600&fit=crop",
+  ],
+  "Mais Coxinha": [
+    // salgados artesanais — Holambra
+    "https://images.unsplash.com/photo-1604909052743-94e838986d24?w=900&h=600&fit=crop",
+  ],
+  "Casa da Esfiha": [
+    // esfihas e salgados — Holambra
+    "https://images.unsplash.com/photo-1564844536311-de546a28c87d?w=900&h=600&fit=crop",
+  ],
+  "Fiore Forneria": [
+    // pizzaria artesanal — Holambra
+    "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&h=600&fit=crop",
+  ],
+  "Vecchio Onofre": [
+    // pizzaria italiana — Holambra
+    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=900&h=600&fit=crop",
   ],
 
   // ─── HOTÉIS ────────────────────────────────────────────────────
@@ -202,6 +245,12 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://i.ytimg.com/vi/WT1MXrm8iaU/maxresdefault.jpg",
     "https://media-cdn.tripadvisor.com/media/photo-s/0d/ed/f5/ce/lago-vitoria-regia-em.jpg",
   ],
+  "Praça Vitória Régia": [
+    // alias explícito — fuzzy match não alcança "Lago Vitória Régia"
+    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1b/0f/ef/2e/foto-panoramica-em-um.jpg?w=900&h=500&s=1",
+    "https://i.ytimg.com/vi/WT1MXrm8iaU/maxresdefault.jpg",
+    "https://media-cdn.tripadvisor.com/media/photo-s/0d/ed/f5/ce/lago-vitoria-regia-em.jpg",
+  ],
   "Nossa Prainha": [
     "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/44/67/dc/20160514-142534-largejpg.jpg?w=900&h=-1&s=1",
     "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/e3/c0/0f/vista-do-lago-3.jpg?w=900&h=-1&s=1",
@@ -228,6 +277,38 @@ export const PLACE_IMAGES: Record<string, string[]> = {
     "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/08/ff/50/img-20180211-174802-283.jpg?w=1200&h=-1&s=1",
     "https://i.pinimg.com/736x/d6/82/ed/d682ed13d28f40677c20118680a4dc1b.jpg",
     "https://i.pinimg.com/736x/17/a1/56/17a156fbe4fc7edebdd2105cfc3f2926.jpg",
+  ],
+  "Igreja Matriz do Divino Espírito Santo": [
+    // Wikimedia Commons — domínio público
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Igreja_Divino_Esp%C3%ADrito_Santo_Holambra.jpg/1280px-Igreja_Divino_Esp%C3%ADrito_Santo_Holambra.jpg",
+  ],
+  "Igreja Nossa Senhora das Flores": [
+    // Igreja no centro de Holambra — Wikimedia Commons
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Igreja_Nossa_Senhora_das_Flores_Holambra.jpg/1280px-Igreja_Nossa_Senhora_das_Flores_Holambra.jpg",
+  ],
+  "Em Busca do Galope": [
+    // turismo rural equestre — Holambra
+    "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=900&h=600&fit=crop",
+  ],
+  "Villagrill Hamburgueria e Bar": [
+    // bar e hamburgueria — Holambra
+    "https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=900&h=600&fit=crop",
+  ],
+  "Italia no Box": [
+    // food truck itália — Holambra
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&h=600&fit=crop",
+  ],
+  "Italia No Box Holambra": [
+    // alias — fuzzy match não alcança "Italia no Box" com "Italia No Box Holambra"
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&h=600&fit=crop",
+  ],
+  "Kok Holambra Food Truck": [
+    // food truck holandês — Holambra
+    "https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?w=900&h=600&fit=crop",
+  ],
+  "Sabor & Arte": [
+    // restaurante — Holambra
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&h=600&fit=crop",
   ],
   "Museu de Holambra": [
     "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/27/89/95/87/entrada.jpg?w=1200&h=-1&s=1",

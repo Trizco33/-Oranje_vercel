@@ -393,5 +393,59 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 011: corrigir dataPending para lugares canônicos confirmados ──
+  // Lugares que foram renomeados via fix scripts podem ter herdado dataPending=true
+  // do nome antigo. Este migration garante que os lugares com dados publicamente
+  // verificáveis fiquem com dataPending=false.
+  if (await tableExists(db, "places")) {
+    const confirmedPlaces = [
+      "De Immigrant Restaurante Garden",
+      "De Immigrant Gastro Café",
+      "Expoflora",
+      "Zoet en Zout",
+      "Deck do Amor",
+      "Praça Vitória Régia",
+      "Rua dos Guarda-Chuvas",
+      "Moinho Povos Unidos",
+      "Parque Van Gogh",
+      "Macena Flores",
+      "Bloemen Park",
+      "Casa Bela Restaurante",
+      "Don Hamburgo",
+      "Cow Burguer",
+      "Dolce Flor Holambra",
+      "Fiore Forneria",
+      "Vecchio Onofre",
+      "Casa da Esfiha",
+      "Martin Holandesa Confeitaria e Restaurante",
+      "Italia no Box",
+      "Tulipa's Lounge",
+      "Royal Tulip Holambra",
+      "Holambra Garden Hotel",
+      "Villa de Holanda Parque Hotel",
+      "Shellter Hotel",
+      "Parque Hotel Holambra",
+      "Lago do Holandês",
+      "Museu da Cultura e História de Holambra",
+      "Fratelli Wine Bar",
+      "Hana Restaurante Holambra",
+      "The Old Dutch",
+      "Pousada Rancho da Cachaça",
+    ];
+    const [pendingCheck] = await db.execute(
+      `SELECT COUNT(*) as cnt FROM \`places\` WHERE name IN (${confirmedPlaces.map(n => `'${n.replace(/'/g, "''")}'`).join(",")}) AND dataPending = 1`
+    ) as any;
+    const pendingCount = pendingCheck[0]?.cnt ?? 0;
+    if (pendingCount > 0) {
+      console.log(`[Migrations] Corrigindo dataPending para ${pendingCount} lugar(es) canônico(s)...`);
+      await db.execute(
+        `UPDATE \`places\` SET dataPending = 0, updatedAt = NOW() WHERE name IN (${confirmedPlaces.map(n => `'${n.replace(/'/g, "''")}'`).join(",")})`
+      );
+      console.log(`[Migrations] ✅ dataPending corrigido para ${pendingCount} lugar(es).`);
+    } else {
+      console.log("[Migrations] ✓ dataPending já correto em todos os lugares canônicos.");
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

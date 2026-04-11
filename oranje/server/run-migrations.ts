@@ -447,5 +447,83 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 012: auditoria completa — lat/lng, duplicados, horários, paradas ──
+  if (await tableExists(db, "places")) {
+
+    // 12-A: Lat/lng dos 3 lugares do Festival Gastronômico (criados sem coordenadas)
+    const festivalUpdates = [
+      { id: 25616, lat: -22.6362, lng: -47.0618, name: "Obelisco Gelato e Café" },
+      { id: 25617, lat: -22.6382, lng: -47.0638, name: "Restaurante Tratterie Holandesa" },
+      { id: 25618, lat: -22.6356, lng: -47.0615, name: "Ristorante Marchesini di Roverbella" },
+    ];
+    for (const { id, lat, lng, name } of festivalUpdates) {
+      const [chk] = await db.execute(`SELECT lat FROM \`places\` WHERE id = ${id}`) as any;
+      if (chk[0] && (chk[0].lat === null || chk[0].lat === 0)) {
+        await db.execute(`UPDATE \`places\` SET lat = ${lat}, lng = ${lng}, updatedAt = NOW() WHERE id = ${id}`);
+        console.log(`[Migrations] ✅ lat/lng adicionado: ${name} (id=${id})`);
+      } else {
+        console.log(`[Migrations] ✓ lat/lng já existe: ${name}`);
+      }
+    }
+
+    // 12-B: Lat/lng do Don Hamburgo (seed tem lat=null)
+    const [donH] = await db.execute(`SELECT id, lat FROM \`places\` WHERE slug = 'don-hamburgo' LIMIT 1`) as any;
+    if (donH[0] && (donH[0].lat === null || donH[0].lat === 0)) {
+      await db.execute(`UPDATE \`places\` SET lat = -22.6355, lng = -47.0625, updatedAt = NOW() WHERE slug = 'don-hamburgo'`);
+      console.log("[Migrations] ✅ lat/lng adicionado: Don Hamburgo");
+    } else {
+      console.log("[Migrations] ✓ Don Hamburgo lat/lng já configurado");
+    }
+
+    // 12-C: Esconder "Italia No Box Holambra" (id=13954) — duplicado de "Italia no Box" (id=40)
+    const [italiaCheck] = await db.execute(`SELECT id, dataPending FROM \`places\` WHERE id = 13954 LIMIT 1`) as any;
+    if (italiaCheck[0] && italiaCheck[0].dataPending == 0) {
+      await db.execute(`UPDATE \`places\` SET dataPending = 1, updatedAt = NOW() WHERE id = 13954`);
+      console.log("[Migrations] ✅ Italia No Box Holambra (id=13954) ocultado — duplicado de Italia no Box (id=40)");
+    } else {
+      console.log("[Migrations] ✓ Italia No Box Holambra já oculto ou não existe");
+    }
+
+    // 12-D: Opening hours para lugares públicos sem horário
+    const hoursUpdates: { slug: string; hours: string; label: string }[] = [
+      { slug: "fratelli-wine-bar", hours: "Qui–Sex: 18h–23h | Sáb: 12h–00h | Dom: 12h–22h | Fecha Seg–Qua", label: "Fratelli Wine Bar" },
+      { slug: "tulipas-lounge", hours: "Qui–Sex: 19h–01h | Sáb: 19h–02h | Dom: 19h–00h | Fecha Seg–Qua", label: "Tulipa's Lounge" },
+      { slug: "royal-tulip-holambra", hours: "Aberto 24h — recepção disponível a qualquer hora", label: "Royal Tulip Holambra" },
+      { slug: "holambra-garden-hotel", hours: "Aberto 24h — recepção disponível a qualquer hora", label: "Holambra Garden Hotel" },
+      { slug: "villa-de-holanda-parque-hotel", hours: "Aberto 24h — recepção disponível a qualquer hora", label: "Villa de Holanda Parque Hotel" },
+      { slug: "shellter-hotel", hours: "Aberto 24h — recepção disponível a qualquer hora", label: "Shellter Hotel" },
+      { slug: "rancho-da-cachaca", hours: "Seg/Qua–Dom: 08h–18h | Fecha às terças", label: "Pousada Rancho da Cachaça" },
+      { slug: "deck-do-amor", hours: "Acesso livre todos os dias — melhor ao entardecer", label: "Deck do Amor" },
+      { slug: "praca-vitoria-regia", hours: "Acesso livre todos os dias — melhor ao amanhecer", label: "Praça Vitória Régia" },
+      { slug: "rua-dos-guarda-chuvas", hours: "Acesso livre todos os dias", label: "Rua dos Guarda-Chuvas" },
+      { slug: "museu-da-cultura-e-historia-de-holambra", hours: "Ter–Dom: 09h–17h | Fecha às segundas | Entrada gratuita", label: "Museu da Cultura e História de Holambra" },
+      { slug: "expoflora-park", hours: "Evento anual em setembro — consulte expoflora.com.br para datas", label: "Expoflora" },
+      { slug: "dr-pizza-holambra", hours: "Ter–Dom: 18h–23h | Fecha às segundas", label: "Dr Pizza Holambra" },
+      { slug: "pizzaria-serrana", hours: "Ter–Dom: 18h–23h | Fecha às segundas", label: "Pizzaria Serrana" },
+      { slug: "parque-hotel-holambra", hours: "Aberto 24h — recepção disponível a qualquer hora", label: "Parque Hotel Holambra" },
+    ];
+    for (const { slug, hours, label } of hoursUpdates) {
+      const [chk] = await db.execute(`SELECT openingHours FROM \`places\` WHERE slug = '${slug}' LIMIT 1`) as any;
+      if (chk[0] && !chk[0].openingHours) {
+        const escapedHours = hours.replace(/'/g, "''");
+        await db.execute(`UPDATE \`places\` SET openingHours = '${escapedHours}', updatedAt = NOW() WHERE slug = '${slug}'`);
+        console.log(`[Migrations] ✅ openingHours adicionado: ${label}`);
+      } else {
+        console.log(`[Migrations] ✓ ${label} já tem openingHours`);
+      }
+    }
+  }
+
+  // 12-E: Remover parada de Tour 8 que aponta para "Nossa Prainha" (dataPending=1)
+  if (await tableExists(db, "guided_tour_stops")) {
+    const [chk] = await db.execute(`SELECT id FROM \`guided_tour_stops\` WHERE tourId = 8 AND placeId = 23 LIMIT 1`) as any;
+    if (chk[0]) {
+      await db.execute(`DELETE FROM \`guided_tour_stops\` WHERE tourId = 8 AND placeId = 23`);
+      console.log("[Migrations] ✅ Parada 'Nossa Prainha' (dataPending=1) removida do Tour 8");
+    } else {
+      console.log("[Migrations] ✓ Tour 8 sem parada em Nossa Prainha — ok");
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

@@ -892,7 +892,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     _categorySlug: "hamburguerias",
     shortDesc: "Hamburgueria artesanal no centro de Holambra — opção forte para almoço e jantar perto do Garden Hotel",
     longDesc: "O Don Hamburgo é a referência em hambúrgueres artesanais de Holambra, localizado no centro da cidade na Av. das Tulipas. Cardápio focado em combinações generosas, com ingredientes de qualidade e montagem caprichada. Funciona tanto no almoço quanto no jantar, com atendimento constante — o que o torna uma das melhores opções para hóspedes do entorno que querem algo sólido sem buscar o boulevard. Ambiente descontraído, preço justo e fácil acesso de quem está hospedado na região central.",
-    address: "Av. das Tulipas, 44 – Centro, Holambra – SP", lat: null, lng: null,
+    address: "Av. das Tulipas, 44 – Centro, Holambra – SP", lat: -22.6355, lng: -47.0625,
     city: "Holambra", state: "SP", country: "Brasil",
     phone: "+55 19 97100-7176",
     openingHours: "Diariamente 10h30–15h e 18h–23h",
@@ -963,7 +963,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
     priceRange: "$$", isFree: false,
     isRecommended: false, isFeatured: false, isPartner: false,
     tags: ["italiano", "massas", "pizza", "almoco", "jantar", "casual", "dois_turnos"], status: "active",
-    dataPending: false,
+    dataPending: true, // duplicado de "Italia no Box" (id=40, Food Garden) — mantido oculto para evitar duplicata
   },
 ];
 

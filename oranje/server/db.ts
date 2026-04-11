@@ -784,7 +784,7 @@ export async function getGuidedTourBySlug(slug: string) {
         placeLng: places.lng,
       })
       .from(places)
-      .where(inArray(places.id, extIds));
+      .where(and(inArray(places.id, extIds), eq(places.dataPending, false)));
     // preserve original seed order
     extensionPlaces.sort((a, b) => extIds.indexOf(a.placeId) - extIds.indexOf(b.placeId));
   }

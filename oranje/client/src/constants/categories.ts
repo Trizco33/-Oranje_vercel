@@ -10,6 +10,7 @@
 export const CATEGORY_SLUGS = [
   "restaurantes",
   "pizzarias",
+  "hamburguerias",
   "bares",
   "cafes",
   "docerias",
@@ -30,6 +31,7 @@ export type CategorySlug = (typeof CATEGORY_SLUGS)[number];
 export const CATEGORY_COVERS: Record<CategorySlug, string> = {
   restaurantes: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop",
   pizzarias: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=200&fit=crop",
+  hamburguerias: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=200&fit=crop",
   bares: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&h=200&fit=crop",
   cafes: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=200&fit=crop",
   docerias: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=200&fit=crop",
@@ -48,6 +50,7 @@ export const CATEGORY_COVERS: Record<CategorySlug, string> = {
 export const CATEGORY_ICONS: Record<CategorySlug, string> = {
   restaurantes: "\u{1F37D}\u{FE0F}",
   pizzarias: "\u{1F355}",
+  hamburguerias: "\u{1F354}",
   bares: "\u{1F37A}",
   cafes: "\u2615",
   docerias: "\u{1F370}",

@@ -886,6 +886,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "Don Hamburgo",
+    slug: "don-hamburgo",
     _categorySlug: "hamburguerias",
     shortDesc: "Hamburgueria artesanal no centro de Holambra — opção forte para almoço e jantar perto do Garden Hotel",
     longDesc: "O Don Hamburgo é a referência em hambúrgueres artesanais de Holambra, localizado no centro da cidade na Av. das Tulipas. Cardápio focado em combinações generosas, com ingredientes de qualidade e montagem caprichada. Funciona tanto no almoço quanto no jantar, com atendimento constante — o que o torna uma das melhores opções para hóspedes do entorno que querem algo sólido sem buscar o boulevard. Ambiente descontraído, preço justo e fácil acesso de quem está hospedado na região central.",
@@ -901,6 +902,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "Fiore Forneria",
+    slug: "fiore-forneria",
     _categorySlug: "pizzarias",
     shortDesc: "Forneria com pizzas e massas artesanais em quiosque aconchegante — noites de Qui a Dom",
     longDesc: "A Fiore Forneria opera num quiosque charmoso no Seção A de Holambra, com proposta de forno a lenha artesanal. O cardápio gira em torno de pizzas e fornadas autorais, com ingredientes frescos e receitas que fogem do padrão das pizzarias de bairro. Funciona de quinta a domingo no período noturno — uma boa opção para jantar em noites que a demanda nos restaurantes maiores está alta.",
@@ -916,6 +918,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "Vecchio Onofre",
+    slug: "vecchio-onofre",
     _categorySlug: "pizzarias",
     shortDesc: "Pizzaria tradicional no bairro Groot — de terça a domingo no jantar",
     longDesc: "O Vecchio Onofre é uma pizzaria de bairro com personalidade, instalada no bairro Groot de Holambra. O cardápio segue a linha italiana clássica — massas, pizzas e antepastos — com ambiente familiar e atendimento acolhedor. Funciona de terça a domingo no período noturno. Uma boa alternativa para quem quer fugir do centro e encontrar algo mais tranquilo no jantar.",
@@ -931,6 +934,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "Casa da Esfiha",
+    slug: "casa-da-esfiha",
     _categorySlug: "restaurantes",
     shortDesc: "Esfihas e salgados árabes frescos — opção rápida de jantar todos os dias da semana",
     longDesc: "A Casa da Esfiha é uma das poucas opções de culinária árabe em Holambra, com foco em esfihas, kibe e salgados frescos preparados diariamente. Funciona no período noturno todos os dias, com atendimento ágil — ideal para uma refeição rápida antes ou depois de passear pelo centro. Preço acessível e boa para grupos pequenos ou refeições informais.",
@@ -946,6 +950,7 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "Italia No Box Holambra",
+    slug: "italia-no-box-holambra",
     _categorySlug: "pizzarias",
     shortDesc: "Culinária italiana em formato casual — massas e pizzas de Ter a Sáb, almoço e jantar",
     longDesc: "O Italia No Box Holambra traz culinária italiana num formato descomplicado, com cardápio de massas e pizzas para consumo no local ou retirada. Funciona em dois turnos de terça a sábado — almoço e jantar — o que facilita encaixar no roteiro de quem está na cidade por mais de um dia. Boa opção complementar às pizzarias tradicionais do centro, com uma proposta mais prática e acessível.",

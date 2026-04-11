@@ -161,10 +161,10 @@ function RestaurantesContent() {
         cardápio autoral em ambiente garden. Os dois juntos formam um dos endereços mais ricos da cidade.
       </Para>
       <Para>
-        Para hambúrguer artesanal, o{" "}
-        <PlaceLink href="/app/lugar/42">Cowburguer</PlaceLink> entrega exatamente isso — sem firulas, com muito sabor.
-        E o recém-chegado <PlaceLink href="/app/lugar/13946">Don Hamburgo</PlaceLink> já está conquistando quem busca
-        hambúrguer de qualidade em Holambra.
+        Para hambúrguer artesanal de qualidade, o{" "}
+        <PlaceLink href="/app/lugar/13946">Don Hamburgo</PlaceLink> — na Av. das Tulipas — já está conquistando quem
+        busca uma refeição sólida em Holambra. Cardápio focado, ingredientes de qualidade e fácil acesso para hóspedes
+        da região central.
       </Para>
       <Para>
         Para esfiha e comida árabe num endereço descontraído,{" "}
@@ -187,8 +187,7 @@ function RestaurantesContent() {
       <PlaceCard name="Restaurante Villa Girassol" desc="Culinária regional e ambiente agradável no coração de Holambra" href="/app/lugar/25" />
       <PlaceCard name="De Immigrant Gastro Café" desc="Café da manhã, almoço e história da imigração holandesa — desde as 8h" href="/app/lugar/36" />
       <PlaceCard name="De Immigrant Restaurante Garden" desc="Cardápio autoral em ambiente garden — vizinho ao Gastro Café" href="/app/lugar/3824" />
-      <PlaceCard name="Cowburguer" desc="Hambúrguer artesanal de qualidade em Holambra" href="/app/lugar/42" />
-      <PlaceCard name="Don Hamburgo" desc="Novo hambúrgueria artesanal — já conquistando quem visita Holambra" href="/app/lugar/13946" />
+      <PlaceCard name="Don Hamburgo" desc="Hamburgueria artesanal — Av. das Tulipas, centro de Holambra" href="/app/lugar/13946" />
       <PlaceCard name="Casa da Esfiha" desc="Esfiha e opções árabes — aberto diariamente a partir das 17h" href="/app/lugar/13952" />
     </div>
   );

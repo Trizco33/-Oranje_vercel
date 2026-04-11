@@ -30,7 +30,7 @@ const IMAGE_MAP: Record<string, string> = {
   "Kopenhagen Holambra":                  "/places/kopenhagen.png",
   "Italia no Box":                        "/places/italia-no-box.png",
   "Food Garden Holambra":                 "/places/food-garden.png",
-  "Cowburguer":                           "/places/cowburguer.png",
+  "Cow Burguer":                          "/places/cowburguer.png",
   "Quintal dos Avós Gastrobar":           "/places/quintal-dos-avos.png",
   "Tulipa's Lounge":                      "/places/tulipas-lounge.png",
 };

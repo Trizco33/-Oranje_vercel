@@ -299,9 +299,9 @@ const TOURS: Array<{
         bestMoment: "Almoço",
       },
       {
-        placeName: "Cowburguer", order: 4,
-        narrative: "Para o jantar, uma guinada: hambúrguer artesanal com blend especial, batata bem feita e ambiente completamente diferente do almoço. A Cowburguer funciona a partir das 19h de quarta a domingo, no Bairro Novo Cambuí. É o tipo de lugar que aparece nas histórias de quem visitou Holambra — não esperavam um hambúrguer tão bom numa cidade de flores. Mas Holambra é cheia de surpresas.",
-        tip: "Peça o blend especial — é a razão de existir da casa.",
+        placeName: "Cow Burguer", order: 4,
+        narrative: "Para o jantar, uma guinada: hambúrguer artesanal temático em ambiente de Velho Oeste no centro de Holambra. A Cow Burguer funciona a partir das 18h30, de terça a domingo, na Rua Campo do Pouso, 1139. O Cow Provolone (com queijo empanado) e o Cow Cheddar Melt (cebola caramelizada) são os destaques. Boa carne, batata bem feita, ambiente descontraído — exatamente o encerramento que o dia gourmet pede.",
+        tip: "Peça o Cow Provolone e a Batata Faroeste — é a combinação da casa.",
         bestMoment: "Noite",
       },
       {

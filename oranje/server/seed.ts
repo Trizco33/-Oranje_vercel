@@ -68,7 +68,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <p>O <a href="/app/lugar/24">Casa Bela Restaurante</a> é a pedida certa para refeições em família. Ambiente acolhedor, cardápio farto e preço justo — o tipo de lugar que você recomenda sem hesitar.</p>
 <h2>Para os que gostam de algo diferente</h2>
 <p>O <a href="/app/lugar/36">De Immigrant Garden</a> traz uma proposta mais autoral, com pratos que contam histórias de imigração e pertencimento. Ótimo para quem quer ir além do convencional.</p>
-<p>Se a fome for por hambúrguer artesanal de qualidade, o <a href="/app/lugar/42">Cowburguer</a> entrega exatamente isso — sem firulas, com muito sabor.</p>
+<p>Para hambúrguer artesanal, a <a href="/app/lugar/cow-burguer">Cow Burguer</a> é a pedida certa — ambiente temático de Velho Oeste, blend próprio e porções generosas no centro de Holambra.</p>
 <p>E o <a href="/app/lugar/35">Garden Restaurante</a> fecha essa lista com um ambiente verde e agradável, ideal para quem quer comer bem num ambiente que combina com a natureza da cidade.</p>
 <h2>Dicas de quem conhece</h2>
 <p>Holambra tem movimento intenso nos fins de semana e durante a Expoflora. Se for nessas datas, <strong>faça reserva com antecedência</strong> — os restaurantes mais procurados lotam cedo. Na semana, você consegue mesa com mais tranquilidade e muitas vezes um atendimento ainda mais cuidadoso.</p>
@@ -78,7 +78,7 @@ const DEFAULT_PAGES: InsertSitePage[] = [
 <a href="/app/lugar/24" class="place-card"><div class="place-card-name">Casa Bela Restaurante</div><div class="place-card-desc">Ambiente familiar, farto e acolhedor</div></a>
 <a href="/app/lugar/36" class="place-card"><div class="place-card-name">De Immigrant Garden</div><div class="place-card-desc">Proposta autoral e ingredientes locais</div></a>
 <a href="/app/lugar/35" class="place-card"><div class="place-card-name">Garden Restaurante</div><div class="place-card-desc">Ambiente arborizado, ótima pedida para almoço tranquilo</div></a>
-<a href="/app/lugar/42" class="place-card"><div class="place-card-name">Cowburguer</div><div class="place-card-desc">Hambúrguer artesanal de qualidade em Holambra</div></a>`,
+<a href="/app/lugar/cow-burguer" class="place-card"><div class="place-card-name">Cow Burguer</div><div class="place-card-desc">Hamburgueria temática com blend artesanal no centro de Holambra</div></a>`,
   },
   {
     slug: "melhores-cafes-de-holambra",

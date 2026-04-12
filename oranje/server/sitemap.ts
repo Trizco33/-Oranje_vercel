@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
-import { articles, places, events, routes } from "../drizzle/schema";
+import { articles, places, events, routes, guidedTours } from "../drizzle/schema";
 import { and, eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
 
@@ -34,6 +34,12 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     .from(routes)
     .where(eq(routes.isPublic, true)) : [];
 
+  // Active guided tours (receptivo)
+  const activeTours = db ? await db
+    .select({ id: guidedTours.id, slug: guidedTours.slug, updatedAt: guidedTours.updatedAt, createdAt: guidedTours.createdAt })
+    .from(guidedTours)
+    .where(eq(guidedTours.status, "active")) : [];
+
   const today = new Date().toISOString().split("T")[0];
 
   const urls: Array<{
@@ -49,6 +55,16 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     { loc: `${baseUrl}/app/explorar`, lastmod: today, priority: 0.9, changefreq: "daily" },
     { loc: `${baseUrl}/app/eventos`, lastmod: today, priority: 0.8, changefreq: "daily" },
     { loc: `${baseUrl}/app/roteiros`, lastmod: today, priority: 0.8, changefreq: "weekly" },
+
+    // ─── Páginas editoriais de categoria (SEO prioritário) ───────────
+    { loc: `${baseUrl}/melhores-restaurantes-de-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },
+    { loc: `${baseUrl}/melhores-cafes-de-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },
+    { loc: `${baseUrl}/bares-e-drinks-em-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },
+    { loc: `${baseUrl}/onde-tirar-fotos-em-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },
+    { loc: `${baseUrl}/eventos-em-holambra`, lastmod: today, priority: 0.8, changefreq: "weekly" },
+
+    // ─── Receptivo Oranje (passeios guiados com motorista) ───────────
+    { loc: `${baseUrl}/app/receptivo`, lastmod: today, priority: 0.8, changefreq: "weekly" },
 
     // ─── Páginas institucionais ───────────────────────────────────────
     { loc: `${baseUrl}/sobre`, lastmod: today, priority: 0.5, changefreq: "monthly" },
@@ -85,6 +101,14 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
       loc: `${baseUrl}/app/roteiro/${route.id}`,
       lastmod: (route.updatedAt || route.createdAt).toISOString().split("T")[0],
       priority: 0.6 as const,
+      changefreq: "monthly" as const,
+    })),
+
+    // ─── Passeios Receptivo (guided tours ativos) ─────────────────────
+    ...activeTours.map((tour) => ({
+      loc: `${baseUrl}/app/receptivo/${tour.slug}`,
+      lastmod: (tour.updatedAt || tour.createdAt).toISOString().split("T")[0],
+      priority: 0.8 as const,
       changefreq: "monthly" as const,
     })),
   ];

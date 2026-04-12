@@ -35,6 +35,11 @@ Disallow: /app/login
 Disallow: /app/perfil
 Disallow: /app/mapa
 Disallow: /app/configuracoes
+Disallow: /app/explorar
+Disallow: /app/eventos
+Disallow: /app/roteiros
+Disallow: /app/favoritos
+Disallow: /app/notificacoes
 
 Sitemap: ${baseUrl}/sitemap.xml
 `;

@@ -52,9 +52,6 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     { loc: baseUrl, lastmod: today, priority: 1.0, changefreq: "weekly" },
     { loc: `${baseUrl}/guia`, lastmod: today, priority: 0.8, changefreq: "weekly" },
     { loc: `${baseUrl}/blog`, lastmod: today, priority: 0.8, changefreq: "daily" },
-    { loc: `${baseUrl}/app/explorar`, lastmod: today, priority: 0.9, changefreq: "daily" },
-    { loc: `${baseUrl}/app/eventos`, lastmod: today, priority: 0.8, changefreq: "daily" },
-    { loc: `${baseUrl}/app/roteiros`, lastmod: today, priority: 0.8, changefreq: "weekly" },
 
     // ─── Páginas editoriais principais (SEO altíssima prioridade) ────
     { loc: `${baseUrl}/o-que-fazer-em-holambra`, lastmod: today, priority: 0.95, changefreq: "monthly" },
@@ -67,9 +64,6 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     { loc: `${baseUrl}/bares-e-drinks-em-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },
     { loc: `${baseUrl}/onde-tirar-fotos-em-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },
     { loc: `${baseUrl}/eventos-em-holambra`, lastmod: today, priority: 0.8, changefreq: "weekly" },
-
-    // ─── Receptivo Oranje (passeios guiados com motorista) ───────────
-    { loc: `${baseUrl}/app/receptivo`, lastmod: today, priority: 0.8, changefreq: "weekly" },
 
     // ─── Páginas institucionais ───────────────────────────────────────
     { loc: `${baseUrl}/sobre`, lastmod: today, priority: 0.5, changefreq: "monthly" },

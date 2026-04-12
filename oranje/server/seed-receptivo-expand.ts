@@ -402,6 +402,23 @@ export async function seedReceptivoExpand() {
     return;
   }
 
+  // ── Verificação rápida de idempotência — evita reseed dos tours a cada restart ──────────
+  try {
+    const trResult = await db.execute(sql`SELECT COUNT(*) as n FROM guided_tours WHERE status = 'active'`);
+    const stResult = await db.execute(sql`SELECT COUNT(*) as n FROM guided_tour_stops`);
+    const trRows = trResult as any;
+    const stRows = stResult as any;
+    const tourCount = Number(trRows?.[0]?.[0]?.n ?? trRows?.[0]?.n ?? 0);
+    const stopCount = Number(stRows?.[0]?.[0]?.n ?? stRows?.[0]?.n ?? 0);
+    if (tourCount >= 7 && stopCount >= 25) {
+      console.log(`  ✓ seedReceptivoExpand: ${tourCount} tours e ${stopCount} paradas já existem — seed pulado (idempotente).`);
+      return;
+    }
+    console.log(`  → ${tourCount} tours / ${stopCount} paradas encontrados — executando seed completo.`);
+  } catch (_) {
+    console.log("  → Verificação de tours falhou — executando seed completo.");
+  }
+
   console.log("🌷 Receptivo Oranje — seed de expansão iniciado\n");
 
   for (const tour of TOURS) {

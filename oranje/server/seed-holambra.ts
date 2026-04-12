@@ -1070,6 +1070,20 @@ export async function seedHolambra() {
     process.exit(1);
   }
 
+  // ── Verificação rápida de idempotência — evita 60+ upserts sequenciais no Railway ──────
+  try {
+    const result = await db.execute(sql`SELECT COUNT(*) as n FROM places WHERE city = 'Holambra' AND status = 'active'`);
+    const rows = result as any;
+    const count = Number(rows?.[0]?.[0]?.n ?? rows?.[0]?.n ?? 0);
+    if (count >= 55) {
+      console.log(`  ✓ seedHolambra: ${count} lugares ativos já existem — seed pulado (idempotente).`);
+      return;
+    }
+    console.log(`  → ${count} lugares encontrados — executando seed completo.`);
+  } catch (_) {
+    console.log("  → Verificação de contagem falhou — executando seed completo.");
+  }
+
   // 0. Garantir unique index em (name, city) para que o upsert funcione
   console.log("🔑 Garantindo unique index places_name_city_idx...");
   try {

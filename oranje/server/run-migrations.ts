@@ -803,9 +803,14 @@ export async function runMigrations(): Promise<void> {
       25616, 9, 26613, 25618, 25, 32, 13948, 21, 30251,
     ];
     for (const placeId of formulaIds) {
-      const [rows] = await db.execute(`SELECT id, name, lat, lng FROM \`places\` WHERE id = ${placeId} LIMIT 1`) as any[];
+      const [rows] = await db.execute(`SELECT id, name, lat, lng, geoStatus FROM \`places\` WHERE id = ${placeId} LIMIT 1`) as any[];
       const row = (rows as any[])[0];
       if (!row) continue;
+      // Nunca sobrescrever lugares já verificados via OSM (migration 020 ou manual)
+      if (row.geoStatus === 'ok') {
+        console.log(`[Migrations] ✓ 019-C: id=${placeId} ${row.name} — OSM-verificado, pulando fórmula`);
+        continue;
+      }
       if (row.lng >= -47.057) {
         // Já está na zona correta — apenas marcar como ok
         await db.execute(`UPDATE \`places\` SET geoStatus='ok', geoNote='Coordenadas na zona válida de Holambra' WHERE id=${placeId} AND geoStatus='unverified'`);
@@ -818,7 +823,6 @@ export async function runMigrations(): Promise<void> {
       const dLng = (newLng - row.lng) * Math.PI / 180;
       const a = Math.sin(dLat/2)**2 + Math.cos(row.lat*Math.PI/180)*Math.cos(newLat*Math.PI/180)*Math.sin(dLng/2)**2;
       const distM = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-      // Não sobrescrever se migration 020 (OSM-verificado) já corrigiu este lugar
       await db.execute(`UPDATE \`places\` SET lat=${newLat}, lng=${newLng}, geoStatus='suspect', geoNote='Correção por fórmula (offset +${DLAT}/+${DLNG}) — validação manual recomendada', updatedAt=NOW() WHERE id=${placeId} AND geoStatus != 'ok'`);
       console.log(`[Migrations] ✅ 019-C: id=${placeId} ${row.name} — fórmula aplicada (≈${distM}m) [suspect]`);
     }

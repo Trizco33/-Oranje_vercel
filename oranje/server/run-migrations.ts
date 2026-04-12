@@ -712,6 +712,45 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 020: Correções OSM-verificadas individualmente ──────────────
+  // Cada coordenada foi obtida diretamente do OSM Overpass por nome do lugar.
+  // Sem fórmula de offset — só dados verificados por fonte primária.
+  {
+    const osm020: Array<{ id: number; name: string; lat: number; lng: number; source: string }> = [
+      // Confirmados via OSM Overpass "out center" por nome exato do estabelecimento
+      { id: 4215,  name: "Rua dos Guarda-Chuvas",       lat: -22.62973, lng: -47.05824, source: "OSM way 126692860 — Alameda Maurício de Nassau + Nominatim" },
+      { id: 4214,  name: "Praça Vitória Régia",          lat: -22.63145, lng: -47.05729, source: "OSM way 1171605571" },
+      { id: 5,     name: "Expoflora",                    lat: -22.62569, lng: -47.05632, source: "OSM way 126693147" },
+      { id: 2616,  name: "Moinho Povos Unidos",          lat: -22.62321, lng: -47.06018, source: "OSM way 126693171" },
+      { id: 19,    name: "Parque Van Gogh",              lat: -22.63786, lng: -47.05119, source: "OSM way 1098863639" },
+      { id: 30,    name: "Royal Tulip Holambra",         lat: -22.62453, lng: -47.07554, source: "OSM way 1136037533" },
+      { id: 34,    name: "Macena Flores",                lat: -22.61587, lng: -47.04791, source: "OSM way 1132588683" },
+      { id: 32,    name: "Bloemen Park",                 lat: -22.61276, lng: -47.05664, source: "OSM way 1133332816" },
+      { id: 18,    name: "Parque Hotel Holambra",        lat: -22.64005, lng: -47.04236, source: "OSM node 10992283114" },
+      { id: 23,    name: "Nossa Prainha",                lat: -22.63726, lng: -47.05401, source: "OSM way — Lago Nossa Prainha" },
+      { id: 21,    name: "Cidade das Crianças",          lat: -22.62279, lng: -47.05803, source: "OSM way — Parque Cidade das Crianças" },
+    ];
+
+    const R = 6371000;
+    for (const c of osm020) {
+      const [rows] = await db.execute(`SELECT id, name, lat, lng FROM \`places\` WHERE id = ${c.id} LIMIT 1`) as any[];
+      const row = (rows as any[])[0];
+      if (!row) { console.log(`[Migrations] ⚠️  020: id=${c.id} não encontrado`); continue; }
+      const dLat = (c.lat - parseFloat(row.lat)) * Math.PI / 180;
+      const dLng = (c.lng - parseFloat(row.lng)) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(parseFloat(row.lat)*Math.PI/180)*Math.cos(c.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+      const distM = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+      if (distM < 30) {
+        await db.execute(`UPDATE \`places\` SET geoStatus='ok', geoNote=${JSON.stringify(c.source)} WHERE id=${c.id}`);
+        console.log(`[Migrations] ✓ 020: ${c.name} já correto [OSM]`);
+      } else {
+        await db.execute(`UPDATE \`places\` SET lat=${c.lat}, lng=${c.lng}, geoStatus='ok', geoNote=${JSON.stringify('Corrigido via OSM Overpass: ' + c.source + ' (' + distM + 'm de erro anterior)')}, updatedAt=NOW() WHERE id=${c.id}`);
+        console.log(`[Migrations] ✅ 020: ${c.name} — corrigido ${distM}m [OSM]`);
+      }
+    }
+    console.log("[Migrations] ✅ 020: Correções OSM individuais aplicadas");
+  }
+
   // ─── Migration 019: geoStatus + correção global de coordenadas ─────────────
   // Adiciona coluna geoStatus e corrige/classifica todos os lugares.
   {
@@ -779,7 +818,8 @@ export async function runMigrations(): Promise<void> {
       const dLng = (newLng - row.lng) * Math.PI / 180;
       const a = Math.sin(dLat/2)**2 + Math.cos(row.lat*Math.PI/180)*Math.cos(newLat*Math.PI/180)*Math.sin(dLng/2)**2;
       const distM = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-      await db.execute(`UPDATE \`places\` SET lat=${newLat}, lng=${newLng}, geoStatus='suspect', geoNote='Correção por fórmula (offset +${DLAT}/+${DLNG}) — validação manual recomendada', updatedAt=NOW() WHERE id=${placeId}`);
+      // Não sobrescrever se migration 020 (OSM-verificado) já corrigiu este lugar
+      await db.execute(`UPDATE \`places\` SET lat=${newLat}, lng=${newLng}, geoStatus='suspect', geoNote='Correção por fórmula (offset +${DLAT}/+${DLNG}) — validação manual recomendada', updatedAt=NOW() WHERE id=${placeId} AND geoStatus != 'ok'`);
       console.log(`[Migrations] ✅ 019-C: id=${placeId} ${row.name} — fórmula aplicada (≈${distM}m) [suspect]`);
     }
 

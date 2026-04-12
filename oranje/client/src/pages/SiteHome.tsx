@@ -656,92 +656,84 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 3) DESTAQUES — Beige background, 3:2 cards ═══ */}
-      <section className="site-section" style={{ background: "#F5F5DC" }}>
+      {/* ═══ 3) DESTAQUES — Full-bleed photo cards ═══ */}
+      <section style={{ background: "#F7F5F0", padding: "72px 24px" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
-            <SectionHeader
-              label="Destaques"
-              labelColor="#00251A"
-              title="Destaques da Semana"
-              subtitle="Lugares mais visitados e bem avaliados"
-            />
+            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 40, flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <span style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#00251A", opacity: 0.4, display: "block", marginBottom: 10, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                  Destaques
+                </span>
+                <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", fontWeight: 800, color: "#00251A", lineHeight: 1.1, letterSpacing: "-0.025em", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                  Mais visitados agora
+                </h2>
+              </div>
+              <Link to="/app/explorar" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.8125rem", fontWeight: 600, color: "#E65100", textDecoration: "none" }}>
+                Ver todos <ArrowRight size={13} />
+              </Link>
+            </div>
           </Reveal>
 
-          {/* Horizontal scroll on mobile, grid on desktop */}
-          <div
-            className="scroll-x site-featured-grid"
-            style={{
-              display: "flex",
-              gap: 20,
-              paddingBottom: 4,
-            }}
-          >
+          <div className="scroll-x site-featured-grid" style={{ display: "flex", gap: 16, paddingBottom: 4 }}>
             {placesLoading
               ? [1, 2, 3].map((i) => (
-                  <div key={i} className="site-card site-featured-item">
-                    <div className="site-skeleton" style={{ height: 200, borderRadius: 0 }} />
-                    <div style={{ padding: 20 }}>
-                      <div className="site-skeleton" style={{ height: 18, width: "70%", marginBottom: 12 }} />
-                      <div className="site-skeleton" style={{ height: 14, width: "50%" }} />
-                    </div>
+                  <div key={i} className="site-featured-item" style={{ borderRadius: 20, overflow: "hidden", flexShrink: 0 }}>
+                    <div className="site-skeleton" style={{ height: 280, width: "100%" }} />
                   </div>
                 ))
               : featuredPlaces.slice(0, 3).map((place: any, i: number) => (
-                  <Reveal key={place.id} delay={i * 80}>
-                    <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block" }}>
-                      <div
-                        className="card-press"
-                        style={{
-                          background: "#FFFFFF",
-                          borderRadius: 16,
-                          overflow: "hidden",
-                          borderTop: "2px solid #E65100",
-                          boxShadow: "0 4px 18px rgba(0,37,26,0.07)",
-                          transition: "transform 0.22s ease, box-shadow 0.22s ease",
-                        }}
-                        onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.boxShadow = "0 14px 36px rgba(0,37,26,0.14)"; }}
-                        onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 4px 18px rgba(0,37,26,0.07)"; }}
+                  <Reveal key={place.id} delay={i * 70}>
+                    <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block", flexShrink: 0 }}>
+                      <div style={{
+                        borderRadius: 20, overflow: "hidden",
+                        position: "relative",
+                        aspectRatio: "3/4",
+                        transition: "transform 0.25s ease",
+                      }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "scale(0.98)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
                       >
-                        {/* 3:2 aspect ratio image */}
-                        <div style={{ position: "relative", paddingBottom: "66.67%", overflow: "hidden" }}>
-                          <img
-                            src={getPlaceImage(place)}
-                            alt={place.name}
-                            loading="lazy"
-                            className="card-img-zoom"
-                            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-                          />
-                          {/* gradient overlay */}
-                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,37,26,0.55) 0%, transparent 50%)" }} />
-                          {/* category chip */}
-                          <span style={{
-                            position: "absolute", bottom: 12, left: 14,
-                            fontSize: "0.6875rem", fontWeight: 600,
-                            background: "rgba(0,37,26,0.75)", backdropFilter: "blur(6px)",
-                            color: "rgba(255,255,255,0.92)", padding: "4px 10px", borderRadius: 20,
-                            border: "1px solid rgba(255,255,255,0.15)",
-                          }}>
-                            {catMap[(place as any).categoryId] || "Holambra"}
-                          </span>
-                        </div>
-                        <div style={{ padding: "16px 18px" }}>
-                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 10, lineHeight: 1.25, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                        {/* Full-bleed photo */}
+                        <img
+                          src={getPlaceImage(place)}
+                          alt={place.name}
+                          loading="lazy"
+                          className="card-img-zoom"
+                          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                        {/* Gradient overlay — stronger at bottom */}
+                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,20,10,0.85) 0%, rgba(0,20,10,0.2) 50%, transparent 100%)" }} />
+
+                        {/* Category chip — top */}
+                        <span style={{
+                          position: "absolute", top: 14, left: 14,
+                          fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+                          background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)",
+                          color: "rgba(255,255,255,0.85)", padding: "4px 10px", borderRadius: 20,
+                          border: "1px solid rgba(255,255,255,0.18)",
+                        }}>
+                          {catMap[(place as any).categoryId] || "Holambra"}
+                        </span>
+
+                        {/* Text — bottom */}
+                        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 18px" }}>
+                          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#FFFFFF", marginBottom: 8, lineHeight: 1.2, fontFamily: "'Montserrat', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
                             {place.name}
                           </h3>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                              <Star size={13} style={{ color: "#E65100", fill: "#E65100", flexShrink: 0 }} />
-                              <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#00251A" }}>
+                              <Star size={12} style={{ color: "#E65100", fill: "#E65100" }} />
+                              <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "rgba(255,255,255,0.9)" }}>
                                 {place.rating || "4.5"}
                               </span>
                             </div>
                             <span style={{
-                              fontSize: "0.75rem", fontWeight: 700, color: "#fff",
+                              fontSize: "0.6875rem", fontWeight: 700, color: "#fff",
                               display: "inline-flex", alignItems: "center", gap: 4,
-                              background: "#E65100", padding: "5px 12px", borderRadius: 8,
+                              background: "#E65100", padding: "5px 11px", borderRadius: 8,
                             }}>
-                              Visitar <ArrowRight size={11} />
+                              Visitar <ArrowRight size={10} />
                             </span>
                           </div>
                         </div>
@@ -1148,236 +1140,164 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 5) MAPA INTERATIVO — Beige background ═══ */}
-      <section className="site-section" style={{ background: "#F5F5DC" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      {/* ═══ 5) MAPA INTERATIVO — editorial split ═══ */}
+      <section style={{ background: "#00251A", padding: "80px 24px" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+
+          {/* Cabeçalho */}
           <Reveal>
-            <SectionHeader
-              label="Mapa"
-              title="Explore Holambra com o Mapa Interativo"
-              subtitle="Encontre lugares próximos, filtre por categoria e navegue pela cidade com o mapa do Oranje"
-            />
+            <div style={{ marginBottom: 56, maxWidth: 560 }}>
+              <span style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", display: "block", marginBottom: 16, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                Mapa Interativo
+              </span>
+              <h2 style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)", fontWeight: 800, color: "#FFFFFF", lineHeight: 1.1, letterSpacing: "-0.025em", fontFamily: "'Montserrat', system-ui, sans-serif", marginBottom: 14 }}>
+                Explore Holambra no mapa
+              </h2>
+              <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.65 }}>
+                Encontre lugares próximos, filtre por categoria e navegue pela cidade com o mapa do Oranje.
+              </p>
+            </div>
           </Reveal>
 
-          <Reveal delay={80}>
-            <div style={{
-              background: "linear-gradient(160deg, #001A12 0%, #00251A 60%, #002E1F 100%)",
-              borderRadius: 24,
-              padding: "40px 32px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 32,
-              border: "1px solid rgba(255,255,255,0.06)",
-              position: "relative",
-              overflow: "hidden",
-            }}>
-              {/* decorative radial glow */}
-              <div style={{
-                position: "absolute",
-                top: -80, right: -80,
-                width: 300, height: 300,
-                borderRadius: "50%",
-                background: "radial-gradient(circle, rgba(230,81,0,0.1) 0%, transparent 70%)",
-                pointerEvents: "none",
-              }} />
-
-              {/* Feature grid */}
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-                gap: 16,
-              }}>
-                {[
-                  {
-                    icon: <Navigation size={20} strokeWidth={2} />,
-                    accent: "#E65100",
-                    title: "Perto de Mim",
-                    desc: "Veja o que está mais próximo de você agora, em tempo real",
-                  },
-                  {
-                    icon: <SlidersHorizontal size={20} strokeWidth={2} />,
-                    accent: "#FF8C42",
-                    title: "Filtros por Categoria",
-                    desc: "Restaurantes, cafés, parques — filtre e encontre o que quer",
-                  },
-                  {
-                    icon: <Heart size={20} strokeWidth={2} />,
-                    accent: "#FFB347",
-                    title: "Favoritos no Mapa",
-                    desc: "Seus lugares favoritos marcados e acessíveis de onde estiver",
-                  },
-                ].map((feat, i) => (
-                  <div key={i} style={{
-                    background: "rgba(255,255,255,0.05)",
-                    borderRadius: 16,
-                    padding: "24px 22px",
-                    border: "1px solid rgba(255,255,255,0.09)",
-                    borderTop: `2px solid ${feat.accent}`,
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
-                    cursor: "default",
-                  }}
-                    onMouseEnter={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.transform = "translateY(-4px)";
-                      el.style.background = "rgba(255,255,255,0.08)";
-                      el.style.boxShadow = `0 12px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)`;
+          {/* Features como lista com link — bug fix: cada item é clicável */}
+          <div style={{ marginBottom: 48 }}>
+            {[
+              { icon: <Navigation size={18} />, accent: "#E65100", title: "Perto de Mim", desc: "Veja o que está mais próximo de você agora, em tempo real" },
+              { icon: <SlidersHorizontal size={18} />, accent: "#FF8C42", title: "Filtros por Categoria", desc: "Restaurantes, cafés, parques — filtre e encontre o que quer" },
+              { icon: <Heart size={18} />, accent: "#FF9F4A", title: "Favoritos no Mapa", desc: "Seus lugares favoritos marcados e acessíveis de onde estiver" },
+            ].map((feat, i) => (
+              <Reveal key={feat.title} delay={i * 50}>
+                <Link to="/app/mapa" style={{ textDecoration: "none", display: "block" }}>
+                  <div
+                    style={{
+                      display: "flex", alignItems: "center", gap: 20,
+                      padding: "22px 0",
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
+                      transition: "padding-left 0.2s ease",
+                      cursor: "pointer",
                     }}
-                    onMouseLeave={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.transform = "";
-                      el.style.background = "rgba(255,255,255,0.05)";
-                      el.style.boxShadow = "";
-                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "8px"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "0px"; }}
                   >
-                    {/* icon circle */}
+                    {/* Ícone colorido */}
                     <div style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 12,
-                      background: `linear-gradient(135deg, ${feat.accent}28, ${feat.accent}10)`,
-                      border: `1px solid ${feat.accent}40`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 14,
+                      width: 40, height: 40, borderRadius: "50%", flexShrink: 0,
+                      background: `${feat.accent}18`,
+                      border: `1px solid ${feat.accent}35`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
                       color: feat.accent,
                     }}>
                       {feat.icon}
                     </div>
-                    <p style={{ fontWeight: 800, color: "#fff", fontSize: "0.9375rem", margin: "0 0 7px", fontFamily: "'Montserrat', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
-                      {feat.title}
-                    </p>
-                    <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.8125rem", margin: 0, lineHeight: 1.65 }}>
-                      {feat.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTAs */}
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", position: "relative" }}>
-                <Link
-                  to="/app/mapa"
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: 8,
-                    height: 50, padding: "0 28px",
-                    background: "linear-gradient(135deg, #E65100, #FF6D00)",
-                    color: "#FFFFFF",
-                    fontSize: "0.9375rem", fontWeight: 700, borderRadius: 13,
-                    textDecoration: "none", fontFamily: "'Montserrat', system-ui, sans-serif",
-                    boxShadow: "0 4px 18px rgba(230,81,0,0.4)",
-                    transition: "transform 0.15s ease, box-shadow 0.15s ease",
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 22px rgba(230,81,0,0.5)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 18px rgba(230,81,0,0.4)"; }}
-                >
-                  <MapPin size={17} />
-                  Abrir mapa no app
-                  <ArrowRight size={15} />
-                </Link>
-                <Link
-                  to="/mapa"
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: 8,
-                    height: 50, padding: "0 24px",
-                    background: "transparent", color: "rgba(255,255,255,0.7)",
-                    fontSize: "0.875rem", fontWeight: 600, borderRadius: 13,
-                    textDecoration: "none", border: "1.5px solid rgba(255,255,255,0.15)",
-                    fontFamily: "'Montserrat', system-ui, sans-serif",
-                    transition: "border-color 0.15s ease, color 0.15s ease",
-                  }}
-                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.35)"; el.style.color = "#fff"; }}
-                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.15)"; el.style.color = "rgba(255,255,255,0.7)"; }}
-                >
-                  Saiba mais sobre o mapa
-                </Link>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══ 6) BLOG & GUIAS — White background ═══ */}
-      <section className="site-section" style={{ background: "#FFFFFF" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <Reveal>
-            <SectionHeader
-              label="Blog & Guias"
-              title="Guias e Notícias de Holambra"
-              subtitle="Leia antes de ir — dicas editoriais, guias de visita e novidades da cidade"
-            />
-          </Reveal>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 40 }}>
-            {articles.slice(0, 3).map((article: any, i: number) => (
-              <Reveal key={article.id} delay={i * 60}>
-                <Link to={`/blog/${article.slug}`} style={{ textDecoration: "none", display: "block" }}>
-                  <div
-                    className="card-press"
-                    style={{
-                      padding: "18px 22px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 16,
-                      background: "#FFFFFF",
-                      borderRadius: 14,
-                      borderLeft: "3px solid #E65100",
-                      boxShadow: "0 2px 12px rgba(0,37,26,0.06)",
-                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateX(4px)"; el.style.boxShadow = "0 6px 22px rgba(0,37,26,0.11)"; }}
-                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 2px 12px rgba(0,37,26,0.06)"; }}
-                  >
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 4, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                        {article.title}
-                      </h3>
-                      <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.4)" }}>
-                        {article.publishedAt &&
-                          new Date(article.publishedAt).toLocaleDateString("pt-BR")}
-                      </p>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: "1rem", fontWeight: 700, color: "#FFFFFF", marginBottom: 3, fontFamily: "'Montserrat', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
+                        {feat.title}
+                      </div>
+                      <div style={{ fontSize: "0.8125rem", color: "rgba(255,255,255,0.42)", lineHeight: 1.5 }}>
+                        {feat.desc}
+                      </div>
                     </div>
-                    <div style={{
-                      width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-                      background: "rgba(230,81,0,0.08)", border: "1px solid rgba(230,81,0,0.16)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <ArrowRight size={15} style={{ color: "#E65100" }} />
-                    </div>
+                    <ArrowRight size={14} style={{ color: "rgba(255,255,255,0.2)", flexShrink: 0 }} />
                   </div>
                 </Link>
               </Reveal>
             ))}
           </div>
 
+          {/* CTAs */}
           <Reveal>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Link
-                to="/blog"
+                to="/app/mapa"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: 44,
-                  padding: "0 24px",
-                  background: "#E65100",
-                  color: "#FFFFFF",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  borderRadius: 11,
-                  textDecoration: "none",
-                  transition: "background 0.2s ease",
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "#E65100", color: "#FFFFFF",
+                  padding: "14px 28px", borderRadius: 12,
+                  fontSize: "0.9375rem", fontWeight: 700,
+                  textDecoration: "none", fontFamily: "'Montserrat', system-ui, sans-serif",
+                  boxShadow: "0 4px 20px rgba(230,81,0,0.35)",
+                }}
+              >
+                <MapPin size={16} />
+                Abrir mapa no app
+                <ArrowRight size={14} />
+              </Link>
+              <Link
+                to="/mapa"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.7)",
+                  padding: "14px 24px", borderRadius: 12,
+                  fontSize: "0.875rem", fontWeight: 600,
+                  textDecoration: "none", border: "1px solid rgba(255,255,255,0.12)",
                   fontFamily: "'Montserrat', system-ui, sans-serif",
                 }}
-                onMouseEnter={(e: any) => (e.currentTarget.style.background = "#FF6D00")}
-                onMouseLeave={(e: any) => (e.currentTarget.style.background = "#E65100")}
               >
-                Ver todos os guias
-                <ArrowRight size={16} />
+                Saiba mais sobre o mapa
               </Link>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* ═══ 6) BLOG & GUIAS — lista de artigos editorial ═══ */}
+      <section style={{ background: "#FFFFFF", padding: "80px 24px" }}>
+        <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+          <Reveal>
+            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 52, flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <span style={{ fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#E65100", display: "block", marginBottom: 10, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                  Blog & Guias
+                </span>
+                <h2 style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", fontWeight: 800, color: "#00251A", lineHeight: 1.1, letterSpacing: "-0.025em", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+                  Leia antes de ir
+                </h2>
+              </div>
+              <Link to="/blog" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "0.8125rem", fontWeight: 600, color: "#E65100", textDecoration: "none" }}>
+                Ver todos <ArrowRight size={13} />
+              </Link>
+            </div>
+          </Reveal>
+
+          {articles.slice(0, 3).map((article: any, i: number) => (
+            <Reveal key={article.id} delay={i * 55}>
+              <Link to={`/blog/${article.slug}`} style={{ textDecoration: "none", display: "block" }}>
+                <div
+                  style={{
+                    display: "flex", alignItems: "baseline", gap: 24,
+                    padding: "24px 0",
+                    borderBottom: "1px solid rgba(0,37,26,0.07)",
+                    transition: "padding-left 0.2s ease",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "8px"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "0"; }}
+                >
+                  {/* Data como índice visual */}
+                  <span style={{
+                    fontSize: "0.6875rem", fontWeight: 600, color: "rgba(0,37,26,0.3)",
+                    fontFamily: "monospace", flexShrink: 0, minWidth: 56,
+                  }}>
+                    {article.publishedAt
+                      ? new Date(article.publishedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
+                      : "—"}
+                  </span>
+
+                  <h3 style={{
+                    flex: 1, minWidth: 0,
+                    fontSize: "clamp(0.9375rem, 3vw, 1.0625rem)", fontWeight: 700,
+                    color: "#00251A", lineHeight: 1.3,
+                    fontFamily: "'Montserrat', system-ui, sans-serif",
+                    letterSpacing: "-0.01em",
+                  }}>
+                    {article.title}
+                  </h3>
+
+                  <ArrowRight size={14} style={{ color: "rgba(0,37,26,0.2)", flexShrink: 0 }} />
+                </div>
+              </Link>
+            </Reveal>
+          ))}
         </div>
       </section>
 

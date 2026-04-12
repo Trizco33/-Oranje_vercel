@@ -806,9 +806,9 @@ export async function runMigrations(): Promise<void> {
       const [rows] = await db.execute(`SELECT id, name, lat, lng, geoStatus FROM \`places\` WHERE id = ${placeId} LIMIT 1`) as any[];
       const row = (rows as any[])[0];
       if (!row) continue;
-      // Nunca sobrescrever lugares já verificados via OSM (migration 020 ou manual)
-      if (row.geoStatus === 'ok') {
-        console.log(`[Migrations] ✓ 019-C: id=${placeId} ${row.name} — OSM-verificado, pulando fórmula`);
+      // Nunca sobrescrever lugares já revisados/verificados (qualquer status exceto unverified)
+      if (row.geoStatus !== 'unverified' && row.geoStatus !== null) {
+        console.log(`[Migrations] ✓ 019-C: id=${placeId} ${row.name} — já classificado [${row.geoStatus}], pulando fórmula`);
         continue;
       }
       if (row.lng >= -47.057) {
@@ -823,7 +823,7 @@ export async function runMigrations(): Promise<void> {
       const dLng = (newLng - row.lng) * Math.PI / 180;
       const a = Math.sin(dLat/2)**2 + Math.cos(row.lat*Math.PI/180)*Math.cos(newLat*Math.PI/180)*Math.sin(dLng/2)**2;
       const distM = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-      await db.execute(`UPDATE \`places\` SET lat=${newLat}, lng=${newLng}, geoStatus='suspect', geoNote='Correção por fórmula (offset +${DLAT}/+${DLNG}) — validação manual recomendada', updatedAt=NOW() WHERE id=${placeId} AND geoStatus != 'ok'`);
+      await db.execute(`UPDATE \`places\` SET lat=${newLat}, lng=${newLng}, geoStatus='suspect', geoNote='Correção por fórmula (offset +${DLAT}/+${DLNG}) — validação manual recomendada', updatedAt=NOW() WHERE id=${placeId} AND (geoStatus='unverified' OR geoStatus IS NULL)`);
       console.log(`[Migrations] ✅ 019-C: id=${placeId} ${row.name} — fórmula aplicada (≈${distM}m) [suspect]`);
     }
 
@@ -917,6 +917,88 @@ export async function runMigrations(): Promise<void> {
       );
       console.log(`[Migrations] ✅ 017: tour id=${t.id} — clientPrice=R$${t.clientPrice}, driverPayout=R$${t.driverPayout}`);
     }
+  }
+
+  // ─── Migration 021: Geo-validação individual dos 21 suspeitos ────────────────
+  // Fonte: Nominatim (OSM) + web search (endereços oficiais confirmados)
+  // Hierarquia: Nominatim/endereço-oficial → ok | bairro-atípico → suspect | sem-coords → needs_review
+  {
+    const geoFixes = [
+      // ── GRUPO A: Nominatim confirmado + endereço oficial → ok ────────────────
+      { id: 13948, lat: -22.63396, lng: -47.05985, status: 'ok',
+        note: 'Nominatim: Rua Íris 1, Quiosque Seco A, Holambra SP — endereço oficial confirmado via web' },
+      { id: 27,    lat: -22.62952, lng: -47.05104, status: 'ok',
+        note: 'Nominatim: Rua Primavera 936, Centro, Holambra SP — endereço oficial confirmado via web' },
+      { id: 25616, lat: -22.62812, lng: -47.05325, status: 'ok',
+        note: 'Nominatim: Rua Dória Vasconcelos 151, Loja 2, Boulevard Holandês — endereço oficial confirmado' },
+      { id: 25,    lat: -22.63080, lng: -47.05275, status: 'ok',
+        note: 'Nominatim: Rua Dória Vasconcelos 220, Holambra SP — endereço oficial confirmado via web' },
+      { id: 30251, lat: -22.61607, lng: -47.06488, status: 'ok',
+        note: 'Nominatim: Rua Flipsen 168, Holambra SP — endereço oficial confirmado' },
+      { id: 6432,  lat: -22.63179, lng: -47.03591, status: 'ok',
+        note: 'Nominatim: Rua Rota dos Imigrantes 848, Bairro Van Gogh, CEP 13825-150 — endereço oficial confirmado' },
+      // ── GRUPO B: Nominatim encontrou, bairro distinto ou posição estimada → suspect ─
+      { id: 9,    lat: -22.63893, lng: -47.05435, status: 'suspect',
+        note: 'Nominatim: Rua Próteas 42, Jardim Holanda — bairro distinto do centro, confirmação visual recomendada' },
+      { id: 6424, lat: -22.62973, lng: -47.05824, status: 'suspect',
+        note: 'Nominatim: Alameda Maurício de Nassau, centróide do segmento OSM — posição estimada no eixo da rua' },
+      // ── GRUPO C: Rua Campo do Pouso — endereço confirmado, centróide da rua → needs_review ─
+      // CEP 13825-063 | Centróide confirmado via web: lat=-22.6316421, lng=-47.0526924
+      { id: 13952, lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 826, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 6334,  lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 851, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 8,     lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 898, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 6418,  lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1050, Loja 1, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 6428,  lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1050, Loja 4, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 30247, lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1050, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 25618, lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1089, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 26613, lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1139, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 44,    lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: "Endereço confirmado: Rua Campo do Pouso 1162, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual." },
+      { id: 43,    lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1163, Seção A, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 40,    lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1189, Espaço Food Garden, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      { id: 6438,  lat: -22.63164, lng: -47.05269, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Campo do Pouso 1239, Centro, Holambra SP (CEP 13825-063). Coordenada = centróide da rua. Posição exata requer validação manual.' },
+      // ── GRUPO D: Kéndi — endereço confirmado, Nominatim falhou → needs_review ──────────
+      { id: 29,    lat: null, lng: null, status: 'needs_review',
+        note: 'Endereço confirmado: Rua Rota dos Imigrantes 409, Sala 01, Centro, Holambra SP. Nominatim não localizou coordenadas. Validação manual no Google Maps necessária.' },
+    ];
+
+    let applied = 0, skipped = 0;
+    for (const fix of geoFixes) {
+      const [rows] = await db.execute(`SELECT id, geoStatus FROM \`places\` WHERE id = ${fix.id} LIMIT 1`) as any[];
+      const row = (rows as any[])[0];
+      if (!row) { console.log(`[Migrations] ⚠️  021: id=${fix.id} não encontrado`); continue; }
+
+      // Idempotente: só aplica se ainda não está na classificação alvo
+      if (row.geoStatus === fix.status) {
+        console.log(`[Migrations] ✓ 021: id=${fix.id} já classificado [${fix.status}], skip`);
+        skipped++; continue;
+      }
+
+      if (fix.lat !== null) {
+        await db.execute(
+          `UPDATE \`places\` SET lat=${fix.lat}, lng=${fix.lng}, geoStatus='${fix.status}', geoNote=?, updatedAt=NOW() WHERE id=${fix.id}`,
+          [fix.note]
+        );
+      } else {
+        await db.execute(
+          `UPDATE \`places\` SET geoStatus='${fix.status}', geoNote=?, updatedAt=NOW() WHERE id=${fix.id}`,
+          [fix.note]
+        );
+      }
+      applied++;
+    }
+    console.log(`[Migrations] ✅ 021: geo-validação aplicada — ${applied} corrigidos, ${skipped} já corretos`);
   }
 
   console.log("[Migrations] All migrations applied.");

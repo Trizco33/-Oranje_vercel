@@ -1024,5 +1024,30 @@ export async function runMigrations(): Promise<void> {
     console.log(`[Migrations] ✅ 021: geo-validação aplicada — ${applied} corrigidos, ${skipped} já corretos`);
   }
 
+  // ── Migration 023: limpar CMS das páginas editoriais com conteúdo desatualizado ──────────
+  // As 4 páginas de categoria tinham conteúdo CMS publicado com lugares desatualizados.
+  // Ao deletar, o fallback JSX (validado com IDs reais do banco) assume automaticamente.
+  // Guard: só roda se ainda existir alguma das páginas na tabela.
+  {
+    const slugsToClear = [
+      'bares-e-drinks-em-holambra',
+      'melhores-cafes-de-holambra',
+      'melhores-restaurantes-de-holambra',
+      'onde-tirar-fotos-em-holambra',
+    ];
+    const [existRows] = await db.execute(
+      `SELECT COUNT(*) as cnt FROM site_pages WHERE slug IN (${slugsToClear.map(s => `'${s}'`).join(',')})`
+    ) as any[];
+    const count = (existRows as any[])[0]?.cnt ?? 0;
+    if (count === 0) {
+      console.log('[Migrations] ✓ 023: páginas editoriais CMS já limpas — fallback JSX ativo');
+    } else {
+      await db.execute(
+        `DELETE FROM site_pages WHERE slug IN (${slugsToClear.map(s => `'${s}'`).join(',')})`
+      );
+      console.log(`[Migrations] ✅ 023: ${count} páginas CMS desatualizadas removidas — fallback JSX restaurado`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

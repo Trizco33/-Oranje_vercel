@@ -2,8 +2,8 @@ import { router, adminProcedure, publicProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
-import { siteContent, sitePages, siteSeo } from "../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { siteContent, sitePages, siteSeo, places } from "../drizzle/schema";
+import { eq, inArray } from "drizzle-orm";
 import { ENV } from "./_core/env";
 import { AuthService } from "./authService";
 
@@ -120,6 +120,28 @@ export const cmsRouter = router({
       if (!db) throw new Error("Database not available");
       const safeContent = sanitizeHtml(input.content);
       const safeInput = { ...input, content: safeContent };
+
+      // ── Anti-regressão: validar IDs de lugares antes de publicar ──────────────
+      // Extrai todos os IDs numéricos de /app/lugar/ID no HTML e verifica se
+      // existem como lugares ativos no banco. Bloqueia publicação se algum faltar.
+      if (input.published) {
+        const idMatches = [...safeContent.matchAll(/\/app\/lugar\/(\d+)/g)];
+        const numericIds = [...new Set(idMatches.map((m) => parseInt(m[1], 10)))];
+        if (numericIds.length > 0) {
+          const found = await db
+            .select({ id: places.id })
+            .from(places)
+            .where(inArray(places.id, numericIds));
+          const foundIds = new Set(found.map((r: { id: number }) => r.id));
+          const missing = numericIds.filter((id) => !foundIds.has(id));
+          if (missing.length > 0) {
+            throw new Error(
+              `Publicação bloqueada: ${missing.length} lugar(es) não encontrado(s) no banco (IDs: ${missing.join(", ")}). Remova os links quebrados antes de publicar.`
+            );
+          }
+        }
+      }
+
       if (input.id) {
         await db
           .update(sitePages)

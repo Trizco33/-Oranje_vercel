@@ -96,6 +96,8 @@ export const places = mysqlTable("places", {
   reviewCount: int("reviewCount").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  geoStatus: mysqlEnum("geoStatus", ["ok", "suspect", "out_of_bounds", "unverified", "needs_review"]).default("unverified").notNull(),
+  geoNote: text("geoNote"),
 }, (table) => ({
   nameCityIdx: uniqueIndex("places_name_city_idx").on(table.name, table.city),
 }));

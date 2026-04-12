@@ -712,6 +712,95 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 019: geoStatus + correção global de coordenadas ─────────────
+  // Adiciona coluna geoStatus e corrige/classifica todos os lugares.
+  {
+    // 019-A: Adicionar coluna geoStatus (se não existir)
+    if (!(await columnExists(db, "places", "geoStatus"))) {
+      await db.execute(`ALTER TABLE \`places\` ADD COLUMN \`geoStatus\` enum('ok','suspect','out_of_bounds','unverified','needs_review') NOT NULL DEFAULT 'unverified' AFTER \`updatedAt\``);
+      console.log("[Migrations] ✅ 019-A: coluna geoStatus adicionada");
+    } else {
+      console.log("[Migrations] ✓ 019-A: geoStatus já existe");
+    }
+    if (!(await columnExists(db, "places", "geoNote"))) {
+      await db.execute(`ALTER TABLE \`places\` ADD COLUMN \`geoNote\` text NULL AFTER \`geoStatus\``);
+      console.log("[Migrations] ✅ 019-A: coluna geoNote adicionada");
+    }
+
+    // 019-B: Correções de coordenadas — OSM-confirmadas (alta confiança)
+    const osmCorrections: Array<{ id: number; name: string; lat: number; lng: number }> = [
+      { id: 2614,  name: "Lago do Holandês",               lat: -22.63630, lng: -47.05150 },
+      { id: 4213,  name: "Deck do Amor",                   lat: -22.63140, lng: -47.05770 },
+      { id: 3825,  name: "Villa de Holanda Parque Hotel",  lat: -22.63250, lng: -47.05580 },
+      { id: 25617, name: "Restaurante Tratterie Holandesa",lat: -22.63000, lng: -47.04990 },
+      { id: 4212,  name: "Zoet en Zout",                   lat: -22.62930, lng: -47.05670 },
+    ];
+
+    for (const c of osmCorrections) {
+      const [rows] = await db.execute(`SELECT id, lat, lng FROM \`places\` WHERE id = ${c.id} LIMIT 1`) as any[];
+      const row = (rows as any[])[0];
+      if (!row) { console.log(`[Migrations] ⚠️  019-B: id=${c.id} não encontrado`); continue; }
+      const R = 6371000;
+      const dLat = (c.lat - row.lat) * Math.PI / 180;
+      const dLng = (c.lng - row.lng) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(row.lat*Math.PI/180)*Math.cos(c.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+      const distM = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+      if (distM < 50) {
+        await db.execute(`UPDATE \`places\` SET geoStatus='ok', geoNote='OSM-confirmado' WHERE id=${c.id}`);
+        console.log(`[Migrations] ✓ 019-B: ${c.name} já correto — marcado ok [OSM]`);
+      } else {
+        await db.execute(`UPDATE \`places\` SET lat=${c.lat}, lng=${c.lng}, geoStatus='ok', geoNote='Corrigido via OSM Overpass (${distM}m de erro)', updatedAt=NOW() WHERE id=${c.id}`);
+        console.log(`[Migrations] ✅ 019-B: ${c.name} — corrigido ${distM}m [OSM]`);
+      }
+    }
+
+    // 019-C: Correções via fórmula (offset sistemático médio Δlat=+0.0063, Δlng=+0.0085)
+    // Aplicado a lugares na zona suspeita (lng < -47.057) não cobertos pelo OSM
+    const DLAT = 0.0063;
+    const DLNG = 0.0085;
+    const formulaIds = [
+      30, 19, 43, 34, 40, 6334, 13952, 8, 6432, 4215, 6424,
+      6428, 30247, 6418, 27, 2616, 4214, 6438, 18, 5, 29, 44,
+      25616, 9, 26613, 25618, 25, 32, 13948, 21, 30251,
+    ];
+    for (const placeId of formulaIds) {
+      const [rows] = await db.execute(`SELECT id, name, lat, lng FROM \`places\` WHERE id = ${placeId} LIMIT 1`) as any[];
+      const row = (rows as any[])[0];
+      if (!row) continue;
+      if (row.lng >= -47.057) {
+        // Já está na zona correta — apenas marcar como ok
+        await db.execute(`UPDATE \`places\` SET geoStatus='ok', geoNote='Coordenadas na zona válida de Holambra' WHERE id=${placeId} AND geoStatus='unverified'`);
+        continue;
+      }
+      const newLat = +(parseFloat(row.lat) + DLAT).toFixed(5);
+      const newLng = +(parseFloat(row.lng) + DLNG).toFixed(5);
+      const R = 6371000;
+      const dLat = (newLat - row.lat) * Math.PI / 180;
+      const dLng = (newLng - row.lng) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(row.lat*Math.PI/180)*Math.cos(newLat*Math.PI/180)*Math.sin(dLng/2)**2;
+      const distM = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+      await db.execute(`UPDATE \`places\` SET lat=${newLat}, lng=${newLng}, geoStatus='suspect', geoNote='Correção por fórmula (offset +${DLAT}/+${DLNG}) — validação manual recomendada', updatedAt=NOW() WHERE id=${placeId}`);
+      console.log(`[Migrations] ✅ 019-C: id=${placeId} ${row.name} — fórmula aplicada (≈${distM}m) [suspect]`);
+    }
+
+    // 019-D: Marcar como 'ok' os já corrigidos via OSM na 018 e a zona correta
+    const migration018Ids = [24, 2613, 36, 3824, 13946, 16, 31, 26];
+    for (const id of migration018Ids) {
+      await db.execute(`UPDATE \`places\` SET geoStatus='ok', geoNote='Corrigido via OSM Overpass — migration 018' WHERE id=${id} AND (geoStatus IS NULL OR geoStatus='unverified')`);
+    }
+
+    // 019-E: Marcar zona correta (sem alteração necessária)
+    const correctZoneIds = [17, 23, 13950, 30249, 28, 30243, 3826, 30245];
+    for (const id of correctZoneIds) {
+      await db.execute(`UPDATE \`places\` SET geoStatus='ok', geoNote='Coordenadas na zona correta — validado por análise OSM' WHERE id=${id} AND (geoStatus IS NULL OR geoStatus='unverified')`);
+    }
+
+    // 019-F: Qualquer outro lugar ainda unverified → needs_review
+    await db.execute(`UPDATE \`places\` SET geoStatus='needs_review', geoNote='Requer verificação manual de coordenadas' WHERE geoStatus='unverified' OR geoStatus IS NULL`);
+
+    console.log("[Migrations] ✅ 019: geoStatus configurado para todos os lugares");
+  }
+
   // ─── Migration 018: Correção de coordenadas geográficas — precisão real ───
   // Causa raiz: coordenadas do DB tinham offset sistemático de ~1.1km vs posição real (OSM verified).
   // Método: OSM Overpass confirmou posições reais. Idempotente via threshold de deslocamento.

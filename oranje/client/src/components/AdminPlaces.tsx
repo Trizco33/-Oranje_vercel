@@ -5,11 +5,38 @@ import { AdminListTable } from "./AdminListTable";
 import { AdminFormModal } from "./AdminFormModal";
 import { Place } from "../../../drizzle/schema";
 
+const GEO_STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
+  ok:            { label: "OK",          bg: "rgba(91,217,138,0.15)",  color: "#5BD98A" },
+  suspect:       { label: "Suspeito",    bg: "rgba(255,152,0,0.15)",   color: "#FF9800" },
+  out_of_bounds: { label: "Fora da área",bg: "rgba(244,67,54,0.15)",   color: "#F44336" },
+  unverified:    { label: "Não verif.",  bg: "rgba(150,150,150,0.15)", color: "#9E9E9E" },
+  needs_review:  { label: "Revisar",     bg: "rgba(33,150,243,0.15)",  color: "#2196F3" },
+};
+
+function GeoStatusBadge({ status }: { status?: string | null }) {
+  const cfg = GEO_STATUS_CONFIG[status ?? "unverified"] ?? GEO_STATUS_CONFIG.unverified;
+  return (
+    <span style={{
+      padding: "3px 7px",
+      borderRadius: "4px",
+      fontSize: "11px",
+      fontWeight: 600,
+      backgroundColor: cfg.bg,
+      color: cfg.color,
+      whiteSpace: "nowrap",
+    }}>
+      {cfg.label}
+    </span>
+  );
+}
+
 const PLACE_FORM_FIELDS = [
   { name: "name", label: "Nome", type: "text" as const, required: true },
   { name: "shortDesc", label: "Descrição Curta", type: "textarea" as const },
   { name: "longDesc", label: "Descrição Longa", type: "textarea" as const },
   { name: "address", label: "Endereço", type: "text" as const },
+  { name: "lat", label: "Latitude", type: "text" as const, placeholder: "-22.6333" },
+  { name: "lng", label: "Longitude", type: "text" as const, placeholder: "-47.0520" },
   { name: "whatsapp", label: "WhatsApp", type: "text" as const, placeholder: "11999999999" },
   { name: "instagram", label: "Instagram", type: "text" as const },
   { name: "website", label: "Website", type: "url" as const },
@@ -26,8 +53,9 @@ const PLACE_FORM_FIELDS = [
 export function AdminPlaces() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlace, setEditingPlace] = useState<any>(null);
+  const [showSuspectOnly, setShowSuspectOnly] = useState(false);
 
-  const { data: places, isLoading: placesLoading, refetch: refetchPlaces } = trpc.places.list.useQuery({ limit: 100, offset: 0 });
+  const { data: places, isLoading: placesLoading, refetch: refetchPlaces } = trpc.places.list.useQuery({ limit: 200, offset: 0 });
   const createPlace = trpc.places.create.useMutation();
   const updatePlace = trpc.places.update.useMutation();
   const deletePlace = trpc.places.delete.useMutation();
@@ -54,12 +82,17 @@ export function AdminPlaces() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      const parsed = {
+        ...data,
+        lat: data.lat ? parseFloat(data.lat) : undefined,
+        lng: data.lng ? parseFloat(data.lng) : undefined,
+      };
       if (editingPlace) {
-        await updatePlace.mutateAsync({ id: editingPlace.id, ...data });
-        toast.success("Lugar atualizado com sucesso");
+        await updatePlace.mutateAsync({ id: editingPlace.id, ...parsed });
+        toast.success("Lugar atualizado — coordenadas validadas automaticamente");
       } else {
-        await createPlace.mutateAsync(data as any);
-        toast.success("Lugar criado com sucesso");
+        await createPlace.mutateAsync(parsed as any);
+        toast.success("Lugar criado — coordenadas validadas automaticamente");
       }
       setIsModalOpen(false);
       refetchPlaces();
@@ -68,16 +101,63 @@ export function AdminPlaces() {
     }
   };
 
+  const filteredPlaces = showSuspectOnly
+    ? (places ?? []).filter((p: any) => p.geoStatus === "suspect" || p.geoStatus === "needs_review" || p.geoStatus === "out_of_bounds")
+    : places;
+
+  const suspectCount = (places ?? []).filter(
+    (p: any) => p.geoStatus === "suspect" || p.geoStatus === "needs_review" || p.geoStatus === "out_of_bounds"
+  ).length;
+
   return (
     <>
+      {suspectCount > 0 && (
+        <div style={{
+          background: "rgba(255,152,0,0.1)",
+          border: "1px solid rgba(255,152,0,0.3)",
+          borderRadius: "8px",
+          padding: "10px 16px",
+          marginBottom: "12px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+        }}>
+          <span style={{ color: "#FF9800", fontSize: "13px" }}>
+            ⚠️ {suspectCount} lugar(es) com coordenadas suspeitas ou não verificadas
+          </span>
+          <button
+            onClick={() => setShowSuspectOnly(!showSuspectOnly)}
+            style={{
+              background: showSuspectOnly ? "#FF9800" : "transparent",
+              border: "1px solid #FF9800",
+              borderRadius: "4px",
+              color: showSuspectOnly ? "#fff" : "#FF9800",
+              padding: "4px 10px",
+              fontSize: "12px",
+              cursor: "pointer",
+            }}
+          >
+            {showSuspectOnly ? "Mostrar todos" : "Filtrar suspeitos"}
+          </button>
+        </div>
+      )}
+
       <AdminListTable
         title="Lugares"
         columns={[
-          { key: "name", label: "Nome", width: "30%" },
-          { key: "address", label: "Endereço", width: "40%" },
+          { key: "name", label: "Nome", width: "28%" },
+          { key: "address", label: "Endereço", width: "32%" },
+          {
+            key: "geoStatus",
+            label: "Geo",
+            width: "10%",
+            render: (value) => <GeoStatusBadge status={value} />,
+          },
           {
             key: "status",
             label: "Status",
+            width: "10%",
             render: (value) => (
               <span
                 style={{
@@ -93,7 +173,7 @@ export function AdminPlaces() {
             ),
           },
         ]}
-        data={places}
+        data={filteredPlaces}
         isLoading={placesLoading}
         onEdit={handleEdit}
         onDelete={handleDelete}
@@ -103,7 +183,11 @@ export function AdminPlaces() {
       <AdminFormModal
         title={editingPlace ? "Editar Lugar" : "Novo Lugar"}
         fields={PLACE_FORM_FIELDS}
-        initialData={editingPlace || undefined}
+        initialData={editingPlace ? {
+          ...editingPlace,
+          lat: editingPlace.lat?.toString(),
+          lng: editingPlace.lng?.toString(),
+        } : undefined}
         isOpen={isModalOpen}
         isLoading={createPlace.isPending || updatePlace.isPending}
         onClose={() => setIsModalOpen(false)}

@@ -124,7 +124,9 @@ export const placesRouter = router({
       dataPending: z.boolean().optional(),
     }))
     .mutation(async ({ input }) => {
-      return db.createPlace(input as any);
+      const { validatePlaceCoords } = await import("./geo-validator");
+      const { geoStatus, geoNote } = await validatePlaceCoords(input.lat, input.lng, input.address);
+      return db.createPlace({ ...input, geoStatus, geoNote } as any);
     }),
 
   // Admin: Update place
@@ -157,6 +159,16 @@ export const placesRouter = router({
       dataPending: z.boolean().optional(),
     }))
     .mutation(async ({ input: { id, ...data } }) => {
+      if (data.lat != null || data.lng != null || data.address != null) {
+        const { validatePlaceCoords } = await import("./geo-validator");
+        const existing = await db.getPlaceById(id);
+        const lat = data.lat ?? existing?.lat;
+        const lng = data.lng ?? existing?.lng;
+        const address = data.address ?? existing?.address;
+        const { geoStatus, geoNote } = await validatePlaceCoords(lat, lng, address);
+        (data as any).geoStatus = geoStatus;
+        (data as any).geoNote = geoNote;
+      }
       await db.updatePlace(id, data as any);
       return { success: true };
     }),
@@ -196,5 +208,45 @@ export const placesRouter = router({
         console.error("[Places] Error searching places:", error);
         return [];
       }
+    }),
+
+  // Admin: Geo audit — classifica todos os lugares por confiabilidade geográfica
+  geoAudit: adminProcedure.query(async () => {
+    const { auditPlaces } = await import("./geo-validator");
+    const dbConn = await getDb();
+    if (!dbConn) return { ok: [], suspect: [], out_of_bounds: [], unverified: [], needs_review: [] };
+    const all = await dbConn.select({
+      id: places.id,
+      name: places.name,
+      lat: places.lat,
+      lng: places.lng,
+      address: places.address,
+      geoStatus: places.geoStatus,
+    }).from(places).where(eq(places.status, "active"));
+
+    const results = auditPlaces(all);
+    const grouped = {
+      ok:            results.filter(r => r.auditStatus === "ok"),
+      suspect:       results.filter(r => r.auditStatus === "suspect"),
+      out_of_bounds: results.filter(r => r.auditStatus === "out_of_bounds"),
+      unverified:    results.filter(r => r.auditStatus === "unverified"),
+      needs_review:  results.filter(r => r.auditStatus === "needs_review"),
+    };
+    return grouped;
+  }),
+
+  // Admin: Marca geoStatus manualmente (revisão humana)
+  setGeoStatus: adminProcedure
+    .input(z.object({
+      id: z.number(),
+      geoStatus: z.enum(["ok", "suspect", "out_of_bounds", "unverified", "needs_review"]),
+      geoNote: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      await db.updatePlace(input.id, {
+        geoStatus: input.geoStatus,
+        geoNote: input.geoNote ?? null,
+      } as any);
+      return { success: true };
     }),
 });

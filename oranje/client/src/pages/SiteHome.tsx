@@ -1167,39 +1167,29 @@ export default function SiteHome() {
               { icon: <Heart size={18} />, accent: "#FF9F4A", title: "Favoritos no Mapa", desc: "Seus lugares favoritos marcados e acessíveis de onde estiver" },
             ].map((feat, i) => (
               <Reveal key={feat.title} delay={i * 50}>
-                <Link to="/app/mapa" style={{ textDecoration: "none", display: "block" }}>
-                  <div
-                    style={{
-                      display: "flex", alignItems: "center", gap: 20,
-                      padding: "22px 0",
-                      borderBottom: "1px solid rgba(255,255,255,0.06)",
-                      transition: "padding-left 0.2s ease",
-                      cursor: "pointer",
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "8px"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "0px"; }}
-                  >
-                    {/* Ícone colorido */}
-                    <div style={{
-                      width: 40, height: 40, borderRadius: "50%", flexShrink: 0,
-                      background: `${feat.accent}18`,
-                      border: `1px solid ${feat.accent}35`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: feat.accent,
-                    }}>
-                      {feat.icon}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "1rem", fontWeight: 700, color: "#FFFFFF", marginBottom: 3, fontFamily: "'Montserrat', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
-                        {feat.title}
-                      </div>
-                      <div style={{ fontSize: "0.8125rem", color: "rgba(255,255,255,0.42)", lineHeight: 1.5 }}>
-                        {feat.desc}
-                      </div>
-                    </div>
-                    <ArrowRight size={14} style={{ color: "rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 20,
+                  padding: "22px 0",
+                  borderBottom: "1px solid rgba(255,255,255,0.06)",
+                }}>
+                  <div style={{
+                    width: 40, height: 40, borderRadius: "50%", flexShrink: 0,
+                    background: `${feat.accent}18`,
+                    border: `1px solid ${feat.accent}35`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: feat.accent,
+                  }}>
+                    {feat.icon}
                   </div>
-                </Link>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: "1rem", fontWeight: 700, color: "#FFFFFF", marginBottom: 3, fontFamily: "'Montserrat', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
+                      {feat.title}
+                    </div>
+                    <div style={{ fontSize: "0.8125rem", color: "rgba(255,255,255,0.42)", lineHeight: 1.5 }}>
+                      {feat.desc}
+                    </div>
+                  </div>
+                </div>
               </Reveal>
             ))}
           </div>

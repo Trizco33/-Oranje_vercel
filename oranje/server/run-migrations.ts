@@ -596,5 +596,100 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 016: 5 novas hospedagens + correção Hotel 1948 ──────────────
+  {
+    // 016-A: Corrigir Hotel 1948 (id=3826) — endereço genérico → endereço real
+    const [h1948] = await db.execute(`SELECT id, address FROM \`places\` WHERE id = 3826 LIMIT 1`) as any;
+    const h1948Row = (h1948 as any[])[0];
+    if (h1948Row && (!h1948Row.address || h1948Row.address === 'Holambra \u2013 SP' || h1948Row.address === 'Holambra - SP')) {
+      await db.execute(`UPDATE \`places\` SET address = 'Rua Brom\u00e9lias, 206, Holambra - SP, 13825-000', lat = -22.62810, lng = -47.05010, dataPending = 0, updatedAt = NOW() WHERE id = 3826`);
+      console.log(`[Migrations] ✅ 016: Hotel 1948 — endereço e coords corrigidos`);
+    } else {
+      console.log(`[Migrations] ✓ 016: Hotel 1948 endereço já correto`);
+    }
+
+    // 016-B: Inserir 5 novas hospedagens (idempotente via INSERT IGNORE + unique name+city)
+    const novasHospedagens = [
+      {
+        name: "Hotel Flores de Holambra",
+        shortDesc: "Hotel familiar no Centro de Holambra — conforto e boa localização para explorar a cidade das flores",
+        longDesc: "O Hotel Flores de Holambra fica no coração do Centro, na tranquila Rua das Bromélias — a poucos passos dos principais pontos turísticos da cidade. Uma opção acessível e bem localizada para quem quer usar Holambra como base de fim de semana sem abrir mão de conforto.",
+        address: "R. Brom\u00e9lias, 125 - Centro, Holambra - SP, 13825-055",
+        lat: -22.62817, lng: -47.05019,
+        openingHours: "Aberto 24h \u2014 recep\u00e7\u00e3o dispon\u00edvel a qualquer hora",
+        tags: "hotel,central,familia,casal,flores,fim_de_semana",
+      },
+      {
+        name: "Hotel Amsterdam Su\u00edtes",
+        shortDesc: "Hotel de suítes no Parque Residencial Palm Park — tranquilidade e natureza a poucos minutos do centro",
+        longDesc: "O Hotel Amsterdam Suítes está localizado no Parque Residencial Palm Park, área verde e tranquila de Holambra próxima à Rodovia SP-107. As suítes oferecem mais espaço e privacidade, com ambiente que privilegia o silêncio e o contato com a natureza — ideal para casais que buscam descanso de verdade.",
+        address: "R. Dezesseis, 31 - Parque Res. Palm Park, Holambra - SP, 13825-000",
+        lat: -22.62484, lng: -47.05660,
+        openingHours: "Aberto 24h \u2014 recep\u00e7\u00e3o dispon\u00edvel a qualquer hora",
+        tags: "hotel,suites,palm_park,natureza,casal,tranquilo,fim_de_semana",
+      },
+      {
+        name: "Onze Tuin - Hospedagem numa vilinha holandesa",
+        shortDesc: "Hospedagem encantadora em uma vilinha de estilo holandês — ambiente único no coração de Holambra",
+        longDesc: "O Onze Tuin — que significa Nosso Jardim em holandês — é uma das hospedagens mais charmosas de Holambra. Situado no Campo do Pouso, no coração da cidade, o local recria a atmosfera de uma vilinha holandesa com atenção aos detalhes: fachadas características, jardins cuidados e hospitalidade que faz o hóspede sentir que está numa pequena aldeia europeia.",
+        address: "R. Campo do Pouso, 1050 - Sec\u00e7\u00e3o A, Holambra - SP, 13825-063",
+        lat: -22.63880, lng: -47.06120,
+        openingHours: "Aberto 24h \u2014 recep\u00e7\u00e3o dispon\u00edvel a qualquer hora",
+        tags: "hospedagem,holandes,charmoso,casal,romantico,central,vilinha,experiencia",
+      },
+      {
+        name: "Pousada Rosa de Saron",
+        shortDesc: "Pousada aconchegante no bairro Morada das Flores — tranquilidade e boa localização em Holambra",
+        longDesc: "A Pousada Rosa de Saron está localizada no bairro Morada das Flores, uma das áreas mais tranquilas e residenciais de Holambra. Proposta aconchegante, com atendimento próximo e ambiente familiar — ideal para casais e famílias que querem descanso sem abrir mão de estar bem localizado na cidade.",
+        address: "R. das Az\u00e1leias, 597 - Morada das Flores, Holambra - SP, 13825-000",
+        lat: -22.64039, lng: -47.05359,
+        openingHours: "Aberto 24h \u2014 recep\u00e7\u00e3o dispon\u00edvel a qualquer hora",
+        tags: "pousada,morada_das_flores,tranquilo,aconchegante,familia,casal,fim_de_semana",
+      },
+      {
+        name: "Lofts Holambra",
+        shortDesc: "Lofts modernos no bairro dos Imigrantes — espaço, conforto e custo-benefício em Holambra",
+        longDesc: "Os Lofts Holambra ficam no bairro dos Imigrantes, na Rua Flipsen — área residencial tranquila que mistura moradores locais e visitantes. Os lofts têm proposta mais independente: espaços amplos com cozinha, ideais para quem fica mais de uma noite e quer liberdade para montar a própria rotina na cidade.",
+        address: "R. Flipsen, 168 - Imigrantes, Holambra - SP, 13825-000",
+        lat: -22.61607, lng: -47.06488,
+        openingHours: "Aberto 24h \u2014 check-in a combinar",
+        tags: "loft,imigrantes,moderno,casal,familia,autonomia,cozinha,fim_de_semana",
+      },
+    ];
+
+    for (const h of novasHospedagens) {
+      const [chk] = await db.execute(
+        `SELECT id FROM \`places\` WHERE name = '${h.name.replace(/'/g, "''")}' AND city = 'Holambra' LIMIT 1`
+      ) as any;
+      const existing = (chk as any[])[0];
+      if (existing) {
+        console.log(`[Migrations] ✓ 016: ${h.name} já existe (id=${existing.id})`);
+        continue;
+      }
+      const esc = (s: string) => s.replace(/'/g, "''");
+      await db.execute(`
+        INSERT INTO \`places\`
+          (name, slug, shortDesc, longDesc, address, lat, lng, city, state, country,
+           categoryId, priceRange, isFree, isRecommended, isFeatured, isPartner,
+           openingHours, tags, status, dataPending, createdAt, updatedAt)
+        VALUES (
+          '${esc(h.name)}',
+          '${esc(h.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''))}',
+          '${esc(h.shortDesc)}',
+          '${esc(h.longDesc)}',
+          '${esc(h.address)}',
+          ${h.lat}, ${h.lng},
+          'Holambra', 'SP', 'Brasil',
+          15, '$$', 0, 0, 0, 0,
+          '${esc(h.openingHours)}',
+          '${esc(h.tags)}',
+          'active', 0,
+          NOW(), NOW()
+        )
+      `);
+      console.log(`[Migrations] ✅ 016: ${h.name} inserido`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

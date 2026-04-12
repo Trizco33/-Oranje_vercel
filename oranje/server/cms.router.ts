@@ -125,8 +125,8 @@ export const cmsRouter = router({
       // Extrai todos os IDs numéricos de /app/lugar/ID no HTML e verifica se
       // existem como lugares ativos no banco. Bloqueia publicação se algum faltar.
       if (input.published) {
-        const idMatches = [...safeContent.matchAll(/\/app\/lugar\/(\d+)/g)];
-        const numericIds = [...new Set(idMatches.map((m) => parseInt(m[1], 10)))];
+        const idMatches = Array.from(safeContent.matchAll(/\/app\/lugar\/(\d+)/g));
+        const numericIds = Array.from(new Set(idMatches.map((m) => parseInt(m[1], 10))));
         if (numericIds.length > 0) {
           const found = await db
             .select({ id: places.id })

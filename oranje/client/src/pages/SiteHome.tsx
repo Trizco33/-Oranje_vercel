@@ -159,7 +159,7 @@ export default function SiteHome() {
   const { data: cats = [] } = useCategoriesList();
   const { data: publicRoutes = [], isLoading: routesLoading } = usePublicRoutes();
   const { data: siteFeatureItems = [], isLoading: siteFeaturesLoading } = trpc.routes.siteFeatures.useQuery(undefined, { staleTime: 60_000 });
-  const siteFeatures = (siteFeatureItems ?? []) as SiteFeatureItem[];
+  const siteFeatures = (siteFeatureItems ?? []) as unknown as SiteFeatureItem[];
   const featuredRoute = siteFeatures.find((f) => f.isFeatured) ?? null;
   const secondaryRoutes = siteFeatures.filter((f) => !f.isFeatured);
   const hasCmsRoutes = siteFeatures.length > 0;

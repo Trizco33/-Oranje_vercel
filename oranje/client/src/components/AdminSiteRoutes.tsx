@@ -65,7 +65,7 @@ export function AdminSiteRoutes() {
   const [form, setForm] = useState<FormState>(emptyForm());
   const [error, setError] = useState("");
 
-  const features = (allFeaturesRaw ?? []) as SiteFeature[];
+  const features = (allFeaturesRaw ?? []) as unknown as SiteFeature[];
   const adminRoutes = adminRoutesRaw as RouteItem[];
 
   function openCreate() {

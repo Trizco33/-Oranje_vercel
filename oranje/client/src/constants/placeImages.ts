@@ -388,7 +388,7 @@ export const BLOCKED_COVER_URLS: Set<string> = new Set([
  */
 export function isBlockedCoverUrl(url: string): boolean {
   if (!url) return false;
-  for (const blocked of BLOCKED_COVER_URLS) {
+  for (const blocked of Array.from(BLOCKED_COVER_URLS)) {
     if (url.startsWith(blocked) || url === blocked) return true;
   }
   return false;

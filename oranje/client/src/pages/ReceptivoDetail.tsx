@@ -1399,7 +1399,7 @@ function ClosingSection({ tourName, extensionPlaces = [] }: { tourName: string; 
                         </p>
                       )}
                     </div>
-                    <ChevronRight size={14} color="#E65100" flexShrink={0} />
+                    <span style={{ flexShrink: 0, display: "flex" }}><ChevronRight size={14} color="#E65100" /></span>
                   </div>
                 </Link>
               );

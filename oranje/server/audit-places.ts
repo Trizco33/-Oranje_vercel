@@ -149,7 +149,7 @@ async function main() {
   console.log(`${ANSI.dim}─────────────────────────────────────────${ANSI.reset}`);
   console.log(`${ANSI.bold}Auditoria concluída.${ANSI.reset}\n`);
 
-  await db.end?.();
+  await (db as any).$client?.end?.();
   process.exit(0);
 }
 

@@ -92,8 +92,8 @@ export const pushRouter = router({
       const payload = JSON.stringify({
         title: input.title,
         body: input.body,
-        icon: "https://d2xsxph8kpxj0f.cloudfront.net/310519663387178677/8rzdsSWs85gXVtjhEeBpLG/icon-192-SBArfE9rAW64F3Y8g9uv32.png",
-        badge: "https://d2xsxph8kpxj0f.cloudfront.net/310519663387178677/8rzdsSWs85gXVtjhEeBpLG/icon-192-SBArfE9rAW64F3Y8g9uv32.png",
+        icon: "https://oranjeapp.com.br/icon-192.png",
+        badge: "https://oranjeapp.com.br/icon-192.png",
         url: input.url || "/app",
       });
 

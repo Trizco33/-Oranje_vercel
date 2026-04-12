@@ -11,12 +11,10 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 async function getOrRegisterSW(): Promise<ServiceWorkerRegistration> {
-  // Register if not already present
-  const existing = await navigator.serviceWorker.getRegistration("/app/");
+  const existing = await navigator.serviceWorker.getRegistration("/");
   if (!existing) {
-    await navigator.serviceWorker.register("/app/sw.js", { scope: "/app/" });
+    await navigator.serviceWorker.register("/sw.js", { scope: "/" });
   }
-  // Wait until active (required for pushManager.subscribe)
   return await navigator.serviceWorker.ready;
 }
 

@@ -539,5 +539,37 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 014: corrigir endereços e coordenadas de 12 lugares ──────────
+  {
+    const fixes: { id: number; name: string; address: string; lat?: number; lng?: number }[] = [
+      { id: 8,     name: "Pizzaria Serrana",                     address: "R. Campo do Pouso, 898 - Centro, Holambra - SP, 13825-063",                                  lat: -22.6398, lng: -47.0608 },
+      { id: 9,     name: "Dr Pizza Holambra",                    address: "R. Proteas, 42 - Jardim Holanda, Holambra - SP, 13825-000",                                  lat: -22.6360, lng: -47.0660 },
+      { id: 16,    name: "Shellter Hotel",                       address: "Av. das Tulípas, 57 - Centro, Holambra - SP, 13825-000",                                     lat: -22.6380, lng: -47.0615 },
+      { id: 17,    name: "Pousada Rancho da Cachaça",            address: "Petrus Van Ham - Estrada HBR, 266 - Camanducaia, Holambra - SP, 13829-899",                  lat: -22.6500, lng: -47.0500 },
+      { id: 18,    name: "Parque Hotel Holambra",                address: "R. das Dálias, 100 - Jardim Holanda, Holambra - SP, 13827-030" },
+      { id: 31,    name: "Holambra Garden Hotel",                address: "R. Rota dos Imigrantes, 620 - Centro, Holambra - SP, 13825-000",                             lat: -22.6381, lng: -47.0607 },
+      { id: 32,    name: "Bloemen Park",                         address: "Sitio Laguna - Estrada Municipal HBR-155, s/n - Alegre, Holambra - SP, 13825-000" },
+      { id: 4215,  name: "Rua dos Guarda-Chuvas",               address: "Alameda Maurício de Nassau - Secção A, Holambra - SP, 13825-000" },
+      { id: 6418,  name: "Fratelli Wine Bar",                    address: "R. Campo do Pouso, 1050 - Centro, Holambra - SP, 13825-000",                                 lat: -22.6388, lng: -47.0612 },
+      { id: 6424,  name: "Museu da Cultura e História",          address: "Alameda Maurício de Nassau, 894 - Centro, Holambra - SP, 13825-000" },
+      { id: 13946, name: "Don Hamburgo",                         address: "Av. das Tulípas, 44 - Centro, Holambra - SP, 13825-000",                                     lat: -22.6382, lng: -47.0615 },
+      { id: 13952, name: "Casa da Esfiha",                       address: "R. Campo do Pouso, 826 - Secção A, Holambra - SP, 13825-000",                                lat: -22.6400, lng: -47.0618 },
+    ];
+
+    for (const f of fixes) {
+      const escapedAddr = f.address.replace(/'/g, "''");
+      if (f.lat !== undefined && f.lng !== undefined) {
+        await db.execute(
+          `UPDATE \`places\` SET address = '${escapedAddr}', lat = ${f.lat}, lng = ${f.lng}, updatedAt = NOW() WHERE id = ${f.id}`
+        );
+      } else {
+        await db.execute(
+          `UPDATE \`places\` SET address = '${escapedAddr}', updatedAt = NOW() WHERE id = ${f.id}`
+        );
+      }
+      console.log(`[Migrations] ✅ 014: Endereço corrigido — ${f.name} (id=${f.id})`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

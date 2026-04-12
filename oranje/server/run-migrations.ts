@@ -571,5 +571,30 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 015: aplicar coverImages confirmadas para lugares sem foto ────
+  {
+    const fixes: { id: number; name: string; coverImage: string }[] = [
+      { id: 4213,  name: "Deck do Amor",                   coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/08/ff/50/img-20180211-174802-283.jpg?w=1200&h=-1&s=1" },
+      { id: 4214,  name: "Praça Vitória Régia",            coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1b/0f/ef/2e/foto-panoramica-em-um.jpg?w=900&h=500&s=1" },
+      { id: 4215,  name: "Rua dos Guarda-Chuvas",          coverImage: "https://i.pinimg.com/736x/57/ab/06/57ab066b45a89b7000193f24d4e623d7.jpg" },
+      { id: 13946, name: "Don Hamburgo",                    coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/73/6f/ae/don-hamburgo.jpg?w=1200&h=-1&s=1" },
+      { id: 26613, name: "Cow Burguer",                     coverImage: "/places/cowburguer.png" },
+      { id: 3824,  name: "De Immigrant Restaurante Garden", coverImage: "/places/de-immigrant-garden.png" },
+      { id: 3825,  name: "Villa de Holanda Parque Hotel",   coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/1d/fd/d2/hotel-villa-de-holanda.jpg?w=900&h=500&s=1" },
+    ];
+
+    for (const f of fixes) {
+      const existing = await db.execute(`SELECT coverImage FROM \`places\` WHERE id = ${f.id} LIMIT 1`) as any;
+      const rows = existing[0] as any[];
+      if (rows.length > 0 && rows[0].coverImage) {
+        console.log(`[Migrations] ✓ 015: ${f.name} já tem coverImage`);
+        continue;
+      }
+      const escaped = f.coverImage.replace(/'/g, "''");
+      await db.execute(`UPDATE \`places\` SET coverImage = '${escaped}', updatedAt = NOW() WHERE id = ${f.id}`);
+      console.log(`[Migrations] ✅ 015: coverImage aplicado — ${f.name} (id=${f.id})`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

@@ -254,7 +254,19 @@ export default function SiteWhatToDo() {
       title="O que Fazer em Holambra"
       subtitle="Parques de flores, gastronomia holandesa, cafés artesanais e muito mais"
       content={content}
-      cta={{ label: "Explorar todos os lugares no App", href: "/app" }}
+      cta={{
+        label: "Abrir no App Oranje",
+        href: "/app/explorar",
+        description: (
+          <span>
+            O app Oranje tem todos os lugares de Holambra com fotos, horários e avaliações reais.
+            Use o filtro <strong style={{ color: "var(--ds-color-text-primary)" }}>Perto de Mim</strong> para
+            descobrir o que está aberto agora, perto de onde você está — ou explore por categoria:
+            restaurantes, cafés, parques, bares e muito mais.
+          </span>
+        ),
+        secondary: { label: "Ver Passeios com Motorista", href: "/app/receptivo" },
+      }}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "O que Fazer em Holambra", href: "/o-que-fazer-em-holambra" },

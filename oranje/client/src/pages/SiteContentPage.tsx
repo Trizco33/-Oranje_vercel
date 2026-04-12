@@ -12,6 +12,8 @@ interface SiteContentPageProps {
   cta?: {
     label: string;
     href: string;
+    description?: ReactNode;
+    secondary?: { label: string; href: string };
   };
   breadcrumbs?: Array<{ label: string; href: string }>;
 }
@@ -120,20 +122,32 @@ export default function SiteContentPage({
                 border: "1px solid rgba(230, 81, 0, 0.2)",
               }}
             >
-              <p
+              <div
                 style={{
-                  fontSize: "var(--ds-text-lg)",
+                  fontSize: "var(--ds-text-base)",
                   color: "var(--ds-color-text-secondary)",
-                  marginBottom: "var(--ds-space-4)",
+                  lineHeight: "var(--ds-leading-relaxed)",
+                  marginBottom: "var(--ds-space-5)",
                 }}
               >
-                Quer explorar mais? Baixe o app Oranje e tenha acesso a todas as experiências!
-              </p>
-              <Link to={cta.href} style={{ textDecoration: "none" }}>
-                <DSButton variant="primary" size="lg" iconRight={<ArrowRight size={18} />}>
-                  {cta.label}
-                </DSButton>
-              </Link>
+                {cta.description ?? (
+                  <span>Quer explorar mais? Baixe o app Oranje e tenha acesso a todas as experiências de Holambra.</span>
+                )}
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--ds-space-3)" }}>
+                <Link to={cta.href} style={{ textDecoration: "none" }}>
+                  <DSButton variant="primary" size="lg" iconRight={<ArrowRight size={18} />}>
+                    {cta.label}
+                  </DSButton>
+                </Link>
+                {cta.secondary && (
+                  <Link to={cta.secondary.href} style={{ textDecoration: "none" }}>
+                    <DSButton variant="ghost" size="lg">
+                      {cta.secondary.label}
+                    </DSButton>
+                  </Link>
+                )}
+              </div>
             </div>
           )}
         </div>

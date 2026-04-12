@@ -95,14 +95,33 @@ Holambra continua entregando uma boa experiência mesmo depois que o sol vai emb
    SEO config — apenas roteiro (preservado)
 ───────────────────────────────────────────── */
 
-const seoConfig: Record<string, { title: string; description: string; h1: string; subtitle: string; content: string; cta: string }> = {
+interface PageConfig {
+  title: string;
+  description: string;
+  h1: string;
+  subtitle: string;
+  content: string;
+  cta: {
+    label: string;
+    href: string;
+    descriptionText: string;
+    secondary?: { label: string; href: string };
+  };
+}
+
+const seoConfig: Record<string, PageConfig> = {
   "roteiro-1-dia-em-holambra": {
     h1: "Roteiro de 1 Dia em Holambra",
     subtitle: "Aproveite o melhor da cidade em um dia",
     title: "Roteiro de 1 Dia em Holambra",
     description: "Um dia em Holambra: roteiro completo com dicas de manhã, almoço, tarde e noite para aproveitar ao máximo a cidade das flores.",
     content: roteiroContent,
-    cta: "Planejar meu roteiro no App",
+    cta: {
+      label: "Planejar meu Roteiro no App",
+      href: "/app/roteiros",
+      descriptionText: "O app Oranje tem roteiros curados para todos os perfis de visitante. Salve seus lugares favoritos, veja horários em tempo real e monte um roteiro personalizado direto do celular — sem precisar de guia.",
+      secondary: { label: "Ver Passeios com Motorista", href: "/app/receptivo" },
+    },
   },
   "holambra-bate-e-volta": {
     h1: "Holambra Bate e Volta",
@@ -110,7 +129,12 @@ const seoConfig: Record<string, { title: string; description: string; h1: string
     title: "Holambra Bate e Volta — Guia Completo saindo de SP e Campinas",
     description: "Holambra bate e volta: distância de SP, quando ir, o que fazer, dicas práticas e roteiro completo para aproveitar o dia na cidade das flores.",
     content: bateVoltaContent,
-    cta: "Planejar meu bate e volta no App",
+    cta: {
+      label: "Ver Passeios com Motorista",
+      href: "/app/receptivo",
+      descriptionText: "Prefere não se preocupar com carro, trânsito ou estacionamento? O Receptivo Oranje busca você em São Paulo ou Campinas com motorista particular e leva para os melhores pontos da cidade — conforto total, nenhuma logística.",
+      secondary: { label: "Explorar no App Oranje", href: "/app/explorar" },
+    },
   },
 };
 
@@ -209,7 +233,12 @@ export default function SiteSEOPages() {
       title={seo.h1}
       subtitle={seo.subtitle}
       content={content}
-      cta={{ label: seo.cta, href: "/app" }}
+      cta={{
+        label: seo.cta.label,
+        href: seo.cta.href,
+        description: <span>{seo.cta.descriptionText}</span>,
+        secondary: seo.cta.secondary,
+      }}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: seo.h1, href: location.pathname },

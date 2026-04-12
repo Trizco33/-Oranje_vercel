@@ -5,7 +5,7 @@ import type { PlaceWithDistance } from "@/hooks/useNearbyPlaces";
 import type { GeoPosition } from "@/hooks/useGeolocation";
 import { DirectionsSheet } from "@/components/DirectionsSheet";
 
-const HOLAMBRA_CENTER: [number, number] = [-22.6389, -47.0600];
+const HOLAMBRA_CENTER: [number, number] = [-22.6333, -47.0520];
 
 interface NearbyMapProps {
   onClose: () => void;

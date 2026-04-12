@@ -712,5 +712,79 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 018: Correção de coordenadas geográficas — precisão real ───
+  // Causa raiz: coordenadas do DB tinham offset sistemático de ~1.1km vs posição real (OSM verified).
+  // Método: OSM Overpass confirmou posições reais. Idempotente via threshold de deslocamento.
+  {
+    const corrections = [
+      // OSM CONFIRMADOS — coordenadas verificadas via OpenStreetMap Overpass API
+      { id: 24,    name: "Casa Bela Restaurante",           lat: -22.63260, lng: -47.05240, source: "OSM" },
+      { id: 2613,  name: "Martin Holandesa",                lat: -22.63220, lng: -47.05220, source: "OSM" },
+      { id: 31,    name: "Holambra Garden Hotel",           lat: -22.63310, lng: -47.05340, source: "OSM" },
+      { id: 26,    name: "Restaurante e Cervejaria Holambier", lat: -22.63250, lng: -47.05240, source: "OSM" },
+      // MODELO LINEAR (Rua Dória Vasconcelos, base: #81 e #144 OSM-confirmados)
+      { id: 36,    name: "De Immigrant Gastro Café",        lat: -22.63125, lng: -47.05173, source: "street-model" },
+      { id: 3824,  name: "De Immigrant Restaurante Garden", lat: -22.63166, lng: -47.05193, source: "street-model" },
+      // MODELO Av. das Tulipas (#44=sul=-22.6384, #123=norte=-22.6331, OSM-confirmados)
+      { id: 13946, name: "Don Hamburgo",                    lat: -22.63840, lng: -47.04990, source: "tulipas-model" },
+      { id: 16,    name: "Shellter Hotel",                  lat: -22.63753, lng: -47.05048, source: "tulipas-model" },
+    ];
+
+    for (const c of corrections) {
+      const [rows] = await db.execute(
+        `SELECT id, lat, lng FROM \`places\` WHERE id = ${c.id} LIMIT 1`
+      ) as any[];
+      const row = (rows as any[])[0];
+      if (!row) { console.log(`[Migrations] ⚠️  018: id=${c.id} não encontrado`); continue; }
+
+      // Haversine simplificado — detecta se o ponto ainda está errado (>500m do correto)
+      const R = 6371000;
+      const dLat = (c.lat - row.lat) * Math.PI / 180;
+      const dLng = (c.lng - row.lng) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(row.lat * Math.PI/180) * Math.cos(c.lat * Math.PI/180) * Math.sin(dLng/2)**2;
+      const distM = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+
+      if (distM < 50) {
+        console.log(`[Migrations] ✓ 018: ${c.name} já está correto (deslocamento=${distM}m)`);
+        continue;
+      }
+      await db.execute(
+        `UPDATE \`places\` SET lat=${c.lat}, lng=${c.lng}, updatedAt=NOW() WHERE id=${c.id}`
+      );
+      console.log(`[Migrations] ✅ 018: ${c.name} — corrigido ${distM}m de erro [${c.source}]`);
+    }
+  }
+
+  // ─── Migration 017: Preços padrão dos Passeios Premium (idempotente) ──────
+  {
+    const tourPricing: { id: number; clientPrice: number; driverPayout: number; partnerFee: number }[] = [
+      { id: 1, clientPrice: 280, driverPayout: 180, partnerFee: 0 }, // Holambra Romântica
+      { id: 2, clientPrice: 180, driverPayout: 120, partnerFee: 0 }, // Holambra de Manhã
+      { id: 3, clientPrice: 220, driverPayout: 140, partnerFee: 0 }, // Holambra das Flores
+      { id: 4, clientPrice: 200, driverPayout: 130, partnerFee: 0 }, // Holambra da Imigração
+      { id: 5, clientPrice: 250, driverPayout: 160, partnerFee: 0 }, // Holambra Gourmet
+      { id: 6, clientPrice: 220, driverPayout: 140, partnerFee: 0 }, // Holambra Familiar
+      { id: 7, clientPrice: 180, driverPayout: 120, partnerFee: 0 }, // Holambra ao Entardecer
+    ];
+    for (const t of tourPricing) {
+      const [chk] = await db.execute(
+        `SELECT id, clientPrice FROM \`guided_tours\` WHERE id = ${t.id} LIMIT 1`
+      ) as any[];
+      const row = (chk as any[])[0];
+      if (!row) {
+        console.log(`[Migrations] ⚠️  017: guided_tour id=${t.id} não encontrado`);
+        continue;
+      }
+      if (row.clientPrice !== null && row.clientPrice !== undefined) {
+        console.log(`[Migrations] ✓ 017: tour id=${t.id} já tem preço (R$${row.clientPrice})`);
+        continue;
+      }
+      await db.execute(
+        `UPDATE \`guided_tours\` SET clientPrice=${t.clientPrice}, driverPayout=${t.driverPayout}, partnerFee=${t.partnerFee}, requiresTransport=0, recommendedWithDriver=1, updatedAt=NOW() WHERE id=${t.id}`
+      );
+      console.log(`[Migrations] ✅ 017: tour id=${t.id} — clientPrice=R$${t.clientPrice}, driverPayout=R$${t.driverPayout}`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

@@ -3,7 +3,9 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { AdminListTable } from "./AdminListTable";
 import { AdminFormModal } from "./AdminFormModal";
+import { PlacePinEditor } from "./PlacePinEditor";
 import { Place } from "../../../drizzle/schema";
+import { MapPin } from "lucide-react";
 
 const GEO_STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
   ok:            { label: "OK",          bg: "rgba(91,217,138,0.15)",  color: "#5BD98A" },
@@ -13,8 +15,16 @@ const GEO_STATUS_CONFIG: Record<string, { label: string; bg: string; color: stri
   needs_review:  { label: "Revisar",     bg: "rgba(33,150,243,0.15)",  color: "#2196F3" },
 };
 
-function GeoStatusBadge({ status }: { status?: string | null }) {
+const GEO_SOURCE_ICON: Record<string, string> = {
+  manual:        "📍",
+  osm_verified:  "🗺️",
+  maps_verified: "🌍",
+  auto:          "",
+};
+
+function GeoStatusBadge({ status, source }: { status?: string | null; source?: string | null }) {
   const cfg = GEO_STATUS_CONFIG[status ?? "unverified"] ?? GEO_STATUS_CONFIG.unverified;
+  const icon = GEO_SOURCE_ICON[source ?? "auto"] ?? "";
   return (
     <span style={{
       padding: "3px 7px",
@@ -25,6 +35,7 @@ function GeoStatusBadge({ status }: { status?: string | null }) {
       color: cfg.color,
       whiteSpace: "nowrap",
     }}>
+      {icon && <span style={{ marginRight: "3px" }}>{icon}</span>}
       {cfg.label}
     </span>
   );
@@ -53,6 +64,7 @@ const PLACE_FORM_FIELDS = [
 export function AdminPlaces() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlace, setEditingPlace] = useState<any>(null);
+  const [pinEditorPlace, setPinEditorPlace] = useState<any>(null);
   const [showSuspectOnly, setShowSuspectOnly] = useState(false);
 
   const { data: places, isLoading: placesLoading, refetch: refetchPlaces } = trpc.places.list.useQuery({ limit: 200, offset: 0 });
@@ -89,7 +101,11 @@ export function AdminPlaces() {
       };
       if (editingPlace) {
         await updatePlace.mutateAsync({ id: editingPlace.id, ...parsed });
-        toast.success("Lugar atualizado — coordenadas validadas automaticamente");
+        const isManual = editingPlace.geoSource === "manual";
+        toast.success(isManual
+          ? "Lugar atualizado — pin manual preservado"
+          : "Lugar atualizado — coordenadas validadas automaticamente"
+        );
       } else {
         await createPlace.mutateAsync(parsed as any);
         toast.success("Lugar criado — coordenadas validadas automaticamente");
@@ -109,8 +125,11 @@ export function AdminPlaces() {
     (p: any) => p.geoStatus === "suspect" || p.geoStatus === "needs_review" || p.geoStatus === "out_of_bounds"
   ).length;
 
+  const manualCount = (places ?? []).filter((p: any) => (p as any).geoSource === "manual").length;
+
   return (
     <>
+      {/* Banner suspeitos */}
       {suspectCount > 0 && (
         <div style={{
           background: "rgba(255,152,0,0.1)",
@@ -125,6 +144,11 @@ export function AdminPlaces() {
         }}>
           <span style={{ color: "#FF9800", fontSize: "13px" }}>
             ⚠️ {suspectCount} lugar(es) com coordenadas suspeitas ou não verificadas
+            {manualCount > 0 && (
+              <span style={{ color: "#00897B", marginLeft: "12px" }}>
+                📍 {manualCount} com pin manual verificado
+              </span>
+            )}
           </span>
           <button
             onClick={() => setShowSuspectOnly(!showSuspectOnly)}
@@ -146,13 +170,13 @@ export function AdminPlaces() {
       <AdminListTable
         title="Lugares"
         columns={[
-          { key: "name", label: "Nome", width: "28%" },
-          { key: "address", label: "Endereço", width: "32%" },
+          { key: "name", label: "Nome", width: "26%" },
+          { key: "address", label: "Endereço", width: "30%" },
           {
             key: "geoStatus",
             label: "Geo",
-            width: "10%",
-            render: (value) => <GeoStatusBadge status={value} />,
+            width: "12%",
+            render: (value, item) => <GeoStatusBadge status={value} source={(item as any).geoSource} />,
           },
           {
             key: "status",
@@ -178,8 +202,37 @@ export function AdminPlaces() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onCreate={handleCreate}
+        extraRowActions={(place: any) => (
+          <button
+            onClick={() => setPinEditorPlace(place)}
+            title="Ajustar Pin Manualmente"
+            style={{
+              padding: "8px",
+              borderRadius: "8px",
+              border: "1px solid",
+              borderColor: place.geoSource === "manual"
+                ? "rgba(0,137,123,0.4)"
+                : "rgba(0,37,26,0.08)",
+              background: place.geoSource === "manual"
+                ? "rgba(0,137,123,0.08)"
+                : "transparent",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minWidth: "36px",
+              minHeight: "36px",
+            }}
+          >
+            <MapPin
+              size={14}
+              style={{ color: place.geoSource === "manual" ? "#00897B" : "#9E9E9E" }}
+            />
+          </button>
+        )}
       />
 
+      {/* Modal de edição padrão */}
       <AdminFormModal
         title={editingPlace ? "Editar Lugar" : "Novo Lugar"}
         fields={PLACE_FORM_FIELDS}
@@ -193,6 +246,18 @@ export function AdminPlaces() {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
       />
+
+      {/* Editor de Pin Manual */}
+      {pinEditorPlace && (
+        <PlacePinEditor
+          place={pinEditorPlace}
+          onClose={() => setPinEditorPlace(null)}
+          onSaved={() => {
+            refetchPlaces();
+            setPinEditorPlace(null);
+          }}
+        />
+      )}
     </>
   );
 }

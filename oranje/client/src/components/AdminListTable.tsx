@@ -19,6 +19,7 @@ interface AdminListTableProps<T extends { id: number | string }> {
   onCreate: () => void;
   onSearch?: (query: string) => void;
   deleteLoading?: boolean;
+  extraRowActions?: (item: T) => React.ReactNode;
 }
 
 export function AdminListTable<T extends { id: number | string }>({
@@ -31,6 +32,7 @@ export function AdminListTable<T extends { id: number | string }>({
   onCreate,
   onSearch,
   deleteLoading,
+  extraRowActions,
 }: AdminListTableProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
@@ -153,7 +155,8 @@ export function AdminListTable<T extends { id: number | string }>({
                     </td>
                   ))}
                   <td data-label="Ações" style={{ padding: '14px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      {extraRowActions && extraRowActions(item)}
                       <button
                         onClick={() => onEdit(item)}
                         style={{

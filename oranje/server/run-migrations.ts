@@ -881,6 +881,16 @@ export async function runMigrations(): Promise<void> {
         console.log(`[Migrations] ✓ 018: ${c.name} já está correto (deslocamento=${distM}m)`);
         continue;
       }
+      // Proteger pins ajustados manualmente (só verifica se a coluna já existe)
+      const [geoSrcExists] = await db.execute("SHOW COLUMNS FROM `places` LIKE 'geoSource'") as any[];
+      if ((geoSrcExists as any[]).length > 0) {
+        const [chkSrc] = await db.execute(`SELECT geoSource FROM \`places\` WHERE id=${c.id} LIMIT 1`) as any[];
+        const srcRow = (chkSrc as any[])[0];
+        if (srcRow?.geoSource === 'manual') {
+          console.log(`[Migrations] ✓ 018: ${c.name} — pin manual, skip`);
+          continue;
+        }
+      }
       await db.execute(
         `UPDATE \`places\` SET lat=${c.lat}, lng=${c.lng}, updatedAt=NOW() WHERE id=${c.id}`
       );
@@ -916,6 +926,19 @@ export async function runMigrations(): Promise<void> {
         `UPDATE \`guided_tours\` SET clientPrice=${t.clientPrice}, driverPayout=${t.driverPayout}, partnerFee=${t.partnerFee}, requiresTransport=0, recommendedWithDriver=1, updatedAt=NOW() WHERE id=${t.id}`
       );
       console.log(`[Migrations] ✅ 017: tour id=${t.id} — clientPrice=R$${t.clientPrice}, driverPayout=R$${t.driverPayout}`);
+    }
+  }
+
+  // ─── Migration 022: Adicionar coluna geoSource ───────────────────────────────
+  // Rastreamento da origem das coordenadas: auto | manual | osm_verified | maps_verified
+  // Pins manuais (geoSource='manual') ficam protegidos contra sobrescrita automática.
+  {
+    const [cols] = await db.execute("SHOW COLUMNS FROM `places` LIKE 'geoSource'") as any[];
+    if ((cols as any[]).length === 0) {
+      await db.execute(`ALTER TABLE \`places\` ADD COLUMN geoSource ENUM('auto','manual','osm_verified','maps_verified') NOT NULL DEFAULT 'auto'`);
+      console.log("[Migrations] ✅ 022: coluna geoSource adicionada a places");
+    } else {
+      console.log("[Migrations] ✓ 022: geoSource já existe");
     }
   }
 

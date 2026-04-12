@@ -159,9 +159,11 @@ export const placesRouter = router({
       dataPending: z.boolean().optional(),
     }))
     .mutation(async ({ input: { id, ...data } }) => {
-      if (data.lat != null || data.lng != null || data.address != null) {
+      const existing = await db.getPlaceById(id);
+      // Pins manuais são imunes à geo-validação automática
+      const isManualPin = (existing as any)?.geoSource === 'manual';
+      if (!isManualPin && (data.lat != null || data.lng != null || data.address != null)) {
         const { validatePlaceCoords } = await import("./geo-validator");
-        const existing = await db.getPlaceById(id);
         const lat = data.lat ?? existing?.lat;
         const lng = data.lng ?? existing?.lng;
         const address = data.address ?? existing?.address;
@@ -234,6 +236,25 @@ export const placesRouter = router({
     };
     return grouped;
   }),
+
+  // Admin: Ajuste manual de pin — salva coords precisas e protege contra sobrescrita automática
+  updatePin: adminProcedure
+    .input(z.object({
+      id: z.number(),
+      lat: z.number(),
+      lng: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const now = new Date().toISOString().slice(0, 10);
+      await db.updatePlace(input.id, {
+        lat: input.lat,
+        lng: input.lng,
+        geoStatus: "ok",
+        geoSource: "manual",
+        geoNote: `Pin ajustado manualmente pelo admin em ${now}. Coordenadas protegidas contra sobrescrita automática.`,
+      } as any);
+      return { success: true };
+    }),
 
   // Admin: Marca geoStatus manualmente (revisão humana)
   setGeoStatus: adminProcedure

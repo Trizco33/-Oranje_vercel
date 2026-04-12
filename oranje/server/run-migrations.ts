@@ -1008,15 +1008,14 @@ export async function runMigrations(): Promise<void> {
         skipped++; continue;
       }
 
+      const safeNote = (fix.note ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
       if (fix.lat !== null) {
         await db.execute(
-          `UPDATE \`places\` SET lat=${fix.lat}, lng=${fix.lng}, geoStatus='${fix.status}', geoNote=?, updatedAt=NOW() WHERE id=${fix.id}`,
-          [fix.note]
+          `UPDATE \`places\` SET lat=${fix.lat}, lng=${fix.lng}, geoStatus='${fix.status}', geoNote='${safeNote}', updatedAt=NOW() WHERE id=${fix.id}` as any
         );
       } else {
         await db.execute(
-          `UPDATE \`places\` SET geoStatus='${fix.status}', geoNote=?, updatedAt=NOW() WHERE id=${fix.id}`,
-          [fix.note]
+          `UPDATE \`places\` SET geoStatus='${fix.status}', geoNote='${safeNote}', updatedAt=NOW() WHERE id=${fix.id}` as any
         );
       }
       applied++;

@@ -576,8 +576,8 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 2) CATEGORIAS — White background ═══ */}
-      <section id="categorias" className="site-section" style={{ background: "#FFFFFF" }}>
+      {/* ═══ 2) CATEGORIAS — Bento grid ═══ */}
+      <section id="categorias" style={{ background: "#FFFFFF", padding: "72px 24px" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Reveal>
             <SectionHeader
@@ -587,50 +587,67 @@ export default function SiteHome() {
             />
           </Reveal>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-              gap: 20,
-            }}
-          >
-            {categories.map((cat, i) => (
-              <Reveal key={cat.title} delay={i * 60}>
-                <Link to={cat.link} style={{ textDecoration: "none", display: "block" }}>
+          {/* Bento: 3 cols desktop / 2 cols mobile */}
+          <style>{`
+            .cat-bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+            @media (max-width: 600px) { .cat-bento-grid { grid-template-columns: repeat(2, 1fr); } }
+          `}</style>
+          <div className="cat-bento-grid">
+            {[
+              { ...categories[0], bg: "linear-gradient(145deg, #00251A 0%, #00381F 100%)", span: false },
+              { ...categories[1], bg: "linear-gradient(145deg, #1A3320 0%, #002E1F 100%)", span: false },
+              { ...categories[2], bg: "linear-gradient(145deg, #E65100 0%, #BF4400 100%)", span: false },
+              { ...categories[3], bg: "linear-gradient(145deg, #002E1F 0%, #001A12 100%)", span: false },
+              { ...categories[4], bg: "linear-gradient(145deg, #00251A 0%, #1A3320 100%)", span: false },
+              { ...categories[5], bg: "linear-gradient(145deg, #111 0%, #1a1a1a 100%)", span: false },
+            ].map((cat, i) => (
+              <Reveal key={cat.title} delay={i * 50}>
+                <Link
+                  to={cat.link}
+                  style={{ textDecoration: "none", display: "block", height: "100%" }}
+                >
                   <div
-                    className="card-press"
                     style={{
-                      padding: "26px 22px",
-                      background: "#FFFFFF",
-                      borderRadius: 16,
-                      borderTop: "2px solid #E65100",
-                      boxShadow: "0 2px 14px rgba(0,37,26,0.06)",
-                      transition: "transform 0.22s ease, box-shadow 0.22s ease",
+                      background: cat.bg,
+                      borderRadius: 18,
+                      padding: "28px 20px 22px",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "flex-start",
+                      gap: 14,
+                      minHeight: 140,
+                      position: "relative",
+                      overflow: "hidden",
+                      transition: "opacity 0.18s ease, transform 0.18s ease",
+                      cursor: "pointer",
                     }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.boxShadow = "0 12px 32px rgba(0,37,26,0.12)"; }}
-                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 2px 14px rgba(0,37,26,0.06)"; }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.88"; (e.currentTarget as HTMLElement).style.transform = "scale(0.98)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
                   >
+                    {/* subtle texture dot */}
                     <div style={{
-                      width: 48, height: 48, borderRadius: 13,
-                      background: "linear-gradient(135deg, rgba(230,81,0,0.1), rgba(230,81,0,0.04))",
-                      border: "1px solid rgba(230,81,0,0.16)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      marginBottom: 16, color: "#E65100",
-                    }}>
+                      position: "absolute", top: -24, right: -24,
+                      width: 80, height: 80, borderRadius: "50%",
+                      background: "rgba(255,255,255,0.04)",
+                      pointerEvents: "none",
+                    }} />
+                    <div style={{ color: "rgba(255,255,255,0.85)" }}>
                       {cat.icon}
                     </div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#00251A", marginBottom: 6, fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                      {cat.title}
-                    </h3>
-                    <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", marginBottom: 18, lineHeight: 1.6, flex: 1 }}>
-                      {cat.desc}
-                    </p>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.8125rem", fontWeight: 700, color: "#E65100" }}>
-                      Explorar <ArrowRight size={13} />
-                    </span>
+                    <div>
+                      <div style={{
+                        fontSize: "0.9375rem", fontWeight: 700,
+                        color: "#FFFFFF", lineHeight: 1.2,
+                        fontFamily: "'Montserrat', system-ui, sans-serif",
+                        marginBottom: 4,
+                      }}>
+                        {cat.title}
+                      </div>
+                      <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.5)", lineHeight: 1.4 }}>
+                        {cat.desc}
+                      </div>
+                    </div>
+                    <ArrowRight size={14} style={{ color: "rgba(255,255,255,0.35)", marginTop: "auto" }} />
                   </div>
                 </Link>
               </Reveal>
@@ -736,102 +753,89 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 3.5) CONTINUE EXPLORANDO — glass icon-card grid ═══ */}
+      {/* ═══ 3.5) CONTINUE EXPLORANDO — lista editorial ═══ */}
       <section style={{
-        background: "linear-gradient(160deg, #001A12 0%, #00251A 60%, #002E1F 100%)",
-        padding: "44px 24px",
+        background: "#00251A",
+        padding: "52px 24px",
         position: "relative",
         overflow: "hidden",
       }}>
-        {/* decorative glow */}
+        {/* glow decorativo */}
         <div style={{
-          position: "absolute", bottom: -60, left: -60,
-          width: 260, height: 260, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(230,81,0,0.09) 0%, transparent 70%)",
-          pointerEvents: "none",
+          position: "absolute", top: "50%", right: -120,
+          width: 340, height: 340, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(230,81,0,0.07) 0%, transparent 70%)",
+          transform: "translateY(-50%)", pointerEvents: "none",
         }} />
-        <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }}>
+        <div style={{ maxWidth: "860px", margin: "0 auto", position: "relative" }}>
           <Reveal>
             <p style={{
-              fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase",
-              color: "rgba(255,255,255,0.38)", marginBottom: 22,
-              fontFamily: "'Montserrat', system-ui, sans-serif",
+              fontSize: "0.625rem", fontWeight: 700, letterSpacing: "0.14em",
+              textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+              marginBottom: 36, fontFamily: "'Montserrat', system-ui, sans-serif",
             }}>
               Continue Explorando Holambra
             </p>
           </Reveal>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))",
-            gap: 12,
-          }}>
-            {[
-              { label: "Melhores Restaurantes", icon: <Utensils size={18} strokeWidth={1.8} />, link: "/melhores-restaurantes-de-holambra", accent: "#E65100" },
-              { label: "Cafés em Holambra",      icon: <Coffee    size={18} strokeWidth={1.8} />, link: "/melhores-cafes-de-holambra",       accent: "#FF8C42" },
-              { label: "Bares & Drinks",          icon: <Wine      size={18} strokeWidth={1.8} />, link: "/bares-e-drinks-em-holambra",        accent: "#FFB347" },
-              { label: "Onde Tirar Fotos",        icon: <Camera    size={18} strokeWidth={1.8} />, link: "/onde-tirar-fotos-em-holambra",      accent: "#FF8C42" },
-              { label: "Ver no Mapa",             icon: <Map       size={18} strokeWidth={1.8} />, link: "/mapa",                              accent: "#E65100" },
-              { label: "Ver Passeios",            icon: <Navigation size={18} strokeWidth={1.8} />, link: "/app/receptivo",                    accent: "#E65100", cta: true },
-            ].map((item, i) => (
-              <Reveal key={item.label} delay={i * 45}>
-                <Link to={item.link} style={{ textDecoration: "none", display: "block" }}>
-                  <div
-                    style={{
-                      background: item.cta
-                        ? `linear-gradient(135deg, ${item.accent}22, ${item.accent}10)`
-                        : "rgba(255,255,255,0.05)",
-                      borderRadius: 14,
-                      padding: "16px 16px",
-                      border: `1px solid ${item.cta ? item.accent + "44" : "rgba(255,255,255,0.08)"}`,
-                      borderTop: `2px solid ${item.accent}`,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      transition: "transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease",
-                      cursor: "pointer",
-                    }}
-                    onMouseEnter={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.transform = "translateY(-3px)";
-                      el.style.background = item.cta
-                        ? `linear-gradient(135deg, ${item.accent}35, ${item.accent}18)`
-                        : "rgba(255,255,255,0.09)";
-                      el.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)";
-                    }}
-                    onMouseLeave={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.transform = "";
-                      el.style.background = item.cta
-                        ? `linear-gradient(135deg, ${item.accent}22, ${item.accent}10)`
-                        : "rgba(255,255,255,0.05)";
-                      el.style.boxShadow = "";
-                    }}
-                  >
-                    {/* icon accent square */}
-                    <div style={{
-                      width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                      background: `linear-gradient(135deg, ${item.accent}30, ${item.accent}12)`,
-                      border: `1px solid ${item.accent}40`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: item.accent,
-                    }}>
-                      {item.icon}
-                    </div>
-                    <span style={{
-                      fontSize: "0.8125rem", fontWeight: 700,
-                      color: item.cta ? item.accent : "rgba(255,255,255,0.85)",
-                      fontFamily: "'Montserrat', system-ui, sans-serif",
-                      lineHeight: 1.25,
-                      flex: 1,
-                    }}>
-                      {item.label}
-                    </span>
-                    <ArrowRight size={13} style={{ color: item.cta ? item.accent : "rgba(255,255,255,0.3)", flexShrink: 0 }} />
+
+          {[
+            { label: "Melhores Restaurantes", icon: <Utensils size={16} />, link: "/melhores-restaurantes-de-holambra", accent: "#E65100" },
+            { label: "Cafés em Holambra",      icon: <Coffee    size={16} />, link: "/melhores-cafes-de-holambra",       accent: "#FF8C42" },
+            { label: "Bares & Drinks",          icon: <Wine      size={16} />, link: "/bares-e-drinks-em-holambra",        accent: "#FF9F4A" },
+            { label: "Onde Tirar Fotos",        icon: <Camera    size={16} />, link: "/onde-tirar-fotos-em-holambra",      accent: "#FF8C42" },
+            { label: "Ver no Mapa",             icon: <Map       size={16} />, link: "/mapa",                              accent: "#E65100" },
+            { label: "Ver Passeios Guiados",    icon: <Navigation size={16} />, link: "/app/receptivo",                   accent: "#E65100", highlight: true },
+          ].map((item, i) => (
+            <Reveal key={item.label} delay={i * 40}>
+              <Link
+                to={item.link}
+                style={{ textDecoration: "none", display: "block" }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 20,
+                    padding: "20px 0",
+                    borderBottom: "1px solid rgba(255,255,255,0.06)",
+                    transition: "padding-left 0.2s ease",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "8px"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.paddingLeft = "0px"; }}
+                >
+                  {/* dot accent */}
+                  <div style={{
+                    width: 6, height: 6, borderRadius: "50%",
+                    background: item.accent, flexShrink: 0,
+                    opacity: item.highlight ? 1 : 0.65,
+                  }} />
+
+                  <span style={{
+                    flex: 1,
+                    fontSize: "clamp(1rem, 4vw, 1.25rem)",
+                    fontWeight: 600,
+                    color: item.highlight ? item.accent : "rgba(255,255,255,0.82)",
+                    fontFamily: "'Montserrat', system-ui, sans-serif",
+                    lineHeight: 1.2,
+                    letterSpacing: "-0.01em",
+                  }}>
+                    {item.label}
+                  </span>
+
+                  <div style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    border: `1px solid ${item.highlight ? item.accent + "60" : "rgba(255,255,255,0.1)"}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: item.highlight ? item.accent : "rgba(255,255,255,0.3)",
+                    flexShrink: 0,
+                  }}>
+                    <ArrowRight size={13} />
                   </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
+                </div>
+              </Link>
+            </Reveal>
+          ))}
         </div>
       </section>
 
@@ -1377,85 +1381,95 @@ export default function SiteHome() {
         </div>
       </section>
 
-      {/* ═══ 7) PARCEIROS — White background ═══ */}
-      <section className="site-section" style={{ background: "#FFFFFF" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      {/* ═══ 7) PARCEIROS — Layout numerado editorial ═══ */}
+      <section style={{ background: "#FAFAF8", padding: "80px 24px" }}>
+        <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+
+          {/* Cabeçalho assimétrico */}
           <Reveal>
-            <SectionHeader
-              label="Parceiros"
-              title="Seja um Parceiro Oranje"
-              subtitle="Cresça seu negócio com a plataforma de curadoria local"
-            />
+            <div style={{ marginBottom: 64 }}>
+              <span style={{
+                display: "inline-block", fontSize: "0.625rem", fontWeight: 700,
+                letterSpacing: "0.14em", textTransform: "uppercase",
+                color: "#E65100", marginBottom: 16,
+                fontFamily: "'Montserrat', system-ui, sans-serif",
+              }}>
+                Parceiros
+              </span>
+              <h2 style={{
+                fontSize: "clamp(1.75rem, 5vw, 2.75rem)", fontWeight: 800,
+                color: "#00251A", lineHeight: 1.1, letterSpacing: "-0.03em",
+                fontFamily: "'Montserrat', system-ui, sans-serif",
+                marginBottom: 12,
+              }}>
+                Seja um Parceiro<br />Oranje
+              </h2>
+              <p style={{ fontSize: "1rem", color: "rgba(0,37,26,0.45)", maxWidth: 400, lineHeight: 1.6 }}>
+                Cresça seu negócio com a plataforma de curadoria local
+              </p>
+            </div>
           </Reveal>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-              gap: 18,
-              marginBottom: 48,
-            }}
-          >
-            {[
-              { icon: <CheckCircle size={22} strokeWidth={1.8} />, title: "Visibilidade", desc: "Alcance turistas e locais que buscam Holambra", accent: "#E65100" },
-              { icon: <Star size={22} strokeWidth={1.8} />, title: "Destaque", desc: "Apareça em roteiros curados pelo Oranje", accent: "#FF8C42" },
-              { icon: <Download size={22} strokeWidth={1.8} />, title: "Vouchers", desc: "Ofertas exclusivas para visitantes do app", accent: "#FFB347" },
-              { icon: <CheckCircle size={22} strokeWidth={1.8} />, title: "Verificado", desc: "Selo de curadoria e confiança Oranje", accent: "#E65100" },
-            ].map((vantagem, i) => (
-              <Reveal key={vantagem.title} delay={i * 60}>
-                <div
-                  style={{
-                    padding: "24px 20px",
-                    background: "#FFFFFF",
-                    borderRadius: 16,
-                    borderTop: `2px solid ${vantagem.accent}`,
-                    boxShadow: "0 2px 14px rgba(0,37,26,0.06)",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                  }}
-                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-4px)"; el.style.boxShadow = "0 10px 28px rgba(0,37,26,0.11)"; }}
-                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; el.style.boxShadow = "0 2px 14px rgba(0,37,26,0.06)"; }}
-                >
-                  <div style={{
-                    width: 44, height: 44, borderRadius: 12, marginBottom: 14,
-                    background: `linear-gradient(135deg, ${vantagem.accent}18, ${vantagem.accent}08)`,
-                    border: `1px solid ${vantagem.accent}28`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: vantagem.accent,
+          {/* Lista numerada tipo manifesto */}
+          {[
+            { n: "01", title: "Visibilidade",  desc: "Alcance turistas e locais que buscam Holambra ativamente pelo app e pelo site." },
+            { n: "02", title: "Destaque",      desc: "Apareça em roteiros curados pelo Oranje com contexto, história e posição de destaque." },
+            { n: "03", title: "Vouchers",      desc: "Ofertas exclusivas para visitantes do app — atraia quem já está em Holambra." },
+            { n: "04", title: "Verificado",    desc: "Selo de curadoria Oranje: diferenciação real no mercado local." },
+          ].map((item, i) => (
+            <Reveal key={item.n} delay={i * 70}>
+              <div style={{
+                display: "flex",
+                gap: 28,
+                padding: "28px 0",
+                borderBottom: "1px solid rgba(0,37,26,0.07)",
+                alignItems: "flex-start",
+              }}>
+                {/* Número decorativo */}
+                <span style={{
+                  fontSize: "clamp(2.5rem, 6vw, 3.5rem)", fontWeight: 800,
+                  color: "rgba(0,37,26,0.06)",
+                  lineHeight: 1, flexShrink: 0,
+                  fontFamily: "'Montserrat', system-ui, sans-serif",
+                  letterSpacing: "-0.04em",
+                  userSelect: "none",
+                  minWidth: 72,
+                }}>
+                  {item.n}
+                </span>
+                {/* Conteúdo */}
+                <div style={{ paddingTop: 6 }}>
+                  <h3 style={{
+                    fontSize: "1.125rem", fontWeight: 700, color: "#00251A",
+                    marginBottom: 8, fontFamily: "'Montserrat', system-ui, sans-serif",
+                    letterSpacing: "-0.01em",
                   }}>
-                    {vantagem.icon}
-                  </div>
-                  <h3 style={{ fontWeight: 800, color: "#00251A", marginBottom: 6, fontSize: "0.9375rem", fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                    {vantagem.title}
+                    {item.title}
                   </h3>
-                  <p style={{ fontSize: "0.8125rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.6 }}>
-                    {vantagem.desc}
+                  <p style={{ fontSize: "0.875rem", color: "rgba(0,37,26,0.5)", lineHeight: 1.65 }}>
+                    {item.desc}
                   </p>
                 </div>
-              </Reveal>
-            ))}
-          </div>
+              </div>
+            </Reveal>
+          ))}
 
+          {/* CTA */}
           <Reveal>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ paddingTop: 48 }}>
               <Link
                 to="/seja-um-parceiro"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: 44,
-                  padding: "0 24px",
-                  background: "#E65100",
-                  color: "#FFFFFF",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  borderRadius: 11,
+                  display: "inline-flex", alignItems: "center", gap: 10,
+                  background: "#00251A", color: "#FFFFFF",
+                  padding: "14px 28px", borderRadius: 12,
+                  fontSize: "0.9375rem", fontWeight: 600,
                   textDecoration: "none",
-                  transition: "background 0.2s ease",
                   fontFamily: "'Montserrat', system-ui, sans-serif",
+                  transition: "background 0.2s ease",
                 }}
-                onMouseEnter={(e: any) => (e.currentTarget.style.background = "#FF6D00")}
-                onMouseLeave={(e: any) => (e.currentTarget.style.background = "#E65100")}
+                onMouseEnter={(e: any) => (e.currentTarget.style.background = "#003D2B")}
+                onMouseLeave={(e: any) => (e.currentTarget.style.background = "#00251A")}
               >
                 Quero ser Parceiro
                 <ArrowRight size={16} />

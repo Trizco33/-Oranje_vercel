@@ -689,6 +689,27 @@ export async function runMigrations(): Promise<void> {
       `);
       console.log(`[Migrations] ✅ 016: ${h.name} inserido`);
     }
+
+    // 016-C: Aplicar coverImages para as 6 hospedagens (idempotente — só atualiza se nulo)
+    const coverFixes: { name: string; coverImage: string }[] = [
+      { name: "Hotel 1948",                                   coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/f9/ed/5f/getlstd-property-photo.jpg?w=900&h=500&s=1" },
+      { name: "Hotel Flores de Holambra",                     coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2d/30/c2/9f/caption.jpg?w=900&h=500&s=1" },
+      { name: "Hotel Amsterdam Su\u00edtes",                  coverImage: "https://hotelamsterdamsuites.com.br/wp-content/uploads/2022/05/e261555a-62a9-45b0-99be-fcacda416190.jpg" },
+      { name: "Onze Tuin - Hospedagem numa vilinha holandesa", coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/b2/1e/1e/caption.jpg?w=900&h=500&s=1" },
+      { name: "Pousada Rosa de Saron",                        coverImage: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/334575400.jpg?k=89aba352f67194bbbed435d4e97ab0c02ff3b1a24f058e92da80c1a81e84a633&o=" },
+      { name: "Lofts Holambra",                               coverImage: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/573954772.jpg?k=118fd4dfd501ec7f3757a074e0de3d40afc93bf52c03defa8c79570661d1bd79&o=" },
+    ];
+    for (const f of coverFixes) {
+      const [chk] = await db.execute(
+        `SELECT id, coverImage FROM \`places\` WHERE name = '${f.name.replace(/'/g, "''")}' AND city = 'Holambra' LIMIT 1`
+      ) as any;
+      const row = (chk as any[])[0];
+      if (!row) { console.log(`[Migrations] ⚠️  016-C: não encontrado — ${f.name}`); continue; }
+      if (row.coverImage) { console.log(`[Migrations] ✓ 016-C: ${f.name} já tem coverImage`); continue; }
+      const esc = f.coverImage.replace(/'/g, "''");
+      await db.execute(`UPDATE \`places\` SET coverImage = '${esc}', updatedAt = NOW() WHERE id = ${row.id}`);
+      console.log(`[Migrations] ✅ 016-C: coverImage aplicado — ${f.name} (id=${row.id})`);
+    }
   }
 
   console.log("[Migrations] All migrations applied.");

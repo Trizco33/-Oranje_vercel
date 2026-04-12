@@ -470,7 +470,7 @@ const STATIC_CONFIG: Record<string, {
   subtitle: string;
   seoTitle: string;
   seoDescription: string;
-  cta: { label: string; href: string };
+  cta: { label: string; href: string; descriptionText: string; secondary?: { label: string; href: string } };
   FallbackContent: React.ComponentType;
 }> = {
   "melhores-restaurantes-de-holambra": {
@@ -478,7 +478,12 @@ const STATIC_CONFIG: Record<string, {
     subtitle: "Uma curadoria real dos lugares para comer bem na capital brasileira das flores",
     seoTitle: "Melhores Restaurantes em Holambra — Guia Oranje",
     seoDescription: "Descubra os melhores restaurantes de Holambra com curadoria do Oranje. Do Lago do Holandês ao Martin Holandesa, veja onde comer bem com avaliações reais.",
-    cta: { label: "Ver restaurantes no App", href: "/app" },
+    cta: {
+      label: "Abrir no App Oranje",
+      href: "/app/explorar",
+      descriptionText: "O app Oranje reúne todos os restaurantes de Holambra com fotos reais, horários de funcionamento e avaliações de quem visitou. Use o filtro Perto de Mim para descobrir o que está aberto agora, onde você está.",
+      secondary: { label: "Ver Passeios Gastronômicos", href: "/app/receptivo" },
+    },
     FallbackContent: RestaurantesContent,
   },
   "melhores-cafes-de-holambra": {
@@ -486,7 +491,12 @@ const STATIC_CONFIG: Record<string, {
     subtitle: "Café artesanal e pausas com identidade — os espaços que valem a parada em Holambra",
     seoTitle: "Melhores Cafés em Holambra — Guia Oranje",
     seoDescription: "Os melhores cafés de Holambra: Zoet en Zout, Lotus Café, Kéndi Cafeteria e Oma Beppie — descubra onde tomar um bom café na cidade das flores com curadoria do Oranje.",
-    cta: { label: "Ver cafés no App", href: "/app" },
+    cta: {
+      label: "Descobrir Cafés no App",
+      href: "/app/explorar",
+      descriptionText: "No app Oranje você encontra todos os cafés de Holambra com endereço, horário de abertura e avaliações reais. Use o filtro Perto de Mim para saber qual café está aberto agora e mais perto de você.",
+      secondary: { label: "Ver Passeios com Motorista", href: "/app/receptivo" },
+    },
     FallbackContent: CafesContent,
   },
   "bares-e-drinks-em-holambra": {
@@ -494,7 +504,12 @@ const STATIC_CONFIG: Record<string, {
     subtitle: "Cerveja artesanal, vinhos autorais e lounges para noites memoráveis em Holambra",
     seoTitle: "Bares e Drinks em Holambra — Guia Oranje",
     seoDescription: "Guia completo dos melhores bares de Holambra: Cervejaria Holambier, Cervejaria Seo Carneiro, Fratelli Wine Bar, Quintal dos Avós Gastrobar, Tulipa's Lounge e mais.",
-    cta: { label: "Ver bares no App", href: "/app" },
+    cta: {
+      label: "Explorar Bares no App",
+      href: "/app/explorar",
+      descriptionText: "O app Oranje tem todos os bares e lounges de Holambra com horários, cardápios e avaliações reais. Use o filtro Perto de Mim para descobrir qual bar está aberto agora e como chegar.",
+      secondary: { label: "Ver Passeios com Motorista", href: "/app/receptivo" },
+    },
     FallbackContent: BaresContent,
   },
   "onde-tirar-fotos-em-holambra": {
@@ -502,7 +517,12 @@ const STATIC_CONFIG: Record<string, {
     subtitle: "Parques, flores, o moinho e a Rua dos Guarda-Chuvas — os lugares que definem a cidade",
     seoTitle: "Pontos Turísticos de Holambra — Guia Oranje",
     seoDescription: "Os principais pontos turísticos de Holambra: Expoflora, Moinho Povos Unidos, Rua dos Guarda-Chuvas, Parque Van Gogh e mais. Saiba o que visitar e como se planejar.",
-    cta: { label: "Explorar pontos turísticos", href: "/app" },
+    cta: {
+      label: "Explorar no App Oranje",
+      href: "/app/explorar",
+      descriptionText: "O app Oranje tem mapa completo com todos os pontos turísticos de Holambra — horários, como chegar, dicas de visitantes e fotos reais. Prefere fazer o passeio com guia e motorista? O Receptivo Oranje leva você aos melhores pontos da cidade.",
+      secondary: { label: "Ver Passeios com Motorista", href: "/app/receptivo" },
+    },
     FallbackContent: PontosTuristicosContent,
   },
   "eventos-em-holambra": {
@@ -510,7 +530,12 @@ const STATIC_CONFIG: Record<string, {
     subtitle: "Expoflora, Mês do Rei, Hortitec e o calendário que transforma a cidade ao longo do ano",
     seoTitle: "Eventos em Holambra — Guia Oranje",
     seoDescription: "Conheça os principais eventos de Holambra: Expoflora em setembro, Mês do Rei em fevereiro, Hortitec em junho e muito mais. Planeje sua visita com o Oranje.",
-    cta: { label: "Ver eventos no App", href: "/app/eventos" },
+    cta: {
+      label: "Ver Agenda de Eventos",
+      href: "/app/eventos",
+      descriptionText: "O app Oranje tem a agenda atualizada de eventos de Holambra com datas, locais e informações para você planejar sua visita com antecedência — incluindo a Expoflora, o maior evento de flores do Brasil.",
+      secondary: { label: "Ver Passeios com Motorista", href: "/app/receptivo" },
+    },
     FallbackContent: EventosContent,
   },
 };
@@ -683,7 +708,12 @@ export default function CMSCategoryPage() {
       title={title}
       subtitle={subtitle}
       content={content}
-      cta={cta}
+      cta={{
+        label: cta.label,
+        href: cta.href,
+        description: <span>{cta.descriptionText}</span>,
+        secondary: cta.secondary,
+      }}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: staticCfg.h1, href: location.pathname },

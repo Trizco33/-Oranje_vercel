@@ -53,7 +53,7 @@ function hasValidCoords(p: { lat?: number | null; lng?: number | null }): boolea
 }
 
 export function useNearbyPlaces(position: GeoPosition | null, limit = 6) {
-  const { data: places, isLoading } = usePlacesList({ limit: 100, offset: 0 });
+  const { data: places, isLoading } = usePlacesList({ limit: 200, offset: 0 });
 
   const nearby = useMemo<PlaceWithDistance[]>(() => {
     if (!places || !position) return [];

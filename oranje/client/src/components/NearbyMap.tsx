@@ -28,7 +28,7 @@ export default function NearbyMap({ onClose }: NearbyMapProps) {
   const [directionsPlace, setDirectionsPlace] = useState<PlaceWithDistance | null>(null);
 
   const geoPosition = userPos ?? { lat: HOLAMBRA_CENTER[0], lng: HOLAMBRA_CENTER[1], isFallback: true };
-  const { nearby: nearbyPlaces, isLoading: placesLoading } = useNearbyPlaces(geoPosition, 12);
+  const { nearby: nearbyPlaces, isLoading: placesLoading } = useNearbyPlaces(geoPosition, 60);
 
   // Prevent body scroll while modal is open
   useEffect(() => {

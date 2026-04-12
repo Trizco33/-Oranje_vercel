@@ -56,6 +56,11 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     { loc: `${baseUrl}/app/eventos`, lastmod: today, priority: 0.8, changefreq: "daily" },
     { loc: `${baseUrl}/app/roteiros`, lastmod: today, priority: 0.8, changefreq: "weekly" },
 
+    // ─── Páginas editoriais principais (SEO altíssima prioridade) ────
+    { loc: `${baseUrl}/o-que-fazer-em-holambra`, lastmod: today, priority: 0.95, changefreq: "monthly" },
+    { loc: `${baseUrl}/roteiro-1-dia-em-holambra`, lastmod: today, priority: 0.95, changefreq: "monthly" },
+    { loc: `${baseUrl}/holambra-bate-e-volta`, lastmod: today, priority: 0.95, changefreq: "monthly" },
+
     // ─── Páginas editoriais de categoria (SEO prioritário) ───────────
     { loc: `${baseUrl}/melhores-restaurantes-de-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },
     { loc: `${baseUrl}/melhores-cafes-de-holambra`, lastmod: today, priority: 0.9, changefreq: "monthly" },

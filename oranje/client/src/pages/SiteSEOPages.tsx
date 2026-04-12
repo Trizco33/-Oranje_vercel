@@ -30,6 +30,44 @@ function setNameMeta(name: string, content: string) {
    Página: Roteiro de 1 Dia — conteúdo e SEO preservados
 ───────────────────────────────────────────── */
 
+const bateVoltaContent = `
+Holambra é um dos melhores destinos de bate e volta do estado de São Paulo — e talvez o mais subestimado. A menos de duas horas da capital e a menos de uma hora de Campinas, a cidade entrega muito mais do que parece possível para um dia de passeio.
+
+## Distância e como chegar
+
+De São Paulo, são cerca de 170 km pela Rodovia Anhanguera (SP-330), com saída em Cosmópolis e mais 15 km até a cidade. O tempo médio é de 1h45 a 2h, dependendo do trânsito na saída da capital. De Campinas, são 50 km e aproximadamente 45 minutos.
+
+Não há transporte público direto de SP até Holambra — o ideal é de carro, ou usando o Receptivo Oranje com motorista particular, que busca você em qualquer ponto de São Paulo ou Campinas.
+
+## Quando ir
+
+Holambra recebe visitantes o ano todo, mas há momentos especialmente bons:
+
+- **Setembro (Expoflora):** O maior festival de flores do Brasil. A cidade fica cheia, os parques estão em plena floração e a programação cultural é intensa. Reserve restaurantes com antecedência e chegue cedo.
+- **Fins de semana em geral:** A cidade pulsa nos sábados e domingos, com mercados, cafés cheios e boa energia. Os horários de funcionamento dos parques costumam ser mais longos.
+- **Dias úteis:** Para quem quer Holambra sem fila e sem multidão. Os restaurantes atendem bem, os parques ficam mais tranquilos e a experiência é mais contemplativa.
+
+## O que fazer num bate e volta
+
+Um dia bem aproveitado em Holambra cabe no seguinte roteiro:
+
+**Manhã:** Comece com café artesanal no Zoet en Zout ou na Oma Beppie — stroopwafels quentinhos são o jeito certo de entrar no clima. Depois, vá direto para o Bloemen Park para as fotos no campo de girassóis, que ficam melhores com a luz da manhã.
+
+**Almoço:** O Boulevard Holandês concentra boas opções num raio caminhável. De Immigrant Restaurante Garden é a indicação clássica; Villa Girassol é a opção com melhor vista.
+
+**Tarde:** Reserve para o Parque Van Gogh, o Moinho e uma caminhada pela área central. O Deck do Amor é parada obrigatória para fotos no fim do dia.
+
+**Volta:** Se saiu cedo de SP, dá para estar de volta às 20h com conforto — ou encerrar com jantar em Holambra antes de voltar.
+
+## Dicas para o bate e volta perfeito
+
+- Saia de SP antes das 7h para evitar trânsito e aproveitar a manhã inteira
+- Leve protetor solar e sapatos fechados e confortáveis
+- Os estacionamentos perto do Boulevard Holandês ficam cheios nos fins de semana — chegue cedo ou estacione um pouco mais longe e vá a pé
+- Baixe o app Oranje antes de sair: mapa offline, horários e avaliações reais de cada lugar
+- Se quiser ir sem se preocupar com logística, o Receptivo Oranje oferece passeios com motorista saindo de SP e Campinas
+`;
+
 const roteiroContent = `
 Um dia em Holambra é tempo suficiente para sair diferente de como entrou. A cidade é compacta, bonita e surpreendentemente generosa com quem chega disposto a descobrí-la sem pressa.
 
@@ -57,12 +95,22 @@ Holambra continua entregando uma boa experiência mesmo depois que o sol vai emb
    SEO config — apenas roteiro (preservado)
 ───────────────────────────────────────────── */
 
-const seoConfig: Record<string, { title: string; description: string; h1: string; subtitle: string }> = {
+const seoConfig: Record<string, { title: string; description: string; h1: string; subtitle: string; content: string; cta: string }> = {
   "roteiro-1-dia-em-holambra": {
     h1: "Roteiro de 1 Dia em Holambra",
     subtitle: "Aproveite o melhor da cidade em um dia",
     title: "Roteiro de 1 Dia em Holambra",
     description: "Um dia em Holambra: roteiro completo com dicas de manhã, almoço, tarde e noite para aproveitar ao máximo a cidade das flores.",
+    content: roteiroContent,
+    cta: "Planejar meu roteiro no App",
+  },
+  "holambra-bate-e-volta": {
+    h1: "Holambra Bate e Volta",
+    subtitle: "Tudo que você precisa saber para fazer o passeio perfeito",
+    title: "Holambra Bate e Volta — Guia Completo saindo de SP e Campinas",
+    description: "Holambra bate e volta: distância de SP, quando ir, o que fazer, dicas práticas e roteiro completo para aproveitar o dia na cidade das flores.",
+    content: bateVoltaContent,
+    cta: "Planejar meu bate e volta no App",
   },
 };
 
@@ -125,24 +173,35 @@ export default function SiteSEOPages() {
     );
   }
 
+  function renderMarkdown(text: string) {
+    return text
+      .split("\n")
+      .map((line) => {
+        if (line.startsWith("## ")) {
+          return `<h2 style="font-size: var(--ds-text-2xl); font-weight: var(--ds-font-bold); color: var(--ds-color-text-primary); margin-top: var(--ds-space-8); margin-bottom: var(--ds-space-3); font-family: var(--ds-font-display);">${line.substring(3)}</h2>`;
+        }
+        if (line.startsWith("**") && line.endsWith("**")) {
+          return `<p style="font-weight: var(--ds-font-bold); color: var(--ds-color-text-primary); margin-bottom: var(--ds-space-1);">${line.slice(2, -2)}</p>`;
+        }
+        if (line.trim().startsWith("- **")) {
+          const clean = line.trim().substring(2).replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+          return `<div style="display: flex; align-items: flex-start; gap: var(--ds-space-2); margin-bottom: var(--ds-space-2); padding-left: var(--ds-space-2);"><span style="color: var(--ds-color-accent); margin-top: 6px; flex-shrink: 0;">•</span><span style="color: var(--ds-color-text-secondary);">${clean}</span></div>`;
+        }
+        if (line.trim().startsWith("- ")) {
+          return `<div style="display: flex; align-items: flex-start; gap: var(--ds-space-2); margin-bottom: var(--ds-space-2); padding-left: var(--ds-space-2);"><span style="color: var(--ds-color-accent); margin-top: 6px; flex-shrink: 0;">•</span><span style="color: var(--ds-color-text-secondary);">${line.trim().substring(2)}</span></div>`;
+        }
+        if (line.trim().startsWith("**") && line.includes(":")) {
+          const clean = line.trim().replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+          return `<p style="margin-bottom: var(--ds-space-3); color: var(--ds-color-text-secondary); line-height: var(--ds-leading-relaxed);">${clean}</p>`;
+        }
+        if (line.trim() === "") return "";
+        return `<p style="margin-bottom: var(--ds-space-3); color: var(--ds-color-text-secondary); line-height: var(--ds-leading-relaxed);">${line.trim()}</p>`;
+      })
+      .join("");
+  }
+
   const content = (
-    <div
-      dangerouslySetInnerHTML={{
-        __html: roteiroContent
-          .split("\n")
-          .map((line) => {
-            if (line.startsWith("## ")) {
-              return `<h2 style="font-size: var(--ds-text-2xl); font-weight: var(--ds-font-bold); color: var(--ds-color-text-primary); margin-top: var(--ds-space-8); margin-bottom: var(--ds-space-3); font-family: var(--ds-font-display);">${line.substring(3)}</h2>`;
-            }
-            if (line.trim().startsWith("- ")) {
-              return `<div style="display: flex; align-items: flex-start; gap: var(--ds-space-2); margin-bottom: var(--ds-space-2); padding-left: var(--ds-space-2);"><span style="color: var(--ds-color-accent); margin-top: 6px; flex-shrink: 0;">•</span><span style="color: var(--ds-color-text-secondary);">${line.trim().substring(2)}</span></div>`;
-            }
-            if (line.trim() === "") return "";
-            return `<p style="margin-bottom: var(--ds-space-3); color: var(--ds-color-text-secondary); line-height: var(--ds-leading-relaxed);">${line.trim()}</p>`;
-          })
-          .join(""),
-      }}
-    />
+    <div dangerouslySetInnerHTML={{ __html: renderMarkdown(seo.content) }} />
   );
 
   return (
@@ -150,7 +209,7 @@ export default function SiteSEOPages() {
       title={seo.h1}
       subtitle={seo.subtitle}
       content={content}
-      cta={{ label: "Planejar meu roteiro no App", href: "/app" }}
+      cta={{ label: seo.cta, href: "/app" }}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: seo.h1, href: location.pathname },

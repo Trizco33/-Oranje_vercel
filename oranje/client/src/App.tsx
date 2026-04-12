@@ -161,6 +161,7 @@ function Router() {
         <Route path="/onde-tirar-fotos-em-holambra" element={<Suspense fallback={<LoadingFallback />}><CMSCategoryPage /></Suspense>} />
         <Route path="/eventos-em-holambra" element={<Suspense fallback={<LoadingFallback />}><CMSCategoryPage /></Suspense>} />
         <Route path="/roteiro-1-dia-em-holambra" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
+        <Route path="/holambra-bate-e-volta" element={<Suspense fallback={<LoadingFallback />}><SiteSEOPages /></Suspense>} />
         <Route path="/roteiros" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/mapa" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/parceiros" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />

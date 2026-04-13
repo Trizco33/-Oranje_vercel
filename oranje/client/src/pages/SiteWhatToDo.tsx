@@ -24,6 +24,25 @@ function setNameMeta(name: string, content: string) {
   tag.setAttribute("content", content);
 }
 
+function EditImg({ src, alt }: { src: string; alt: string }) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+      style={{
+        width: "100%",
+        borderRadius: "12px",
+        objectFit: "cover",
+        display: "block",
+        margin: "4px 0 24px",
+        maxHeight: 360,
+      }}
+    />
+  );
+}
+
 export default function SiteWhatToDo() {
   useEffect(() => {
     const SITE = "ORANJE — Holambra em um só lugar";
@@ -55,8 +74,8 @@ export default function SiteWhatToDo() {
   }, []);
 
   const s = {
-    p: { color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)", marginBottom: "var(--ds-space-2)" } as React.CSSProperties,
-    h2: { fontSize: "var(--ds-text-2xl)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginTop: "var(--ds-space-3)", marginBottom: "var(--ds-space-3)", fontFamily: "var(--ds-font-display)" } as React.CSSProperties,
+    p: { color: "var(--ds-color-text-secondary)", lineHeight: "var(--ds-leading-relaxed)", marginBottom: "var(--ds-space-4)" } as React.CSSProperties,
+    h2: { fontSize: "var(--ds-text-2xl)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginTop: "var(--ds-space-2)", marginBottom: "var(--ds-space-3)", fontFamily: "var(--ds-font-display)" } as React.CSSProperties,
     h3: { fontSize: "var(--ds-text-lg)", fontWeight: "var(--ds-font-bold)", color: "var(--ds-color-text-primary)", marginBottom: "var(--ds-space-2)" } as React.CSSProperties,
     placeLink: { color: "var(--ds-color-accent)", fontWeight: "var(--ds-font-medium)", textDecoration: "none" } as React.CSSProperties,
     card: { background: "var(--ds-color-bg-secondary)", borderRadius: "var(--ds-radius-lg)", padding: "var(--ds-space-4)", display: "flex", flexDirection: "column" as const, gap: "var(--ds-space-2)" },
@@ -64,11 +83,20 @@ export default function SiteWhatToDo() {
   };
 
   const content = (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-8)" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-6)" }}>
 
       <p style={s.p}>
-        Holambra surpreende quem não a conhece e encanta quem já voltou. A menor cidade do estado de São Paulo é também uma das mais completas para quem quer gastar um dia bem — ou um fim de semana inteiro — sem abrir mão de conforto, beleza e boa gastronomia.
+        Tem uma coisa que quem vem a Holambra pela primeira vez não espera: a cidade é muito mais do que flores.
+        Claro que as flores são o cartão-postal — e são espetaculares — mas o que faz a gente que mora aqui se
+        apaixonar é o conjunto. A tranquilidade das ruas, a gastronomia que vai muito além do turístico, os
+        cafés onde você senta e perde a noção do tempo, os parques onde a luz da tarde faz tudo parecer pintado.
+        Este guia foi feito para você aproveitar tudo isso, não só a foto do girassol.
       </p>
+
+      <EditImg
+        src="https://images.unsplash.com/photo-1455582916367-25f75bfc6710?w=900&h=420&fit=crop&q=80"
+        alt="Flores coloridas de Holambra"
+      />
 
       {/* PARQUES E NATUREZA */}
       <div>
@@ -77,29 +105,37 @@ export default function SiteWhatToDo() {
         </DSBadge>
         <h2 style={s.h2}>Parques e Atrações ao Ar Livre</h2>
         <p style={s.p}>
-          As flores são a alma de Holambra. Há parques e espaços ao ar livre que valem a viagem por si só — do famoso campo de girassóis ao moinho que virou símbolo da cidade.
+          Em Holambra, até os caminhos entre um lugar e outro são bonitos. Mas há parques que merecem parada
+          obrigatória — seja pelo campo de girassóis que para o coração, pelo moinho que virou símbolo da cidade,
+          ou pelo mirante à beira do lago onde o pôr do sol é sempre uma surpresa nova.
         </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)", marginTop: "var(--ds-space-4)" }}>
+
+        <EditImg
+          src="https://images.unsplash.com/photo-1490750967868-88df5691cc5b?w=900&h=400&fit=crop&q=80"
+          alt="Campo de girassóis em Holambra"
+        />
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)" }}>
           {[
             {
               name: "Bloemen Park",
               id: 32,
-              desc: "O parque mais fotogênico de Holambra. As fileiras de girassóis voltadas para o pôr do sol criam uma das cenas mais bonitas do interior paulista. Há também um moinho para fotos e um café no local.",
+              desc: "O parque mais fotogênico de Holambra — ponto final. As fileiras de girassóis voltadas para o poente criam uma das cenas mais bonitas de todo o interior paulista. Quem chega cedo da manhã pega a luz perfeita e as fotos sem fila. Tem também um moinho para fotos e um café no local.",
             },
             {
               name: "Parque Van Gogh",
               id: 19,
-              desc: "Área verde com jardins floridos, exposições ao ar livre e espaço para crianças. Perfeito para passar a tarde com calma, especialmente durante a Expoflora.",
+              desc: "Jardins floridos com referências ao pintor holandês — um cenário que parece de quadro mesmo. Ótimo para passar a tarde com calma, levar crianças ou simplesmente sentar num banco e respirar. Durante a Expoflora, fica ainda mais bonito.",
             },
             {
               name: "Deck do Amor",
               id: 12,
-              desc: "Um mirante encantador à beira do lago, com vista aberta e uma trilha singela que termina no melhor pôr do sol da cidade. Ida obrigatória para casais.",
+              desc: "Um mirante à beira do lago com trilha singela e a melhor vista para o pôr do sol da cidade. A gente que mora aqui sabe: se você só tiver tempo para um lugar, que seja o Deck no fim da tarde. Leve alguém especial.",
             },
             {
               name: "Praça Vitória Régia",
               id: 4215,
-              desc: "O coração de Holambra. A praça central reúne comércio, arquitetura holandesa e o cotidiano da cidade — ótima para começar ou encerrar o passeio.",
+              desc: "O coração vivo de Holambra. É aqui que a cidade respira — comércio, arquitetura holandesa, o cotidiano dos moradores e a energia de quem chegou para descobrir tudo isso. Ótimo começo ou fim de passeio.",
             },
           ].map((place) => (
             <div key={place.id} style={s.card}>
@@ -120,24 +156,33 @@ export default function SiteWhatToDo() {
         </DSBadge>
         <h2 style={s.h2}>Restaurantes que Valem a Viagem</h2>
         <p style={s.p}>
-          A cena gastronômica de Holambra é surpreendentemente boa para uma cidade do seu tamanho. Há desde restaurantes com culinária holandesa autêntica até opções italianas, brasileiras e de boteco — tudo concentrado num raio de poucos quilômetros.
+          Holambra tem uma cena gastronômica que surpreende — para uma cidade do seu tamanho, a qualidade e a
+          variedade são impressionantes. Você vai encontrar culinária holandesa de verdade, cozinha italiana com
+          ingredientes frescos, hambúrguer artesanal bem feito e o bom e velho prato do dia com alma de cidade
+          pequena. Tudo num raio que você resolve a pé.
         </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)", marginTop: "var(--ds-space-4)" }}>
+
+        <EditImg
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=400&fit=crop&q=80"
+          alt="Mesa de restaurante com boa gastronomia"
+        />
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)" }}>
           {[
             {
               name: "De Immigrant Restaurante Garden",
-              id: 7,
-              desc: "O clássico da gastronomia holandesa em Holambra. Ambiente aberto, cardápio refinado e a experiência completa de comer bem na cidade das flores.",
+              id: 3824,
+              desc: "O clássico irretocável da gastronomia de Holambra. Ambiente garden aberto, cardápio autoral que conta a história dos imigrantes holandeses e uma execução que justifica a reputação. Se for só a um restaurante, que seja esse.",
             },
             {
               name: "Villa Girassol",
               id: 6,
-              desc: "Restaurante com vista para o campo de girassóis. Uma das melhores localizações da cidade aliada a uma cozinha consistente e bem executada.",
+              desc: "A combinação perfeita entre boa cozinha e localização invejável. Fica de frente para os girassóis e o almoço aqui vira uma experiência completa — não só refeição.",
             },
             {
               name: "Quintal dos Avós Gastrobar",
               id: 43,
-              desc: "Ambiente descontraído com boa comida e drinks — a pedida certa para quem quer uma refeição sem formalidade, mas com personalidade.",
+              desc: "Ambiente que parece quintal de casa — rústico, caloroso, sem frescura. A comida é generosa e os drinks são criativos. Um dos lugares mais queridos de Holambra para quem quer algo diferente.",
             },
           ].map((place) => (
             <div key={place.id} style={s.card}>
@@ -150,7 +195,9 @@ export default function SiteWhatToDo() {
           ))}
         </div>
         <p style={{ ...s.p, marginTop: "var(--ds-space-3)" }}>
-          Quer a lista completa? Veja os <Link to="/melhores-restaurantes-de-holambra" style={s.placeLink}>melhores restaurantes de Holambra</Link> com avaliações reais.
+          Quer a lista completa com todos os detalhes? Veja os{" "}
+          <Link to="/melhores-restaurantes-de-holambra" style={s.placeLink}>melhores restaurantes de Holambra</Link>{" "}
+          com avaliações reais.
         </p>
       </div>
 
@@ -161,24 +208,34 @@ export default function SiteWhatToDo() {
         </DSBadge>
         <h2 style={s.h2}>Cafés Artesanais e Docerias</h2>
         <p style={s.p}>
-          Holambra tem uma cultura de café e confeitaria que faz sentido com sua herança holandesa. Estes são os favoritos do Oranje para uma pausa bem aproveitada.
+          Tem algo de muito certo na relação de Holambra com o café. Talvez seja a herança holandesa — que sempre
+          levou a sério a arte de fazer uma boa pausa. Os cafés aqui não são genéricos: cada um tem personalidade
+          própria, vitrine cuidada e algo que você não encontra em nenhuma rede. O stroopwafel quentinho da Oma
+          Beppie, o café coado do Zoet en Zout, o croissant da Kéndi que as pessoas mencionam com nostalgia
+          depois que saem da cidade.
         </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)", marginTop: "var(--ds-space-4)" }}>
+
+        <EditImg
+          src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=900&h=400&fit=crop&q=80"
+          alt="Café artesanal e confeitaria"
+        />
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-4)" }}>
           {[
             {
               name: "Zoet en Zout",
               id: 5,
-              desc: "Café artesanal com vitrine holandesa e produtos que misturam o doce e o salgado da confeitaria europeia. Um dos espaços mais característicos da cidade.",
+              desc: "\"Doce e salgado\" em holandês — e esse equilíbrio define o lugar. Café artesanal de qualidade, vitrine com produtos que você vai querer levar pra casa e um ambiente que captura o charme da herança cultural da cidade. É o tipo de café onde você entra para um expresso e sai quarenta minutos depois.",
             },
             {
               name: "Oma Beppie",
               id: 3,
-              desc: "Confeitaria tradicional onde você encontra as famosas stroopwafels e outros clássicos holandeses. Imperdível para quem quer levar algo de volta para casa.",
+              desc: "Confeitaria tradicional holandesa onde moram as melhores stroopwafels da cidade — aquele biscoito de caramelo que quem prova uma vez nunca mais esquece. Perfeito para comprar de presente ou comer ali mesmo, quentinho.",
             },
             {
-              name: "Lotus Café",
-              id: 2,
-              desc: "Café com ambiente aconchegante e uma seleção cuidadosa de bebidas e doces. Um refúgio tranquilo no meio do passeio.",
+              name: "Kéndi Cafeteria",
+              id: 29,
+              desc: "Confeitaria fina com brigadeiros gourmet, croissant elogiado por todo mundo que passa e método japonês Hario V60 para o café. Ambiente climatizado e charmoso — uma das mais completas da cidade.",
             },
           ].map((place) => (
             <div key={place.id} style={s.card}>
@@ -191,7 +248,8 @@ export default function SiteWhatToDo() {
           ))}
         </div>
         <p style={{ ...s.p, marginTop: "var(--ds-space-3)" }}>
-          Veja todos os <Link to="/melhores-cafes-de-holambra" style={s.placeLink}>melhores cafés de Holambra</Link> no guia completo.
+          Guia completo:{" "}
+          <Link to="/melhores-cafes-de-holambra" style={s.placeLink}>melhores cafés de Holambra</Link>.
         </p>
       </div>
 
@@ -202,24 +260,42 @@ export default function SiteWhatToDo() {
         </DSBadge>
         <h2 style={s.h2}>Os Melhores Pontos para Fotos</h2>
         <p style={s.p}>
-          Holambra foi feita para ser fotografada. A arquitetura holandesa, as flores em todo canto e as paisagens naturais criam cenários únicos em cada esquina. Veja os lugares favoritos do Oranje para quem quer boas fotos.
+          Holambra foi generosa com quem gosta de fotografia. A cada esquina tem um enquadramento novo — os
+          guarda-chuvas coloridos suspensos sobre a rua, o moinho ao fundo de um campo de flores, a luz dourada
+          da tarde sobre o lago. Não precisa ser fotógrafo profissional: a cidade faz o trabalho por você.
         </p>
-        <p style={{ ...s.p, marginTop: "var(--ds-space-2)" }}>
-          → Guia completo: <Link to="/onde-tirar-fotos-em-holambra" style={s.placeLink}>Onde tirar fotos em Holambra</Link>
+
+        <EditImg
+          src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?w=900&h=400&fit=crop&q=80"
+          alt="Guarda-chuvas coloridos — ponto fotogênico de Holambra"
+        />
+
+        <p style={{ ...s.p }}>
+          A{" "}
+          <Link to="/onde-tirar-fotos-em-holambra" style={s.placeLink}>Rua dos Guarda-Chuvas</Link>{" "}
+          é o ponto mais instagramável — simples, colorido, completamente único. O{" "}
+          <Link to="/app/lugar/2616" style={s.placeLink}>Moinho Povos Unidos</Link>{" "}
+          é a foto clássica que representa Holambra no mundo. O{" "}
+          <Link to="/app/lugar/32" style={s.placeLink}>Bloemen Park</Link>{" "}
+          entrega aquelas fotos de campo de flores que parecem filtradas mas são o puro real.
+        </p>
+        <p style={{ ...s.p }}>
+          → Guia completo:{" "}
+          <Link to="/onde-tirar-fotos-em-holambra" style={s.placeLink}>onde tirar fotos em Holambra</Link>
         </p>
       </div>
 
       {/* DICAS */}
       <div>
-        <DSBadge variant="default" size="md">Dicas Práticas</DSBadge>
+        <DSBadge variant="default" size="md">Dicas de Morador</DSBadge>
         <h2 style={s.h2}>Antes de Ir</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-3)" }}>
           {[
-            { tip: "Chegue cedo nos fins de semana — cafés e restaurantes populares lotam rápido, especialmente na Expoflora (setembro)." },
-            { tip: "Vista sapatos confortáveis. Bloemen Park e a área central pedem bastante caminhada." },
-            { tip: "A maioria dos lugares fecha às 18h. Planeje o jantar com antecedência se quiser ficar até mais tarde." },
-            { tip: "Baixe o app Oranje antes de sair — mapa offline, horários atualizados e avaliações reais de cada lugar." },
-            { tip: "Viajando de carro? Holambra fica a 170 km de São Paulo e 50 km de Campinas — ideal para um bate e volta ou fim de semana." },
+            { tip: "Chegue cedo nos fins de semana — o Zoet en Zout e a Oma Beppie lotam antes das 10h. Quem chega às 8h30 pega a cidade ainda acordando, com a luz mais bonita e fila nenhuma." },
+            { tip: "Vista sapatos que aguentem chão de terra. O Bloemen Park e a área rural ao redor pedem conforto — é difícil parar de caminhar." },
+            { tip: "A maioria dos lugares fecha entre 17h e 18h. Se quiser jantar, planeje com antecedência — durante a Expoflora (setembro), a cidade enche muito e os restaurantes lotam cedo." },
+            { tip: "Leve dinheiro. Não todos os lugares têm maquininha estável, e não raro você vai querer comprar flores na beira da estrada onde só aceitam espécie." },
+            { tip: "Holambra fica a 170 km de São Paulo pela Anhanguera e a 50 km de Campinas. Perfeito para bate e volta — ou para ficar um fim de semana inteiro, que é o que a gente recomenda." },
           ].map((item, i) => (
             <div key={i} style={s.iconRow}>
               <CheckCircle size={18} style={{ color: "var(--ds-color-accent)", flexShrink: 0, marginTop: 2 }} />
@@ -231,13 +307,14 @@ export default function SiteWhatToDo() {
 
       {/* LINKS RELACIONADOS */}
       <div style={{ borderTop: "1px solid var(--ds-color-border)", paddingTop: "var(--ds-space-6)" }}>
-        <h3 style={s.h3}>Leia também</h3>
+        <h3 style={s.h3}>Continue explorando</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-2)" }}>
           {[
-            { label: "Roteiro de 1 dia em Holambra", href: "/roteiro-1-dia-em-holambra" },
-            { label: "Holambra bate e volta — dicas para vir de SP", href: "/holambra-bate-e-volta" },
+            { label: "Roteiro de 1 dia em Holambra — hora a hora", href: "/roteiro-1-dia-em-holambra" },
+            { label: "Holambra bate e volta — guia completo saindo de SP", href: "/holambra-bate-e-volta" },
             { label: "Melhores restaurantes de Holambra", href: "/melhores-restaurantes-de-holambra" },
-            { label: "Eventos em Holambra", href: "/eventos-em-holambra" },
+            { label: "Melhores cafés de Holambra", href: "/melhores-cafes-de-holambra" },
+            { label: "Onde tirar fotos em Holambra", href: "/onde-tirar-fotos-em-holambra" },
           ].map((link) => (
             <Link key={link.href} to={link.href} style={{ ...s.placeLink, display: "flex", alignItems: "center", gap: "var(--ds-space-1)" }}>
               → {link.label}
@@ -252,17 +329,17 @@ export default function SiteWhatToDo() {
   return (
     <SiteContentPage
       title="O que Fazer em Holambra"
-      subtitle="Parques de flores, gastronomia holandesa, cafés artesanais e muito mais"
+      subtitle="O guia de quem mora aqui — parques, gastronomia, cafés e os segredos da cidade das flores"
       content={content}
       cta={{
         label: "Abrir no App Oranje",
         href: "/app/explorar",
         description: (
           <span>
-            O app Oranje tem todos os lugares de Holambra com fotos, horários e avaliações reais.
-            Use o filtro <strong style={{ color: "var(--ds-color-text-primary)" }}>Perto de Mim</strong> para
-            descobrir o que está aberto agora, perto de onde você está — ou explore por categoria:
-            restaurantes, cafés, parques, bares e muito mais.
+            O app Oranje tem todos os lugares de Holambra com fotos, horários e avaliações reais de moradores e
+            visitantes. Use o filtro{" "}
+            <strong style={{ color: "var(--ds-color-text-primary)" }}>Perto de Mim</strong> para descobrir o que
+            está aberto agora — ou explore por categoria: restaurantes, cafés, parques, bares e muito mais.
           </span>
         ),
         secondary: { label: "Ver Passeios com Motorista", href: "/app/receptivo" },

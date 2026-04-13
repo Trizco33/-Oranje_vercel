@@ -79,6 +79,25 @@ function Para({ children }: { children: React.ReactNode }) {
   );
 }
 
+function EditImg({ src, alt }: { src: string; alt: string }) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+      style={{
+        width: "100%",
+        borderRadius: "12px",
+        objectFit: "cover",
+        display: "block",
+        margin: "4px 0 28px",
+        maxHeight: 360,
+      }}
+    />
+  );
+}
+
 function PlaceCard({ name, desc, href }: { name: string; desc: string; href: string }) {
   return (
     <Link
@@ -126,14 +145,20 @@ function PlaceCard({ name, desc, href }: { name: string; desc: string; href: str
 function RestaurantesContent() {
   return (
     <div>
+      <EditImg
+        src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=400&fit=crop&q=80"
+        alt="Gastronomia de Holambra — restaurantes da cidade das flores"
+      />
       <Para>
         Holambra surpreende quem chega esperando apenas flores. A cena gastronômica da cidade cresceu junto com o
-        turismo e hoje oferece experiências de verdade — desde almoços à beira do lago até cardápios que cruzam
-        culturas brasileiras, holandesas e italianas sem perder a identidade local.
+        turismo — mas cresceu com personalidade. Hoje você encontra almoços à beira do lago, cardápios que cruzam
+        a culinária holandesa com ingredientes frescos da região e lugares onde o garçom já conhece você pelo nome
+        na segunda visita.
       </Para>
       <Para>
-        Aqui você não vai encontrar genéricas "opções para todos os gostos". O que existe em Holambra são lugares com
-        história, ingredientes frescos e cozinheiros que conhecem seus clientes pelo nome.
+        Aqui você não vai encontrar as genéricas "opções para todos os gostos" dos guias de turismo. O que existe
+        em Holambra são lugares com história, cozinheiros que se importam e refeições que você vai recomendar para
+        os outros.
       </Para>
       <SectionTitle>Onde comer bem em Holambra</SectionTitle>
       <Para>
@@ -196,12 +221,18 @@ function RestaurantesContent() {
 function CafesContent() {
   return (
     <div>
+      <EditImg
+        src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=900&h=400&fit=crop&q=80"
+        alt="Café artesanal em Holambra — a pausa perfeita"
+      />
       <Para>
-        Holambra é uma cidade que sabe desacelerar — e o café é parte essencial dessa experiência. A cena de cafés
-        na cidade é enxuta mas com identidade própria: são lugares onde a pausa é intencional e o detalhe conta.
+        Holambra é uma cidade que sabe desacelerar — e o café é parte essencial dessa experiência. Não é coincidência:
+        a herança holandesa tem o hábito da pausa no DNA. A cena de cafés aqui é enxuta mas com identidade própria —
+        são lugares onde o detalhe conta, onde a vitrine foi pensada, onde você fica mais tempo do que planejou.
       </Para>
       <Para>
-        Não espere volume. Espere qualidade e autenticidade — que é o que Holambra entrega quando está no seu melhor.
+        Não espere volume. Espere qualidade e aquela autenticidade que só se encontra em lugares que não precisam
+        competir com ninguém — porque já têm o próprio público fiel.
       </Para>
       <SectionTitle>Os cafés que valem a visita</SectionTitle>
       <Para>
@@ -249,14 +280,19 @@ function CafesContent() {
 function BaresContent() {
   return (
     <div>
+      <EditImg
+        src="https://images.unsplash.com/photo-1470337458703-4ad1d7ebb03e?w=900&h=400&fit=crop&q=80"
+        alt="Cerveja artesanal e bares de Holambra"
+      />
       <Para>
-        Holambra não é conhecida pela vida noturna agitada — e isso é exatamente o que torna seus bares interessantes.
-        Sem a pressão de grandes cidades, os bares aqui têm personalidade própria: são lugares onde as pessoas se
-        conhecem, a conversa flui e o tempo passa sem que ninguém perceba.
+        Holambra não é conhecida pela vida noturna agitada — e isso é exatamente o que torna seus bares
+        interessantes. Sem a pressão das grandes cidades, os bares aqui têm personalidade própria: são lugares
+        onde as pessoas se conhecem pelo nome, a conversa flui sem que ninguém fique olhando para o relógio,
+        e uma cerveja artesanal no jardim vira programa de domingo à tarde que ninguém quer encerrar.
       </Para>
       <Para>
-        A oferta de bares em Holambra é enxuta mas bem escolhida — cada um com proposta diferente, todos com
-        identidade local.
+        A oferta é enxuta — mas cada bar tem proposta clara, identidade local e algo que você não encontra em
+        nenhuma cadeia. É a noite que combina com a cidade.
       </Para>
       <SectionTitle>Cerveja artesanal em Holambra</SectionTitle>
       <Para>
@@ -309,14 +345,19 @@ function BaresContent() {
 function PontosTuristicosContent() {
   return (
     <div>
+      <EditImg
+        src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?w=900&h=400&fit=crop&q=80"
+        alt="Holambra — pontos fotogênicos e turísticos da cidade das flores"
+      />
       <Para>
-        Holambra não é grande — e isso é uma vantagem. Em poucos quilômetros, você encontra parques floridos, lagos,
-        espaços culturais e pontos que concentram tudo o que torna essa cidade única no Brasil. É o tipo de lugar que
-        funciona tanto para uma tarde quanto para um fim de semana inteiro.
+        Holambra não é grande — e isso é uma das suas maiores virtudes. Em poucos quilômetros você encontra parques
+        floridos, lagos, um moinho holandês de verdade, uma rua coberta de guarda-chuvas coloridos e pontos que
+        só existem aqui. É o tipo de cidade que funciona tanto para uma tarde de fotos quanto para um fim de semana
+        inteiro de exploração.
       </Para>
       <Para>
-        O segredo para aproveitar bem Holambra é não tentar ver tudo de uma vez. Escolha bem, caminhe sem pressa e
-        deixe a cidade te surpreender.
+        O segredo que a gente que mora aqui sabe: não tente ver tudo de uma vez. Escolha bem, caminhe sem pressa e
+        deixe a cidade te surpreender. Ela sempre tem algo guardado para quem vai devagar.
       </Para>
       <SectionTitle>O grande evento que define setembro</SectionTitle>
       <Para>

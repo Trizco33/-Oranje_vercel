@@ -1,7 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
-  BarChart3, Bell, Building2, CalendarDays, ChevronRight, Edit, FileText, ImagePlus,
+  BarChart3, Bell, Building2, CalendarDays, ChevronRight, Edit, ImagePlus,
   LayoutGrid, Loader2, LogOut, Map, Menu, Package, Plus, Settings, Sparkles, Tag, Ticket, Trash2, Users, X, Car, Award, Star
 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -22,9 +22,7 @@ import { AdminSiteRoutes } from "@/components/AdminSiteRoutes";
 import { AdminClaims } from "@/components/AdminClaims";
 import { AdminPremiumTours } from "@/components/AdminPremiumTours";
 import { AdminOperationsCenter } from "@/components/AdminOperationsCenter";
-import { AdminEditorialPages } from "@/components/AdminEditorialPages";
-
-type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes" | "claims" | "premium-tours" | "operations-center" | "editorial-pages";
+type AdminTab = "dashboard" | "places" | "events" | "vouchers" | "ads" | "partners" | "routes" | "logs" | "drivers" | "categories" | "articles" | "site-routes" | "claims" | "premium-tours" | "operations-center";
 
 const NAV_GROUPS = [
   {
@@ -53,7 +51,6 @@ const NAV_GROUPS = [
     label: "Site",
     items: [
       { id: "site-routes" as AdminTab, icon: Sparkles, label: "Passeios no Site" },
-      { id: "editorial-pages" as AdminTab, icon: FileText, label: "Páginas" },
     ],
   },
   {
@@ -329,7 +326,6 @@ export default function Admin() {
           {activeTab === "drivers" && <AdminDriversMarketplace />}
           {activeTab === "routes" && <AdminRoutes />}
           {activeTab === "site-routes" && <AdminSiteRoutes />}
-          {activeTab === "editorial-pages" && <AdminEditorialPages />}
           {activeTab === "categories" && <AdminCategories />}
           {activeTab === "articles" && <AdminArticles />}
           {activeTab === "claims" && <AdminClaims />}

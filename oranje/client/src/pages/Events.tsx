@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { TabBar } from "@/components/TabBar";
 import { CalendarDays, Clock, MapPin, Tag } from "lucide-react";
@@ -109,6 +110,34 @@ export function EventDetail() {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: event, isLoading } = useEventById(Number(params.id));
+
+  useEffect(() => {
+    if (!event) return;
+    const SITE = "ORANJE — Holambra em um só lugar";
+    const title = `${event.title} — ${SITE}`;
+    const description = (event.description ?? "").slice(0, 160) || `Evento em Holambra: ${event.title}`;
+    const pageUrl = `https://oranjeapp.com.br/app/evento/${params.id}`;
+    document.title = title;
+    const setMeta = (prop: string, val: string, attr = "property") => {
+      let el = document.querySelector(`meta[${attr}="${prop}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, prop); document.head.appendChild(el); }
+      el.setAttribute("content", val);
+    };
+    setMeta("og:title", event.title);
+    setMeta("og:description", description);
+    setMeta("og:type", "website");
+    setMeta("og:url", pageUrl);
+    setMeta("og:site_name", SITE);
+    if (event.coverImage) setMeta("og:image", event.coverImage);
+    setMeta("description", description, "name");
+    setMeta("twitter:card", "summary_large_image", "name");
+    setMeta("twitter:title", event.title, "name");
+    setMeta("twitter:description", description, "name");
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonical) { canonical = document.createElement("link"); canonical.setAttribute("rel", "canonical"); document.head.appendChild(canonical); }
+    canonical.setAttribute("href", pageUrl);
+    return () => { document.title = SITE; };
+  }, [event, params.id]);
 
   if (isLoading) {
     return (

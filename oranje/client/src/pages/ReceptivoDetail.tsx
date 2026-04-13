@@ -1435,6 +1435,37 @@ export default function ReceptivoDetail() {
   const stops: TourStop[] = (tour as any)?.stops ?? [];
   const tourName: string = (tour as any)?.name ?? "";
 
+  // ── SEO ───────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!tour || !slug) return;
+    const SITE = "ORANJE — Holambra em um só lugar";
+    const t = tour as any;
+    const name: string = t.name ?? tourName;
+    const title = `${name} — Passeio com Motorista em Holambra — ${SITE}`;
+    const description: string = t.tagline ?? ((t.description ?? "").slice(0, 160) || `Passeio guiado em Holambra: ${name}`);
+    const pageUrl = `https://oranjeapp.com.br/app/receptivo/${slug}`;
+    document.title = title;
+    const setMeta = (prop: string, val: string, attr = "property") => {
+      let el = document.querySelector(`meta[${attr}="${prop}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, prop); document.head.appendChild(el); }
+      el.setAttribute("content", val);
+    };
+    setMeta("og:title", name);
+    setMeta("og:description", description);
+    setMeta("og:type", "website");
+    setMeta("og:url", pageUrl);
+    setMeta("og:site_name", SITE);
+    if (t.coverImage) setMeta("og:image", t.coverImage);
+    setMeta("description", description, "name");
+    setMeta("twitter:card", "summary_large_image", "name");
+    setMeta("twitter:title", name, "name");
+    setMeta("twitter:description", description, "name");
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonical) { canonical = document.createElement("link"); canonical.setAttribute("rel", "canonical"); document.head.appendChild(canonical); }
+    canonical.setAttribute("href", pageUrl);
+    return () => { document.title = SITE; };
+  }, [tour, slug]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Restore persisted progress ─────────────────────────────────────────────
   useEffect(() => {
     if (!slug || stops.length === 0 || hasTrackedStart.current) return;

@@ -6,7 +6,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { DSBadge } from "@/components/ds";
 import { getPlaceImage } from "@/components/PlaceCard";
 import { getCategoryFallbackImage } from "@/constants/placeImages";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 /* ─────────────────────────────────────────────
    Componente de Momento (highlight editorial)
@@ -234,6 +234,34 @@ export default function RouteDetail() {
   const navigate = useNavigate();
   const { data: route, isLoading } = useRouteById(Number(params.id));
   const { data: publicRoutes } = usePublicRoutes();
+
+  useEffect(() => {
+    if (!route) return;
+    const SITE = "ORANJE — Holambra em um só lugar";
+    const title = `${route.title} — ${SITE}`;
+    const description = ((route as any).description ?? "").slice(0, 160) || `Roteiro em Holambra: ${route.title}`;
+    const pageUrl = `https://oranjeapp.com.br/app/roteiro/${params.id}`;
+    document.title = title;
+    const setMeta = (prop: string, val: string, attr = "property") => {
+      let el = document.querySelector(`meta[${attr}="${prop}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, prop); document.head.appendChild(el); }
+      el.setAttribute("content", val);
+    };
+    setMeta("og:title", route.title);
+    setMeta("og:description", description);
+    setMeta("og:type", "website");
+    setMeta("og:url", pageUrl);
+    setMeta("og:site_name", SITE);
+    if ((route as any).coverImage) setMeta("og:image", (route as any).coverImage);
+    setMeta("description", description, "name");
+    setMeta("twitter:card", "summary_large_image", "name");
+    setMeta("twitter:title", route.title, "name");
+    setMeta("twitter:description", description, "name");
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonical) { canonical = document.createElement("link"); canonical.setAttribute("rel", "canonical"); document.head.appendChild(canonical); }
+    canonical.setAttribute("href", pageUrl);
+    return () => { document.title = SITE; };
+  }, [route, params.id]);
 
   const currentId = Number(params.id);
   const otherRoutes = useMemo(() => {

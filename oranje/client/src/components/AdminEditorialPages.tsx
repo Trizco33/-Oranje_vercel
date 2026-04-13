@@ -79,7 +79,7 @@ export function AdminEditorialPages() {
     try {
       const base64 = await compressImageToBase64(file);
       const result = await uploadMutation.mutateAsync({ file: base64.split(",")[1], fileName: file.name, mimeType: "image/jpeg" });
-      setEditing(p => p ? { ...p, coverImageUrl: result.url } : p);
+      setEditing(p => p ? { ...p, coverImageUrl: result.url ?? "" } : p);
       toast.success("Capa enviada!");
     } catch { /* handled */ } finally { setUploading(false); }
   }

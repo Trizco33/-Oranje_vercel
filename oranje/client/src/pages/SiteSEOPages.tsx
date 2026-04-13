@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import SiteContentPage from "./SiteContentPage";
+import { trpc } from "@/lib/trpc";
 
 function setMeta(property: string, content: string) {
   let tag = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null;
@@ -373,10 +374,27 @@ const seoConfig: Record<string, PageConfig> = {
 
 /* ── Componente principal ────────────────────────────────────────────────── */
 
+const CMS_STYLES_SEO = `
+  .cms-seo-content p { margin-bottom: 16px; color: var(--ds-color-text-secondary); line-height: 1.75; }
+  .cms-seo-content h2 { font-size: var(--ds-text-2xl); font-weight: 700; color: var(--ds-color-text-primary); margin-top: 36px; margin-bottom: 12px; font-family: var(--ds-font-display); }
+  .cms-seo-content h3 { font-size: var(--ds-text-lg); font-weight: 700; color: var(--ds-color-text-primary); margin-bottom: 8px; }
+  .cms-seo-content a { color: var(--ds-color-accent); text-decoration: none; font-weight: 600; border-bottom: 1px solid rgba(230,81,0,0.3); }
+  .cms-seo-content strong { font-weight: 700; color: var(--ds-color-text-primary); }
+  .cms-seo-content ul, .cms-seo-content ol { padding-left: 20px; margin-bottom: 16px; }
+  .cms-seo-content li { margin-bottom: 8px; line-height: 1.7; color: var(--ds-color-text-secondary); }
+  .cms-seo-content img { width: 100%; border-radius: 12px; margin: 8px 0 24px; max-height: 400px; object-fit: cover; display: block; }
+`;
+
 export default function SiteSEOPages() {
   const location = useLocation();
   const page = location.pathname.replace(/^\//, "");
   const seo = seoConfig[page];
+
+  const { data: cmsPage } = trpc.cms.getPageBySlug.useQuery(
+    { slug: page },
+    { staleTime: 5 * 60 * 1000, retry: false, enabled: !!seoConfig[page] }
+  );
+  const useCMS = !!(cmsPage?.published && cmsPage?.content);
 
   useEffect(() => {
     if (!seo) return;
@@ -418,11 +436,29 @@ export default function SiteSEOPages() {
     );
   }
 
+  const cmsContent = useCMS ? (
+    <>
+      <style>{CMS_STYLES_SEO}</style>
+      {cmsPage!.coverImageUrl && (
+        <img
+          src={cmsPage!.coverImageUrl}
+          alt={cmsPage!.title}
+          onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+          style={{ width: "100%", maxHeight: 380, objectFit: "cover", borderRadius: 16, marginBottom: 32, display: "block" }}
+        />
+      )}
+      <div
+        className="cms-seo-content"
+        dangerouslySetInnerHTML={{ __html: cmsPage!.content }}
+      />
+    </>
+  ) : null;
+
   return (
     <SiteContentPage
-      title={seo.h1}
-      subtitle={seo.subtitle}
-      content={seo.content}
+      title={useCMS ? (cmsPage!.title ?? seo.h1) : seo.h1}
+      subtitle={useCMS ? (cmsPage!.subtitle ?? seo.subtitle) : seo.subtitle}
+      content={useCMS ? cmsContent! : seo.content}
       cta={{
         label: seo.cta.label,
         href: seo.cta.href,
@@ -431,7 +467,7 @@ export default function SiteSEOPages() {
       }}
       breadcrumbs={[
         { label: "Home", href: "/" },
-        { label: seo.h1, href: location.pathname },
+        { label: useCMS ? (cmsPage!.title ?? seo.h1) : seo.h1, href: location.pathname },
       ]}
     />
   );

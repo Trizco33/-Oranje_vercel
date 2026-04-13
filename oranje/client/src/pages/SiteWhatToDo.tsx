@@ -3,6 +3,7 @@ import SiteContentPage from "./SiteContentPage";
 import { DSBadge } from "@/components/ds/Badge";
 import { CheckCircle, MapPin, Coffee, Utensils, Camera, Trees } from "lucide-react";
 import { Link } from "react-router-dom";
+import { trpc } from "@/lib/trpc";
 
 function setMeta(property: string, content: string) {
   let tag = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null;
@@ -43,12 +44,28 @@ function EditImg({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+const CMS_STYLES = `
+  .cms-editorial-content p { margin-bottom: 16px; color: var(--ds-color-text-secondary); line-height: 1.75; }
+  .cms-editorial-content h2 { font-size: var(--ds-text-2xl); font-weight: 700; color: var(--ds-color-text-primary); margin-top: 36px; margin-bottom: 12px; font-family: var(--ds-font-display); }
+  .cms-editorial-content h3 { font-size: var(--ds-text-lg); font-weight: 700; color: var(--ds-color-text-primary); margin-bottom: 8px; }
+  .cms-editorial-content a { color: var(--ds-color-accent); text-decoration: none; font-weight: 600; border-bottom: 1px solid rgba(230,81,0,0.3); }
+  .cms-editorial-content strong { font-weight: 700; color: var(--ds-color-text-primary); }
+  .cms-editorial-content ul, .cms-editorial-content ol { padding-left: 20px; margin-bottom: 16px; }
+  .cms-editorial-content li { margin-bottom: 8px; line-height: 1.7; color: var(--ds-color-text-secondary); }
+  .cms-editorial-content img { width: 100%; border-radius: 12px; margin: 8px 0 24px; max-height: 400px; object-fit: cover; display: block; }
+`;
+
 export default function SiteWhatToDo() {
+  const { data: cmsPage } = trpc.cms.getPageBySlug.useQuery(
+    { slug: "o-que-fazer-em-holambra" },
+    { staleTime: 5 * 60 * 1000, retry: false }
+  );
+  const useCMS = !!(cmsPage?.published && cmsPage?.content);
+
   useEffect(() => {
     const SITE = "ORANJE — Holambra em um só lugar";
-    const title = "O que Fazer em Holambra — Guia Completo de Atrações";
-    const description =
-      "Descubra o que fazer em Holambra: parques de flores, gastronomia holandesa, cafés artesanais, pontos históricos e muito mais. Guia completo e atualizado.";
+    const title = useCMS ? (cmsPage?.metaTitle ?? cmsPage?.title ?? "O que Fazer em Holambra") : "O que Fazer em Holambra — Guia Completo de Atrações";
+    const description = useCMS ? (cmsPage?.metaDescription ?? "") : "Descubra o que fazer em Holambra: parques de flores, gastronomia holandesa, cafés artesanais, pontos históricos e muito mais. Guia completo e atualizado.";
     const pageUrl = "https://oranjeapp.com.br/o-que-fazer-em-holambra";
 
     document.title = title;
@@ -326,11 +343,29 @@ export default function SiteWhatToDo() {
     </div>
   );
 
+  const cmsContent = useCMS ? (
+    <>
+      <style>{CMS_STYLES}</style>
+      {cmsPage!.coverImageUrl && (
+        <img
+          src={cmsPage!.coverImageUrl}
+          alt={cmsPage!.title}
+          onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+          style={{ width: "100%", maxHeight: 380, objectFit: "cover", borderRadius: 16, marginBottom: 32, display: "block" }}
+        />
+      )}
+      <div
+        className="cms-editorial-content"
+        dangerouslySetInnerHTML={{ __html: cmsPage!.content }}
+      />
+    </>
+  ) : null;
+
   return (
     <SiteContentPage
-      title="O que Fazer em Holambra"
-      subtitle="O guia de quem mora aqui — parques, gastronomia, cafés e os segredos da cidade das flores"
-      content={content}
+      title={useCMS ? (cmsPage!.title ?? "O que Fazer em Holambra") : "O que Fazer em Holambra"}
+      subtitle={useCMS ? (cmsPage!.subtitle ?? "") : "O guia de quem mora aqui — parques, gastronomia, cafés e os segredos da cidade das flores"}
+      content={useCMS ? cmsContent! : content}
       cta={{
         label: "Abrir no App Oranje",
         href: "/app/explorar",

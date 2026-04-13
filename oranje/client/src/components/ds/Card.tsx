@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import { forwardRef, type HTMLAttributes, type ReactNode, useState } from "react";
 
 type ImageAspect = "video" | "square" | "portrait" | "wide" | string;
 
@@ -61,6 +61,7 @@ export const DSCard = forwardRef<HTMLDivElement, DSCardProps>(
   ({ variant = "default", padding = "md", interactive = false, image, imageAlt, imageHeight = 200, imageAspect, overlay = false, overlayContent, children, style, className, ...props }, ref) => {
     const v = variantStyles[variant] ?? variantStyles.default;
     const aspectPadding = imageAspect ? (aspectMap[imageAspect] ?? imageAspect) : undefined;
+    const [imgError, setImgError] = useState(false);
 
     return (
       <div

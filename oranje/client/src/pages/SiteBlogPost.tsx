@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useArticleBySlug } from "@/hooks/useMockData";
 import SiteLayout from "@/components/SiteLayout";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Calendar, Share2 } from "lucide-react";
 import { DSButton } from "@/components/ds/Button";
 import { DSBadge } from "@/components/ds/Badge";
@@ -11,6 +11,7 @@ export default function SiteBlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { data: article, isLoading } = useArticleBySlug(slug || "");
+  const [coverImgError, setCoverImgError] = useState(false);
 
   // If the slug was renamed, silently update the browser URL to the current one
   useEffect(() => {
@@ -194,11 +195,12 @@ export default function SiteBlogPost() {
       </section>
 
       {/* Featured Image */}
-      {article.coverImageUrl && (
+      {article.coverImageUrl && !coverImgError && (
         <div style={{ maxWidth: "48rem", margin: "0 auto", padding: "var(--ds-space-4) var(--ds-space-4) 0" }}>
           <img
             src={article.coverImageUrl}
             alt={article.title}
+            onError={() => setCoverImgError(true)}
             style={{
               width: "100%",
               height: "auto",

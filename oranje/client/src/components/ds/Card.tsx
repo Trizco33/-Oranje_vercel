@@ -93,7 +93,7 @@ export const DSCard = forwardRef<HTMLDivElement, DSCardProps>(
         }}
         {...props}
       >
-        {image && (
+        {image && !imgError && (
           <div style={{
             height: aspectPadding ? 0 : imageHeight,
             paddingBottom: aspectPadding,
@@ -113,6 +113,7 @@ export const DSCard = forwardRef<HTMLDivElement, DSCardProps>(
                 objectFit: "cover",
                 transition: "transform var(--ds-duration-slow) var(--ds-ease-smooth)",
               }}
+              onError={() => setImgError(true)}
               onMouseEnter={(e) => { if (interactive) e.currentTarget.style.transform = "scale(1.05)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
             />

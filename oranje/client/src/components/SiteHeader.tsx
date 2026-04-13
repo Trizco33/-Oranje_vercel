@@ -1,45 +1,40 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass, Phone, Utensils, Coffee, Beer, Camera, PartyPopper } from "lucide-react";
+import { Menu, X, ArrowRight, MapPin, Calendar, BookOpen, Users, MessageCircle, Compass, Utensils, Coffee, Beer, Camera, PartyPopper, Map, Navigation, ChevronDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 
 const DESCUBRA_ITEMS = [
-  { label: "Restaurantes", href: "/melhores-restaurantes-de-holambra", icon: Utensils },
-  { label: "Cafés", href: "/melhores-cafes-de-holambra", icon: Coffee },
-  { label: "Bares & Drinks", href: "/bares-e-drinks-em-holambra", icon: Beer },
-  { label: "Pontos Turísticos", href: "/onde-tirar-fotos-em-holambra", icon: Camera },
-  { label: "Eventos", href: "/eventos-em-holambra", icon: PartyPopper },
+  { label: "O que fazer em Holambra", href: "/o-que-fazer-em-holambra", icon: Compass },
+  { label: "Roteiro de 1 dia",        href: "/roteiro-1-dia-em-holambra", icon: Map },
+  { label: "Holambra bate e volta",   href: "/holambra-bate-e-volta",    icon: Navigation },
+  { label: "Restaurantes",            href: "/melhores-restaurantes-de-holambra", icon: Utensils },
+  { label: "Cafés",                   href: "/melhores-cafes-de-holambra", icon: Coffee },
+  { label: "Bares & Drinks",          href: "/bares-e-drinks-em-holambra", icon: Beer },
+  { label: "Pontos Turísticos",       href: "/onde-tirar-fotos-em-holambra", icon: Camera },
+  { label: "Eventos",                 href: "/eventos-em-holambra",        icon: PartyPopper },
 ];
 
 const ICON_MAP: Record<string, React.ElementType> = {
-  Compass, MapPin, Calendar, BookOpen, Users, MessageCircle, Phone,
+  Compass, MapPin, Calendar, BookOpen, Users, MessageCircle,
 };
 
 const DEFAULT_NAV_ITEMS = [
-  { label: "Início",             href: "/",                        icon: "Compass",     visible: true, order: 0 },
-  { label: "Receptivo Oranje",   href: "/app/receptivo",           icon: "MapPin",      visible: true, order: 1 },
-  { label: "Explorar",           href: "/app/explorar",            icon: "Compass",     visible: true, order: 2 },
-  { label: "O que fazer",        href: "/o-que-fazer-em-holambra", icon: "MapPin",      visible: true, order: 3 },
-  { label: "Mapa",               href: "/mapa",                    icon: "MapPin",      visible: true, order: 4 },
-  { label: "Blog",               href: "/blog",                    icon: "BookOpen",    visible: true, order: 5 },
-  { label: "Contato",            href: "/contato",                 icon: "MessageCircle", visible: true, order: 6 },
+  { label: "Início",           href: "/",              icon: "Compass",       visible: true, order: 0 },
+  { label: "Receptivo Oranje", href: "/app/receptivo", icon: "MapPin",        visible: true, order: 1 },
+  { label: "Mapa",             href: "/mapa",          icon: "MapPin",        visible: true, order: 2 },
+  { label: "Blog",             href: "/blog",          icon: "BookOpen",      visible: true, order: 3 },
+  { label: "Contato",          href: "/contato",       icon: "MessageCircle", visible: true, order: 4 },
 ];
 
 export default function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [guiaOpen, setGuiaOpen] = useState(false);
+  const guiaRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const location = useLocation();
 
-  // Read contact phone from CMS so the header reflects saved siteContent data
-  const { data: contact } = trpc.content.getContact.useQuery(undefined, {
-    staleTime: 10 * 60 * 1000,
-    retry: false,
-  });
-  const phone = contact?.phone || null;
-
-  // Read nav items from CMS (falls back to DEFAULT_NAV_ITEMS if not set)
   const { data: cmsNavItems } = trpc.content.getNavItems.useQuery(undefined, {
     staleTime: 10 * 60 * 1000,
     retry: false,
@@ -49,6 +44,7 @@ export default function SiteHeader() {
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   const isActive = (href: string) => location?.pathname === href;
+  const isDescubraActive = DESCUBRA_ITEMS.some((i) => location?.pathname === i.href);
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -59,9 +55,7 @@ export default function SiteHeader() {
     return () => { document.body.style.overflow = ""; };
   }, [isMenuOpen]);
 
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location?.pathname]);
+  useEffect(() => { setIsMenuOpen(false); setGuiaOpen(false); }, [location?.pathname]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -69,7 +63,33 @@ export default function SiteHeader() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (guiaRef.current && !guiaRef.current.contains(e.target as Node)) {
+        setGuiaOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+
+  const navLinkStyle = (active: boolean): React.CSSProperties => ({
+    padding: "8px 14px",
+    borderRadius: "8px",
+    fontSize: "0.8125rem",
+    fontWeight: active ? 600 : 500,
+    textDecoration: "none",
+    transition: "color 0.2s ease, background 0.2s ease",
+    color: active ? "#FFFFFF" : "rgba(255,255,255,0.7)",
+    background: active ? "rgba(255,255,255,0.08)" : "transparent",
+    letterSpacing: "0.01em",
+    whiteSpace: "nowrap" as const,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
+  });
 
   return (
     <>
@@ -97,7 +117,7 @@ export default function SiteHeader() {
             justifyContent: "space-between",
           }}
         >
-          {/* Logo — Fixed size via inline styles, NO Tailwind classes */}
+          {/* Logo */}
           <Link
             to="/"
             style={{
@@ -123,73 +143,124 @@ export default function SiteHeader() {
             />
           </Link>
 
-          {/* Desktop Navigation — Rendered only on desktop */}
+          {/* Desktop Navigation */}
           {!isMobile && (
             <nav
               aria-label="Navegação principal"
               style={{ display: "flex", alignItems: "center", gap: "4px" }}
             >
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  aria-current={isActive(item.href) ? "page" : undefined}
+              {navItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    aria-current={active ? "page" : undefined}
+                    style={navLinkStyle(active)}
+                    onMouseEnter={(e: any) => {
+                      if (!active) {
+                        e.currentTarget.style.color = "#FFFFFF";
+                        e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+                      }
+                    }}
+                    onMouseLeave={(e: any) => {
+                      if (!active) {
+                        e.currentTarget.style.color = "rgba(255,255,255,0.7)";
+                        e.currentTarget.style.background = "transparent";
+                      }
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              {/* Descubra dropdown */}
+              <div ref={guiaRef} style={{ position: "relative" }}>
+                <button
+                  onClick={() => setGuiaOpen((v) => !v)}
                   style={{
-                    padding: "8px 14px",
-                    borderRadius: "8px",
-                    fontSize: "0.8125rem",
-                    fontWeight: isActive(item.href) ? 600 : 500,
-                    textDecoration: "none",
-                    transition: "color 0.2s ease, background 0.2s ease",
-                    color: isActive(item.href) ? "#FFFFFF" : "rgba(255,255,255,0.7)",
-                    background: isActive(item.href) ? "rgba(255,255,255,0.08)" : "transparent",
-                    letterSpacing: "0.01em",
-                    whiteSpace: "nowrap",
-                  }}
-                  onMouseEnter={(e: any) => {
-                    if (!isActive(item.href)) {
-                      e.currentTarget.style.color = "#FFFFFF";
-                      e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-                    }
-                  }}
-                  onMouseLeave={(e: any) => {
-                    if (!isActive(item.href)) {
-                      e.currentTarget.style.color = "rgba(255,255,255,0.7)";
-                      e.currentTarget.style.background = "transparent";
-                    }
+                    ...navLinkStyle(isDescubraActive),
+                    background: guiaOpen || isDescubraActive ? "rgba(255,255,255,0.08)" : "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    fontFamily: "'Montserrat', system-ui, sans-serif",
                   }}
                 >
-                  {item.label}
-                </Link>
-              ))}
+                  Descubra
+                  <ChevronDown
+                    size={13}
+                    style={{
+                      transition: "transform 0.2s ease",
+                      transform: guiaOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    }}
+                  />
+                </button>
+
+                {guiaOpen && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "calc(100% + 8px)",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      background: "#00251A",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "14px",
+                      padding: "8px",
+                      minWidth: "240px",
+                      boxShadow: "0 16px 48px rgba(0,0,0,0.4)",
+                      zIndex: 200,
+                    }}
+                  >
+                    {DESCUBRA_ITEMS.map((item) => {
+                      const active = isActive(item.href);
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          to={item.href}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            padding: "9px 12px",
+                            borderRadius: "9px",
+                            textDecoration: "none",
+                            color: active ? "#FFFFFF" : "rgba(255,255,255,0.75)",
+                            background: active ? "rgba(255,255,255,0.08)" : "transparent",
+                            fontSize: "0.8125rem",
+                            fontWeight: active ? 600 : 400,
+                            transition: "all 0.15s ease",
+                            whiteSpace: "nowrap",
+                          }}
+                          onMouseEnter={(e: any) => {
+                            if (!active) {
+                              e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+                              e.currentTarget.style.color = "#FFFFFF";
+                            }
+                          }}
+                          onMouseLeave={(e: any) => {
+                            if (!active) {
+                              e.currentTarget.style.background = "transparent";
+                              e.currentTarget.style.color = "rgba(255,255,255,0.75)";
+                            }
+                          }}
+                        >
+                          <Icon size={14} style={{ color: active ? "#E65100" : "rgba(255,255,255,0.35)", flexShrink: 0 }} />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </nav>
           )}
 
-          {/* Desktop CTA — Only on desktop */}
+          {/* Desktop CTA */}
           {!isMobile && (
             <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
-              {/* Phone from CMS — only shown when siteContent has a phone configured */}
-              {phone && (
-                <a
-                  href={`tel:${phone.replace(/\D/g, "")}`}
-                  aria-label={`Ligar para ${phone}`}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    fontSize: "0.8125rem",
-                    color: "rgba(255,255,255,0.6)",
-                    textDecoration: "none",
-                    transition: "color 0.2s ease",
-                    fontFamily: "'Montserrat', system-ui, sans-serif",
-                  }}
-                  onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.color = "#FFFFFF")}
-                  onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
-                >
-                  <Phone size={13} />
-                  {phone}
-                </a>
-              )}
               <Link
                 to="/app"
                 style={{
@@ -215,7 +286,7 @@ export default function SiteHeader() {
             </div>
           )}
 
-          {/* Mobile Menu Toggle — Only on mobile */}
+          {/* Mobile Menu Toggle */}
           {isMobile && (
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -275,10 +346,6 @@ export default function SiteHeader() {
             borderLeft: "1px solid rgba(255,255,255,0.06)",
             transform: isMenuOpen ? "translateX(0)" : "translateX(100%)",
             transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
-            // CRITICAL FIX v2: Use display:none when closed to completely remove from hit-testing
-            // Previous fix (visibility+pointerEvents) failed because child divs still intercepted clicks
-            // Playwright error: "<div> from <nav> subtree intercepts pointer events"
-            // Solution: display:none removes element entirely from interaction tree
             display: isMenuOpen ? "flex" : "none",
             flexDirection: "column",
             overflowY: "auto",
@@ -302,7 +369,7 @@ export default function SiteHeader() {
           </div>
 
           {/* Nav Links */}
-          <div style={{ flex: 1, padding: "0.5rem 1rem" }}>
+          <div style={{ padding: "0.5rem 1rem" }}>
             {navItems.map((item) => {
               const Icon = (typeof item.icon === "string" ? ICON_MAP[item.icon] : item.icon) ?? Compass;
               const active = isActive(item.href);
@@ -419,4 +486,3 @@ export default function SiteHeader() {
     </>
   );
 }
-// Cache bust 1774040066

@@ -105,6 +105,8 @@ export default function CMSEditor() {
 
   const [appHeroImage, setAppHeroImage] = useState("");
   const [appHeroUploading, setAppHeroUploading] = useState(false);
+  const [appHeroVideoUrl, setAppHeroVideoUrl] = useState("");
+  const [appHeroMediaType, setAppHeroMediaType] = useState<"image" | "video">("image");
 
   const heroQuery = trpc.content.getHero.useQuery();
   const appHeroQuery = trpc.content.getAppHero.useQuery();
@@ -205,8 +207,10 @@ export default function CMSEditor() {
   useEffect(() => {
     if (appHeroQuery.data) {
       const url = appHeroQuery.data.imageUrl || "";
-      const isValid = url.startsWith("https://") || url.startsWith("data:image/");
+      const isValid = url.startsWith("https://") || url.startsWith("data:image/") || url.startsWith("/");
       setAppHeroImage(isValid ? url : "");
+      setAppHeroVideoUrl((appHeroQuery.data as any).videoUrl || "");
+      setAppHeroMediaType(((appHeroQuery.data as any).mediaType as "image" | "video") || "image");
     }
   }, [appHeroQuery.data]);
 
@@ -336,7 +340,12 @@ export default function CMSEditor() {
     try {
       const dataUrl = await compressImageToBase64(file);
       setAppHeroImage(dataUrl);
-      updateAppHeroMutation.mutate({ imageUrl: dataUrl });
+      setAppHeroMediaType("image");
+      updateAppHeroMutation.mutate({
+        imageUrl: dataUrl,
+        videoUrl: appHeroVideoUrl,
+        mediaType: "image",
+      });
     } catch {
       toast.error("Erro ao processar imagem. Tente outro arquivo.");
       setAppHeroUploading(false);
@@ -608,17 +617,19 @@ export default function CMSEditor() {
             </CardContent>
           </Card>
 
-          {/* App Hero Image */}
+          {/* App Hero Image + Video */}
           <Card className="mt-4 border-blue-100">
             <CardHeader>
-              <CardTitle className="text-base">Imagem Hero do App <span className="text-xs font-normal text-gray-500">(/app)</span></CardTitle>
+              <CardTitle className="text-base">Hero do App <span className="text-xs font-normal text-gray-500">(/app)</span></CardTitle>
               <CardDescription>
-                Troca a foto de fundo do hero na tela inicial do app (oranjeapp.com.br/app). Independente do hero do site.
+                Controla a mídia de fundo do hero na tela inicial do app. Suporta imagem ou vídeo — independente do hero do site.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
+
+              {/* Imagem */}
               <div className="bg-blue-50 border border-blue-200 rounded p-3">
-                <p className="text-xs font-semibold text-blue-800 mb-2">📱 Foto do App Hero</p>
+                <p className="text-xs font-semibold text-blue-800 mb-2">📱 Imagem do App Hero</p>
                 <p className="text-xs text-blue-700 mb-2">Selecione uma foto — ela será comprimida e salva automaticamente.</p>
                 <input
                   type="file"
@@ -631,26 +642,31 @@ export default function CMSEditor() {
                   <p className="text-sm text-[#E65100] font-medium mt-2">⏳ Processando e salvando imagem...</p>
                 )}
               </div>
-              {appHeroImage.startsWith("data:") && (
+              {appHeroImage && (
                 <div>
-                  <p className="text-xs text-green-700 font-medium mb-1">✅ Imagem personalizada ativa:</p>
-                  <img src={appHeroImage} alt="Hero do App atual" className="w-full h-36 object-cover rounded" />
+                  {appHeroImage.startsWith("data:") && (
+                    <>
+                      <p className="text-xs text-green-700 font-medium mb-1">✅ Imagem personalizada:</p>
+                      <img src={appHeroImage} alt="Hero do App atual" className="w-full h-36 object-cover rounded" />
+                    </>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
                       setAppHeroImage("");
+                      setAppHeroMediaType("image");
                       setAppHeroUploading(true);
-                      updateAppHeroMutation.mutate({ imageUrl: "" });
+                      updateAppHeroMutation.mutate({ imageUrl: "", videoUrl: appHeroVideoUrl, mediaType: "image" });
                     }}
                     disabled={appHeroUploading}
                     className="text-xs text-red-500 mt-1 hover:underline disabled:opacity-50"
                   >
-                    Remover foto (volta ao moinho padrão)
+                    Remover imagem
                   </button>
                 </div>
               )}
               {!appHeroImage && (
-                <p className="text-xs text-gray-500">Sem imagem personalizada — mostrando imagem padrão do moinho.</p>
+                <p className="text-xs text-gray-500">Sem imagem personalizada — usará o gradiente animado como fallback.</p>
               )}
               <div className="border-t pt-3">
                 <label className="block text-xs font-medium text-gray-500 mb-1">Ou cole uma URL externa (https://)</label>
@@ -665,13 +681,112 @@ export default function CMSEditor() {
                 {appHeroImage && !appHeroImage.startsWith("data:") && /^https?:\/\//.test(appHeroImage) && (
                   <Button
                     className="mt-2 bg-[#E65100] hover:bg-[#D84500]"
-                    onClick={() => updateAppHeroMutation.mutate({ imageUrl: appHeroImage })}
+                    onClick={() => updateAppHeroMutation.mutate({ imageUrl: appHeroImage, videoUrl: appHeroVideoUrl, mediaType: "image" })}
                     disabled={updateAppHeroMutation.isPending}
                   >
                     {updateAppHeroMutation.isPending ? "Salvando..." : "Salvar URL"}
                   </Button>
                 )}
               </div>
+
+              {/* Vídeo */}
+              <div className="border-t pt-3">
+                <label className="block text-sm font-medium mb-2">Vídeo do App Hero <span className="text-gray-400 text-xs">(opcional)</span></label>
+                <div className="bg-purple-50 border border-purple-200 rounded p-3 space-y-2">
+                  <p className="text-xs font-semibold text-purple-800">🎬 URL do vídeo (MP4)</p>
+                  <p className="text-xs text-purple-700">
+                    Cole a URL do vídeo <code>.mp4</code>. Use <code>/hero-motion.mp4</code> para o vídeo enviado, ou uma URL externa <code>https://...</code>.
+                  </p>
+                  <Input
+                    value={appHeroVideoUrl}
+                    onChange={(e) => setAppHeroVideoUrl(e.target.value)}
+                    placeholder="/hero-motion.mp4 ou https://..."
+                  />
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      disabled={updateAppHeroMutation.isPending}
+                      onClick={() =>
+                        updateAppHeroMutation.mutate(
+                          { imageUrl: appHeroImage.startsWith("data:") ? appHeroImage : appHeroImage, videoUrl: appHeroVideoUrl, mediaType: appHeroMediaType },
+                          { onSuccess: () => toast.success("URL do vídeo do app salva!") }
+                        )
+                      }
+                      className="text-xs bg-purple-600 text-white px-3 py-1.5 rounded hover:bg-purple-700 disabled:opacity-50"
+                    >
+                      {updateAppHeroMutation.isPending ? "Salvando..." : "Salvar URL do vídeo"}
+                    </button>
+                    {appHeroVideoUrl && (
+                      <button
+                        type="button"
+                        disabled={updateAppHeroMutation.isPending}
+                        onClick={() => {
+                          setAppHeroVideoUrl("");
+                          setAppHeroMediaType("image");
+                          updateAppHeroMutation.mutate(
+                            { imageUrl: appHeroImage.startsWith("data:") ? appHeroImage : appHeroImage, videoUrl: "", mediaType: "image" },
+                            { onSuccess: () => toast.success("Vídeo do app removido.") }
+                          );
+                        }}
+                        className="text-xs text-red-500 hover:underline disabled:opacity-50"
+                      >
+                        Remover vídeo
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Seletor de mídia ativa */}
+                <div className="bg-gray-50 border rounded p-3 mt-2">
+                  <p className="text-xs font-semibold text-gray-700 mb-2">Mídia ativa no App Hero</p>
+                  <div className="flex gap-3">
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="appHeroMediaType"
+                        value="image"
+                        checked={appHeroMediaType === "image"}
+                        onChange={() => {
+                          setAppHeroMediaType("image");
+                          updateAppHeroMutation.mutate(
+                            { imageUrl: appHeroImage.startsWith("data:") ? appHeroImage : appHeroImage, videoUrl: appHeroVideoUrl, mediaType: "image" },
+                            { onSuccess: () => toast.success("App Hero usando imagem.") }
+                          );
+                        }}
+                      />
+                      <span className="text-sm">🖼 Imagem</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="appHeroMediaType"
+                        value="video"
+                        checked={appHeroMediaType === "video"}
+                        disabled={!appHeroVideoUrl}
+                        onChange={() => {
+                          if (!appHeroVideoUrl) return;
+                          setAppHeroMediaType("video");
+                          updateAppHeroMutation.mutate(
+                            { imageUrl: appHeroImage.startsWith("data:") ? appHeroImage : appHeroImage, videoUrl: appHeroVideoUrl, mediaType: "video" },
+                            { onSuccess: () => toast.success("App Hero usando vídeo.") }
+                          );
+                        }}
+                      />
+                      <span className={`text-sm ${!appHeroVideoUrl ? "text-gray-400" : ""}`}>🎬 Vídeo</span>
+                    </label>
+                  </div>
+                  {!appHeroVideoUrl && (
+                    <p className="text-xs text-gray-500 mt-1">Salve uma URL de vídeo acima para ativar o modo vídeo.</p>
+                  )}
+                  {appHeroMediaType === "video" && appHeroVideoUrl && (
+                    <p className="text-xs text-green-700 mt-1 font-medium">✅ Vídeo ativo — fallback: imagem → gradiente animado.</p>
+                  )}
+                  {appHeroMediaType === "image" && appHeroVideoUrl && (
+                    <p className="text-xs text-blue-700 mt-1">Vídeo salvo mas inativo. Mude para 🎬 Vídeo para ativar.</p>
+                  )}
+                </div>
+              </div>
+
             </CardContent>
           </Card>
         </TabsContent>

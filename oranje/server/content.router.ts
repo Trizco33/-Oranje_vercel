@@ -159,7 +159,7 @@ export const contentRouter = router({
 
   // ─── App Hero Section (/app) ──────────────────────────────────────────────
   getAppHero: publicProcedure.query(async () => {
-    if (!db) return { imageUrl: "" };
+    if (!db) return { imageUrl: "", videoUrl: "", mediaType: "image" };
     try {
       const result = await db
         .select()
@@ -169,22 +169,37 @@ export const contentRouter = router({
       result.forEach((item) => {
         data[item.key.replace("app_hero_", "")] = item.value;
       });
-      return { imageUrl: data.imageUrl ?? "" };
+      return {
+        imageUrl: data.imageUrl ?? "",
+        videoUrl: data.videoUrl ?? "",
+        mediaType: data.mediaType ?? "image",
+      };
     } catch (error) {
       console.error("[Content] Error fetching app hero:", error);
-      return { imageUrl: "" };
+      return { imageUrl: "", videoUrl: "", mediaType: "image" };
     }
   }),
 
   updateAppHero: cmsProcedure
-    .input(z.object({ imageUrl: z.string().default("") }))
+    .input(z.object({
+      imageUrl: z.string().default(""),
+      videoUrl: z.string().default(""),
+      mediaType: z.enum(["image", "video"]).default("image"),
+    }))
     .mutation(async ({ input, ctx }) => {
       const userId = getCmsUserId(ctx);
       const db = getContentDb();
-      await db
-        .insert(siteContent)
-        .values({ key: "app_hero_imageUrl", value: input.imageUrl, section: "app_hero", updatedBy: userId })
-        .onDuplicateKeyUpdate({ set: { value: input.imageUrl, updatedBy: userId } });
+      const updates = [
+        { key: "app_hero_imageUrl", value: input.imageUrl },
+        { key: "app_hero_videoUrl", value: input.videoUrl },
+        { key: "app_hero_mediaType", value: input.mediaType },
+      ];
+      for (const u of updates) {
+        await db
+          .insert(siteContent)
+          .values({ key: u.key, value: u.value, section: "app_hero", updatedBy: userId })
+          .onDuplicateKeyUpdate({ set: { value: u.value, updatedBy: userId } });
+      }
       return { success: true };
     }),
 

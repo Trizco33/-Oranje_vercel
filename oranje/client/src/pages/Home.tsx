@@ -212,11 +212,18 @@ export default function Home() {
   const { position: geoPosition, loading: geoLoading, denied: geoDenied } = useGeolocation();
   const { nearby: nearbyPlaces, isLoading: nearbyLoading } = useNearbyPlaces(geoPosition, 6);
   const { data: appHeroData } = trpc.content.getAppHero.useQuery();
+  const [heroVideoError, setHeroVideoError] = useState(false);
 
+  const heroMediaType = (appHeroData as any)?.mediaType ?? "image";
+  const heroVideoUrl = (() => {
+    const url = (appHeroData as any)?.videoUrl ?? "";
+    return url.startsWith("/") || /^https?:\/\//.test(url) ? url : "";
+  })();
   const heroImageUrl = (() => {
     const url = appHeroData?.imageUrl ?? "";
     return url.startsWith("data:image/") || /^https?:\/\//.test(url) || url.startsWith("/") ? url : "";
   })();
+  const useHeroVideo = heroMediaType === "video" && heroVideoUrl && !heroVideoError;
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), "_blank"); return; }
@@ -241,20 +248,56 @@ export default function Home() {
         position: "relative",
         minHeight: 360,
         overflow: "hidden",
-        ...(heroImageUrl
-          ? { backgroundImage: `url(${heroImageUrl})`, backgroundSize: "cover", backgroundPosition: "center 30%" }
-          : {
+        ...(!useHeroVideo && !heroImageUrl
+          ? {
               background: "linear-gradient(135deg, #001812 0%, #00251A 40%, #003428 70%, #001F14 100%)",
               backgroundSize: "300% 300%",
               animation: "oranje-hero-breathe 14s ease infinite",
-            }),
+            }
+          : {}),
       }}>
-        {/* dark overlay over photo (only when image present) */}
-        {heroImageUrl && (
+        {/* Background: Video (priority) or Image */}
+        {useHeroVideo && (
+          <video
+            key={heroVideoUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onError={() => setHeroVideoError(true)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+          >
+            <source src={heroVideoUrl} type="video/mp4" />
+          </video>
+        )}
+        {!useHeroVideo && heroImageUrl && (
+          <img
+            src={heroImageUrl}
+            alt=""
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center 30%",
+            }}
+          />
+        )}
+        {/* dark overlay over media */}
+        {(useHeroVideo || heroImageUrl) && (
           <>
             <div style={{
               position: "absolute", inset: 0,
-              background: "linear-gradient(to right, rgba(0,24,18,0.92) 0%, rgba(0,24,18,0.65) 60%, rgba(0,24,18,0.3) 100%)",
+              background: "linear-gradient(to right, rgba(0,24,18,0.85) 0%, rgba(0,24,18,0.55) 60%, rgba(0,24,18,0.25) 100%)",
             }} />
             <div style={{
               position: "absolute", inset: 0,

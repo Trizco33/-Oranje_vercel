@@ -1048,5 +1048,75 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ── Migration 024: Categoria "Agências de Receptivo" + HolamBrasil Turismo ─────────────
+  {
+    const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+
+    // 2a. Criar categoria se não existir
+    const [catRows] = await db.execute(
+      `SELECT id FROM \`categories\` WHERE slug = 'agencias-receptivo' LIMIT 1`
+    ) as any[];
+    let catId: number;
+    if ((catRows as any[]).length === 0) {
+      await db.execute(
+        `INSERT INTO \`categories\` (name, slug, icon, description, coverImage, isActive, createdAt)
+         VALUES ('Agências de Receptivo', 'agencias-receptivo', '🧭',
+                 'Agências de turismo receptivo especializadas em passeios e roteiros em Holambra',
+                 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop',
+                 1, NOW())`
+      );
+      const [newCat] = await db.execute(
+        `SELECT id FROM \`categories\` WHERE slug = 'agencias-receptivo' LIMIT 1`
+      ) as any[];
+      catId = (newCat as any[])[0].id;
+      console.log(`[Migrations] ✅ 024: Categoria "Agências de Receptivo" criada (id=${catId})`);
+    } else {
+      catId = (catRows as any[])[0].id;
+      console.log(`[Migrations] ✓ 024: Categoria "Agências de Receptivo" já existe (id=${catId})`);
+    }
+
+    // 2b. Upsert HolamBrasil Turismo
+    const shortDesc = esc('Agência receptivo em Holambra desde 2003 — passeios de bicicleta, roteiros nos campos de flores e ensaios fotográficos com a guia Daiana Tamata');
+    const longDesc  = esc('A HolamBrasil Turismo é a agência de turismo receptivo de referência em Holambra, operando desde 2003. Fundada e liderada pela guia Daiana Tamata Cardoso — a primeira pessoa a guiar visitantes pelos campos de flores de Holambra —, a agência oferece uma experiência personalizada e autêntica na Cidade das Flores.\n\nOs serviços incluem passeios de bicicleta pelos campos floridos, roteiros guiados com acesso exclusivo a fazendas de flores normalmente fechadas ao público, ensaios fotográficos em meio ao feno, eucaliptos e girassóis, além de city tour e organização de grupos em vans para maior conforto.\n\nAtende em português, inglês, espanhol e holandês, aceita cartões de crédito e débito, e possui estrutura adaptada para portadores de deficiência.');
+    const coverImg  = 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/b5/e4/62/caption.jpg?w=900&h=500&s=1';
+
+    const [placeRows] = await db.execute(
+      `SELECT id, categoryId FROM \`places\` WHERE name = 'HolamBrasil Turismo' AND city = 'Holambra' LIMIT 1`
+    ) as any[];
+
+    if ((placeRows as any[]).length > 0) {
+      const placeId = (placeRows as any[])[0].id;
+      const existingCatId = (placeRows as any[])[0].categoryId;
+      // Sempre garantir dataPending=0 e dados atualizados, independente do catId
+      await db.execute(`UPDATE \`places\` SET categoryId = ${catId}, status = 'active', isRecommended = 1, isFeatured = 1, dataPending = 0, lat = -22.6388, lng = -47.0615, phone = '(19) 98199-0072', whatsapp = '19981990072', website = 'https://www.holambrasil.com', instagram = 'holambrasilturismo', coverImage = '${coverImg}', tags = '["agencia","turismo","receptivo","bicicleta","flores","roteiros","fotos","holambra"]', updatedAt = NOW() WHERE id = ${placeId}`);
+      await db.execute(`UPDATE \`places\` SET shortDesc = '${shortDesc}' WHERE id = ${placeId}`);
+      if (existingCatId !== catId) {
+        console.log(`[Migrations] ✅ 024: HolamBrasil Turismo (id=${placeId}) → categoria agencias-receptivo`);
+      } else {
+        console.log(`[Migrations] ✓ 024: HolamBrasil Turismo (id=${placeId}) — dados sincronizados, categoria já correta`);
+      }
+    } else {
+      await db.execute(
+        `INSERT INTO \`places\`
+          (name, categoryId, shortDesc, longDesc, address, city, state, country,
+           phone, whatsapp, website, instagram, coverImage, tags,
+           lat, lng, priceRange, isFree, isRecommended, isPartner, isFeatured,
+           dataPending, status, claimStatus, rating, reviewCount, geoStatus, geoSource, createdAt, updatedAt)
+         VALUES (
+           'HolamBrasil Turismo', ${catId},
+           '${shortDesc}', '${longDesc}',
+           'Holambra – SP', 'Holambra', 'SP', 'Brasil',
+           '(19) 98199-0072', '19981990072',
+           'https://www.holambrasil.com', 'holambrasilturismo',
+           '${coverImg}',
+           '["agencia","turismo","receptivo","bicicleta","flores","roteiros","fotos","holambra"]',
+           -22.6388, -47.0615, '$$', 0, 1, 0, 1, 0, 'active', 'unclaimed', 0, 0,
+           'needs_review', 'manual', NOW(), NOW()
+         )`
+      );
+      console.log(`[Migrations] ✅ 024: HolamBrasil Turismo inserido na categoria agencias-receptivo`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

@@ -817,15 +817,20 @@ const HOLAMBRA_PLACES: PlaceWithCategorySlug[] = [
 
   {
     name: "HolamBrasil Turismo",
-    _categorySlug: "pontos-turisticos",
-    shortDesc: "Agência de turismo local com pacotes e roteiros para Holambra e região",
-    longDesc: null,
-    address: "Holambra – SP", lat: -22.6390, lng: -47.0612,
+    _categorySlug: "agencias-receptivo",
+    shortDesc: "Agência receptivo em Holambra desde 2003 — passeios de bicicleta, roteiros nos campos de flores e ensaios fotográficos com a guia Daiana Tamata",
+    longDesc: "A HolamBrasil Turismo é a agência de turismo receptivo de referência em Holambra, operando desde 2003. Fundada e liderada pela guia Daiana Tamata Cardoso — a primeira pessoa a guiar visitantes pelos campos de flores de Holambra —, a agência oferece uma experiência personalizada e autêntica na Cidade das Flores.\n\nOs serviços incluem passeios de bicicleta pelos campos floridos, roteiros guiados com acesso exclusivo a fazendas de flores normalmente fechadas ao público, ensaios fotográficos em meio ao feno, eucaliptos e girassóis, além de city tour e organização de grupos em vans para maior conforto.\n\nAtende em português, inglês, espanhol e holandês, aceita cartões de crédito e débito, e possui estrutura adaptada para portadores de deficiência. Para grupos menores, o passeio é feito no próprio carro do visitante (80% dos casos). Em 80% das saídas, o guia acompanha os visitantes no próprio veículo deles.",
+    address: "Holambra – SP", lat: -22.6388, lng: -47.0615,
     city: "Holambra", state: "SP", country: "Brasil",
+    phone: "(19) 98199-0072",
+    whatsapp: "19981990072",
+    website: "https://www.holambrasil.com",
+    instagram: "holambrasilturismo",
+    coverImage: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/b5/e4/62/caption.jpg?w=900&h=500&s=1",
     priceRange: "$$", isFree: false,
-    isRecommended: false, isFeatured: false, isPartner: false,
-    tags: ["agencia", "turismo", "pacotes", "roteiros"], status: "active",
-    dataPending: true,
+    isRecommended: true, isFeatured: true, isPartner: false,
+    tags: ["agencia", "turismo", "receptivo", "bicicleta", "flores", "roteiros", "fotos", "holambra", "daiana-tamata"], status: "active",
+    dataPending: false,
   },
 
   {

@@ -21,6 +21,7 @@ export const CATEGORY_SLUGS = [
   "compras",
   "bares-drinks",
   "eventos",
+  "agencias-receptivo",
 ] as const;
 
 export type CategorySlug = (typeof CATEGORY_SLUGS)[number];
@@ -42,6 +43,7 @@ export const CATEGORY_COVERS: Record<CategorySlug, string> = {
   compras: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=200&fit=crop",
   "bares-drinks": "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&h=200&fit=crop",
   eventos: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=200&fit=crop",
+  "agencias-receptivo": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=200&fit=crop",
 };
 
 /**
@@ -61,6 +63,7 @@ export const CATEGORY_ICONS: Record<CategorySlug, string> = {
   compras: "\u{1F6CD}\u{FE0F}",
   "bares-drinks": "\u{1F378}",
   eventos: "\u{1F3AA}",
+  "agencias-receptivo": "\u{1F9ED}",
 };
 
 /**
@@ -81,6 +84,10 @@ export const CATEGORY_SLUG_ALIASES: Record<string, CategorySlug> = {
   "lojas-artesanato": "compras",
   "lojas-e-artesanato": "compras",
   floriculturas: "compras",
+  agencias: "agencias-receptivo",
+  receptivo: "agencias-receptivo",
+  "agencias-de-receptivo": "agencias-receptivo",
+  "turismo-receptivo": "agencias-receptivo",
   "cafes-confeitarias": "cafes",
   confeitarias: "cafes",
   "docerias-cafes": "docerias",

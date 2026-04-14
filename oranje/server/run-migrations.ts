@@ -1023,28 +1023,22 @@ export async function runMigrations(): Promise<void> {
     console.log(`[Migrations] ✅ 021: geo-validação aplicada — ${applied} corrigidos, ${skipped} já corretos`);
   }
 
-  // ── Migration 023: limpar CMS das páginas editoriais com conteúdo desatualizado ──────────
-  // As 4 páginas de categoria tinham conteúdo CMS publicado com lugares desatualizados.
-  // Ao deletar, o fallback JSX (validado com IDs reais do banco) assume automaticamente.
-  // Guard: só roda se ainda existir alguma das páginas na tabela.
+  // ── Migration 023: limpeza pontual de páginas editoriais desatualizadas (one-shot) ─────────
+  // CORREÇÃO DE BUG: o guard original usava presença das páginas como gatilho, causando
+  // deleção do conteúdo salvo pelo usuário a cada restart. Corrigido para one-shot via
+  // marcador em site_content (`migration_023_done`). Só roda UMA vez.
   {
-    const slugsToClear = [
-      'bares-e-drinks-em-holambra',
-      'melhores-cafes-de-holambra',
-      'melhores-restaurantes-de-holambra',
-      'onde-tirar-fotos-em-holambra',
-    ];
-    const [existRows] = await db.execute(
-      `SELECT COUNT(*) as cnt FROM site_pages WHERE slug IN (${slugsToClear.map(s => `'${s}'`).join(',')})`
+    const [markerRows] = await db.execute(
+      `SELECT COUNT(*) as cnt FROM site_content WHERE \`key\` = 'migration_023_done'`
     ) as any[];
-    const count = (existRows as any[])[0]?.cnt ?? 0;
-    if (count === 0) {
-      console.log('[Migrations] ✓ 023: páginas editoriais CMS já limpas — fallback JSX ativo');
+    const alreadyDone = ((markerRows as any[])[0]?.cnt ?? 0) > 0;
+    if (alreadyDone) {
+      console.log('[Migrations] ✓ 023: limpeza one-shot já aplicada anteriormente');
     } else {
       await db.execute(
-        `DELETE FROM site_pages WHERE slug IN (${slugsToClear.map(s => `'${s}'`).join(',')})`
+        `INSERT IGNORE INTO site_content (\`key\`, \`value\`, \`section\`) VALUES ('migration_023_done', '1', 'migrations')`
       );
-      console.log(`[Migrations] ✅ 023: ${count} páginas CMS desatualizadas removidas — fallback JSX restaurado`);
+      console.log('[Migrations] ✅ 023: marcador registrado — páginas editoriais ficam intactas');
     }
   }
 

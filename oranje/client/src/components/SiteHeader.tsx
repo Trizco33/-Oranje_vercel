@@ -11,7 +11,7 @@ const DESCUBRA_ITEMS = [
   { label: "Restaurantes",            href: "/melhores-restaurantes-de-holambra", icon: Utensils },
   { label: "Cafés",                   href: "/melhores-cafes-de-holambra", icon: Coffee },
   { label: "Bares & Drinks",          href: "/bares-e-drinks-em-holambra", icon: Beer },
-  { label: "Pontos Turísticos",       href: "/onde-tirar-fotos-em-holambra", icon: Camera },
+  { label: "Onde Tirar Fotos",         href: "/onde-tirar-fotos-em-holambra", icon: Camera },
   { label: "Eventos",                 href: "/eventos-em-holambra",        icon: PartyPopper },
 ];
 

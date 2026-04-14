@@ -883,6 +883,10 @@ export async function updateClaimStatus(
 ) {
   const db = await getDb();
   if (!db) throw new Error("DB not available");
+
+  // Buscar placeId da reivindicação para atualizar o lugar se aprovado
+  const [claimRows] = await db.select({ placeId: profileClaims.placeId }).from(profileClaims).where(eq(profileClaims.id, id)).limit(1);
+
   await db
     .update(profileClaims)
     .set({
@@ -892,6 +896,18 @@ export async function updateClaimStatus(
       updatedAt: new Date(),
     })
     .where(eq(profileClaims.id, id));
+
+  // Sincronizar claimStatus do lugar
+  if (claimRows?.placeId) {
+    const newClaimStatus = status === "approved" ? "claimed" : "unclaimed";
+    // Só atualiza se aprovado ou rejeitado — pending não muda o estado do lugar
+    if (status === "approved" || status === "rejected") {
+      await db
+        .update(places)
+        .set({ claimStatus: newClaimStatus, updatedAt: new Date() })
+        .where(eq(places.id, claimRows.placeId));
+    }
+  }
 }
 
 // ─── Tour Operations ──────────────────────────────────────────────────────────

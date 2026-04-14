@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "./_core/trpc";
 import * as db from "./db";
+import { sendClaimNotificationEmail } from "./_core/email";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
@@ -55,6 +56,26 @@ export const claimsRouter = router({
         coverImageUrl: input.coverImageUrl ?? null,
         status: "pending",
       });
+
+      // Notificação por email ao admin (não crítico — nunca bloqueia o submit)
+      try {
+        // Buscar nome real do lugar para o email
+        const placeData = await db.getPlaceById(input.placeId) as any;
+        const placeName = (placeData as any)?.name ?? input.businessName ?? `Lugar #${input.placeId}`;
+        await sendClaimNotificationEmail({
+          placeId:      input.placeId,
+          placeName,
+          contactName:  input.contactName,
+          contactEmail: input.contactEmail,
+          contactPhone: input.contactPhone ?? null,
+          contactRole:  input.contactRole ?? null,
+          businessName: input.businessName ?? null,
+          instagram:    input.instagram ?? null,
+          website:      input.website ?? null,
+          message:      input.message ?? null,
+          description:  input.description ?? null,
+        });
+      } catch (e) { console.warn("[Claims] Failed to send email notification:", e); }
 
       // Registrar na Central de Operações Oranje (não crítico)
       try {

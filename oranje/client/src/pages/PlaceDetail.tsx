@@ -1242,7 +1242,7 @@ export default function PlaceDetail() {
         {/* ─────────────────────────────────────────────────────────── */}
         {/* Claim Block — Este negócio é seu?                         */}
         {/* ─────────────────────────────────────────────────────────── */}
-        <ClaimBlock placeId={place.id} placeName={place.name} />
+        <ClaimBlock placeId={place.id} placeName={place.name} claimStatus={(place as any).claimStatus ?? "unclaimed"} />
 
         {/* ─────────────────────────────────────────────────────────── */}
         {/* Continue Explorando Holambra                               */}

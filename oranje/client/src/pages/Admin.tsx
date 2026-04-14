@@ -77,6 +77,13 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Badge de reivindicações pendentes
+  const { data: pendingClaims } = trpc.claims.list.useQuery(
+    { status: "pending" },
+    { refetchInterval: 60_000, enabled: !!user && user.role === "admin" }
+  );
+  const pendingClaimsCount = pendingClaims?.length ?? 0;
+
   // Close sidebar on route change (mobile)
   useEffect(() => {
     setSidebarOpen(false);
@@ -190,14 +197,37 @@ export default function Admin() {
               <div className="admin-nav-group-label">{group.label}</div>
               {group.items.map(item => {
                 const Icon = item.icon;
+                const isClaims = item.id === "claims";
+                const showBadge = isClaims && pendingClaimsCount > 0;
                 return (
                   <button
                     key={item.id}
                     className={`admin-nav-item ${activeTab === item.id ? 'active' : ''}`}
                     onClick={() => setActiveTab(item.id)}
+                    style={{ position: "relative" }}
                   >
                     <Icon size={18} />
                     {item.label}
+                    {showBadge && (
+                      <span style={{
+                        marginLeft: "auto",
+                        minWidth: 18,
+                        height: 18,
+                        borderRadius: 9,
+                        background: "#E65100",
+                        color: "#fff",
+                        fontSize: 10,
+                        fontWeight: 800,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0 5px",
+                        fontFamily: "Montserrat, sans-serif",
+                        letterSpacing: 0,
+                      }}>
+                        {pendingClaimsCount > 99 ? "99+" : pendingClaimsCount}
+                      </span>
+                    )}
                   </button>
                 );
               })}

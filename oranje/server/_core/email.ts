@@ -24,7 +24,7 @@ export interface ClaimNotificationParams {
 export async function sendClaimNotificationEmail(params: ClaimNotificationParams): Promise<boolean> {
   const adminEmail = "admin@oranjeapp.com.br";
   const resendApiKey = process.env.RESEND_API_KEY;
-  const mailFrom = process.env.MAIL_FROM ?? "Oranje <noreply@oranjeapp.com.br>";
+  const mailFrom = process.env.MAIL_FROM ?? "Oranje <onboarding@resend.dev>";
 
   const {
     placeId, placeName, contactName, contactEmail,

@@ -214,18 +214,9 @@ export default function Home() {
   const { data: appHeroData } = trpc.content.getAppHero.useQuery();
   const [heroVideoError, setHeroVideoError] = useState(false);
 
-  const heroMediaType = (appHeroData as any)?.mediaType ?? "image";
-  const cmsVideoUrl = (() => {
-    const url = (appHeroData as any)?.videoUrl ?? "";
-    return url.startsWith("/") || /^https?:\/\//.test(url) ? url : "";
-  })();
-  const heroImageUrl = (() => {
-    const url = appHeroData?.imageUrl ?? "";
-    return url.startsWith("data:image/") || /^https?:\/\//.test(url) || url.startsWith("/") ? url : "";
-  })();
-  // Motion design local é o padrão; CMS image pode sobrescrever se configurada
+  // Motion design — sempre ativo como fundo da hero
   const heroVideoUrl = "/videos/hero-motion.mp4?v=20260416";
-  const useHeroVideo = !heroVideoError && !heroImageUrl;
+  const useHeroVideo = !heroVideoError;
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), "_blank"); return; }
@@ -272,21 +263,6 @@ export default function Home() {
           >
             <source src={heroVideoUrl} type="video/mp4" />
           </video>
-        )}
-        {heroImageUrl && (
-          <img
-            src={heroImageUrl}
-            alt=""
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "center 30%",
-            }}
-          />
         )}
         {/* dark overlay */}
         <div style={{

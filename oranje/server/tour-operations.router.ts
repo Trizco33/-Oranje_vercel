@@ -35,10 +35,13 @@ export const tourOperationsRouter = router({
         throw new TRPCError({ code: "NOT_FOUND", message: "Passeio não encontrado." });
       }
 
-      const clientPrice = (tour as any).clientPrice ?? 0;
+      const basePrice = (tour as any).basePrice ?? 0;
+      const partnerCosts = (tour as any).partnerCosts ?? (tour as any).partnerFee ?? 0; // partnerFee = partnerCosts DB column
+      const clientPrice = (tour as any).clientPrice ?? (basePrice + partnerCosts);
       const driverPayout = (tour as any).driverPayout ?? 0;
-      const partnerFee = (tour as any).partnerFee ?? 0;
-      const oranjeMargin = clientPrice - driverPayout - partnerFee;
+      const partnerCommission = (tour as any).partnerCommission ?? 0;
+      // Resultado Oranje = Valor final ao cliente + Comissão do parceiro - Custos incluídos - Repasse motorista
+      const oranjeMargin = clientPrice + partnerCommission - partnerCosts - driverPayout;
 
       const result = await db.createTourOperation({
         tourId: input.tourId,
@@ -53,9 +56,11 @@ export const tourOperationsRouter = router({
         notes: input.notes ?? null,
         internalNotes: null,
         requestOrigin: input.requestOrigin,
+        basePrice,
+        partnerCosts,
         clientPrice,
         driverPayout,
-        partnerFee,
+        partnerCommission,
         oranjeMargin,
         operationStatus: "pending",
         driverPayoutStatus: "pending",
@@ -77,7 +82,7 @@ export const tourOperationsRouter = router({
           requestOrigin:  input.requestOrigin,
           customerAmount: clientPrice,
           operatorAmount: driverPayout,
-          partnerAmount:  partnerFee,
+          partnerAmount:  partnerCosts,
           oranjeMargin:   oranjeMargin,
           billingStatus:  clientPrice > 0 ? "pending" : "not_applicable",
           payoutStatus:   driverPayout > 0 ? "pending" : "not_applicable",
@@ -202,13 +207,26 @@ export const tourOperationsRouter = router({
       requiresTransport: z.boolean().optional(),
       walkOnly: z.boolean().optional(),
       recommendedWithDriver: z.boolean().optional(),
-      clientPrice: z.number().optional().nullable(),
-      driverPayout: z.number().optional().nullable(),
-      partnerFee: z.number().optional().nullable(),
+      // Valores financeiros com semântica correta:
+      basePrice: z.number().min(0).optional().nullable(),           // Preço base do passeio
+      partnerCosts: z.number().min(0).optional().nullable(),        // Custos incluídos de parceiros (ingresso, atração...)
+      partnerCommission: z.number().min(0).optional().nullable(),   // Comissão recebida de parceiros (receita Oranje)
+      driverPayout: z.number().min(0).optional().nullable(),        // Repasse ao motorista
     }))
     .mutation(async ({ input }) => {
-      const { tourId, ...data } = input;
-      await db.updateGuidedTourPremiumSettings(tourId, data);
+      const { tourId, basePrice, partnerCosts, partnerCommission, driverPayout, ...eligibility } = input;
+      // Calcula clientPrice automaticamente = basePrice + partnerCosts
+      const bp = basePrice ?? 0;
+      const pc = partnerCosts ?? 0;
+      const clientPrice = bp + pc;
+      await db.updateGuidedTourPremiumSettings(tourId, {
+        ...eligibility,
+        basePrice: basePrice ?? null,
+        partnerCosts: partnerCosts ?? null,
+        clientPrice: clientPrice > 0 ? clientPrice : null,
+        partnerCommission: partnerCommission ?? null,
+        driverPayout: driverPayout ?? null,
+      });
       return { ok: true };
     }),
 
@@ -233,31 +251,28 @@ export const tourOperationsRouter = router({
       });
 
       const header = [
-        "ID", "Data", "Horário", "Passeio", "Cliente", "Email", "Telefone",
-        "Pessoas", "Motorista", "Valor Cliente (R$)", "Repasse Motorista (R$)",
-        "Valor Parceiro (R$)", "Margem Oranje (R$)", "Status Operação",
-        "Status Repasse", "Origem", "Notas", "Notas Internas",
+        "passeio", "cliente", "data", "status", "passageiros",
+        "preco_base", "custos_incluidos_parceiros", "valor_final_cliente",
+        "comissao_parceiro", "repasse_motorista", "resultado_oranje",
+        "status_repasse", "motorista", "origem", "notas",
       ].join(";");
 
       const rows = ops.map(op => [
-        op.id,
-        op.scheduledDate,
-        op.scheduledTime ?? "",
         `"${(op.tourName ?? "").replace(/"/g, "'")}"`,
         `"${op.clientName.replace(/"/g, "'")}"`,
-        op.clientEmail ?? "",
-        op.clientPhone ?? "",
-        op.partySize,
-        `"${(op.driverName ?? "").replace(/"/g, "'")}"`,
-        (op.clientPrice ?? 0).toFixed(2),
-        (op.driverPayout ?? 0).toFixed(2),
-        (op.partnerFee ?? 0).toFixed(2),
-        (op.oranjeMargin ?? 0).toFixed(2),
+        op.scheduledDate,
         op.operationStatus,
+        op.partySize,
+        (op.basePrice ?? 0).toFixed(2),
+        (op.partnerCosts ?? 0).toFixed(2),
+        (op.clientPrice ?? 0).toFixed(2),
+        (op.partnerCommission ?? 0).toFixed(2),
+        (op.driverPayout ?? 0).toFixed(2),
+        (op.oranjeMargin ?? 0).toFixed(2),
         op.driverPayoutStatus,
+        `"${(op.driverName ?? "").replace(/"/g, "'")}"`,
         op.requestOrigin ?? "",
         `"${(op.notes ?? "").replace(/"/g, "'")}"`,
-        `"${(op.internalNotes ?? "").replace(/"/g, "'")}"`,
       ].join(";"));
 
       return { csv: [header, ...rows].join("\n"), count: ops.length };

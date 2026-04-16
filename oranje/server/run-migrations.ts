@@ -1112,5 +1112,25 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 025: basePrice + partnerCommission em guided_tours e tour_operations ──
+  // Corrige regra de negócio: separa custos de parceiros (partnerFee existente)
+  // de comissão recebida de parceiros (partnerCommission nova).
+  // basePrice = preço base sem custos incluídos. clientPrice = basePrice + partnerFee.
+  const financialCols025: [string, string, string][] = [
+    ["guided_tours",    "basePrice",          "ALTER TABLE `guided_tours` ADD COLUMN `basePrice` float NULL"],
+    ["guided_tours",    "partnerCommission",   "ALTER TABLE `guided_tours` ADD COLUMN `partnerCommission` float NULL DEFAULT 0"],
+    ["tour_operations", "basePrice",           "ALTER TABLE `tour_operations` ADD COLUMN `basePrice` float NOT NULL DEFAULT 0"],
+    ["tour_operations", "partnerCommission",   "ALTER TABLE `tour_operations` ADD COLUMN `partnerCommission` float NOT NULL DEFAULT 0"],
+  ];
+  for (const [table, col, sql] of financialCols025) {
+    if (!(await columnExists(db, table, col))) {
+      console.log(`[Migrations] 025: Adding ${table}.${col}...`);
+      await db.execute(sql);
+      console.log(`[Migrations] ✅ 025: ${table}.${col} added.`);
+    } else {
+      console.log(`[Migrations] ✓ 025: ${table}.${col} already exists.`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

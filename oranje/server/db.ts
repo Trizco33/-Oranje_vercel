@@ -956,9 +956,11 @@ export async function listTourOperations(filters?: {
       notes: tourOperations.notes,
       internalNotes: tourOperations.internalNotes,
       requestOrigin: tourOperations.requestOrigin,
+      basePrice: tourOperations.basePrice,
+      partnerCosts: tourOperations.partnerCosts,
       clientPrice: tourOperations.clientPrice,
       driverPayout: tourOperations.driverPayout,
-      partnerFee: tourOperations.partnerFee,
+      partnerCommission: tourOperations.partnerCommission,
       oranjeMargin: tourOperations.oranjeMargin,
       operationStatus: tourOperations.operationStatus,
       driverPayoutStatus: tourOperations.driverPayoutStatus,
@@ -1000,9 +1002,11 @@ export async function getTourOperationById(id: number) {
       notes: tourOperations.notes,
       internalNotes: tourOperations.internalNotes,
       requestOrigin: tourOperations.requestOrigin,
+      basePrice: tourOperations.basePrice,
+      partnerCosts: tourOperations.partnerCosts,
       clientPrice: tourOperations.clientPrice,
       driverPayout: tourOperations.driverPayout,
-      partnerFee: tourOperations.partnerFee,
+      partnerCommission: tourOperations.partnerCommission,
       oranjeMargin: tourOperations.oranjeMargin,
       operationStatus: tourOperations.operationStatus,
       driverPayoutStatus: tourOperations.driverPayoutStatus,
@@ -1091,9 +1095,11 @@ export async function getTourFinancialSummary(filters?: {
       driverId: tourOperations.driverId,
       driverName: drivers.name,
       scheduledDate: tourOperations.scheduledDate,
+      basePrice: tourOperations.basePrice,
+      partnerCosts: tourOperations.partnerCosts,
       clientPrice: tourOperations.clientPrice,
       driverPayout: tourOperations.driverPayout,
-      partnerFee: tourOperations.partnerFee,
+      partnerCommission: tourOperations.partnerCommission,
       oranjeMargin: tourOperations.oranjeMargin,
       driverPayoutStatus: tourOperations.driverPayoutStatus,
     })
@@ -1107,11 +1113,12 @@ export async function getTourFinancialSummary(filters?: {
     (acc, op) => ({
       totalRevenue: acc.totalRevenue + (op.clientPrice ?? 0),
       totalDriverPayout: acc.totalDriverPayout + (op.driverPayout ?? 0),
-      totalPartnerFee: acc.totalPartnerFee + (op.partnerFee ?? 0),
+      totalPartnerCosts: acc.totalPartnerCosts + (op.partnerCosts ?? 0),
+      totalPartnerCommission: acc.totalPartnerCommission + (op.partnerCommission ?? 0),
       totalMargin: acc.totalMargin + (op.oranjeMargin ?? 0),
       totalExecutions: acc.totalExecutions + 1,
     }),
-    { totalRevenue: 0, totalDriverPayout: 0, totalPartnerFee: 0, totalMargin: 0, totalExecutions: 0 }
+    { totalRevenue: 0, totalDriverPayout: 0, totalPartnerCosts: 0, totalPartnerCommission: 0, totalMargin: 0, totalExecutions: 0 }
   );
 
   return { operations: ops, totals };
@@ -1123,14 +1130,20 @@ export async function updateGuidedTourPremiumSettings(
     requiresTransport?: boolean;
     walkOnly?: boolean;
     recommendedWithDriver?: boolean;
-    clientPrice?: number | null;
+    basePrice?: number | null;
+    partnerCosts?: number | null;     // stored in partnerFee column
+    clientPrice?: number | null;      // calculated: basePrice + partnerCosts
     driverPayout?: number | null;
-    partnerFee?: number | null;
+    partnerCommission?: number | null;
   }
 ) {
   const db = await getDb();
   if (!db) throw new Error("DB not available");
-  await db.update(guidedTours).set({ ...data, updatedAt: new Date() } as any).where(eq(guidedTours.id, id));
+  // Map partnerCosts → partnerFee column name for backward compat
+  const { partnerCosts, ...rest } = data;
+  const payload: Record<string, any> = { ...rest, updatedAt: new Date() };
+  if (partnerCosts !== undefined) payload.partnerFee = partnerCosts;
+  await db.update(guidedTours).set(payload as any).where(eq(guidedTours.id, id));
 }
 
 // ─── Central de Operações Oranje ──────────────────────────────────────────────

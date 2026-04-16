@@ -465,9 +465,11 @@ export const guidedTours = mysqlTable("guided_tours", {
   requiresTransport: boolean("requiresTransport").default(false).notNull(),
   walkOnly: boolean("walkOnly").default(false).notNull(),
   recommendedWithDriver: boolean("recommendedWithDriver").default(false).notNull(),
-  clientPrice: float("clientPrice"),          // Valor cobrado do cliente (R$)
+  basePrice: float("basePrice"),              // Preço base do passeio (sem custos incluídos)
+  partnerCosts: float("partnerFee"),          // Custos incluídos de parceiros (ingresso, atração, consumo obrigatório)
+  clientPrice: float("clientPrice"),          // Valor final ao cliente = basePrice + partnerCosts
   driverPayout: float("driverPayout"),        // Repasse fixo ao motorista (R$)
-  partnerFee: float("partnerFee"),            // Valor faturado do parceiro por execução (R$)
+  partnerCommission: float("partnerCommission"), // Comissão recebida de parceiros (receita adicional Oranje)
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -549,10 +551,12 @@ export const tourOperations = mysqlTable("tour_operations", {
   internalNotes: text("internalNotes"),  // Notas internas do admin
   requestOrigin: varchar("requestOrigin", { length: 50 }).default("web"), // 'web' | 'whatsapp' | 'admin'
   // ── Financeiro (snapshot dos valores no momento da operação) ──────────────
-  clientPrice: float("clientPrice").notNull().default(0),   // Valor cobrado ao cliente
-  driverPayout: float("driverPayout").notNull().default(0), // Repasse ao motorista
-  partnerFee: float("partnerFee").notNull().default(0),     // Faturamento do parceiro
-  oranjeMargin: float("oranjeMargin").notNull().default(0), // Margem calculada (clientPrice - driverPayout - partnerFee)
+  basePrice: float("basePrice").notNull().default(0),           // Preço base do passeio (snapshot)
+  partnerCosts: float("partnerFee").notNull().default(0),       // Custos incluídos de parceiros (snapshot) — col DB: partnerFee
+  clientPrice: float("clientPrice").notNull().default(0),       // Valor final ao cliente = basePrice + partnerCosts
+  driverPayout: float("driverPayout").notNull().default(0),     // Repasse ao motorista (snapshot)
+  partnerCommission: float("partnerCommission").notNull().default(0), // Comissão recebida de parceiros (receita Oranje)
+  oranjeMargin: float("oranjeMargin").notNull().default(0),     // Resultado Oranje = clientPrice + partnerCommission - partnerCosts - driverPayout
   // ── Status ────────────────────────────────────────────────────────────────
   operationStatus: mysqlEnum("operationStatus", [
     "pending", "confirmed", "assigned", "in_progress", "completed", "cancelled", "no_show"

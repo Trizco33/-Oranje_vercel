@@ -56,10 +56,11 @@ function FinancialSummary({ month }: { month?: string }) {
   const { totals } = data;
 
   const cards = [
-    { label: "Total faturado",       value: totals.totalRevenue,       color: "#2E7D32" },
-    { label: "Repasse motoristas",   value: totals.totalDriverPayout,  color: "#E65100" },
-    { label: "Faturamento parceiros",value: totals.totalPartnerFee,    color: "#1565C0" },
-    { label: "Margem Oranje",        value: totals.totalMargin,        color: "#00251A" },
+    { label: "Total ao cliente",         value: totals.totalRevenue,            color: "#2E7D32" },
+    { label: "Custos incluídos parceiros", value: totals.totalPartnerCosts,     color: "#1565C0" },
+    { label: "Comissão de parceiros",    value: totals.totalPartnerCommission,  color: "#0D7A5F" },
+    { label: "Repasse motoristas",       value: totals.totalDriverPayout,       color: "#E65100" },
+    { label: "Resultado Oranje",         value: totals.totalMargin,             color: "#00251A" },
   ];
 
   return (
@@ -72,7 +73,7 @@ function FinancialSummary({ month }: { month?: string }) {
         Fechamento financeiro — {totals.totalExecutions} execuções concluídas
         {month ? ` (${month})` : " (todos os períodos)"}
       </p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 10, gridAutoRows: "auto" }}>
         {cards.map(c => (
           <div key={c.label} style={{
             background: "#fff",
@@ -99,9 +100,10 @@ function TourPremiumSettingsModal({ tourId, tourName, onClose }: {
     requiresTransport: false,
     walkOnly: false,
     recommendedWithDriver: false,
-    clientPrice: "",
+    basePrice: "",
+    partnerCosts: "",
+    partnerCommission: "",
     driverPayout: "",
-    partnerFee: "",
   });
 
   const updateMutation = trpc.tourOperations.updateTourPremiumSettings.useMutation({
@@ -112,17 +114,41 @@ function TourPremiumSettingsModal({ tourId, tourName, onClose }: {
     onError: () => toast.error("Erro ao salvar configurações."),
   });
 
+  const bp = parseFloat(form.basePrice) || 0;
+  const pc = parseFloat(form.partnerCosts) || 0;
+  const pcom = parseFloat(form.partnerCommission) || 0;
+  const dp = parseFloat(form.driverPayout) || 0;
+  const clientPrice = bp + pc;
+  const oranjeMargin = clientPrice + pcom - pc - dp;
+
   function handleSave() {
     updateMutation.mutate({
       tourId,
       requiresTransport: form.requiresTransport,
       walkOnly: form.walkOnly,
       recommendedWithDriver: form.recommendedWithDriver,
-      clientPrice: form.clientPrice ? parseFloat(form.clientPrice) : null,
-      driverPayout: form.driverPayout ? parseFloat(form.driverPayout) : null,
-      partnerFee: form.partnerFee ? parseFloat(form.partnerFee) : null,
+      basePrice: form.basePrice ? bp : null,
+      partnerCosts: form.partnerCosts ? pc : null,
+      partnerCommission: form.partnerCommission ? pcom : null,
+      driverPayout: form.driverPayout ? dp : null,
     });
   }
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "9px 12px", borderRadius: 8,
+    border: "1px solid rgba(0,37,26,0.15)", fontSize: 13,
+    fontFamily: "Montserrat, sans-serif", boxSizing: "border-box",
+  };
+  const sectionLabel: React.CSSProperties = {
+    fontSize: 11, fontWeight: 700, color: "rgba(0,37,26,0.4)",
+    fontFamily: "Montserrat, sans-serif", textTransform: "uppercase",
+    letterSpacing: "0.08em", margin: "20px 0 10px",
+  };
+  const fieldLabel: React.CSSProperties = {
+    fontSize: 10, fontWeight: 700, color: "rgba(0,37,26,0.45)",
+    fontFamily: "Montserrat, sans-serif", letterSpacing: "0.06em",
+    textTransform: "uppercase", display: "block", marginBottom: 4,
+  };
 
   return (
     <div style={{
@@ -133,7 +159,7 @@ function TourPremiumSettingsModal({ tourId, tourName, onClose }: {
     }}>
       <div style={{
         background: "#fff", borderRadius: 16, padding: "24px 20px",
-        width: "100%", maxWidth: 420, maxHeight: "90vh", overflowY: "auto",
+        width: "100%", maxWidth: 440, maxHeight: "90vh", overflowY: "auto",
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div>
@@ -149,9 +175,7 @@ function TourPremiumSettingsModal({ tourId, tourName, onClose }: {
           </button>
         </div>
 
-        <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(0,37,26,0.4)", fontFamily: "Montserrat, sans-serif", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>
-          Elegibilidade
-        </p>
+        <p style={sectionLabel}>Elegibilidade</p>
         {[
           { key: "requiresTransport", label: "Requer transporte" },
           { key: "walkOnly", label: "Walk-only (sem motorista)" },
@@ -167,41 +191,73 @@ function TourPremiumSettingsModal({ tourId, tourName, onClose }: {
           </label>
         ))}
 
-        <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(0,37,26,0.4)", fontFamily: "Montserrat, sans-serif", textTransform: "uppercase", letterSpacing: "0.08em", margin: "20px 0 10px" }}>
-          Valores (R$)
-        </p>
-        {[
-          { key: "clientPrice", label: "Valor ao cliente" },
-          { key: "driverPayout", label: "Repasse ao motorista" },
-          { key: "partnerFee", label: "Faturamento parceiro" },
-        ].map(({ key, label }) => (
-          <div key={key} style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: "rgba(0,37,26,0.45)", fontFamily: "Montserrat, sans-serif", letterSpacing: "0.06em", textTransform: "uppercase", display: "block", marginBottom: 4 }}>
-              {label}
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={(form as any)[key]}
-              onChange={e => setForm(p => ({ ...p, [key]: e.target.value }))}
-              placeholder="0,00"
-              style={{
-                width: "100%", padding: "9px 12px", borderRadius: 8,
-                border: "1px solid rgba(0,37,26,0.15)", fontSize: 13,
-                fontFamily: "Montserrat, sans-serif", boxSizing: "border-box",
-              }}
-            />
-          </div>
-        ))}
+        <p style={sectionLabel}>Estrutura de custos (R$)</p>
 
-        {form.clientPrice && form.driverPayout && form.partnerFee && (
-          <div style={{ background: "rgba(0,37,26,0.04)", borderRadius: 8, padding: "10px 12px", marginBottom: 16 }}>
-            <p style={{ fontSize: 11, color: "rgba(0,37,26,0.45)", fontFamily: "Montserrat, sans-serif", margin: "0 0 4px" }}>
-              Margem Oranje calculada:
+        {/* Preço base */}
+        <div style={{ marginBottom: 12 }}>
+          <label style={fieldLabel}>Preço base do passeio</label>
+          <input type="number" step="0.01" min="0" value={form.basePrice}
+            onChange={e => setForm(p => ({ ...p, basePrice: e.target.value }))}
+            placeholder="ex: 280,00" style={inputStyle} />
+          <p style={{ fontSize: 10, color: "rgba(0,37,26,0.35)", fontFamily: "Montserrat, sans-serif", margin: "3px 0 0" }}>
+            Custo base do serviço Oranje (transporte + guia)
+          </p>
+        </div>
+
+        {/* Custos incluídos parceiros */}
+        <div style={{ marginBottom: 12 }}>
+          <label style={fieldLabel}>Custos incluídos de parceiros</label>
+          <input type="number" step="0.01" min="0" value={form.partnerCosts}
+            onChange={e => setForm(p => ({ ...p, partnerCosts: e.target.value }))}
+            placeholder="ex: 60,00" style={inputStyle} />
+          <p style={{ fontSize: 10, color: "rgba(0,37,26,0.35)", fontFamily: "Montserrat, sans-serif", margin: "3px 0 0" }}>
+            Ingressos, consumação mínima etc. repassados ao cliente
+          </p>
+        </div>
+
+        {/* Valor ao cliente — calculado */}
+        <div style={{ background: "rgba(0,37,26,0.04)", borderRadius: 8, padding: "10px 12px", marginBottom: 14 }}>
+          <p style={{ fontSize: 10, color: "rgba(0,37,26,0.45)", fontFamily: "Montserrat, sans-serif", margin: "0 0 3px" }}>
+            Valor final ao cliente (calculado: base + custos)
+          </p>
+          <p style={{ fontSize: 16, fontWeight: 800, color: "#00251A", fontFamily: "Montserrat, sans-serif", margin: 0 }}>
+            R$ {clientPrice.toFixed(2).replace(".", ",")}
+          </p>
+        </div>
+
+        <p style={{ ...sectionLabel, margin: "16px 0 10px" }}>Receitas e repasses</p>
+
+        {/* Comissão de parceiros */}
+        <div style={{ marginBottom: 12 }}>
+          <label style={fieldLabel}>Comissão recebida de parceiros</label>
+          <input type="number" step="0.01" min="0" value={form.partnerCommission}
+            onChange={e => setForm(p => ({ ...p, partnerCommission: e.target.value }))}
+            placeholder="ex: 25,00" style={inputStyle} />
+          <p style={{ fontSize: 10, color: "rgba(0,37,26,0.35)", fontFamily: "Montserrat, sans-serif", margin: "3px 0 0" }}>
+            Comissão que o parceiro repassa à Oranje (receita adicional)
+          </p>
+        </div>
+
+        {/* Repasse motorista */}
+        <div style={{ marginBottom: 16 }}>
+          <label style={fieldLabel}>Repasse ao motorista</label>
+          <input type="number" step="0.01" min="0" value={form.driverPayout}
+            onChange={e => setForm(p => ({ ...p, driverPayout: e.target.value }))}
+            placeholder="ex: 100,00" style={inputStyle} />
+        </div>
+
+        {/* Resultado Oranje — calculado */}
+        {(form.basePrice || form.driverPayout) && (
+          <div style={{
+            background: oranjeMargin >= 0 ? "rgba(0,37,26,0.05)" : "rgba(198,40,40,0.06)",
+            border: `1px solid ${oranjeMargin >= 0 ? "rgba(0,37,26,0.1)" : "rgba(198,40,40,0.2)"}`,
+            borderRadius: 8, padding: "10px 12px", marginBottom: 16,
+          }}>
+            <p style={{ fontSize: 10, color: "rgba(0,37,26,0.45)", fontFamily: "Montserrat, sans-serif", margin: "0 0 3px" }}>
+              Resultado Oranje = cliente ({clientPrice.toFixed(2)}) + comissão ({pcom.toFixed(2)}) − custos ({pc.toFixed(2)}) − motorista ({dp.toFixed(2)})
             </p>
-            <p style={{ fontSize: 15, fontWeight: 800, color: "#00251A", fontFamily: "Montserrat, sans-serif", margin: 0 }}>
-              R$ {(parseFloat(form.clientPrice) - parseFloat(form.driverPayout) - parseFloat(form.partnerFee)).toFixed(2).replace(".", ",")}
+            <p style={{ fontSize: 16, fontWeight: 800, color: oranjeMargin >= 0 ? "#00251A" : "#C62828", fontFamily: "Montserrat, sans-serif", margin: 0 }}>
+              R$ {oranjeMargin.toFixed(2).replace(".", ",")}
             </p>
           </div>
         )}
@@ -279,8 +335,8 @@ function OperationRow({ op }: { op: any }) {
             {op.tourName ?? `Tour #${op.tourId}`}
           </p>
           <p style={{ fontSize: 11, color: "rgba(0,37,26,0.55)", fontFamily: "Montserrat, sans-serif", margin: 0 }}>
-            {op.clientName} · {op.partySize} pax · R$ {(op.clientPrice ?? 0).toFixed(2).replace(".", ",")}
-            {" · "}<span style={{ color: op.oranjeMargin >= 0 ? "#2E7D32" : "#C62828" }}>margem R$ {margin}</span>
+            {op.clientName} · {op.partySize} pax · cliente R$ {(op.clientPrice ?? 0).toFixed(2).replace(".", ",")}
+            {" · "}<span style={{ color: (op.oranjeMargin ?? 0) >= 0 ? "#2E7D32" : "#C62828", fontWeight: 700 }}>Oranje R$ {margin}</span>
           </p>
         </div>
         {expanded ? <ChevronUp size={16} color="#999" /> : <ChevronDown size={16} color="#999" />}
@@ -298,10 +354,15 @@ function OperationRow({ op }: { op: any }) {
             <InfoCell label="Origem" value={op.requestOrigin ?? "web"} />
           </div>
 
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 8 }}>
+            <FinCell label="Base" value={op.basePrice} color="#555" />
+            <FinCell label="Custos parceiros" value={op.partnerCosts} color="#1565C0" />
+            <FinCell label="Ao cliente" value={op.clientPrice} color="#00251A" />
+          </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 14 }}>
-            <FinCell label="Cliente" value={op.clientPrice} color="#00251A" />
+            <FinCell label="Comissão parceiro" value={op.partnerCommission} color="#0D7A5F" />
             <FinCell label="Motorista" value={op.driverPayout} color="#E65100" />
-            <FinCell label="Parceiro" value={op.partnerFee} color="#1565C0" />
+            <FinCell label="Resultado Oranje" value={op.oranjeMargin} color={(op.oranjeMargin ?? 0) >= 0 ? "#2E7D32" : "#C62828"} bold />
           </div>
 
           {op.notes && (
@@ -363,11 +424,11 @@ function InfoCell({ label, value }: { label: string; value: string }) {
   );
 }
 
-function FinCell({ label, value, color }: { label: string; value: number; color: string }) {
+function FinCell({ label, value, color, bold }: { label: string; value: number; color: string; bold?: boolean }) {
   return (
-    <div style={{ background: "rgba(0,37,26,0.03)", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
+    <div style={{ background: bold ? "rgba(0,37,26,0.06)" : "rgba(0,37,26,0.03)", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
       <p style={{ fontSize: 9, color: "rgba(0,37,26,0.4)", fontFamily: "Montserrat, sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 3px" }}>{label}</p>
-      <p style={{ fontSize: 13, fontWeight: 700, color, fontFamily: "Montserrat, sans-serif", margin: 0 }}>
+      <p style={{ fontSize: bold ? 14 : 13, fontWeight: bold ? 800 : 700, color, fontFamily: "Montserrat, sans-serif", margin: 0 }}>
         R$ {(value ?? 0).toFixed(2).replace(".", ",")}
       </p>
     </div>
@@ -414,28 +475,28 @@ export function AdminPremiumTours() {
     }
 
     const header = [
-      "ID", "Data", "Horário", "Passeio", "Cliente", "Email", "Telefone",
-      "Pessoas", "Motorista", "Valor (R$)", "Repasse Motorista (R$)",
-      "Parceiro (R$)", "Margem Oranje (R$)", "Status Operação",
-      "Status Repasse", "Origem",
+      "passeio", "cliente", "email", "tel", "data", "pessoas", "status",
+      "preco_base", "custos_parceiros", "valor_cliente",
+      "comissao_parceiro", "repasse_motorista", "resultado_oranje",
+      "status_repasse", "motorista", "origem",
     ].join(";");
 
     const rows = operations.map((op: any) => [
-      op.id,
-      op.scheduledDate,
-      op.scheduledTime ?? "",
       `"${(op.tourName ?? "").replace(/"/g, "'")}"`,
       `"${op.clientName.replace(/"/g, "'")}"`,
       op.clientEmail ?? "",
       op.clientPhone ?? "",
+      op.scheduledDate,
       op.partySize,
-      `"${(op.driverName ?? "").replace(/"/g, "'")}"`,
-      (op.clientPrice ?? 0).toFixed(2),
-      (op.driverPayout ?? 0).toFixed(2),
-      (op.partnerFee ?? 0).toFixed(2),
-      (op.oranjeMargin ?? 0).toFixed(2),
       op.operationStatus,
+      (op.basePrice ?? 0).toFixed(2),
+      (op.partnerCosts ?? 0).toFixed(2),
+      (op.clientPrice ?? 0).toFixed(2),
+      (op.partnerCommission ?? 0).toFixed(2),
+      (op.driverPayout ?? 0).toFixed(2),
+      (op.oranjeMargin ?? 0).toFixed(2),
       op.driverPayoutStatus,
+      `"${(op.driverName ?? "").replace(/"/g, "'")}"`,
       op.requestOrigin ?? "",
     ].join(";"));
 

@@ -223,8 +223,8 @@ export default function Home() {
     const url = appHeroData?.imageUrl ?? "";
     return url.startsWith("data:image/") || /^https?:\/\//.test(url) || url.startsWith("/") ? url : "";
   })();
-  // CMS video takes priority; fallback to local motion design
-  const heroVideoUrl = (heroMediaType === "video" && cmsVideoUrl) ? cmsVideoUrl : "/videos/hero-motion.mp4";
+  // Motion design local é o padrão; CMS image pode sobrescrever se configurada
+  const heroVideoUrl = "/videos/hero-motion.mp4?v=20260416";
   const useHeroVideo = !heroVideoError && !heroImageUrl;
 
   function handleToggleFavorite(placeId: number) {

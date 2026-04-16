@@ -215,7 +215,7 @@ export default function Home() {
   const [heroVideoError, setHeroVideoError] = useState(false);
 
   const heroMediaType = (appHeroData as any)?.mediaType ?? "image";
-  const heroVideoUrl = (() => {
+  const cmsVideoUrl = (() => {
     const url = (appHeroData as any)?.videoUrl ?? "";
     return url.startsWith("/") || /^https?:\/\//.test(url) ? url : "";
   })();
@@ -223,7 +223,9 @@ export default function Home() {
     const url = appHeroData?.imageUrl ?? "";
     return url.startsWith("data:image/") || /^https?:\/\//.test(url) || url.startsWith("/") ? url : "";
   })();
-  const useHeroVideo = heroMediaType === "video" && heroVideoUrl && !heroVideoError;
+  // CMS video takes priority; fallback to local motion design
+  const heroVideoUrl = (heroMediaType === "video" && cmsVideoUrl) ? cmsVideoUrl : "/videos/hero-motion.mp4";
+  const useHeroVideo = !heroVideoError && !heroImageUrl;
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), "_blank"); return; }
@@ -242,19 +244,13 @@ export default function Home() {
       <OranjeHeader showSearch hideThemeToggle transparentUntilScroll />
 
       {/* ════════════════════════════════════════════════════════════
-          HERO — animated gradient + floating orbs + blur-reveal text
+          HERO — motion design video + floating orbs + blur-reveal text
       ════════════════════════════════════════════════════════════ */}
       <section style={{
         position: "relative",
         minHeight: 360,
         overflow: "hidden",
-        ...(!useHeroVideo && !heroImageUrl
-          ? {
-              background: "linear-gradient(135deg, #001812 0%, #00251A 40%, #003428 70%, #001F14 100%)",
-              backgroundSize: "300% 300%",
-              animation: "oranje-hero-breathe 14s ease infinite",
-            }
-          : {}),
+        background: "#001812",
       }}>
         {/* Background: Video (priority) or Image */}
         {useHeroVideo && (
@@ -277,7 +273,7 @@ export default function Home() {
             <source src={heroVideoUrl} type="video/mp4" />
           </video>
         )}
-        {!useHeroVideo && heroImageUrl && (
+        {heroImageUrl && (
           <img
             src={heroImageUrl}
             alt=""
@@ -292,19 +288,15 @@ export default function Home() {
             }}
           />
         )}
-        {/* dark overlay over media */}
-        {(useHeroVideo || heroImageUrl) && (
-          <>
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to right, rgba(0,24,18,0.85) 0%, rgba(0,24,18,0.55) 60%, rgba(0,24,18,0.25) 100%)",
-            }} />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to top, #001812 0%, transparent 55%)",
-            }} />
-          </>
-        )}
+        {/* dark overlay */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to right, rgba(0,24,18,0.72) 0%, rgba(0,24,18,0.38) 60%, rgba(0,24,18,0.15) 100%)",
+        }} />
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to top, #001812 0%, transparent 50%)",
+        }} />
 
         {/* Ambient orb 1 — top-right orange */}
         <div style={{

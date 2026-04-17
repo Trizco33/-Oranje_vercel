@@ -215,7 +215,7 @@ export default function Home() {
   const [heroVideoError, setHeroVideoError] = useState(false);
 
   // Motion design — sempre ativo como fundo da hero
-  const heroVideoUrl = "/videos/hero-motion.mp4?v=20260416";
+  const heroVideoUrl = "/videos/hero-motion.mp4?v=20260416b";
   const useHeroVideo = !heroVideoError;
 
   function handleToggleFavorite(placeId: number) {

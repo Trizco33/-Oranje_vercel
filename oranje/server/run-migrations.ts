@@ -1170,5 +1170,39 @@ export async function runMigrations(): Promise<void> {
     await upsertHeroKey("app_hero_videoUrl",  videoUrl,   "app_hero_videoUrl");
   }
 
+  // ─── Migration 027: site hero → corrigir videoUrl para arquivo existente ────
+  // O arquivo /hero-motion.mp4 foi removido; atualiza para /videos/hero-oranje-v4.mp4
+  {
+    const correctUrl = "/videos/hero-oranje-v4.mp4";
+    const [vRows] = await db.execute(
+      `SELECT id, value FROM \`site_content\` WHERE \`key\` = 'hero_videoUrl' AND section = 'hero' LIMIT 1`
+    ) as any[];
+    if ((vRows as any[]).length > 0) {
+      const current = (vRows as any[])[0].value;
+      if (current === correctUrl) {
+        console.log(`[Migrations] ✓ 027: hero_videoUrl já correto`);
+      } else {
+        await db.execute(
+          `UPDATE \`site_content\` SET value = '${correctUrl}', updatedAt = NOW() WHERE \`key\` = 'hero_videoUrl' AND section = 'hero'`
+        );
+        console.log(`[Migrations] ✅ 027: hero_videoUrl corrigido (era "${current}") → ${correctUrl}`);
+      }
+    } else {
+      // Linha não existe: usa refUpdatedBy de outra linha da seção hero
+      const [refRows] = await db.execute(
+        `SELECT updatedBy FROM \`site_content\` WHERE section = 'hero' LIMIT 1`
+      ) as any[];
+      const refBy: number | null = (refRows as any[]).length > 0 ? (refRows as any[])[0].updatedBy : null;
+      if (refBy !== null) {
+        await db.execute(
+          `INSERT INTO \`site_content\` (\`key\`, value, section, updatedBy, updatedAt) VALUES ('hero_videoUrl', '${correctUrl}', 'hero', ${refBy}, NOW())`
+        );
+        console.log(`[Migrations] ✅ 027: hero_videoUrl inserido → ${correctUrl}`);
+      } else {
+        console.log(`[Migrations] ⚠ 027: hero_videoUrl — sem linha de referência, configure via CMS`);
+      }
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

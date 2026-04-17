@@ -103,12 +103,39 @@ export default function LandingNew() {
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-gradient-to-br from-[#004D40] via-[#00251A] to-[#004D40] text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
+
+        {/* Vídeo de fundo (quando CMS tem mediaType=video) */}
+        {(hero as any).mediaType === "video" && (hero as any).videoUrl && (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+              zIndex: 0,
+            }}
+          >
+            <source src={(hero as any).videoUrl} type="video/mp4" />
+          </video>
+        )}
+
+        {/* Overlay escuro sobre o vídeo */}
+        {(hero as any).mediaType === "video" && (
+          <div className="absolute inset-0 bg-[#00251A]/60" style={{ zIndex: 1 }} />
+        )}
+
+        <div className="absolute inset-0 opacity-10" style={{ zIndex: 2 }}>
           <div className="absolute top-20 right-20 w-72 h-72 bg-[#E65100] rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 left-20 w-72 h-72 bg-[#E65100] rounded-full blur-3xl"></div>
         </div>
 
-        <div className="max-w-6xl mx-auto relative z-10">
+        <div className="max-w-6xl mx-auto relative" style={{ zIndex: 10 }}>
           <div className="text-center space-y-8">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight">
               {hero.title}
@@ -131,18 +158,19 @@ export default function LandingNew() {
             </div>
           </div>
 
-          {(hero.imageUrl || hero.image) && (
+          {/* Imagem abaixo do texto — só exibe em modo imagem */}
+          {(hero as any).mediaType !== "video" && (hero.imageUrl || hero.image) && (
             <div className="mt-16">
-              <img 
-                src={hero.imageUrl || hero.image} 
-                alt="Holambra" 
+              <img
+                src={hero.imageUrl || hero.image}
+                alt="Holambra"
                 className="w-full h-96 object-cover rounded-lg shadow-2xl"
               />
             </div>
           )}
         </div>
 
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce" style={{ zIndex: 10 }}>
           <ChevronDown className="w-8 h-8 text-white" />
         </div>
       </section>

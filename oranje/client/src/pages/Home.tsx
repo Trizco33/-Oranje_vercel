@@ -214,9 +214,13 @@ export default function Home() {
   const { data: appHeroData } = trpc.content.getAppHero.useQuery();
   const [heroVideoError, setHeroVideoError] = useState(false);
 
-  // Motion design fixo — sempre usa o arquivo local (CMS não interfere)
-  const heroVideoUrl = "/videos/hero-oranje-v4.mp4";
-  const useHeroVideo = !heroVideoError;
+  // Hero controlado pelo CMS: mediaType decide imagem ou vídeo.
+  // Fallback para arquivo local se CMS não tiver URL configurada.
+  const cmsMediaType = (appHeroData as any)?.mediaType ?? "image";
+  const cmsVideoUrl  = (appHeroData as any)?.videoUrl  ?? "";
+  const cmsImageUrl  = appHeroData?.imageUrl ?? "";
+  const heroVideoUrl = cmsVideoUrl || "/videos/hero-oranje-v4.mp4";
+  const useHeroVideo = cmsMediaType === "video" && !heroVideoError;
 
   function handleToggleFavorite(placeId: number) {
     if (!user) { window.open(getLoginUrl(), "_blank"); return; }
@@ -243,8 +247,8 @@ export default function Home() {
         overflow: "hidden",
         background: "#001812",
       }}>
-        {/* Background: Video (priority) or Image */}
-        {useHeroVideo && (
+        {/* Background: Video (modo video no CMS) ou Imagem (modo imagem no CMS) */}
+        {useHeroVideo ? (
           <video
             key={heroVideoUrl}
             autoPlay
@@ -263,7 +267,20 @@ export default function Home() {
           >
             <source src={heroVideoUrl} type="video/mp4" />
           </video>
-        )}
+        ) : cmsImageUrl ? (
+          <img
+            src={cmsImageUrl}
+            alt="Hero"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+          />
+        ) : null}
         {/* dark overlay */}
         <div style={{
           position: "absolute", inset: 0,

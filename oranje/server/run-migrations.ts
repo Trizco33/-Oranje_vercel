@@ -1132,5 +1132,43 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 026: app_hero → forçar mediaType=video com arquivo local ─────
+  // Usa updatedBy de uma linha já existente da seção para INSERT quando necessário.
+  {
+    const videoUrl = "/videos/hero-oranje-v4.mp4";
+    // Pega qualquer linha da seção app_hero para reusar updatedBy
+    const [refRows] = await db.execute(
+      `SELECT updatedBy FROM \`site_content\` WHERE section = 'app_hero' LIMIT 1`
+    ) as any[];
+    const refUpdatedBy: number | null = (refRows as any[]).length > 0 ? (refRows as any[])[0].updatedBy : null;
+
+    // Helper: upsert de uma chave respeitando FK
+    const upsertHeroKey = async (key: string, value: string, label: string) => {
+      const [rows] = await db.execute(
+        `SELECT id, value FROM \`site_content\` WHERE \`key\` = '${key}' AND section = 'app_hero' LIMIT 1`
+      ) as any[];
+      if ((rows as any[]).length > 0) {
+        if ((rows as any[])[0].value === value) {
+          console.log(`[Migrations] ✓ 026: ${label} já correto`);
+        } else {
+          await db.execute(
+            `UPDATE \`site_content\` SET value = '${value}', updatedAt = NOW() WHERE \`key\` = '${key}' AND section = 'app_hero'`
+          );
+          console.log(`[Migrations] ✅ 026: ${label} → ${value}`);
+        }
+      } else if (refUpdatedBy !== null) {
+        await db.execute(
+          `INSERT INTO \`site_content\` (\`key\`, value, section, updatedBy, updatedAt) VALUES ('${key}', '${value}', 'app_hero', ${refUpdatedBy}, NOW())`
+        );
+        console.log(`[Migrations] ✅ 026: ${label} inserido → ${value}`);
+      } else {
+        console.log(`[Migrations] ⚠ 026: ${label} — sem linha de referência, será criado ao salvar pelo CMS`);
+      }
+    };
+
+    await upsertHeroKey("app_hero_mediaType", "video",    "app_hero_mediaType");
+    await upsertHeroKey("app_hero_videoUrl",  videoUrl,   "app_hero_videoUrl");
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

@@ -215,7 +215,7 @@ export default function Home() {
   const [heroVideoError, setHeroVideoError] = useState(false);
 
   // Motion design fixo — sempre usa o arquivo local (CMS não interfere)
-  const heroVideoUrl = "/videos/hero-motion.mp4?v=20260416b";
+  const heroVideoUrl = "/videos/hero-oranje-v4.mp4";
   const useHeroVideo = !heroVideoError;
 
   function handleToggleFavorite(placeId: number) {

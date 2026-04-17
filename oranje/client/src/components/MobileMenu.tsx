@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   X, Menu, Compass, Calendar, Heart, MapPin, Search,
-  Sparkles, Settings, Map, Navigation,
+  Sparkles, Settings, Map, Navigation, Star,
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 
@@ -270,6 +270,68 @@ export function MobileMenu() {
             }}
           >
             <NavGroup title="Descobrir" items={discoverItems} />
+
+            {/* Receptivo Oranje — destaque premium */}
+            <div style={{ padding: "0 var(--ds-space-2)" }}>
+              <Link
+                to="/app/receptivo"
+                onClick={close}
+                style={{ textDecoration: "none", display: "block" }}
+              >
+                <div
+                  style={{
+                    borderRadius: "var(--ds-radius-lg)",
+                    background: isActive("/app/receptivo")
+                      ? "var(--ds-color-accent)"
+                      : "linear-gradient(135deg, rgba(230,81,0,0.12) 0%, rgba(230,81,0,0.06) 100%)",
+                    border: `1px solid ${isActive("/app/receptivo") ? "transparent" : "rgba(230,81,0,0.2)"}`,
+                    padding: "12px var(--ds-space-3)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "var(--ds-space-3)",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 10,
+                      background: isActive("/app/receptivo") ? "rgba(255,255,255,0.2)" : "rgba(230,81,0,0.15)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Star size={16} style={{ color: isActive("/app/receptivo") ? "#fff" : "var(--ds-color-accent)" }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: isActive("/app/receptivo") ? "#fff" : "var(--ds-color-accent)",
+                        fontFamily: "var(--ds-font-display)",
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      Receptivo Oranje
+                    </p>
+                    <p
+                      style={{
+                        fontSize: 11,
+                        color: isActive("/app/receptivo") ? "rgba(255,255,255,0.75)" : "var(--ds-color-text-muted)",
+                        lineHeight: 1.2,
+                        marginTop: 1,
+                      }}
+                    >
+                      Passeios curados com motorista
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
             <div style={{ height: 1, background: "rgba(230,81,0,0.07)", margin: "0 var(--ds-space-4)" }} />
             <NavGroup title="Planejar" items={planItems} />
             {adminItems.length > 0 && (

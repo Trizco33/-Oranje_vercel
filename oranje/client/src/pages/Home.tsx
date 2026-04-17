@@ -214,7 +214,7 @@ export default function Home() {
   const { data: appHeroData } = trpc.content.getAppHero.useQuery();
   const [heroVideoError, setHeroVideoError] = useState(false);
 
-  // Motion design — sempre ativo como fundo da hero
+  // Motion design fixo — sempre usa o arquivo local (CMS não interfere)
   const heroVideoUrl = "/videos/hero-motion.mp4?v=20260416b";
   const useHeroVideo = !heroVideoError;
 

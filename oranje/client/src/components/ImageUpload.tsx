@@ -1,4 +1,4 @@
-import { Upload, Loader2, X, Image as ImageIcon, Link as LinkIcon } from "lucide-react";
+import { Upload, Loader2, X, Image as ImageIcon, Link as LinkIcon, AlertCircle } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
 
@@ -36,7 +36,14 @@ export function ImageUpload({
   const [urlMode, setUrlMode] = useState(false);
   const [manualUrl, setManualUrl] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Reset imgError whenever value changes
+  const handleValueChange = useCallback((url: string) => {
+    setImgError(false);
+    onUpload(url);
+  }, [onUpload]);
 
   // ── Validate file before upload ──────────────────────────────────────
   const validateFile = useCallback((file: File): string | null => {
@@ -60,6 +67,7 @@ export function ImageUpload({
 
       setUploading(true);
       setProgress(10);
+      setImgError(false);
 
       try {
         const formData = new FormData();
@@ -98,8 +106,15 @@ export function ImageUpload({
         setProgress(100);
 
         if (result.success && result.url) {
-          onUpload(result.url);
-          toast.success("Imagem enviada!");
+          console.log("[ImageUpload] URL retornada:", result.url);
+          // Warn if it's a local/proxy URL (not persistent in production)
+          if (result.url.startsWith("/api/uploads/")) {
+            console.warn("[ImageUpload] AVISO: URL local retornada — storage externo não configurado.");
+            toast.warning("Imagem enviada localmente. Configure o storage externo para persistência.");
+          } else {
+            toast.success("Imagem enviada com sucesso!");
+          }
+          handleValueChange(result.url);
         } else {
           toast.error(result.error || "Erro ao enviar imagem");
         }
@@ -113,7 +128,7 @@ export function ImageUpload({
         if (inputRef.current) inputRef.current.value = "";
       }
     },
-    [onUpload, validateFile]
+    [handleValueChange, validateFile]
   );
 
   // ── Event handlers ───────────────────────────────────────────────────
@@ -130,7 +145,7 @@ export function ImageUpload({
   };
 
   const handleRemove = () => {
-    onUpload("");
+    handleValueChange("");
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -141,7 +156,7 @@ export function ImageUpload({
       toast.error("Insira uma URL válida (ex: https://…)");
       return;
     }
-    onUpload(trimmed);
+    handleValueChange(trimmed);
     setManualUrl("");
     setUrlMode(false);
     toast.success("URL da imagem aplicada!");
@@ -153,7 +168,7 @@ export function ImageUpload({
   if (compact) {
     return (
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        {value && (
+        {value && !imgError && (
           <img
             src={value}
             alt="preview"
@@ -164,7 +179,22 @@ export function ImageUpload({
               objectFit: "cover",
               border: "1px solid rgba(0,37,26,0.1)",
             }}
+            onError={() => setImgError(true)}
           />
+        )}
+        {value && imgError && (
+          <div style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "6px",
+            background: "rgba(230,81,0,0.08)",
+            border: "1px dashed rgba(230,81,0,0.4)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+            <AlertCircle size={16} style={{ color: "#E65100" }} />
+          </div>
         )}
         <label
           style={{
@@ -236,8 +266,8 @@ export function ImageUpload({
         fontFamily: "'Montserrat', system-ui, sans-serif",
       }}
     >
-      {/* Preview */}
-      {value && (
+      {/* Preview — imagem carregada com sucesso */}
+      {value && !imgError && (
         <div style={{ position: "relative", display: "inline-block" }}>
           <img
             src={value}
@@ -250,10 +280,9 @@ export function ImageUpload({
               objectFit: "cover",
               borderRadius: "10px",
               border: "1px solid rgba(0,37,26,0.1)",
+              display: "block",
             }}
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
+            onError={() => setImgError(true)}
           />
           <button
             type="button"
@@ -277,6 +306,59 @@ export function ImageUpload({
           >
             <X size={14} />
           </button>
+        </div>
+      )}
+
+      {/* Erro ao carregar imagem — mostra URL para debug */}
+      {value && imgError && (
+        <div style={{
+          padding: "12px 14px",
+          borderRadius: "10px",
+          background: "rgba(230,81,0,0.06)",
+          border: "1px solid rgba(230,81,0,0.25)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "6px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <AlertCircle size={15} style={{ color: "#E65100", flexShrink: 0 }} />
+            <span style={{ fontSize: "0.8125rem", color: "#E65100", fontWeight: 600 }}>
+              Não foi possível carregar a imagem
+            </span>
+          </div>
+          <span style={{ fontSize: "0.75rem", color: "#718096", wordBreak: "break-all" }}>
+            URL: {value}
+          </span>
+          <div style={{ display: "flex", gap: "8px", marginTop: "2px" }}>
+            <a
+              href={value}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontSize: "0.75rem",
+                color: "#E65100",
+                textDecoration: "underline",
+                cursor: "pointer",
+              }}
+            >
+              Abrir URL
+            </a>
+            <button
+              type="button"
+              onClick={handleRemove}
+              style={{
+                fontSize: "0.75rem",
+                color: "#718096",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                textDecoration: "underline",
+                padding: 0,
+              }}
+            >
+              Remover
+            </button>
+          </div>
         </div>
       )}
 

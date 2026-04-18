@@ -693,14 +693,33 @@ self.addEventListener('notificationclick', (event) => {
   // ── Image Upload (multipart) ────────────────────────────────────────────
   {
     const multer = (await import("multer")).default;
-    const { storagePut, getUploadDir } = await import("../storage");
+    const { storagePut, getUploadDir, isS3Configured, s3ServeFile } = await import("../storage");
 
-    // Serve uploaded files from local disk
-    // Note: for uploads stored as public GCS URLs, serving is direct (no proxy needed)
-    app.use("/api/uploads", express.static(getUploadDir(), {
-      maxAge: "7d",
-      immutable: true,
-    }));
+    // Serve uploaded files:
+    // - Se S3/R2 configurado sem URL pública → proxy via Express (GET /api/uploads/:key)
+    // - Caso contrário → disco local via express.static
+    if (isS3Configured() && !process.env.STORAGE_S3_PUBLIC_URL) {
+      app.use("/api/uploads", async (req: any, res: any, next: any) => {
+        const key = req.path.replace(/^\//, '');
+        if (!key) return next();
+        try {
+          const served = await s3ServeFile(`uploads/${key}`, req, res);
+          if (!served) res.status(404).json({ error: "Arquivo não encontrado" });
+        } catch (err: any) {
+          console.error("[uploads] S3 proxy error:", err.message);
+          next(err);
+        }
+      });
+      console.log("[Storage] /api/uploads → R2/S3 proxy");
+    } else {
+      app.use("/api/uploads", express.static(getUploadDir(), {
+        maxAge: "7d",
+        immutable: true,
+      }));
+      if (!isS3Configured()) {
+        console.warn("[Storage] /api/uploads → disco local (efêmero — configure STORAGE_S3_*)");
+      }
+    }
 
     const upload = multer({
       storage: multer.memoryStorage(),

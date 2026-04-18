@@ -1,5 +1,7 @@
 // Storage helpers — priority order:
 //   1. S3-compatible (AWS S3 / Cloudflare R2 / Backblaze B2) — via STORAGE_S3_* env vars
+//      • Se STORAGE_S3_PUBLIC_URL estiver definida → URL pública direta
+//      • Caso contrário → proxy via Express em /api/uploads/:key
 //   2. Replit Object Storage (GCS)                           — via DEFAULT_OBJECT_STORAGE_BUCKET_ID
 //   3. Forge proxy (legacy Replit storage)                   — via BUILT_IN_FORGE_API_* env vars
 //   4. Local disk (ephemeral — dev fallback only)
@@ -39,19 +41,33 @@ interface S3Config {
   bucket: string;
   accessKeyId: string;
   secretAccessKey: string;
-  publicUrl: string;
+  publicUrl?: string;   // opcional — se ausente, usa proxy via Express
 }
 
 function getS3Config(): S3Config | null {
   const bucket = process.env.STORAGE_S3_BUCKET;
   const accessKeyId = process.env.STORAGE_S3_ACCESS_KEY;
   const secretAccessKey = process.env.STORAGE_S3_SECRET_KEY;
-  const publicUrl = process.env.STORAGE_S3_PUBLIC_URL;
   const region = process.env.STORAGE_S3_REGION || 'auto';
   const endpoint = process.env.STORAGE_S3_ENDPOINT;
+  const publicUrl = process.env.STORAGE_S3_PUBLIC_URL;  // opcional
 
-  if (!bucket || !accessKeyId || !secretAccessKey || !publicUrl) return null;
+  if (!bucket || !accessKeyId || !secretAccessKey) return null;
   return { bucket, accessKeyId, secretAccessKey, publicUrl, region, endpoint };
+}
+
+async function makeS3Client(config: S3Config) {
+  const { S3Client } = await import('@aws-sdk/client-s3');
+  return new S3Client({
+    region: config.region,
+    ...(config.endpoint ? { endpoint: config.endpoint } : {}),
+    credentials: {
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    },
+    // Cloudflare R2 requer path-style (não virtual-hosted-style)
+    forcePathStyle: true,
+  });
 }
 
 async function s3Put(
@@ -60,16 +76,8 @@ async function s3Put(
   contentType: string,
   config: S3Config
 ): Promise<{ key: string; url: string }> {
-  const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
-
-  const client = new S3Client({
-    region: config.region,
-    ...(config.endpoint ? { endpoint: config.endpoint } : {}),
-    credentials: {
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
-    },
-  });
+  const { PutObjectCommand } = await import('@aws-sdk/client-s3');
+  const client = await makeS3Client(config);
 
   const key = relKey.replace(/^\/+/, '');
   const buf = typeof data === 'string' ? Buffer.from(data) : Buffer.from(data as any);
@@ -82,9 +90,54 @@ async function s3Put(
     CacheControl: 'public, max-age=31536000, immutable',
   }));
 
-  const publicUrl = config.publicUrl.replace(/\/+$/, '');
-  const url = `${publicUrl}/${key}`;
+  // URL pública direta se configurada; caso contrário, proxy via Express
+  const url = config.publicUrl
+    ? `${config.publicUrl.replace(/\/+$/, '')}/${key}`
+    : `/api/uploads/${key}`;
+
+  console.log(`[Storage] R2/S3 upload OK (${config.publicUrl ? 'público' : 'proxy'}): ${url}`);
   return { key, url };
+}
+
+/**
+ * Proxy um objeto do S3/R2 para a resposta HTTP do Express.
+ * Retorna false se o objeto não existir.
+ */
+export async function s3ServeFile(
+  key: string,
+  _req: IncomingMessage,
+  res: ServerResponse
+): Promise<boolean> {
+  const config = getS3Config();
+  if (!config) return false;
+
+  try {
+    const { GetObjectCommand } = await import('@aws-sdk/client-s3');
+    const client = await makeS3Client(config);
+
+    const cmd = new GetObjectCommand({ Bucket: config.bucket, Key: key });
+    const obj = await client.send(cmd);
+
+    const contentType = (obj.ContentType as string) ?? 'application/octet-stream';
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    if (obj.ContentLength) {
+      res.setHeader('Content-Length', obj.ContentLength);
+    }
+
+    const stream = obj.Body as any;
+    await new Promise<void>((resolve, reject) => {
+      stream.on('error', reject).on('end', resolve).pipe(res);
+    });
+
+    return true;
+  } catch (err: any) {
+    if (err?.name === 'NoSuchKey' || err?.$metadata?.httpStatusCode === 404) {
+      return false;
+    }
+    console.error('[Storage] S3 serve error:', err.message);
+    return false;
+  }
 }
 
 // ── Replit Object Storage (Google Cloud Storage via sidecar auth) ─────────────
@@ -118,24 +171,18 @@ async function gcsPut(
     },
   });
 
-  // Tenta tornar o arquivo público (URL direta, funciona em qualquer ambiente)
   try {
     await file.makePublic();
     const url = `https://storage.googleapis.com/${bucketId}/${key}`;
     console.log(`[Storage] GCS upload OK (público): ${url}`);
     return { key, url };
-  } catch (_makePublicErr) {
-    // Se não conseguir tornar público (restrição do bucket), usa proxy via Express
+  } catch (_) {
     const url = `/api/uploads/${fileName}`;
     console.log(`[Storage] GCS upload OK (proxy): ${url}`);
     return { key, url };
   }
 }
 
-/**
- * Proxy a GCS object to an HTTP response (for serving via Express).
- * Returns false if the object does not exist.
- */
 export async function gcsServeFile(
   fileName: string,
   req: IncomingMessage,
@@ -228,7 +275,7 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = 'application/octet-stream'
 ): Promise<{ key: string; url: string }> {
-  // 1. S3-compatible (persistent)
+  // 1. S3-compatible (persistente) — publicUrl opcional, proxy se ausente
   const s3Config = getS3Config();
   if (s3Config) {
     try {
@@ -238,7 +285,7 @@ export async function storagePut(
     }
   }
 
-  // 2. Replit Object Storage / GCS (persistent)
+  // 2. Replit Object Storage / GCS (persistente)
   const gcsBucketId = getGcsBucketId();
   if (gcsBucketId) {
     try {
@@ -248,7 +295,7 @@ export async function storagePut(
     }
   }
 
-  // 3. Forge proxy (legacy)
+  // 3. Forge proxy (legado)
   const forgeConfig = getForgeConfig();
   if (forgeConfig) {
     try {
@@ -258,8 +305,8 @@ export async function storagePut(
     }
   }
 
-  // 4. Local disk (ephemeral — dev only)
-  console.warn('[Storage] WARNING: Using ephemeral local disk. Configure STORAGE_S3_* or Replit Object Storage for persistent uploads.');
+  // 4. Disco local (efêmero — apenas dev)
+  console.warn('[Storage] WARNING: Using ephemeral local disk. Configure STORAGE_S3_* for persistent uploads.');
   return localPut(relKey, data, contentType);
 }
 
@@ -267,8 +314,10 @@ export async function storageGet(relKey: string): Promise<{ key: string; url: st
   const s3Config = getS3Config();
   if (s3Config) {
     const key = relKey.replace(/^\/+/, '');
-    const publicUrl = s3Config.publicUrl.replace(/\/+$/, '');
-    return { key, url: `${publicUrl}/${key}` };
+    const url = s3Config.publicUrl
+      ? `${s3Config.publicUrl.replace(/\/+$/, '')}/${key}`
+      : `/api/uploads/${key}`;
+    return { key, url };
   }
 
   const gcsBucketId = getGcsBucketId();
@@ -296,6 +345,10 @@ export async function storageGet(relKey: string): Promise<{ key: string; url: st
 export function getUploadDir() {
   ensureUploadDir();
   return UPLOAD_DIR;
+}
+
+export function isS3Configured(): boolean {
+  return !!getS3Config();
 }
 
 export function isGcsConfigured(): boolean {

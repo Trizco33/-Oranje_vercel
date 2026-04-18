@@ -695,7 +695,8 @@ self.addEventListener('notificationclick', (event) => {
     const multer = (await import("multer")).default;
     const { storagePut, getUploadDir } = await import("../storage");
 
-    // Serve uploaded files statically
+    // Serve uploaded files from local disk
+    // Note: for uploads stored as public GCS URLs, serving is direct (no proxy needed)
     app.use("/api/uploads", express.static(getUploadDir(), {
       maxAge: "7d",
       immutable: true,

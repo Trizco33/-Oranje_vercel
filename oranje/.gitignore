@@ -110,3 +110,6 @@ temp/
 .webdev/
 .vercel
 core
+
+# Uploaded files (persistent in Replit dev, use S3/R2 for production)
+uploads/

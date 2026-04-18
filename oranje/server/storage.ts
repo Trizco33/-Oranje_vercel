@@ -1,11 +1,13 @@
 // Storage helpers — priority order:
 //   1. S3-compatible (AWS S3 / Cloudflare R2 / Backblaze B2) — via STORAGE_S3_* env vars
-//   2. Forge proxy (Replit Object Storage)                    — via BUILT_IN_FORGE_API_* env vars
-//   3. Local disk (ephemeral on Railway — for dev only)       — fallback
+//   2. Replit Object Storage (GCS)                           — via DEFAULT_OBJECT_STORAGE_BUCKET_ID
+//   3. Forge proxy (legacy Replit storage)                   — via BUILT_IN_FORGE_API_* env vars
+//   4. Local disk (ephemeral — dev fallback only)
 
 import { ENV } from './_core/env';
 import path from 'path';
 import fs from 'fs';
+import type { IncomingMessage, ServerResponse } from 'http';
 
 // ── Local disk storage ───────────────────────────────────────────────────────
 const UPLOAD_DIR = path.resolve(process.cwd(), 'uploads');
@@ -85,7 +87,92 @@ async function s3Put(
   return { key, url };
 }
 
-// ── Forge proxy storage (Replit Object Storage) ──────────────────────────────
+// ── Replit Object Storage (Google Cloud Storage via sidecar auth) ─────────────
+function getGcsBucketId(): string | null {
+  return process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID ?? null;
+}
+
+async function gcsGetClient() {
+  const { Storage } = await import('@google-cloud/storage');
+  return new Storage();
+}
+
+async function gcsPut(
+  relKey: string,
+  data: Buffer | Uint8Array | string,
+  contentType: string,
+  bucketId: string
+): Promise<{ key: string; url: string }> {
+  const storage = await gcsGetClient();
+  const bucket = storage.bucket(bucketId);
+
+  const fileName = relKey.replace(/^uploads\//, '');
+  const key = `uploads/${fileName}`;
+  const file = bucket.file(key);
+  const buf = typeof data === 'string' ? Buffer.from(data) : Buffer.from(data as any);
+
+  await file.save(buf, {
+    metadata: {
+      contentType,
+      cacheControl: 'public, max-age=31536000, immutable',
+    },
+  });
+
+  // Tenta tornar o arquivo público (URL direta, funciona em qualquer ambiente)
+  try {
+    await file.makePublic();
+    const url = `https://storage.googleapis.com/${bucketId}/${key}`;
+    console.log(`[Storage] GCS upload OK (público): ${url}`);
+    return { key, url };
+  } catch (_makePublicErr) {
+    // Se não conseguir tornar público (restrição do bucket), usa proxy via Express
+    const url = `/api/uploads/${fileName}`;
+    console.log(`[Storage] GCS upload OK (proxy): ${url}`);
+    return { key, url };
+  }
+}
+
+/**
+ * Proxy a GCS object to an HTTP response (for serving via Express).
+ * Returns false if the object does not exist.
+ */
+export async function gcsServeFile(
+  fileName: string,
+  req: IncomingMessage,
+  res: ServerResponse
+): Promise<boolean> {
+  const bucketId = getGcsBucketId();
+  if (!bucketId) return false;
+
+  try {
+    const storage = await gcsGetClient();
+    const bucket = storage.bucket(bucketId);
+    const file = bucket.file(`uploads/${fileName}`);
+
+    const [exists] = await file.exists();
+    if (!exists) return false;
+
+    const [metadata] = await file.getMetadata();
+    const contentType = (metadata as any).contentType ?? 'application/octet-stream';
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+
+    await new Promise<void>((resolve, reject) => {
+      file.createReadStream()
+        .on('error', reject)
+        .on('end', resolve)
+        .pipe(res as any);
+    });
+
+    return true;
+  } catch (err) {
+    console.error('[Storage] GCS serve error:', (err as Error).message);
+    return false;
+  }
+}
+
+// ── Forge proxy storage (legacy Replit storage) ───────────────────────────────
 type ForgeConfig = { baseUrl: string; apiKey: string };
 
 function getForgeConfig(): ForgeConfig | null {
@@ -141,17 +228,27 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = 'application/octet-stream'
 ): Promise<{ key: string; url: string }> {
-  // 1. S3-compatible (persistent, recommended for Railway)
+  // 1. S3-compatible (persistent)
   const s3Config = getS3Config();
   if (s3Config) {
     try {
       return await s3Put(relKey, data, contentType, s3Config);
     } catch (err) {
-      console.warn('[Storage] S3 upload failed, trying Forge:', (err as Error).message);
+      console.warn('[Storage] S3 upload failed, trying GCS:', (err as Error).message);
     }
   }
 
-  // 2. Forge (Replit Object Storage)
+  // 2. Replit Object Storage / GCS (persistent)
+  const gcsBucketId = getGcsBucketId();
+  if (gcsBucketId) {
+    try {
+      return await gcsPut(relKey, data, contentType, gcsBucketId);
+    } catch (err) {
+      console.warn('[Storage] GCS upload failed, trying Forge:', (err as Error).message);
+    }
+  }
+
+  // 3. Forge proxy (legacy)
   const forgeConfig = getForgeConfig();
   if (forgeConfig) {
     try {
@@ -161,10 +258,8 @@ export async function storagePut(
     }
   }
 
-  // 3. Local disk (ephemeral — dev only, files lost on Railway restart)
-  if (process.env.NODE_ENV === 'production') {
-    console.warn('[Storage] WARNING: Using ephemeral local disk in production. Configure STORAGE_S3_* env vars for persistent uploads.');
-  }
+  // 4. Local disk (ephemeral — dev only)
+  console.warn('[Storage] WARNING: Using ephemeral local disk. Configure STORAGE_S3_* or Replit Object Storage for persistent uploads.');
   return localPut(relKey, data, contentType);
 }
 
@@ -174,6 +269,12 @@ export async function storageGet(relKey: string): Promise<{ key: string; url: st
     const key = relKey.replace(/^\/+/, '');
     const publicUrl = s3Config.publicUrl.replace(/\/+$/, '');
     return { key, url: `${publicUrl}/${key}` };
+  }
+
+  const gcsBucketId = getGcsBucketId();
+  if (gcsBucketId) {
+    const fileName = relKey.replace(/^uploads\//, '');
+    return { key: relKey, url: `/api/uploads/${fileName}` };
   }
 
   const forgeConfig = getForgeConfig();
@@ -195,4 +296,8 @@ export async function storageGet(relKey: string): Promise<{ key: string; url: st
 export function getUploadDir() {
   ensureUploadDir();
   return UPLOAD_DIR;
+}
+
+export function isGcsConfigured(): boolean {
+  return !!getGcsBucketId();
 }

@@ -82,6 +82,7 @@ MAIL_FROM = "Oranje <onboarding@resend.dev>"
 STORAGE_S3_BUCKET = "oranjeapp"
 STORAGE_S3_ENDPOINT = "https://d32859bb8b2e73f344244081126e9a15.r2.cloudflarestorage.com"
 STORAGE_S3_REGION = "auto"
+STORAGE_S3_PUBLIC_URL = "https://pub-1a3d6fc55c0341198c60fdc79cb88009.r2.dev"
 
 [nix]
 channel = "stable-25_05"

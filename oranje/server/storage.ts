@@ -79,7 +79,8 @@ async function s3Put(
   const { PutObjectCommand } = await import('@aws-sdk/client-s3');
   const client = await makeS3Client(config);
 
-  const key = relKey.replace(/^\/+/, '');
+  // Normaliza: remove leading slashes e prefixo uploads/ duplicado
+  const key = relKey.replace(/^\/+/, '').replace(/^uploads\//, '');
   const buf = typeof data === 'string' ? Buffer.from(data) : Buffer.from(data as any);
 
   await client.send(new PutObjectCommand({
@@ -93,7 +94,7 @@ async function s3Put(
   // URL pública direta se configurada; caso contrário, proxy via Express
   const url = config.publicUrl
     ? `${config.publicUrl.replace(/\/+$/, '')}/${key}`
-    : `/api/uploads/${key}`;
+    : `/api/uploads/${key}`;  // key já é sem 'uploads/' prefix — Express adiciona via /api/uploads route
 
   console.log(`[Storage] R2/S3 upload OK (${config.publicUrl ? 'público' : 'proxy'}): ${url}`);
   return { key, url };

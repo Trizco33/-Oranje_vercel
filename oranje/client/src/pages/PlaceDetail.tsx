@@ -681,6 +681,23 @@ export default function PlaceDetail() {
     else navigator.clipboard.writeText(shareUrl).catch(() => {});
   }
 
+  /* ── SEO: noindex quando lugar não existe ── */
+  useEffect(() => {
+    if (isLoading || place) return;
+    // Lugar não encontrado — injeta noindex para evitar Soft 404 no Google
+    const setMeta = (name: string, content: string, attr = "name") => {
+      let tag = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!tag) { tag = document.createElement("meta"); tag.setAttribute(attr, name); document.head.appendChild(tag); }
+      tag.setAttribute("content", content);
+    };
+    document.title = "Lugar não encontrado — Oranje Holambra";
+    setMeta("robots", "noindex, nofollow");
+    setMeta("og:title", "Lugar não encontrado — Oranje Holambra", "property");
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) { canonical = document.createElement("link"); canonical.setAttribute("rel", "canonical"); document.head.appendChild(canonical); }
+    canonical.setAttribute("href", "https://oranjeapp.com.br/app");
+  }, [place, isLoading]);
+
   /* ── SEO effect ── */
   useEffect(() => {
     if (!place) return;

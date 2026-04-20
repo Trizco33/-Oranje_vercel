@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
+import fs from "fs";
+import path from "path";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -1012,6 +1014,61 @@ self.addEventListener('notificationclick', (event) => {
     })
   );
   
+  // ── Soft-404 guard: /app/lugar/:id ──────────────────────────────────────────
+  // Retorna HTTP 404 real quando o lugar não existe ou está inativo.
+  // Sem isso, o SPA retorna 200 com "Lugar não encontrado" → Soft 404 no Google.
+  app.get("/app/lugar/:id", async (req, res, next) => {
+    const placeId = parseInt(req.params.id, 10);
+    if (isNaN(placeId)) return next();
+    try {
+      const { getDb } = await import("../db");
+      const db = await getDb();
+      if (db) {
+        const { places } = await import("../../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        const rows = await (db as any)
+          .select({ id: places.id })
+          .from(places)
+          .where(and(eq(places.id, placeId), eq(places.status, "active"), eq(places.dataPending, false)))
+          .limit(1);
+        if (!rows || rows.length === 0) {
+          return res.status(404).send(`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Lugar não encontrado — Oranje Holambra</title>
+  <meta name="description" content="Este lugar não está mais disponível no Oranje Holambra.">
+  <link rel="canonical" href="https://oranjeapp.com.br/app">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Montserrat',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F7F3EE;color:#1a1a1a}
+    .card{max-width:440px;width:90%;padding:40px 32px;background:#fff;border-radius:16px;box-shadow:0 2px 24px rgba(0,37,26,.08);text-align:center}
+    .badge{display:inline-block;padding:4px 12px;background:rgba(230,81,0,.1);color:#E65100;border-radius:20px;font-size:.75rem;font-weight:700;letter-spacing:.04em;margin-bottom:20px}
+    h1{font-size:1.375rem;font-weight:700;color:#00251A;margin-bottom:10px}
+    p{font-size:.9375rem;color:#666;line-height:1.5;margin-bottom:28px}
+    a{display:inline-block;padding:13px 28px;background:#E65100;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:.9375rem;transition:opacity .15s}
+    a:hover{opacity:.88}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">404</div>
+    <h1>Lugar não encontrado</h1>
+    <p>Este lugar não está mais disponível ou foi removido da plataforma Oranje Holambra.</p>
+    <a href="/app">Descobrir Holambra</a>
+  </div>
+</body>
+</html>`);
+        }
+      }
+    } catch {
+      // DB check falhou — deixa o SPA renderizar normalmente
+    }
+    next();
+  });
+
   // Setup SPA fallback LAST - after all static file middleware and routes
   // This ensures /assets/ and other static files are served before fallback
   // IMPORTANT: Must use app.use() with middleware, not app.get("*") which is a route

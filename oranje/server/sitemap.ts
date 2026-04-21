@@ -69,7 +69,9 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     { loc: `${baseUrl}/sobre`, lastmod: today, priority: 0.5, changefreq: "monthly" },
     { loc: `${baseUrl}/contato`, lastmod: today, priority: 0.4, changefreq: "monthly" },
     { loc: `${baseUrl}/parceiros`, lastmod: today, priority: 0.4, changefreq: "monthly" },
+    { loc: `${baseUrl}/parcerias`, lastmod: today, priority: 0.4, changefreq: "monthly" },
     { loc: `${baseUrl}/seja-um-parceiro`, lastmod: today, priority: 0.4, changefreq: "monthly" },
+    { loc: `${baseUrl}/roteiros`, lastmod: today, priority: 0.5, changefreq: "weekly" },
 
     // ─── Artigos publicados ───────────────────────────────────────────
     ...publishedArticles.map((article) => ({

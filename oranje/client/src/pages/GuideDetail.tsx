@@ -42,16 +42,16 @@ export default function GuideDetail() {
     setOGTag("og:description", article.seoDescription || article.excerpt || "");
     if (article.coverImageUrl) setOGTag("og:image", article.coverImageUrl);
     setOGTag("og:type", "article");
-    setOGTag("og:url", `${window.location.origin}/guia/${article.slug}`);
+    setOGTag("og:url", `${window.location.origin}/blog/${article.slug}`);
 
-    // Set canonical URL
+    // Set canonical URL — aponta para /blog/ que é a URL no sitemap
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement("link");
       canonical.setAttribute("rel", "canonical");
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute("href", `${window.location.origin}/guia/${article.slug}`);
+    canonical.setAttribute("href", `${window.location.origin}/blog/${article.slug}`);
 
     // Set structured data
     const schemaData = {

@@ -1,7 +1,29 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, BookOpen } from "lucide-react";
+
+function renderContent(content: string): string {
+  return content
+    // headings — processados ANTES do replace de \n
+    .replace(/^### (.*?)$/gm, '<h4 style="font-size:1.125rem;font-weight:700;margin-top:1.5rem;margin-bottom:0.5rem;color:#E8E6E3;">$1</h4>')
+    .replace(/^## (.*?)$/gm, '<h3 style="font-size:1.375rem;font-weight:700;margin-top:2rem;margin-bottom:0.75rem;color:#E8E6E3;">$1</h3>')
+    .replace(/^# (.*?)$/gm, '<h2 style="font-size:1.625rem;font-weight:700;margin-top:2rem;margin-bottom:0.75rem;color:#E8E6E3;">$1</h2>')
+    // bold e italic
+    .replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight:700;color:#E8E6E3;">$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em style="font-style:italic;">$1</em>')
+    // listas
+    .replace(/^[-*] (.*?)$/gm, '<li style="margin-left:1.25rem;margin-bottom:0.375rem;list-style:disc;">$1</li>')
+    // parágrafos — blocos separados por linha em branco
+    .split(/\n{2,}/)
+    .map((block) => {
+      const trimmed = block.trim();
+      if (!trimmed) return "";
+      if (/^<(h[2-4]|li|ul|ol|strong|em)/.test(trimmed)) return trimmed;
+      return `<p style="margin-bottom:1rem;line-height:1.7;color:#C8C5C0;">${trimmed.replace(/\n/g, "<br />")}</p>`;
+    })
+    .join("\n");
+}
 
 export default function GuideDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -12,13 +34,11 @@ export default function GuideDetail() {
     { enabled: !!slug }
   );
 
-  // Set meta tags and SEO
   useEffect(() => {
     if (!article) return;
 
     document.title = `${article.seoTitle || article.title} - ORANJE`;
 
-    // Update description meta
     let descMeta = document.querySelector('meta[name="description"]');
     if (!descMeta) {
       descMeta = document.createElement("meta");
@@ -27,7 +47,6 @@ export default function GuideDetail() {
     }
     descMeta.setAttribute("content", article.seoDescription || article.excerpt || "");
 
-    // Update OG tags
     const setOGTag = (property: string, content: string) => {
       let tag = document.querySelector(`meta[property="${property}"]`);
       if (!tag) {
@@ -44,7 +63,6 @@ export default function GuideDetail() {
     setOGTag("og:type", "article");
     setOGTag("og:url", `${window.location.origin}/blog/${article.slug}`);
 
-    // Set canonical URL — aponta para /blog/ que é a URL no sitemap
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement("link");
@@ -53,7 +71,6 @@ export default function GuideDetail() {
     }
     canonical.setAttribute("href", `${window.location.origin}/blog/${article.slug}`);
 
-    // Set structured data
     const schemaData = {
       "@context": "https://schema.org",
       "@type": "Article",
@@ -62,10 +79,7 @@ export default function GuideDetail() {
       image: article.coverImageUrl || "",
       datePublished: article.publishedAt,
       dateModified: article.updatedAt,
-      author: {
-        "@type": "Organization",
-        name: "ORANJE",
-      },
+      author: { "@type": "Organization", name: "ORANJE" },
     };
 
     let schema = document.querySelector('script[type="application/ld+json"]');
@@ -96,7 +110,7 @@ export default function GuideDetail() {
           onClick={() => navigate("/guia")}
           className="btn-gold px-6 py-2 rounded-xl text-sm mt-4"
         >
-          Voltar ao Guia
+          Voltar ao Blog
         </button>
       </div>
     );
@@ -104,57 +118,98 @@ export default function GuideDetail() {
 
   return (
     <div className="oranje-app min-h-screen">
-      {/* Header */}
-      <div className="oranje-header px-4 py-4">
+      {/* Back button */}
+      <div className="px-4 pt-4 pb-2">
         <button
           onClick={() => navigate("/guia")}
-          className="flex items-center gap-2 text-sm mb-6"
+          className="flex items-center gap-2 text-sm"
           style={{ color: "#D88A3D" }}
         >
           <ArrowLeft size={18} />
-          Voltar ao Guia
+          Voltar ao Blog
         </button>
-
-        {article.coverImageUrl && (
-          <div
-            className="w-full h-64 rounded-2xl bg-cover bg-center mb-6"
-            style={{ backgroundImage: `url(${article.coverImageUrl})` }}
-          />
-        )}
-
-        <h1 className="text-4xl font-bold mb-2" style={{ color: "#E8E6E3" }}>
-          {article.title}
-        </h1>
-        <div className="flex items-center gap-4 text-sm" style={{ color: "#C8C5C0" }}>
-          <span className="px-3 py-1 rounded-full" style={{ background: "rgba(216,138,61,0.1)" }}>
-            {article.category}
-          </span>
-          <span>{new Date(article.publishedAt || article.createdAt).toLocaleDateString("pt-BR")}</span>
-        </div>
       </div>
 
-      {/* Content */}
-      <div className="px-4 py-8 max-w-3xl mx-auto">
+      {/* Hero image ou gradiente */}
+      {article.coverImageUrl ? (
+        <div className="px-4 mb-0">
+          <img
+            src={article.coverImageUrl}
+            alt={article.title}
+            className="w-full rounded-2xl object-cover"
+            style={{ height: "220px" }}
+            onError={(e) => {
+              const el = e.target as HTMLImageElement;
+              el.style.display = "none";
+              const fallback = el.nextElementSibling as HTMLElement;
+              if (fallback) fallback.style.display = "flex";
+            }}
+          />
+          <div
+            className="w-full rounded-2xl"
+            style={{
+              height: "220px",
+              display: "none",
+              background: "linear-gradient(135deg, #1a3a2a 0%, #2d1a0a 50%, #1a2a1a 100%)",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <BookOpen size={48} style={{ color: "rgba(216,138,61,0.4)" }} />
+          </div>
+        </div>
+      ) : (
+        <div className="px-4 mb-0">
+          <div
+            className="w-full rounded-2xl flex items-center justify-center"
+            style={{
+              height: "220px",
+              background: "linear-gradient(135deg, #1a3a2a 0%, #2d1a0a 50%, #1a2a1a 100%)",
+            }}
+          >
+            <BookOpen size={48} style={{ color: "rgba(216,138,61,0.4)" }} />
+          </div>
+        </div>
+      )}
+
+      {/* Header do artigo */}
+      <div className="px-4 pt-6 pb-2 max-w-3xl mx-auto">
+        <div className="flex items-center gap-3 mb-4 text-sm">
+          <span
+            className="px-3 py-1 rounded-full"
+            style={{ background: "rgba(216,138,61,0.1)", color: "#D88A3D" }}
+          >
+            {article.category}
+          </span>
+          <span style={{ color: "#9B9795" }}>
+            {new Date(article.publishedAt || article.createdAt).toLocaleDateString("pt-BR")}
+          </span>
+        </div>
+
+        <h1 className="text-3xl font-bold mb-4" style={{ color: "#E8E6E3", lineHeight: "1.25" }}>
+          {article.title}
+        </h1>
+
         {article.excerpt && (
-          <p className="text-lg mb-6" style={{ color: "#C8C5C0" }}>
+          <p className="text-base mb-6" style={{ color: "#A8A5A0", lineHeight: "1.7" }}>
             {article.excerpt}
           </p>
         )}
 
         <div
-          className="prose prose-invert max-w-none"
-          style={{ color: "#E8E6E3" }}
-          dangerouslySetInnerHTML={{
-            __html: article.content
-              .replace(/\n/g, "<br />")
-              .replace(/^# (.*?)$/gm, '<h2 style="font-size: 1.875rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 1rem; color: #E8E6E3;">$1</h2>')
-              .replace(/^## (.*?)$/gm, '<h3 style="font-size: 1.5rem; font-weight: bold; margin-top: 1.25rem; margin-bottom: 0.75rem; color: #E8E6E3;">$1</h3>')
-              .replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: bold;">$1</strong>')
-              .replace(/\*(.*?)\*/g, '<em style="font-style: italic;">$1</em>')
-              .replace(/^\- (.*?)$/gm, '<li style="margin-left: 1.5rem; margin-bottom: 0.5rem;">$1</li>'),
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+            marginBottom: "1.5rem",
           }}
         />
       </div>
+
+      {/* Conteúdo */}
+      <div
+        className="px-4 pb-24 max-w-3xl mx-auto"
+        style={{ color: "#C8C5C0", fontSize: "1rem", lineHeight: "1.7" }}
+        dangerouslySetInnerHTML={{ __html: renderContent(article.content) }}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { BookOpen, CalendarDays, Compass, Heart, Home, Map } from "lucide-react";
+import { BookOpen, CalendarDays, Compass, Home, Map } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const tabs = [
@@ -6,7 +6,6 @@ const tabs = [
   { path: "/app/explorar", icon: Compass, label: "Explorar" },
   { path: "/app/eventos", icon: CalendarDays, label: "Eventos" },
   { path: "/guia", icon: BookOpen, label: "Guia" },
-  { path: "/app/favoritos", icon: Heart, label: "Favoritos" },
   { path: "/app/receptivo", icon: Map, label: "Passeios" },
 ];
 

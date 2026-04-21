@@ -1,5 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Routes, Route, useParams } from "react-router-dom";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ErrorBoundary } from "react-error-boundary";
@@ -165,7 +165,7 @@ function Router() {
         <Route path="/roteiros" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/mapa" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/parceiros" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
-        <Route path="/seja-um-parceiro" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
+        <Route path="/seja-um-parceiro" element={<Navigate to="/parcerias" replace />} />
         <Route path="/sobre" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/contato" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />
         <Route path="/privacidade" element={<Suspense fallback={<LoadingFallback />}><SiteSecondaryPages /></Suspense>} />

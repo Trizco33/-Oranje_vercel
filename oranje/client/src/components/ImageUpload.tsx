@@ -1,6 +1,7 @@
 import { Upload, Loader2, X, Image as ImageIcon, Link as LinkIcon, AlertCircle } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -39,6 +40,8 @@ export function ImageUpload({
   const [imgError, setImgError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const uploadImageMutation = trpc.upload.uploadImage.useMutation();
+
   // Reset imgError whenever value changes
   const handleValueChange = useCallback((url: string) => {
     setImgError(false);
@@ -56,7 +59,7 @@ export function ImageUpload({
     return null;
   }, []);
 
-  // ── Upload via multipart POST (preferred — works with large files) ───
+  // ── Upload via tRPC base64 (funciona com Vercel rewrite) ─────────────
   const uploadFile = useCallback(
     async (file: File) => {
       const error = validateFile(file);
@@ -66,69 +69,50 @@ export function ImageUpload({
       }
 
       setUploading(true);
-      setProgress(10);
+      setProgress(15);
       setImgError(false);
 
       try {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        // Determine the API base — honours VITE_API_URL for split deploys
-        const apiBase = (import.meta as any).env?.VITE_API_URL || "";
-
-        const xhr = new XMLHttpRequest();
-        const url = `${apiBase}/api/upload`;
-
-        // Track progress
-        xhr.upload.addEventListener("progress", (e) => {
-          if (e.lengthComputable) {
-            setProgress(Math.round((e.loaded / e.total) * 90) + 5);
-          }
+        // Lê arquivo como base64
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            // Remove o prefixo "data:image/xxx;base64,"
+            const data = result.split(",")[1];
+            if (!data) reject(new Error("Erro ao ler arquivo"));
+            else resolve(data);
+          };
+          reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
+          reader.readAsDataURL(file);
         });
 
-        const result = await new Promise<{ success: boolean; url?: string; error?: string }>(
-          (resolve, reject) => {
-            xhr.onload = () => {
-              try {
-                resolve(JSON.parse(xhr.responseText));
-              } catch {
-                reject(new Error("Resposta inválida do servidor"));
-              }
-            };
-            xhr.onerror = () => reject(new Error("Falha na conexão"));
-            xhr.open("POST", url);
-            // Include credentials for cookie-based auth
-            xhr.withCredentials = true;
-            xhr.send(formData);
-          }
-        );
+        setProgress(40);
+
+        const result = await uploadImageMutation.mutateAsync({
+          file: base64,
+          fileName: file.name,
+          mimeType: file.type,
+        });
 
         setProgress(100);
 
         if (result.success && result.url) {
-          console.log("[ImageUpload] URL retornada:", result.url);
-          // Warn if it's a local/proxy URL (not persistent in production)
-          if (result.url.startsWith("/api/uploads/")) {
-            console.warn("[ImageUpload] AVISO: URL local retornada — storage externo não configurado.");
-            toast.warning("Imagem enviada localmente. Configure o storage externo para persistência.");
-          } else {
-            toast.success("Imagem enviada com sucesso!");
-          }
+          toast.success("Imagem enviada com sucesso!");
           handleValueChange(result.url);
         } else {
           toast.error(result.error || "Erro ao enviar imagem");
         }
       } catch (err: any) {
-        console.error("Upload error:", err);
+        console.error("[ImageUpload] Upload error:", err);
         toast.error(err.message || "Erro ao enviar imagem");
       } finally {
         setUploading(false);
         setProgress(0);
-        // Reset file input
         if (inputRef.current) inputRef.current.value = "";
       }
     },
-    [handleValueChange, validateFile]
+    [handleValueChange, validateFile, uploadImageMutation]
   );
 
   // ── Event handlers ───────────────────────────────────────────────────
@@ -388,7 +372,6 @@ export function ImageUpload({
             <span style={{ fontSize: "0.875rem", color: "#4A5568" }}>
               Enviando… {progress > 0 && `${progress}%`}
             </span>
-            {/* Progress bar */}
             {progress > 0 && (
               <div
                 style={{

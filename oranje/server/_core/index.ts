@@ -755,6 +755,29 @@ self.addEventListener('notificationclick', (event) => {
     });
   }
 
+  // ── Diagnóstico de storage (acessível em produção para verificar configuração) ──
+  app.get("/api/storage-status", async (_req, res) => {
+    const { isS3Configured } = await import("../storage");
+    const s3ok = isS3Configured();
+    const bucket   = process.env.STORAGE_S3_BUCKET      ? "✅ configurado" : "❌ ausente";
+    const endpoint = process.env.STORAGE_S3_ENDPOINT    ? "✅ configurado" : "❌ ausente";
+    const region   = process.env.STORAGE_S3_REGION      ? "✅ configurado" : "❌ ausente (padrão: auto)";
+    const pubUrl   = process.env.STORAGE_S3_PUBLIC_URL  ? "✅ configurado" : "❌ ausente";
+    const accKey   = process.env.STORAGE_S3_ACCESS_KEY  ? "✅ configurado (oculto)" : "❌ ausente";
+    const secKey   = process.env.STORAGE_S3_SECRET_KEY  ? "✅ configurado (oculto)" : "❌ ausente";
+    const gcs      = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID ? "✅ configurado" : "❌ ausente";
+
+    res.json({
+      storageBackend: s3ok ? "R2/S3 (persistente ✅)" : "disco local (efêmero ⚠️)",
+      r2: { bucket, endpoint, region, publicUrl: pubUrl, accessKey: accKey, secretKey: secKey },
+      gcs: { bucketId: gcs },
+      env: process.env.NODE_ENV || "unknown",
+      note: s3ok
+        ? "R2 configurado — uploads vão para Cloudflare R2."
+        : "R2 não configurado — configure STORAGE_S3_BUCKET, STORAGE_S3_ENDPOINT, STORAGE_S3_ACCESS_KEY, STORAGE_S3_SECRET_KEY no Railway.",
+    });
+  });
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   

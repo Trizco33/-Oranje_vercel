@@ -67,10 +67,13 @@ export function AdminPlaces() {
   const [pinEditorPlace, setPinEditorPlace] = useState<any>(null);
   const [showSuspectOnly, setShowSuspectOnly] = useState(false);
 
-  const { data: places, isLoading: placesLoading, refetch: refetchPlaces } = trpc.places.list.useQuery({ limit: 200, offset: 0 });
+  const utils = trpc.useUtils();
+  const { data: places, isLoading: placesLoading } = trpc.places.list.useQuery({ limit: 200, offset: 0 });
   const createPlace = trpc.places.create.useMutation();
   const updatePlace = trpc.places.update.useMutation();
   const deletePlace = trpc.places.delete.useMutation();
+
+  const invalidatePlaces = () => utils.places.list.invalidate();
 
   const handleCreate = () => {
     setEditingPlace(null);
@@ -86,7 +89,7 @@ export function AdminPlaces() {
     try {
       await deletePlace.mutateAsync({ id: place.id });
       toast.success("Lugar deletado com sucesso");
-      refetchPlaces();
+      invalidatePlaces();
     } catch (error) {
       toast.error("Erro ao deletar lugar");
     }
@@ -104,14 +107,14 @@ export function AdminPlaces() {
         const isManual = editingPlace.geoSource === "manual";
         toast.success(isManual
           ? "Lugar atualizado — pin manual preservado"
-          : "Lugar atualizado — coordenadas validadas automaticamente"
+          : "Lugar atualizado com sucesso"
         );
       } else {
         await createPlace.mutateAsync(parsed as any);
-        toast.success("Lugar criado — coordenadas validadas automaticamente");
+        toast.success("Lugar criado com sucesso");
       }
       setIsModalOpen(false);
-      refetchPlaces();
+      await invalidatePlaces();
     } catch (error) {
       toast.error("Erro ao salvar lugar");
     }

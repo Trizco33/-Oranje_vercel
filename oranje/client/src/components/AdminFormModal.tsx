@@ -34,6 +34,7 @@ export function AdminFormModal({
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   useEffect(() => {
+    if (!isOpen) return;
     if (initialData) {
       setFormData(initialData);
     } else {
@@ -43,7 +44,7 @@ export function AdminFormModal({
       });
       setFormData(initial);
     }
-  }, [initialData, fields, isOpen]);
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChange = (name: string, value: any) => {
     setFormData((prev) => ({ ...prev, [name]: value }));

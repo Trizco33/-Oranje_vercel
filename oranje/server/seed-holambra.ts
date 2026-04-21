@@ -1075,13 +1075,34 @@ export async function seedHolambra() {
     process.exit(1);
   }
 
-  // ── Verificação rápida de idempotência — evita 60+ upserts sequenciais no Railway ──────
+  // ── Guard 1: marcador persistente (mais confiável) ────────────────────────────
+  // Garante que o seed nunca re-insira registros após nomes terem sido editados pelo admin.
+  try {
+    const marker = await db.execute(sql`
+      SELECT value FROM site_content WHERE \`key\` = '_seed_holambra_v3' LIMIT 1
+    `);
+    const markerRows = marker as any;
+    const val = markerRows?.[0]?.[0]?.value ?? markerRows?.[0]?.value;
+    if (val === 'done') {
+      console.log("  ✓ seedHolambra: marcador de conclusão encontrado — seed pulado.");
+      return;
+    }
+  } catch (_) {
+    // site_content pode não existir ainda — continua
+  }
+
+  // ── Guard 2: contagem de lugares (guard secundário) ───────────────────────────
   try {
     const result = await db.execute(sql`SELECT COUNT(*) as n FROM places WHERE city = 'Holambra' AND status = 'active'`);
     const rows = result as any;
     const count = Number(rows?.[0]?.[0]?.n ?? rows?.[0]?.n ?? 0);
-    if (count >= 55) {
-      console.log(`  ✓ seedHolambra: ${count} lugares ativos já existem — seed pulado (idempotente).`);
+    if (count >= 20) {
+      console.log(`  ✓ seedHolambra: ${count} lugares ativos já existem — seed pulado. Gravando marcador...`);
+      await db.execute(sql`
+        INSERT INTO site_content (\`key\`, value, section)
+        VALUES ('_seed_holambra_v3', 'done', 'system')
+        ON DUPLICATE KEY UPDATE value = 'done'
+      `).catch(() => {});
       return;
     }
     console.log(`  → ${count} lugares encontrados — executando seed completo.`);
@@ -1211,6 +1232,13 @@ export async function seedHolambra() {
   }
 
   console.log(`\n🎉 Seed concluído! ${upserted} lugar(es) inseridos/atualizados via upsert.`);
+
+  // ── Gravar marcador persistente para nunca rodar de novo ────────────────────
+  await db.execute(sql`
+    INSERT INTO site_content (\`key\`, value, section)
+    VALUES ('_seed_holambra_v3', 'done', 'system')
+    ON DUPLICATE KEY UPDATE value = 'done'
+  `).catch((e: any) => console.warn("  ⚠️ Não foi possível gravar marcador:", e?.message));
 
   // 3. Anchor longDesc enforcement — actualiza longDescs editoriais das páginas âncora
   // Isso garante que o longDesc seja persistido mesmo em rows já existentes no banco.

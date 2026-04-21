@@ -1,5 +1,5 @@
 import { getLoginUrl } from "@/const";
-import { CalendarDays, ChevronRight, MapPin, Search, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight, Play, TrendingUp, Sandwich } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Search, LogOut, UtensilsCrossed, Pizza, Wine, Coffee, Flower2, Hotel, Calendar, Navigation, Map, ArrowRight, Play, TrendingUp, Sandwich, BookOpen } from "lucide-react";
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAnyReceptivoProgress, type ReceptivoProgress } from "@/lib/receptivoAnalytics";
@@ -726,6 +726,105 @@ export default function Home() {
                 }}>
                   Ver passeios
                   <ArrowRight size={12} />
+                </div>
+              </div>
+            </div>
+          </Link>
+        </Reveal>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════
+          GUIA ORANJE — card editorial para /guia
+      ════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: "0 20px", marginTop: 20 }}>
+        <Reveal delay={80}>
+          <Link to="/guia" style={{ textDecoration: "none", display: "block" }}>
+            <div
+              style={{
+                borderRadius: 20,
+                overflow: "hidden",
+                background: "linear-gradient(145deg, #1A0A00 0%, #2C1200 55%, #1A0800 100%)",
+                border: "1px solid rgba(230,81,0,0.2)",
+                padding: "20px 20px",
+                position: "relative",
+                transition: "transform 0.18s ease, box-shadow 0.18s ease",
+              }}
+              onPointerDown={e => { const el = e.currentTarget as HTMLElement; el.style.transform = "scale(0.977)"; }}
+              onPointerUp={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; }}
+              onPointerLeave={e => { const el = e.currentTarget as HTMLElement; el.style.transform = ""; }}
+            >
+              {/* ambient orb */}
+              <div style={{
+                position: "absolute", bottom: -40, right: -20,
+                width: 160, height: 160, borderRadius: "50%",
+                background: "radial-gradient(circle, rgba(230,81,0,0.14) 0%, transparent 70%)",
+                animation: "oranje-orb-2 14s ease-in-out infinite",
+                pointerEvents: "none",
+              }} />
+              {/* top accent line */}
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0, height: 2,
+                background: "linear-gradient(90deg, transparent, rgba(230,81,0,0.5), transparent)",
+              }} />
+
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 14, position: "relative" }}>
+                {/* ícone */}
+                <div style={{
+                  width: 44, height: 44, borderRadius: 13, flexShrink: 0,
+                  background: "rgba(230,81,0,0.14)",
+                  border: "1px solid rgba(230,81,0,0.25)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  marginTop: 2,
+                }}>
+                  <BookOpen size={20} color="#E65100" />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {/* badge */}
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    borderRadius: 6, padding: "3px 9px", marginBottom: 10,
+                    background: "rgba(230,81,0,0.12)",
+                    border: "1px solid rgba(230,81,0,0.24)",
+                  }}>
+                    <span style={{
+                      fontSize: 9, fontWeight: 800, color: "#E65100",
+                      fontFamily: "Montserrat, sans-serif",
+                      letterSpacing: "0.1em", textTransform: "uppercase",
+                    }}>
+                      Guia Oranje
+                    </span>
+                  </div>
+
+                  <h2 style={{
+                    color: "#fff", fontSize: 17, fontWeight: 800,
+                    fontFamily: "Montserrat, sans-serif",
+                    margin: "0 0 6px", lineHeight: 1.25,
+                    letterSpacing: "-0.01em",
+                  }}>
+                    Fique por dentro do que<br />
+                    <span style={{ color: "#E65100" }}>rola em Holambra</span>
+                  </h2>
+
+                  <p style={{
+                    color: "rgba(255,255,255,0.55)", fontSize: 12,
+                    fontFamily: "Montserrat, sans-serif",
+                    margin: "0 0 14px", lineHeight: 1.55,
+                  }}>
+                    Histórias, dicas e tudo sobre a cidade das flores — escrito por quem conhece de verdade.
+                  </p>
+
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    background: "linear-gradient(135deg, #E65100, #FF6D00)",
+                    borderRadius: 10, padding: "8px 14px",
+                    color: "#fff", fontSize: 12, fontWeight: 800,
+                    fontFamily: "Montserrat, sans-serif",
+                    boxShadow: "0 4px 14px rgba(230,81,0,0.35)",
+                  }}>
+                    Ler artigos
+                    <ArrowRight size={12} />
+                  </div>
                 </div>
               </div>
             </div>

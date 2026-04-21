@@ -1204,5 +1204,29 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 028: place_photos — uploaderId + isOwner ──────────────────
+  {
+    const photoCols: [string, string][] = [
+      ["uploaderId", "ALTER TABLE `place_photos` ADD COLUMN `uploaderId` int NULL"],
+      ["isOwner",    "ALTER TABLE `place_photos` ADD COLUMN `isOwner` tinyint(1) NOT NULL DEFAULT 0"],
+    ];
+    for (const [col, sql] of photoCols) {
+      if (!(await columnExists(db, "place_photos", col))) {
+        try {
+          await db.execute(sql);
+          console.log(`[Migrations] ✅ 028: place_photos.${col} adicionado.`);
+        } catch (e: any) {
+          if (e?.cause?.errno === 1060 || e?.cause?.code === "ER_DUP_FIELDNAME") {
+            console.log(`[Migrations] ✓ 028: place_photos.${col} já existe (race-condition ignorada).`);
+          } else {
+            throw e;
+          }
+        }
+      } else {
+        console.log(`[Migrations] ✓ 028: place_photos.${col} já existe.`);
+      }
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

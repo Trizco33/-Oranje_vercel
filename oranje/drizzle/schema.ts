@@ -110,6 +110,8 @@ export type InsertPlace = typeof places.$inferInsert;
 export const placePhotos = mysqlTable("place_photos", {
   id: int("id").autoincrement().primaryKey(),
   placeId: int("placeId").notNull().references(() => places.id),
+  uploaderId: int("uploaderId").references(() => users.id),
+  isOwner: boolean("isOwner").default(false).notNull(),
   url: text("url").notNull(),
   caption: text("caption"),
   order: int("order").default(0),

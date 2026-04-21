@@ -72,7 +72,8 @@ export async function generateSitemap(baseUrl: string): Promise<string> {
     { loc: `${baseUrl}/seja-um-parceiro`, lastmod: today, priority: 0.4, changefreq: "monthly" },
 
     // ─── Rotas INTENCIONALMENTE excluídas do sitemap (não remover sem perguntar) ──
-    // /roteiros    — substituída pelo Receptivo Oranje (/app/receptivo). Perguntar antes de reativar.
+    // /roteiros    — página placeholder com conteúdo estático falso (4 cards hardcoded sem dados reais).
+    //               Não indexar até ter conteúdo real. NÃO é o mesmo que /app/receptivo.
     // /parcerias   — motivo não confirmado. Perguntar ao dono antes de adicionar.
     // /privacidade — página legal, sem valor SEO, não indexar.
     // /termos      — página legal, sem valor SEO, não indexar.

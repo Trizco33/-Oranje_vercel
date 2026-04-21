@@ -5,7 +5,7 @@ const tabs = [
   { path: "/app", icon: Home, label: "Home" },
   { path: "/app/explorar", icon: Compass, label: "Explorar" },
   { path: "/app/eventos", icon: CalendarDays, label: "Eventos" },
-  { path: "/guia", icon: BookOpen, label: "Guia" },
+  { path: "/guia", icon: BookOpen, label: "Blog" },
   { path: "/app/receptivo", icon: Map, label: "Passeios" },
 ];
 

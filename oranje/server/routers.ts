@@ -21,6 +21,7 @@ import { pushRouter } from "./push.router";
 import { claimsRouter } from "./claims.router";
 import { tourOperationsRouter } from "./tour-operations.router";
 import { operationsRouter } from "./operations.router";
+import { ownerRouter } from "./owner.router";
 import { generateSitemap } from "./sitemap";
 import * as db from "./db";
 import { getDb } from "./db";
@@ -50,6 +51,7 @@ export const appRouter = router({
   claims: claimsRouter,
   tourOperations: tourOperationsRouter,
   operations: operationsRouter,
+  owner: ownerRouter,
 
   // ── SEO ────────────────────────────────────────────────────────────────────
   seo: router({

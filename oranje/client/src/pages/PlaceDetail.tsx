@@ -15,6 +15,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { DSButton, DSBadge } from "@/components/ds";
 import { DirectionsSheet } from "@/components/DirectionsSheet";
 import { ClaimBlock } from "@/components/ClaimBlock";
+import { OwnerPhotoUpload } from "@/components/OwnerPhotoUpload";
 import { getAllPlaceImages, getPlaceImage } from "@/components/PlaceCard";
 import { isBlockedCoverUrl } from "@/constants/placeImages";
 import { useBusinessHours, getBusinessStatus } from "@/hooks/useBusinessHours";
@@ -1259,6 +1260,8 @@ export default function PlaceDetail() {
         {/* ─────────────────────────────────────────────────────────── */}
         {/* Claim Block — Este negócio é seu?                         */}
         {/* ─────────────────────────────────────────────────────────── */}
+        <OwnerPhotoUpload placeId={place.id} />
+
         <ClaimBlock placeId={place.id} placeName={place.name} claimStatus={(place as any).claimStatus ?? "unclaimed"} />
 
         {/* ─────────────────────────────────────────────────────────── */}

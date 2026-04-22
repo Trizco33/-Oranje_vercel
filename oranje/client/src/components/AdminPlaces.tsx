@@ -256,7 +256,7 @@ export function AdminPlaces() {
           place={pinEditorPlace}
           onClose={() => setPinEditorPlace(null)}
           onSaved={() => {
-            refetchPlaces();
+            invalidatePlaces();
             setPinEditorPlace(null);
           }}
         />

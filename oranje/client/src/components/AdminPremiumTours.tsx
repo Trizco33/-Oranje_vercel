@@ -93,17 +93,24 @@ function FinancialSummary({ month }: { month?: string }) {
 
 // ─── Tour Premium Settings Modal ──────────────────────────────────────────────
 
-function TourPremiumSettingsModal({ tourId, tourName, onClose }: {
+function TourPremiumSettingsModal({ tourId, tourName, initialData, onClose }: {
   tourId: number; tourName: string; onClose: () => void;
+  initialData?: {
+    requiresTransport?: boolean; walkOnly?: boolean; recommendedWithDriver?: boolean;
+    basePrice?: number | null; partnerCosts?: number | null; partnerFee?: number | null;
+    partnerCommission?: number | null; driverPayout?: number | null; clientPrice?: number | null;
+  };
 }) {
   const [form, setForm] = useState({
-    requiresTransport: false,
-    walkOnly: false,
-    recommendedWithDriver: false,
-    basePrice: "",
-    partnerCosts: "",
-    partnerCommission: "",
-    driverPayout: "",
+    requiresTransport: initialData?.requiresTransport ?? false,
+    walkOnly: initialData?.walkOnly ?? false,
+    recommendedWithDriver: initialData?.recommendedWithDriver ?? false,
+    basePrice: initialData?.basePrice != null ? String(initialData.basePrice) : "",
+    partnerCosts: (initialData?.partnerCosts ?? initialData?.partnerFee) != null
+      ? String(initialData?.partnerCosts ?? initialData?.partnerFee)
+      : "",
+    partnerCommission: initialData?.partnerCommission != null ? String(initialData.partnerCommission) : "",
+    driverPayout: initialData?.driverPayout != null ? String(initialData.driverPayout) : "",
   });
 
   const updateMutation = trpc.tourOperations.updateTourPremiumSettings.useMutation({
@@ -453,7 +460,7 @@ const selectStyle: React.CSSProperties = {
 export function AdminPremiumTours() {
   const [filterStatus, setFilterStatus] = useState("");
   const [filterMonth, setFilterMonth] = useState("");
-  const [showSettings, setShowSettings] = useState<{ id: number; name: string } | null>(null);
+  const [showSettings, setShowSettings] = useState<any | null>(null);
   const [activeView, setActiveView] = useState<"operations" | "summary">("operations");
 
   const { data: operations, isLoading } = trpc.tourOperations.list.useQuery({
@@ -570,7 +577,7 @@ export function AdminPremiumTours() {
             {tours.map((t: any) => (
               <button
                 key={t.id}
-                onClick={() => setShowSettings({ id: t.id, name: t.name })}
+                onClick={() => setShowSettings(t)}
                 style={{
                   display: "flex", alignItems: "center", gap: 6,
                   padding: "6px 12px", borderRadius: 8,
@@ -671,6 +678,7 @@ export function AdminPremiumTours() {
         <TourPremiumSettingsModal
           tourId={showSettings.id}
           tourName={showSettings.name}
+          initialData={showSettings}
           onClose={() => setShowSettings(null)}
         />
       )}

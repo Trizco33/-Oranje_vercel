@@ -49,26 +49,41 @@ export function AdminCategories() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
-      const slug = data.slug?.trim() || toSlug(data.name || "");
-      const payload = { ...data, slug };
+      const slug = (data.slug?.trim() || toSlug(data.name || "")) as string;
+
+      // Allow-list: só os campos que existem no formulário, nada de null/undefined/""
+      const FORM_FIELDS = ["name", "slug", "icon", "description", "coverImage"] as const;
+      const payload: Record<string, any> = {};
+      for (const k of FORM_FIELDS) {
+        const v = k === "slug" ? slug : data[k];
+        if (v !== undefined && v !== null && v !== "") payload[k] = v;
+      }
 
       if (editingCategory) {
         await updateCategory.mutateAsync({ id: editingCategory.id, ...payload });
         toast.success("Categoria atualizada");
       } else {
+        if (!payload.name || !payload.slug) {
+          toast.error("Preencha o nome");
+          return;
+        }
         await createCategory.mutateAsync({
           name: payload.name,
           slug: payload.slug,
-          icon: payload.icon || undefined,
-          description: payload.description || undefined,
-          coverImage: payload.coverImage || undefined,
+          icon: payload.icon,
+          description: payload.description,
+          coverImage: payload.coverImage,
         });
         toast.success("Categoria criada — ela já aparece no Explorar e pode ser atribuída a lugares");
       }
       setIsModalOpen(false);
       invalidate();
     } catch (err: any) {
-      const msg = err?.message?.includes("Duplicate") ? "Já existe uma categoria com esse slug" : "Erro ao salvar categoria";
+      console.error("[AdminCategories] save error:", err);
+      const raw = err?.message || "";
+      const msg = raw.includes("Duplicate") || raw.includes("UNIQUE")
+        ? "Já existe uma categoria com esse slug"
+        : `Erro ao salvar categoria: ${raw.slice(0, 120)}`;
       toast.error(msg);
     }
   };

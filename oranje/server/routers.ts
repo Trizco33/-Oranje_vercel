@@ -194,12 +194,19 @@ export const appRouter = router({
     })).mutation(({ input }) => db.createCategory(input)),
     update: adminProcedure.input(z.object({
       id: z.number(),
-      name: z.string().optional(),
-      slug: z.string().optional(),
-      icon: z.string().optional(),
-      description: z.string().optional(),
-      coverImage: z.string().optional(),
-    })).mutation(({ input: { id, ...data } }) => db.updateCategory(id, data)),
+      name: z.string().nullish(),
+      slug: z.string().nullish(),
+      icon: z.string().nullish(),
+      description: z.string().nullish(),
+      coverImage: z.string().nullish(),
+    }).passthrough()).mutation(({ input: { id, ...data } }) => {
+      // Filtra null/undefined antes de mandar pro DB — evita sobrescrever colunas com null
+      const clean: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v !== null && v !== undefined) clean[k] = v;
+      }
+      return db.updateCategory(id, clean);
+    }),
     delete: adminProcedure.input(z.object({ id: z.number() })).mutation(({ input }) =>
       db.deleteCategory(input.id)
     ),

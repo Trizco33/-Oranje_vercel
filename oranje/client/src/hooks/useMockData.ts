@@ -39,12 +39,20 @@ export function useCategoryBySlug(slug: string) {
 }
 
 // ─── Places ───
-export function usePlacesList(params?: { categoryId?: number; limit?: number; offset?: number }) {
+export function usePlacesList(params?: {
+  categoryId?: number;
+  limit?: number;
+  offset?: number;
+  isFeatured?: boolean;
+  isRecommended?: boolean;
+}) {
   const query = trpc.places.list.useQuery(
     {
       categoryId: params?.categoryId,
       limit: params?.limit ?? 50,
       offset: params?.offset ?? 0,
+      isFeatured: params?.isFeatured,
+      isRecommended: params?.isRecommended,
     },
     {
       staleTime: 30_000,

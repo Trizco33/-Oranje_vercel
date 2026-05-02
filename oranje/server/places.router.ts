@@ -12,6 +12,8 @@ export const placesRouter = router({
       limit: z.number().default(20),
       offset: z.number().default(0),
       categoryId: z.number().optional(),
+      isFeatured: z.boolean().optional(),
+      isRecommended: z.boolean().optional(),
     }))
     .query(async ({ input }) => {
       const db = await getDb();
@@ -26,6 +28,12 @@ export const placesRouter = router({
         ];
         if (input.categoryId) {
           conditions.push(eq(places.categoryId, input.categoryId));
+        }
+        if (input.isFeatured) {
+          conditions.push(eq(places.isFeatured, true));
+        }
+        if (input.isRecommended) {
+          conditions.push(eq(places.isRecommended, true));
         }
         query = query.where(and(...conditions)) as any;
 

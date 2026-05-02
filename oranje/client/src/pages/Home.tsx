@@ -206,8 +206,8 @@ export default function Home() {
   }, []);
 
   const { data: categories } = useCategoriesList();
-  const { data: featuredPlaces, isLoading: featuredLoading } = usePlacesList({ limit: 6, offset: 0 });
-  const { data: recommendedPlaces, isLoading: recommendedLoading } = usePlacesList({ limit: 6, offset: 6 });
+  const { data: featuredPlaces, isLoading: featuredLoading } = usePlacesList({ limit: 12, offset: 0, isFeatured: true });
+  const { data: recommendedPlaces, isLoading: recommendedLoading } = usePlacesList({ limit: 12, offset: 0, isRecommended: true });
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
   const { position: geoPosition, loading: geoLoading, denied: geoDenied } = useGeolocation();
   const { nearby: nearbyPlaces, isLoading: nearbyLoading } = useNearbyPlaces(geoPosition, 6);

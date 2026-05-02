@@ -1,65 +1,54 @@
-const CACHE_NAME = 'oranje-v3';
+// ────────────────────────────────────────────────────────────────────────────
+// Oranje Service Worker — v4 (kill-switch + clean cache)
+//
+// Histórico do bug: o SW v3 cacheava HTML em todas as navegações. Quando o
+// bundle JS mudava (deploy/HMR), o HTML cacheado apontava para chunks que
+// não existiam mais — usuário ficava preso em telas antigas (ex.: "Categoria
+// não encontrada" mesmo com a categoria voltando OK na API).
+//
+// Esta versão:
+//   1) Pula waiting + claim imediato → ativa assim que carrega
+//   2) Apaga TODOS os caches antigos (oranje-v1/v2/v3)
+//   3) Não cacheia mais nada — sempre rede direto (network-only passthrough)
+//   4) Notifica páginas abertas para se recarregarem uma vez
+//
+// Resultado: o celular do usuário, na próxima visita, baixa este SW, limpa o
+// cache, e a partir daí busca tudo na rede como app web normal.
+// ────────────────────────────────────────────────────────────────────────────
 
-const urlsToCache = [
-  '/',
-  '/manifest.webmanifest',
-];
+const CACHE_NAME = 'oranje-v4-cleanup';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache).catch(() => {});
-    })
-  );
+  // Não pré-cacheia nada. Ativa imediatamente.
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    // 1) Apaga TODOS os caches (legados oranje-v1, v2, v3, etc.)
+    const names = await caches.keys();
+    await Promise.all(names.map((n) => caches.delete(n)));
+
+    // 2) Toma controle de todas as abas/PWA imediatamente
+    await self.clients.claim();
+
+    // 3) Notifica clientes para fazerem 1 reload (pegar bundle fresco)
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of clients) {
+      try {
+        client.postMessage({ type: 'SW_CLEANUP_RELOAD' });
+      } catch (e) {}
+    }
+  })());
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-
-  const url = new URL(event.request.url);
-
-  if (url.pathname.includes('/api/')) return;
-
-  if (url.pathname.startsWith('/assets/')) {
-    return;
-  }
-
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        if (response.status === 200) {
-          const ct = response.headers.get('content-type') || '';
-          if (ct.includes('text/html') || ct.includes('application/manifest')) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request).then((r) => r || caches.match('/'));
-      })
-  );
+// ── Fetch: passthrough total. Não cacheia, não intercepta nada. ────────────
+// (Sem listener de fetch = browser usa rede direto. Mantido vazio por clareza.)
+self.addEventListener('fetch', () => {
+  // intencionalmente sem event.respondWith → browser usa rede direto
 });
 
-// ─── Push Notifications ───────────────────────────────────────────────────────
-
+// ── Push Notifications (mantido funcional) ─────────────────────────────────
 self.addEventListener('push', (event) => {
   let data = {};
   try {
@@ -78,16 +67,12 @@ self.addEventListener('push', (event) => {
     requireInteraction: false,
   };
 
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-
   const url = (event.notification.data && event.notification.data.url) || '/app';
-
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
@@ -96,9 +81,7 @@ self.addEventListener('notificationclick', (event) => {
           return client.focus();
         }
       }
-      if (clients.openWindow) {
-        return clients.openWindow(url);
-      }
+      if (clients.openWindow) return clients.openWindow(url);
     })
   );
 });

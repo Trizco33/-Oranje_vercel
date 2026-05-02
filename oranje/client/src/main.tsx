@@ -8,12 +8,27 @@ import App from "./App";
 import "./index.css";
 
 
-// Registrar Service Worker para PWA
+// Registrar Service Worker para PWA + auto-recovery de cache antigo.
+// O SW v4 (cleanup) limpa caches legados (oranje-v1/v2/v3) que serviam HTML
+// stale referenciando chunks JS antigos. Quando o SW envia SW_CLEANUP_RELOAD,
+// recarregamos UMA vez para garantir bundle fresco.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // SW registration failed silently;
-    });
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data?.type === 'SW_CLEANUP_RELOAD') {
+      const flag = 'oranje_sw_cleanup_done';
+      try {
+        if (!sessionStorage.getItem(flag)) {
+          sessionStorage.setItem(flag, '1');
+          window.location.reload();
+        }
+      } catch {
+        window.location.reload();
+      }
+    }
   });
 }
 

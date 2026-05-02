@@ -105,56 +105,42 @@ async function startServer() {
   
   // React app will handle /app route via React Router
   
-  // Service Worker para /app
+  // Service Worker para /app — versão CLEANUP (v4).
+  //
+  // O SW antigo (v1/v3) cacheava HTML em /app e servia bundles antigos para
+  // usuários que já tinham o PWA instalado, fazendo telas como "Categoria
+  // não encontrada" persistirem mesmo com a API e o frontend já corretos.
+  //
+  // Esta versão:
+  //   - skipWaiting + clients.claim (ativa imediatamente)
+  //   - apaga TODOS os caches legados (oranje-v1/v2/v3)
+  //   - não intercepta fetch (browser usa rede direto)
+  //   - manda SW_CLEANUP_RELOAD para clients abertos
+  //
+  // Cabeçalhos: Cache-Control no-store para o próprio sw.js, garantindo que
+  // o browser sempre baixe a versão mais nova.
   app.get("/app/sw.js", (_req, res) => {
     const swCode = `
-const CACHE_NAME = 'oranje-v1';
-const urlsToCache = [
-  '/app',
-  '/#/app',
-  '/icon-192.png',
-  '/icon-512.png'
-];
+const CACHE_NAME = 'oranje-v4-cleanup';
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache).catch(() => {
-        console.log('Some resources could not be cached');
-      });
-    })
-  );
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(names.map((n) => caches.delete(n)));
+    await self.clients.claim();
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of wins) {
+      try { client.postMessage({ type: 'SW_CLEANUP_RELOAD' }); } catch (e) {}
+    }
+  })());
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('/api/')) {
-    return;
-  }
-  
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        return caches.match('/app');
-      });
-    })
-  );
-});
+// Passthrough total — sem listener de fetch ativo, browser usa rede direto.
+self.addEventListener('fetch', () => {});
 
 self.addEventListener('push', (event) => {
   if (!event.data) return;
@@ -187,6 +173,7 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
     `;
+    res.set('Cache-Control', 'no-store, max-age=0');
     res.type('application/javascript').send(swCode);
   });
   

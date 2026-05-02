@@ -155,7 +155,9 @@ export default function SiteHome() {
     return () => { document.title = "ORANJE — Holambra em um só lugar"; };
   }, []);
   const { data: articles = [] } = useArticlesListPublished({ limit: 3 });
-  const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList();
+  // Limit alto: pegamos todos os lugares para poder filtrar por destaque/recomendado
+  // (sem isso, lugares com id alto ficavam de fora — bug do Istok não aparecer no site).
+  const { data: allPlaces = [], isLoading: placesLoading } = usePlacesList({ limit: 500 });
   const { data: cats = [] } = useCategoriesList();
   const { data: publicRoutes = [], isLoading: routesLoading } = usePublicRoutes();
   const { data: siteFeatureItems = [], isLoading: siteFeaturesLoading } = trpc.routes.siteFeatures.useQuery(undefined, { staleTime: 60_000 });
@@ -174,9 +176,11 @@ export default function SiteHome() {
     return namedImages.length > 0;
   };
 
+  // Destaques do site: lugar marcado como Em Destaque OU Recomendado no admin
+  // (antes exigia AS DUAS marcações, então quem tinha só uma sumia).
   const featuredPlaces = useMemo(
     () => allPlaces.filter(
-      (p: any) => p.isFeatured && p.isRecommended && p.status !== "inactive" && hasVerifiedImage(p)
+      (p: any) => (p.isFeatured || p.isRecommended) && p.status !== "inactive" && hasVerifiedImage(p)
     ),
     [allPlaces]
   );
@@ -682,7 +686,7 @@ export default function SiteHome() {
                     <div className="site-skeleton" style={{ height: 280, width: "100%" }} />
                   </div>
                 ))
-              : featuredPlaces.slice(0, 3).map((place: any, i: number) => (
+              : featuredPlaces.slice(0, 6).map((place: any, i: number) => (
                   <Reveal key={place.id} delay={i * 70}>
                     <Link to={`/app/lugar/${place.id}`} className="site-featured-item" style={{ textDecoration: "none", display: "block", flexShrink: 0 }}>
                       <div style={{

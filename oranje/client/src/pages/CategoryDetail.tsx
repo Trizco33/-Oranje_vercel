@@ -23,10 +23,11 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
   const normalizedSlug = normalizeSlug(slug) ?? slug;
 
   // Busca a categoria diretamente na API — sem pré-validação estática.
-  // Se não existir no banco, `category` ficará null após o carregamento.
+  // staleTime=0 garante que sempre busca dados frescos (evita cache stale em mobile).
+  // throwOnError: false impede que erro de rede apareça como "categoria não encontrada".
   const categoryQuery = trpc.categories.bySlug.useQuery(
     { slug: normalizedSlug },
-    { enabled: !!normalizedSlug, staleTime: 60_000, retry: 1 }
+    { enabled: !!normalizedSlug, staleTime: 0, retry: 2, throwOnError: false }
   );
   const category = categoryQuery.data ?? null;
 
@@ -56,8 +57,29 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
     onSuccess: () => favoritesQuery.refetch(),
   });
 
-  // Mostra "não encontrada" somente APÓS o carregamento concluir sem dados.
-  // Enquanto carrega, renderiza normalmente (com skeletons via placesLoading).
+  // Erro de rede / timeout — NÃO confundir com "categoria não existe"
+  if (categoryQuery.isError) {
+    return (
+      <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
+        <OranjeHeader title="Explorar" showBack onBack={() => navigate("/app/explorar")} />
+        <div className="px-5 mt-12 text-center">
+          <p className="text-4xl mb-4">📡</p>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--ds-color-text-primary)", fontFamily: "var(--ds-font-display)", marginBottom: 8 }}>
+            Sem conexão
+          </h2>
+          <p className="text-sm mb-6" style={{ color: "var(--ds-color-text-muted)" }}>
+            Não foi possível carregar a categoria. Verifique sua conexão e tente novamente.
+          </p>
+          <DSButton onClick={() => categoryQuery.refetch()}>Tentar novamente</DSButton>
+        </div>
+        <div style={{ height: 100 }} />
+        <TabBar />
+      </div>
+    );
+  }
+
+  // Mostra "não encontrada" somente APÓS o carregamento concluir com dados nulos
+  // (sem erro de rede — significa que a categoria genuinamente não existe no banco).
   if (!categoryQuery.isLoading && !categoryQuery.isFetching && !category) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>

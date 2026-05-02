@@ -113,12 +113,29 @@ export function AdminPlaces() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
-      const parsed = {
-        ...data,
-        lat: data.lat ? parseFloat(data.lat) : undefined,
-        lng: data.lng ? parseFloat(data.lng) : undefined,
-        categoryId: data.categoryId ? parseInt(String(data.categoryId), 10) : undefined,
-      };
+      // ⚠️  IMPORTANTE: só enviar os campos do FORMULÁRIO, nunca espalhar
+      // o `editingPlace` inteiro — campos do banco como tags/images/geoStatus
+      // podem vir null e quebrar a validação Zod do backend silenciosamente.
+      const FORM_FIELDS = [
+        "categoryId", "name", "shortDesc", "longDesc", "address", "openingHours",
+        "lat", "lng", "whatsapp", "instagram", "website", "coverImage",
+        "priceRange", "isFeatured", "isRecommended",
+      ];
+      const parsed: Record<string, any> = {};
+      for (const key of FORM_FIELDS) {
+        const v = data[key];
+        if (v === undefined || v === null || v === "") continue;
+        if (key === "lat" || key === "lng") {
+          const n = parseFloat(String(v));
+          if (!Number.isNaN(n)) parsed[key] = n;
+        } else if (key === "categoryId") {
+          const n = parseInt(String(v), 10);
+          if (!Number.isNaN(n)) parsed[key] = n;
+        } else {
+          parsed[key] = v;
+        }
+      }
+
       if (editingPlace) {
         await updatePlace.mutateAsync({ id: editingPlace.id, ...parsed });
         const isManual = editingPlace.geoSource === "manual";
@@ -132,8 +149,10 @@ export function AdminPlaces() {
       }
       setIsModalOpen(false);
       await invalidatePlaces();
-    } catch (error) {
-      toast.error("Erro ao salvar lugar");
+    } catch (error: any) {
+      console.error("[AdminPlaces] Erro ao salvar:", error);
+      const msg = error?.message || error?.shape?.message || "Erro ao salvar lugar";
+      toast.error(msg.length > 120 ? "Erro ao salvar lugar — verifique os campos" : msg);
     }
   };
 

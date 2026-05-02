@@ -5,7 +5,7 @@ import { AdminListTable } from "./AdminListTable";
 import { AdminFormModal } from "./AdminFormModal";
 import { PlacePinEditor } from "./PlacePinEditor";
 import { Place } from "../../../drizzle/schema";
-import { MapPin } from "lucide-react";l
+import { MapPin } from "lucide-react";
 
 const GEO_STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
   ok:            { label: "OK",          bg: "rgba(91,217,138,0.15)",  color: "#5BD98A" },

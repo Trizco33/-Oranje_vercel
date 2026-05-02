@@ -22,6 +22,7 @@ export const CATEGORY_SLUGS = [
   "bares-drinks",
   "eventos",
   "agencias-receptivo",
+  "comercio-local",
 ] as const;
 
 export type CategorySlug = (typeof CATEGORY_SLUGS)[number];
@@ -44,6 +45,7 @@ export const CATEGORY_COVERS: Record<CategorySlug, string> = {
   "bares-drinks": "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=400&h=200&fit=crop",
   eventos: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=200&fit=crop",
   "agencias-receptivo": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=200&fit=crop",
+  "comercio-local": "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&h=200&fit=crop",
 };
 
 /**
@@ -64,6 +66,7 @@ export const CATEGORY_ICONS: Record<CategorySlug, string> = {
   "bares-drinks": "\u{1F378}",
   eventos: "\u{1F3AA}",
   "agencias-receptivo": "\u{1F9ED}",
+  "comercio-local": "\u{1F6D2}",
 };
 
 /**

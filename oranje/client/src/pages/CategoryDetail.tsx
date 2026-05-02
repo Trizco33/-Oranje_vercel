@@ -4,7 +4,7 @@ import { TabBar } from "@/components/TabBar";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
-import { getCategoryIcon, getCategorycover, normalizeSlug, isValidCategorySlug } from "@/constants/categories";
+import { getCategoryIcon, getCategorycover, normalizeSlug } from "@/constants/categories";
 import { DSButton, DSBadge } from "@/components/ds";
 import { trpc } from "@/lib/trpc";
 
@@ -18,14 +18,15 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const normalizedSlug = normalizeSlug(slug);
-  const isValid = isValidCategorySlug(normalizedSlug);
+  // Normaliza o slug (remove acentos, espaços → hífen), mas aceita qualquer
+  // slug vindo do banco — não bloqueia com lista estática.
+  const normalizedSlug = normalizeSlug(slug) ?? slug;
 
-  // IMPORTANT: All hooks must be called unconditionally (React rules of hooks).
-  // We use `enabled` flag to skip fetching when slug is invalid.
+  // Busca a categoria diretamente na API — sem pré-validação estática.
+  // Se não existir no banco, `category` ficará null após o carregamento.
   const categoryQuery = trpc.categories.bySlug.useQuery(
-    { slug: isValid ? (normalizedSlug ?? '') : '' },
-    { enabled: !!isValid && !!normalizedSlug, staleTime: 60_000, retry: 1 }
+    { slug: normalizedSlug },
+    { enabled: !!normalizedSlug, staleTime: 60_000, retry: 1 }
   );
   const category = categoryQuery.data ?? null;
 
@@ -55,7 +56,9 @@ export default function CategoryDetail({ slug: propSlug }: CategoryDetailProps) 
     onSuccess: () => favoritesQuery.refetch(),
   });
 
-  if (!isValid) {
+  // Mostra "não encontrada" somente APÓS o carregamento concluir sem dados.
+  // Enquanto carrega, renderiza normalmente (com skeletons via placesLoading).
+  if (!categoryQuery.isLoading && !categoryQuery.isFetching && !category) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
         <OranjeHeader

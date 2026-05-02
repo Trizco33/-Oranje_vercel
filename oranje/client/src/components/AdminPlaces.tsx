@@ -47,6 +47,8 @@ const BASE_PLACE_FORM_FIELDS = [
   { name: "longDesc", label: "Descrição Longa", type: "textarea" as const },
   { name: "address", label: "Endereço", type: "text" as const },
   { name: "openingHours", label: "Horário de Funcionamento", type: "text" as const, placeholder: "Seg–Sex 9h–18h" },
+  { name: "lat", label: "Latitude", type: "text" as const, placeholder: "-22.6333" },
+  { name: "lng", label: "Longitude", type: "text" as const, placeholder: "-47.0520" },
   { name: "whatsapp", label: "WhatsApp", type: "text" as const, placeholder: "11999999999" },
   { name: "instagram", label: "Instagram", type: "text" as const },
   { name: "website", label: "Website", type: "url" as const },

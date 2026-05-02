@@ -56,7 +56,9 @@ export default function SearchPage() {
 
   const { user } = useAuth();
   const { data: categories } = useCategoriesList();
-  const { data: places, isLoading } = usePlacesList({ categoryId: selectedCategory, limit: 50, offset: 0 });
+  // Limit alto: a busca filtra no cliente, então precisamos de TODOS os lugares
+  // (do contrário, lugares com id alto ficavam de fora — bug do Istok não aparecer).
+  const { data: places, isLoading } = usePlacesList({ categoryId: selectedCategory, limit: 500, offset: 0 });
 
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 

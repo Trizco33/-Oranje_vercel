@@ -1228,5 +1228,63 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 029: Categoria "Comércio Local" + Istok Holambra (mercado 24h) ─
+  {
+    // 1) Criar categoria "Comércio Local" se não existir
+    const [catRows] = await db.execute(
+      `SELECT id FROM \`categories\` WHERE slug='comercio-local' LIMIT 1`
+    ) as any[];
+    let comercioLocalId: number;
+    if (catRows && catRows.length > 0) {
+      comercioLocalId = catRows[0].id;
+      console.log(`[Migrations] ✓ 029: Categoria "Comércio Local" já existe (id=${comercioLocalId})`);
+    } else {
+      await db.execute(
+        `INSERT INTO \`categories\` (name, slug, icon, isActive, createdAt)
+         VALUES ('Comércio Local', 'comercio-local', '🛒', 1, NOW())`
+      );
+      const [newCat] = await db.execute(
+        `SELECT id FROM \`categories\` WHERE slug='comercio-local' LIMIT 1`
+      ) as any[];
+      comercioLocalId = newCat[0].id;
+      console.log(`[Migrations] ✅ 029: Categoria "Comércio Local" criada (id=${comercioLocalId})`);
+    }
+
+    // 2) Registrar Istok Holambra se não existir
+    const [istokRows] = await db.execute(
+      `SELECT id FROM \`places\` WHERE slug='istok-holambra' LIMIT 1`
+    ) as any[];
+    if (istokRows && istokRows.length > 0) {
+      console.log(`[Migrations] ✓ 029: Istok Holambra já existe (id=${istokRows[0].id})`);
+    } else {
+      await db.execute(
+        `INSERT INTO \`places\`
+           (name, slug, categoryId, shortDesc, longDesc, address, city, state, country,
+            openingHours, lat, lng, status, geoStatus, geoSource, dataPending, createdAt, updatedAt)
+         VALUES (
+           'Istok Holambra',
+           'istok-holambra',
+           ${comercioLocalId},
+           'Mercado de conveniência aberto 24 horas em Holambra — ideal para qualquer hora do dia.',
+           'O Istok Holambra é um mercado de conveniência que funciona 24 horas por dia, 7 dias por semana. Ideal para abastecimento a qualquer momento, o estabelecimento oferece produtos básicos, bebidas, snacks e muito mais, servindo moradores e visitantes de Holambra a qualquer hora do dia ou da noite.',
+           'Holambra, SP',
+           'Holambra',
+           'SP',
+           'Brasil',
+           'Aberto 24 horas, todos os dias',
+           -22.6333,
+           -47.0520,
+           'active',
+           'unverified',
+           'auto',
+           0,
+           NOW(),
+           NOW()
+         )`
+      );
+      console.log(`[Migrations] ✅ 029: Istok Holambra registrado (mercado 24h, Comércio Local)`);
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

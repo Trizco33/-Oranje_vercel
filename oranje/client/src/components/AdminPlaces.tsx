@@ -41,13 +41,12 @@ function GeoStatusBadge({ status, source }: { status?: string | null; source?: s
   );
 }
 
-const PLACE_FORM_FIELDS = [
+const BASE_PLACE_FORM_FIELDS = [
   { name: "name", label: "Nome", type: "text" as const, required: true },
   { name: "shortDesc", label: "Descrição Curta", type: "textarea" as const },
   { name: "longDesc", label: "Descrição Longa", type: "textarea" as const },
   { name: "address", label: "Endereço", type: "text" as const },
-  { name: "lat", label: "Latitude", type: "text" as const, placeholder: "-22.6333" },
-  { name: "lng", label: "Longitude", type: "text" as const, placeholder: "-47.0520" },
+  { name: "openingHours", label: "Horário de Funcionamento", type: "text" as const, placeholder: "Seg–Sex 9h–18h" },
   { name: "whatsapp", label: "WhatsApp", type: "text" as const, placeholder: "11999999999" },
   { name: "instagram", label: "Instagram", type: "text" as const },
   { name: "website", label: "Website", type: "url" as const },
@@ -69,11 +68,26 @@ export function AdminPlaces() {
 
   const utils = trpc.useUtils();
   const { data: places, isLoading: placesLoading } = trpc.places.list.useQuery({ limit: 200, offset: 0 });
+  const { data: allCategories = [] } = trpc.categories.adminListAll.useQuery();
   const createPlace = trpc.places.create.useMutation();
   const updatePlace = trpc.places.update.useMutation();
   const deletePlace = trpc.places.delete.useMutation();
 
   const invalidatePlaces = () => utils.places.list.invalidate();
+
+  // Campos do formulário com seletor de categoria dinâmico
+  const PLACE_FORM_FIELDS = [
+    {
+      name: "categoryId",
+      label: "Categoria",
+      type: "select" as const,
+      options: [
+        { value: "", label: "— Sem categoria —" },
+        ...allCategories.map((c: any) => ({ value: c.id, label: c.name })),
+      ],
+    },
+    ...BASE_PLACE_FORM_FIELDS,
+  ];
 
   const handleCreate = () => {
     setEditingPlace(null);
@@ -101,6 +115,7 @@ export function AdminPlaces() {
         ...data,
         lat: data.lat ? parseFloat(data.lat) : undefined,
         lng: data.lng ? parseFloat(data.lng) : undefined,
+        categoryId: data.categoryId ? parseInt(String(data.categoryId), 10) : undefined,
       };
       if (editingPlace) {
         await updatePlace.mutateAsync({ id: editingPlace.id, ...parsed });

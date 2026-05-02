@@ -180,6 +180,8 @@ export const appRouter = router({
   // ── Categories ────────────────────────────────────────────────────────────
   categories: router({
     list: publicProcedure.query(() => db.getCategoriesPublic()),
+    // Admin: lista TODAS as categorias (sem filtro de publicação)
+    adminListAll: adminProcedure.query(() => db.getCategories()),
     bySlug: publicProcedure.input(z.object({ slug: z.string() })).query(({ input }) =>
       db.getCategoryBySlug(input.slug)
     ),

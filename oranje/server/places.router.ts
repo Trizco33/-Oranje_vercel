@@ -3,7 +3,7 @@ import { publicProcedure, adminProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import * as db from "./db";
 import { places, placePhotos, categories } from "../drizzle/schema";
-import { eq, like, and } from "drizzle-orm";
+import { eq, like, and, asc, inArray, sql } from "drizzle-orm";
 
 export const placesRouter = router({
   // Get all places (for listing)
@@ -14,34 +14,43 @@ export const placesRouter = router({
       categoryId: z.number().optional(),
       isFeatured: z.boolean().optional(),
       isRecommended: z.boolean().optional(),
+      // "featured"/"recommended" ordena por places.featuredOrder/recommendedOrder
+      // (asc, NULLs no fim). Sem orderBy, mantém ordem default do banco.
+      orderBy: z.enum(["featured", "recommended"]).optional(),
     }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return [];
+      const conn = await getDb();
+      if (!conn) return [];
 
       try {
-        let query = db.select().from(places);
-
-        const conditions: any[] = [
+        const conditions = [
           eq(places.status, "active"),
-          eq(places.dataPending, false),   // nunca retornar lugares pendentes de validação
+          eq(places.dataPending, false),
         ];
-        if (input.categoryId) {
-          conditions.push(eq(places.categoryId, input.categoryId));
-        }
-        if (input.isFeatured) {
-          conditions.push(eq(places.isFeatured, true));
-        }
-        if (input.isRecommended) {
-          conditions.push(eq(places.isRecommended, true));
-        }
-        query = query.where(and(...conditions)) as any;
+        if (input.categoryId) conditions.push(eq(places.categoryId, input.categoryId));
+        // orderBy implica o filtro de flag correspondente: orderBy:"featured"
+        // sempre retorna apenas isFeatured=true, e idem para "recommended".
+        const wantFeatured = input.isFeatured || input.orderBy === "featured";
+        const wantRecommended = input.isRecommended || input.orderBy === "recommended";
+        if (wantFeatured) conditions.push(eq(places.isFeatured, true));
+        if (wantRecommended) conditions.push(eq(places.isRecommended, true));
 
-        const results = await (query as any)
-          .limit(input.limit)
-          .offset(input.offset);
+        const base = conn.select().from(places).where(and(...conditions));
 
-        return results;
+        // MySQL não tem NULLS LAST: ISNULL(col)=1 nos NULLs empurra-os pro fim.
+        if (input.orderBy === "featured") {
+          return await base
+            .orderBy(sql`ISNULL(${places.featuredOrder})`, asc(places.featuredOrder), asc(places.id))
+            .limit(input.limit)
+            .offset(input.offset);
+        }
+        if (input.orderBy === "recommended") {
+          return await base
+            .orderBy(sql`ISNULL(${places.recommendedOrder})`, asc(places.recommendedOrder), asc(places.id))
+            .limit(input.limit)
+            .offset(input.offset);
+        }
+        return await base.limit(input.limit).offset(input.offset);
       } catch (error) {
         console.error("[Places] Error listing places:", error);
         return [];
@@ -189,6 +198,52 @@ export const placesRouter = router({
     .mutation(async ({ input }) => {
       await db.deletePlace(input.id);
       return { success: true };
+    }),
+
+  // Admin: grava a ordem manual de "Em Destaque" ou "Recomendados".
+  // Os IDs recebidos devem pertencer a places ativos com a flag correspondente;
+  // grava 1..N atomicamente em featuredOrder/recommendedOrder.
+  reorder: adminProcedure
+    .input(z.object({
+      field: z.enum(["featured", "recommended"]),
+      orderedIds: z.array(z.number().int().positive()),
+    }))
+    .mutation(async ({ input }) => {
+      const conn = await getDb();
+      if (!conn) throw new Error("DB not available");
+      if (input.orderedIds.length === 0) return { success: true, count: 0 };
+
+      if (new Set(input.orderedIds).size !== input.orderedIds.length) {
+        throw new Error("orderedIds contém IDs duplicados.");
+      }
+
+      const flagCol = input.field === "featured" ? places.isFeatured : places.isRecommended;
+      const valid = await conn
+        .select({ id: places.id })
+        .from(places)
+        .where(and(
+          inArray(places.id, input.orderedIds),
+          eq(flagCol, true),
+          eq(places.status, "active"),
+        ));
+      const validIds = new Set(valid.map((r) => r.id));
+      const invalid = input.orderedIds.filter((id) => !validIds.has(id));
+      if (invalid.length > 0) {
+        throw new Error(`IDs não pertencem à vitrine selecionada: ${invalid.join(", ")}`);
+      }
+
+      await conn.transaction(async (tx) => {
+        for (let i = 0; i < input.orderedIds.length; i++) {
+          const id = input.orderedIds[i];
+          if (input.field === "featured") {
+            await tx.update(places).set({ featuredOrder: i + 1 }).where(eq(places.id, id));
+          } else {
+            await tx.update(places).set({ recommendedOrder: i + 1 }).where(eq(places.id, id));
+          }
+        }
+      });
+
+      return { success: true, count: input.orderedIds.length };
     }),
 
   // Search places

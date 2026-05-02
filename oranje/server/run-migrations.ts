@@ -1286,5 +1286,46 @@ export async function runMigrations(): Promise<void> {
     }
   }
 
+  // ─── Migration 030: places.featuredOrder + places.recommendedOrder ────────
+  // Permite ordenação manual dos lugares "Em Destaque" e "Recomendados".
+  // Coluna nullable (nulls last na ordenação) com índice para performance.
+  {
+    const orderCols: [string, string, string][] = [
+      ["featuredOrder",     "ALTER TABLE `places` ADD COLUMN `featuredOrder` int NULL",     "places_featured_order_idx"],
+      ["recommendedOrder",  "ALTER TABLE `places` ADD COLUMN `recommendedOrder` int NULL",  "places_recommended_order_idx"],
+    ];
+    for (const [col, sql, idx] of orderCols) {
+      if (!(await columnExists(db, "places", col))) {
+        try {
+          await db.execute(sql);
+          console.log(`[Migrations] ✅ 030: places.${col} adicionado.`);
+        } catch (e: any) {
+          if (e?.cause?.errno === 1060 || e?.cause?.code === "ER_DUP_FIELDNAME") {
+            console.log(`[Migrations] ✓ 030: places.${col} já existe (race-condition ignorada).`);
+          } else {
+            throw e;
+          }
+        }
+      } else {
+        console.log(`[Migrations] ✓ 030: places.${col} já existe.`);
+      }
+      if (!(await indexExists(db, "places", idx))) {
+        try {
+          await db.execute(`CREATE INDEX \`${idx}\` ON \`places\` (\`${col}\`)`);
+          console.log(`[Migrations] ✅ 030: índice ${idx} criado.`);
+        } catch (e: any) {
+          // 1061 / ER_DUP_KEYNAME = índice já criado (race-condition); demais erros sobem.
+          if (e?.cause?.errno === 1061 || e?.cause?.code === "ER_DUP_KEYNAME") {
+            console.log(`[Migrations] ✓ 030: índice ${idx} já existe (race-condition ignorada).`);
+          } else {
+            throw e;
+          }
+        }
+      } else {
+        console.log(`[Migrations] ✓ 030: índice ${idx} já existe.`);
+      }
+    }
+  }
+
   console.log("[Migrations] All migrations applied.");
 }

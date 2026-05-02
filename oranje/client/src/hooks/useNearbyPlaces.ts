@@ -58,10 +58,10 @@ export function useNearbyPlaces(position: GeoPosition | null, limit = 6) {
   const nearby = useMemo<PlaceWithDistance[]>(() => {
     if (!places || !position) return [];
 
-    const withCoords = (places as PlaceWithDistance[]).filter(hasValidCoords);
+    const withCoords = places.filter(hasValidCoords);
 
     return withCoords
-      .map((place) => {
+      .map<PlaceWithDistance>((place) => {
         const km = haversineKm(position.lat, position.lng, place.lat as number, place.lng as number);
         return {
           ...place,

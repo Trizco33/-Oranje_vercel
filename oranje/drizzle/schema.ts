@@ -94,6 +94,8 @@ export const places = mysqlTable("places", {
   claimStatus: mysqlEnum("claimStatus", ["unclaimed", "claimed", "selo_oranje"]).default("unclaimed").notNull(),
   rating: float("rating").default(0),
   reviewCount: int("reviewCount").default(0),
+  featuredOrder: int("featuredOrder"),
+  recommendedOrder: int("recommendedOrder"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   geoStatus: mysqlEnum("geoStatus", ["ok", "suspect", "out_of_bounds", "unverified", "needs_review"]).default("unverified").notNull(),
@@ -101,6 +103,8 @@ export const places = mysqlTable("places", {
   geoSource: mysqlEnum("geoSource", ["auto", "manual", "osm_verified", "maps_verified"]).default("auto").notNull(),
 }, (table) => ({
   nameCityIdx: uniqueIndex("places_name_city_idx").on(table.name, table.city),
+  featuredOrderIdx: index("places_featured_order_idx").on(table.featuredOrder),
+  recommendedOrderIdx: index("places_recommended_order_idx").on(table.recommendedOrder),
 }));
 
 export type Place = typeof places.$inferSelect;

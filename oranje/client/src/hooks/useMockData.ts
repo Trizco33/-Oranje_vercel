@@ -45,6 +45,7 @@ export function usePlacesList(params?: {
   offset?: number;
   isFeatured?: boolean;
   isRecommended?: boolean;
+  orderBy?: "featured" | "recommended";
 }) {
   const query = trpc.places.list.useQuery(
     {
@@ -53,6 +54,7 @@ export function usePlacesList(params?: {
       offset: params?.offset ?? 0,
       isFeatured: params?.isFeatured,
       isRecommended: params?.isRecommended,
+      orderBy: params?.orderBy,
     },
     {
       staleTime: 30_000,

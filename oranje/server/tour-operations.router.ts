@@ -35,6 +35,17 @@ export const tourOperationsRouter = router({
         throw new TRPCError({ code: "NOT_FOUND", message: "Passeio não encontrado." });
       }
 
+      // Validação de elegibilidade — espelha a regra do CTA no front.
+      // Passeios walk-only ou sem flag de motorista NÃO podem ser solicitados via este endpoint.
+      const t = tour as any;
+      const isEligible = !t.walkOnly && (t.requiresTransport || t.recommendedWithDriver);
+      if (!isEligible) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Este passeio não está disponível para solicitação com motorista Oranje.",
+        });
+      }
+
       const basePrice = (tour as any).basePrice ?? 0;
       const partnerCosts = (tour as any).partnerCosts ?? (tour as any).partnerFee ?? 0; // partnerFee = partnerCosts DB column
       const clientPrice = (tour as any).clientPrice ?? (basePrice + partnerCosts);
@@ -153,9 +164,34 @@ export const tourOperationsRouter = router({
       scheduledDate: z.string().optional(),
       scheduledTime: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { id, ...data } = input;
       await db.updateTourOperationStatus(id, data);
+
+      // Sincroniza com a Central de Operações Oranje (não crítico — falha silenciosa).
+      // Garante que status/notas/agendamento alterados no painel de Passeios Premium
+      // reflitam imediatamente no painel da Central, evitando divergência de fechamento.
+      try {
+        const linked = await db.findOranjeOperationBySource("tour_operations", id);
+        if (linked) {
+          const sync: Record<string, any> = {};
+          if (data.operationStatus !== undefined) sync.status = data.operationStatus;
+          if (data.internalNotes !== undefined) sync.internalNotes = data.internalNotes;
+          if (data.scheduledDate !== undefined) sync.scheduledDate = data.scheduledDate;
+          if (data.scheduledTime !== undefined) sync.scheduledTime = data.scheduledTime;
+          if (data.driverId !== undefined) sync.assignedToId = data.driverId;
+          if (Object.keys(sync).length > 0) {
+            await db.updateOranjeOperation(
+              linked.id,
+              sync,
+              (ctx as any)?.user?.name ?? (ctx as any)?.user?.email ?? "admin",
+            );
+          }
+        }
+      } catch (e) {
+        console.warn("[Sync] Falha ao propagar tour_operation → oranje_operation:", e);
+      }
+
       return { ok: true };
     }),
 

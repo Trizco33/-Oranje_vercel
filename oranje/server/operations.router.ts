@@ -98,6 +98,27 @@ export const operationsRouter = router({
         }
       }
       await db.updateOranjeOperation(id, { status, ...rest } as any, ctx.user.name ?? ctx.user.email ?? "admin");
+
+      // Propaga mudanças para tour_operations quando esta operação tem origem em um passeio premium.
+      // Evita divergência entre o painel "Passeios Premium" e a "Central de Operações".
+      try {
+        const op = await db.getOranjeOperationById(id);
+        if (op?.operationType === "premium_tour" && op.sourceId) {
+          const sync: Record<string, any> = {};
+          if (status) {
+            // tour_operations.operationStatus não tem "rejected" — mapeia para "cancelled".
+            sync.operationStatus = status === "rejected" ? "cancelled" : status;
+          }
+          if (rest.internalNotes !== undefined) sync.internalNotes = rest.internalNotes;
+          if (rest.assignedToId !== undefined) sync.driverId = rest.assignedToId;
+          if (Object.keys(sync).length > 0) {
+            await db.updateTourOperationStatus(op.sourceId, sync);
+          }
+        }
+      } catch (e) {
+        console.warn("[Sync] Falha ao propagar oranje_operation → tour_operation:", e);
+      }
+
       return { ok: true };
     }),
 

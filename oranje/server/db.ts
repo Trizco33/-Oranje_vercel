@@ -1220,6 +1220,26 @@ export async function getOranjeOperationById(id: number): Promise<OranjeOperatio
   return rows[0];
 }
 
+/**
+ * Busca uma oranje_operation pela origem (sourceTable + sourceId).
+ * Usado para sincronizar status/financeiro entre tour_operations e a Central de Operações.
+ */
+export async function findOranjeOperationBySource(
+  sourceTable: string,
+  sourceId: number
+): Promise<typeof oranjeOperations.$inferSelect | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select()
+    .from(oranjeOperations)
+    .where(and(
+      eq(oranjeOperations.sourceTable, sourceTable),
+      eq(oranjeOperations.sourceId, sourceId),
+    ))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
 export async function updateOranjeOperation(
   id: number,
   data: Partial<InsertOranjeOperation>,

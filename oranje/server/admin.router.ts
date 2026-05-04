@@ -53,15 +53,19 @@ export const adminRouter = router({
 
     update: adminProcedure.input(z.object({
       id: z.number(),
-      title: z.string().optional(),
-      description: z.string().optional(),
-      code: z.string().optional(),
-      discount: z.string().optional(),
-      startsAt: z.date().optional(),
-      endsAt: z.date().optional(),
-      isActive: z.boolean().optional(),
-    })).mutation(async ({ input: { id, ...data }, ctx }) => {
-      const result = await db.updateVoucher(id, data as any);
+      title: z.string().nullish(),
+      description: z.string().nullish(),
+      code: z.string().nullish(),
+      discount: z.string().nullish(),
+      startsAt: z.date().nullish(),
+      endsAt: z.date().nullish(),
+      isActive: z.boolean().nullish(),
+    }).passthrough()).mutation(async ({ input: { id, ...data }, ctx }) => {
+      const clean: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v !== null && v !== undefined) clean[k] = v;
+      }
+      const result = await db.updateVoucher(id, clean as any);
       await db.logAdminAction(ctx.user.id, "update_voucher", "voucher", id);
       return result;
     }),
@@ -115,16 +119,20 @@ export const adminRouter = router({
 
     update: adminProcedure.input(z.object({
       id: z.number(),
-      title: z.string().optional(),
-      description: z.string().optional(),
-      imageUrl: z.string().optional(),
-      linkUrl: z.string().optional(),
-      placement: z.enum(["footer_banner", "offers_page", "home_banner"]).optional(),
-      startsAt: z.date().optional(),
-      endsAt: z.date().optional(),
-      isActive: z.boolean().optional(),
-    })).mutation(async ({ input: { id, ...data }, ctx }) => {
-      const result = await db.updateAd(id, data as any);
+      title: z.string().nullish(),
+      description: z.string().nullish(),
+      imageUrl: z.string().nullish(),
+      linkUrl: z.string().nullish(),
+      placement: z.enum(["footer_banner", "offers_page", "home_banner"]).nullish(),
+      startsAt: z.date().nullish(),
+      endsAt: z.date().nullish(),
+      isActive: z.boolean().nullish(),
+    }).passthrough()).mutation(async ({ input: { id, ...data }, ctx }) => {
+      const clean: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v !== null && v !== undefined) clean[k] = v;
+      }
+      const result = await db.updateAd(id, clean as any);
       await db.logAdminAction(ctx.user.id, "update_ad", "ad", id);
       return result;
     }),
@@ -166,13 +174,17 @@ export const adminRouter = router({
 
     update: adminProcedure.input(z.object({
       id: z.number(),
-      name: z.string().optional(),
-      slug: z.string().optional(),
-      icon: z.string().optional(),
-      description: z.string().optional(),
-      coverImage: z.string().optional(),
-    })).mutation(async ({ input: { id, ...data }, ctx }) => {
-      const result = await db.updateCategory(id, data as any);
+      name: z.string().nullish(),
+      slug: z.string().nullish(),
+      icon: z.string().nullish(),
+      description: z.string().nullish(),
+      coverImage: z.string().nullish(),
+    }).passthrough()).mutation(async ({ input: { id, ...data }, ctx }) => {
+      const clean: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v !== null && v !== undefined) clean[k] = v;
+      }
+      const result = await db.updateCategory(id, clean as any);
       await db.logAdminAction(ctx.user.id, "update_category", "category", id);
       return result;
     }),
@@ -214,15 +226,19 @@ export const adminRouter = router({
 
     update: adminProcedure.input(z.object({
       id: z.number(),
-      name: z.string().optional(),
-      plan: z.enum(["Essencial", "Destaque", "Premium"]).optional(),
-      contactName: z.string().optional(),
-      contactWhatsapp: z.string().optional(),
-      contactEmail: z.string().optional(),
-      logoUrl: z.string().optional(),
-      status: z.enum(["pending", "active", "inactive"]).optional(),
-    })).mutation(async ({ input: { id, ...data }, ctx }) => {
-      const result = await db.updatePartner(id, data as any);
+      name: z.string().nullish(),
+      plan: z.enum(["Essencial", "Destaque", "Premium"]).nullish(),
+      contactName: z.string().nullish(),
+      contactWhatsapp: z.string().nullish(),
+      contactEmail: z.string().nullish(),
+      logoUrl: z.string().nullish(),
+      status: z.enum(["pending", "active", "inactive"]).nullish(),
+    }).passthrough()).mutation(async ({ input: { id, ...data }, ctx }) => {
+      const clean: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v !== null && v !== undefined) clean[k] = v;
+      }
+      const result = await db.updatePartner(id, clean as any);
       await db.logAdminAction(ctx.user.id, "update_partner", "partner", id);
       return result;
     }),
@@ -266,16 +282,20 @@ export const adminRouter = router({
 
     update: adminProcedure.input(z.object({
       id: z.number(),
-      title: z.string().optional(),
-      description: z.string().optional(),
-      placeIds: z.array(z.number()).optional(),
-      duration: z.string().optional(),
-      theme: z.string().optional(),
-      isPublic: z.boolean().optional(),
-      coverImage: z.string().optional(),
-      tags: z.array(z.string()).optional(),
-    })).mutation(async ({ input: { id, ...data }, ctx }) => {
-      const result = await db.updateRoute(id, data as any);
+      title: z.string().nullish(),
+      description: z.string().nullish(),
+      placeIds: z.array(z.number()).nullish(),
+      duration: z.string().nullish(),
+      theme: z.string().nullish(),
+      isPublic: z.boolean().nullish(),
+      coverImage: z.string().nullish(),
+      tags: z.array(z.string()).nullish(),
+    }).passthrough()).mutation(async ({ input: { id, ...data }, ctx }) => {
+      const clean: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v !== null && v !== undefined) clean[k] = v;
+      }
+      const result = await db.updateRoute(id, clean as any);
       await db.logAdminAction(ctx.user.id, "update_route", "route", id);
       return result;
     }),

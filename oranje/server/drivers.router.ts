@@ -132,26 +132,26 @@ export const driversRouter = router({
     .input(
       z.object({
         id: z.string(),
-        name: z.string().optional(),
-        whatsapp: z.string().optional(),
-        serviceType: z.string().optional(),
-        region: z.string().optional(),
-        vehicleModel: z.string().optional(),
-        vehicleColor: z.string().optional(),
-        plate: z.string().optional(),
-        capacity: z.number().int().optional(),
-        photoUrl: z.string().optional(),
-        notes: z.string().optional(),
-        status: z.enum(["PENDING", "ACTIVE", "REJECTED"]).optional(),
-        isVerified: z.boolean().optional(),
-        isActive: z.boolean().optional(),
-        isPartner: z.boolean().optional(),
-      })
+        name: z.string().nullish(),
+        whatsapp: z.string().nullish(),
+        serviceType: z.string().nullish(),
+        region: z.string().nullish(),
+        vehicleModel: z.string().nullish(),
+        vehicleColor: z.string().nullish(),
+        plate: z.string().nullish(),
+        capacity: z.number().int().nullish(),
+        photoUrl: z.string().nullish(),
+        notes: z.string().nullish(),
+        status: z.enum(["PENDING", "ACTIVE", "REJECTED"]).nullish(),
+        isVerified: z.boolean().nullish(),
+        isActive: z.boolean().nullish(),
+        isPartner: z.boolean().nullish(),
+      }).passthrough()
     )
     .mutation(async ({ input }) => {
       const { id, ...updates } = input;
       const cleanUpdates = Object.fromEntries(
-        Object.entries(updates).filter(([, value]) => value !== undefined)
+        Object.entries(updates).filter(([, value]) => value !== undefined && value !== null)
       );
       await db.updateDriver(id, cleanUpdates as any);
       return { success: true };
@@ -235,26 +235,26 @@ export const driversRouter = router({
     .input(
       z.object({
         id: z.string(),
-        name: z.string().optional(),
-        whatsapp: z.string().optional(),
-        serviceType: z.string().optional(),
-        region: z.string().optional(),
-        vehicleModel: z.string().optional(),
-        vehicleColor: z.string().optional(),
-        plate: z.string().optional(),
-        capacity: z.number().int().optional(),
-        photoUrl: z.string().optional(),
-        notes: z.string().optional(),
-        status: z.enum(["PENDING", "ACTIVE", "REJECTED"]).optional(),
-        isVerified: z.boolean().optional(),
-        isActive: z.boolean().optional(),
-        isPartner: z.boolean().optional(),
-      })
+        name: z.string().nullish(),
+        whatsapp: z.string().nullish(),
+        serviceType: z.string().nullish(),
+        region: z.string().nullish(),
+        vehicleModel: z.string().nullish(),
+        vehicleColor: z.string().nullish(),
+        plate: z.string().nullish(),
+        capacity: z.number().int().nullish(),
+        photoUrl: z.string().nullish(),
+        notes: z.string().nullish(),
+        status: z.enum(["PENDING", "ACTIVE", "REJECTED"]).nullish(),
+        isVerified: z.boolean().nullish(),
+        isActive: z.boolean().nullish(),
+        isPartner: z.boolean().nullish(),
+      }).passthrough()
     )
     .mutation(async ({ input }) => {
       const { id, ...updates } = input;
       const cleanUpdates = Object.fromEntries(
-        Object.entries(updates).filter(([, value]) => value !== undefined)
+        Object.entries(updates).filter(([, value]) => value !== undefined && value !== null)
       );
       await db.updateDriver(id, cleanUpdates as any);
       return { success: true };

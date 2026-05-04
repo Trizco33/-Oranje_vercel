@@ -35,17 +35,44 @@ export function AdminVouchers() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      // Allow-list: só campos do formulário, nada de null/undefined/""
+      const CREATE_FIELDS = [
+        "placeId", "title", "description", "code", "discount",
+        "image", "startsAt", "endsAt", "isActive",
+      ] as const;
+      const UPDATE_FIELDS = [
+        "title", "description", "code", "discount",
+        "image", "startsAt", "endsAt", "isActive",
+      ] as const;
+      const fields = editingVoucher ? UPDATE_FIELDS : CREATE_FIELDS;
+      const payload: Record<string, any> = {};
+      for (const k of fields) {
+        const v = data[k];
+        if (v === undefined || v === null || v === "") continue;
+        if (k === "placeId") {
+          const n = parseInt(String(v), 10);
+          if (!Number.isNaN(n)) payload[k] = n;
+        } else if (k === "startsAt" || k === "endsAt") {
+          const d = new Date(v);
+          if (!Number.isNaN(d.getTime())) payload[k] = d;
+        } else {
+          payload[k] = v;
+        }
+      }
+
       if (editingVoucher) {
-        await updateVoucher.mutateAsync({ id: editingVoucher.id, ...data });
+        await updateVoucher.mutateAsync({ id: editingVoucher.id, ...payload });
         toast.success("Voucher atualizado");
       } else {
-        await createVoucher.mutateAsync(data as any);
+        await createVoucher.mutateAsync(payload as any);
         toast.success("Voucher criado");
       }
       setIsModalOpen(false);
       refetch();
-    } catch (error) {
-      toast.error("Erro ao salvar voucher");
+    } catch (error: any) {
+      console.error("[AdminVouchers] save error:", error);
+      const msg = error?.message || error?.shape?.message || "Erro ao salvar voucher";
+      toast.error(msg.length > 120 ? "Erro ao salvar voucher — verifique os campos" : msg);
     }
   };
 

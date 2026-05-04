@@ -35,17 +35,29 @@ export function AdminRoutes() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      // Allow-list: só campos do formulário, nada de null/undefined/""
+      const FORM_FIELDS = [
+        "title", "description", "theme", "duration", "coverImage", "isPublic",
+      ] as const;
+      const payload: Record<string, any> = {};
+      for (const k of FORM_FIELDS) {
+        const v = data[k];
+        if (v !== undefined && v !== null && v !== "") payload[k] = v;
+      }
+
       if (editingRoute) {
-        await updateRoute.mutateAsync({ id: editingRoute.id, ...data });
+        await updateRoute.mutateAsync({ id: editingRoute.id, ...payload });
         toast.success("Roteiro atualizado");
       } else {
-        await createRoute.mutateAsync(data as any);
+        await createRoute.mutateAsync(payload as any);
         toast.success("Roteiro criado");
       }
       setIsModalOpen(false);
       refetch();
-    } catch (error) {
-      toast.error("Erro ao salvar roteiro");
+    } catch (error: any) {
+      console.error("[AdminRoutes] save error:", error);
+      const msg = error?.message || error?.shape?.message || "Erro ao salvar roteiro";
+      toast.error(msg.length > 120 ? "Erro ao salvar roteiro — verifique os campos" : msg);
     }
   };
 

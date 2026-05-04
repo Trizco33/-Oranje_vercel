@@ -35,18 +35,36 @@ export function AdminDrivers() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      // Allow-list: só campos do formulário, nada de null/undefined/""
+      const FORM_FIELDS = [
+        "name", "whatsapp", "photoUrl", "vehicleModel", "vehicleColor",
+        "plate", "capacity", "serviceType", "region", "area", "notes",
+        "status", "isVerified", "isActive", "isPartner",
+      ] as const;
+      const payload: Record<string, any> = {};
+      for (const k of FORM_FIELDS) {
+        const v = data[k];
+        if (v === undefined || v === null || v === "") continue;
+        if (k === "capacity") {
+          const n = parseInt(String(v), 10);
+          if (!Number.isNaN(n)) payload[k] = n;
+        } else {
+          payload[k] = v;
+        }
+      }
+
       if (editingDriver) {
-        await updateDriver.mutateAsync({ id: editingDriver.id, ...data });
+        await updateDriver.mutateAsync({ id: editingDriver.id, ...payload });
         toast.success("Motorista atualizado");
       } else {
         toast.error("Criação de motoristas deve ser feita através do app");
       }
       setIsModalOpen(false);
       refetch();
-    } catch (error) {
-      console.error("Erro ao salvar motorista:", error);
-      const errorMsg = error instanceof Error ? error.message : "Erro desconhecido";
-      toast.error(`Erro: ${errorMsg}`);
+    } catch (error: any) {
+      console.error("[AdminDrivers] save error:", error);
+      const msg = error?.message || error?.shape?.message || "Erro ao salvar motorista";
+      toast.error(msg.length > 120 ? "Erro ao salvar motorista — verifique os campos" : msg);
     }
   };
 

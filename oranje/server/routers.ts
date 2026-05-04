@@ -266,19 +266,23 @@ export const appRouter = router({
 
     update: adminProcedure.input(z.object({
       id: z.number(),
-      title: z.string().optional(),
-      description: z.string().optional(),
-      startsAt: z.date().optional(),
-      endsAt: z.date().optional(),
-      location: z.string().optional(),
-      mapsUrl: z.string().optional(),
-      coverImage: z.string().optional(),
-      isFeatured: z.boolean().optional(),
-      tags: z.array(z.string()).optional(),
-      price: z.string().optional(),
-      status: z.enum(["active", "cancelled", "past"]).optional(),
-    })).mutation(async ({ input: { id, ...data }, ctx }) => {
-      const result = await db.updateEvent(id, data as any);
+      title: z.string().nullish(),
+      description: z.string().nullish(),
+      startsAt: z.coerce.date().nullish(),
+      endsAt: z.coerce.date().nullish(),
+      location: z.string().nullish(),
+      mapsUrl: z.string().nullish(),
+      coverImage: z.string().nullish(),
+      isFeatured: z.boolean().nullish(),
+      tags: z.array(z.string()).nullish(),
+      price: z.string().nullish(),
+      status: z.enum(["active", "cancelled", "past"]).nullish(),
+    }).passthrough()).mutation(async ({ input: { id, ...data }, ctx }) => {
+      const clean: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v !== null && v !== undefined) clean[k] = v;
+      }
+      const result = await db.updateEvent(id, clean as any);
       await db.logAdminAction(ctx.user.id, "update_event", "event", id);
       return result;
     }),

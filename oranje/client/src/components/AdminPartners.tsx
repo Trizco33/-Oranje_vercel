@@ -35,17 +35,30 @@ export function AdminPartners() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      // Allow-list: só campos do formulário, nada de null/undefined/""
+      const FORM_FIELDS = [
+        "name", "plan", "contactName", "contactWhatsapp",
+        "contactEmail", "logoUrl", "status",
+      ] as const;
+      const payload: Record<string, any> = {};
+      for (const k of FORM_FIELDS) {
+        const v = data[k];
+        if (v !== undefined && v !== null && v !== "") payload[k] = v;
+      }
+
       if (editingPartner) {
-        await updatePartner.mutateAsync({ id: editingPartner.id, ...data });
+        await updatePartner.mutateAsync({ id: editingPartner.id, ...payload });
         toast.success("Parceiro atualizado");
       } else {
-        await createPartner.mutateAsync(data as any);
+        await createPartner.mutateAsync(payload as any);
         toast.success("Parceiro criado");
       }
       setIsModalOpen(false);
       refetch();
-    } catch (error) {
-      toast.error("Erro ao salvar parceiro");
+    } catch (error: any) {
+      console.error("[AdminPartners] save error:", error);
+      const msg = error?.message || error?.shape?.message || "Erro ao salvar parceiro";
+      toast.error(msg.length > 120 ? "Erro ao salvar parceiro — verifique os campos" : msg);
     }
   };
 

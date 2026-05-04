@@ -35,17 +35,36 @@ export function AdminAds() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      // Allow-list: só campos do formulário, nada de null/undefined/""
+      const FORM_FIELDS = [
+        "title", "description", "imageUrl", "linkUrl",
+        "placement", "startsAt", "endsAt", "isActive",
+      ] as const;
+      const payload: Record<string, any> = {};
+      for (const k of FORM_FIELDS) {
+        const v = data[k];
+        if (v === undefined || v === null || v === "") continue;
+        if (k === "startsAt" || k === "endsAt") {
+          const d = new Date(v);
+          if (!Number.isNaN(d.getTime())) payload[k] = d;
+        } else {
+          payload[k] = v;
+        }
+      }
+
       if (editingAd) {
-        await updateAd.mutateAsync({ id: editingAd.id, ...data });
+        await updateAd.mutateAsync({ id: editingAd.id, ...payload });
         toast.success("Anúncio atualizado");
       } else {
-        await createAd.mutateAsync(data as any);
+        await createAd.mutateAsync(payload as any);
         toast.success("Anúncio criado");
       }
       setIsModalOpen(false);
       refetch();
-    } catch (error) {
-      toast.error("Erro ao salvar anúncio");
+    } catch (error: any) {
+      console.error("[AdminAds] save error:", error);
+      const msg = error?.message || error?.shape?.message || "Erro ao salvar anúncio";
+      toast.error(msg.length > 120 ? "Erro ao salvar anúncio — verifique os campos" : msg);
     }
   };
 

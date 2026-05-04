@@ -39,17 +39,36 @@ export function AdminEvents() {
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      // Allow-list: só campos do formulário, nada de null/undefined/""
+      const FORM_FIELDS = [
+        "title", "description", "startsAt", "endsAt", "location",
+        "mapsUrl", "price", "isFeatured", "coverImage",
+      ] as const;
+      const payload: Record<string, any> = {};
+      for (const k of FORM_FIELDS) {
+        const v = data[k];
+        if (v === undefined || v === null || v === "") continue;
+        if (k === "startsAt" || k === "endsAt") {
+          const d = new Date(v);
+          if (!Number.isNaN(d.getTime())) payload[k] = d;
+        } else {
+          payload[k] = v;
+        }
+      }
+
       if (editingEvent) {
-        await updateEvent.mutateAsync({ id: editingEvent.id, ...data });
+        await updateEvent.mutateAsync({ id: editingEvent.id, ...payload });
         toast.success("Evento atualizado");
       } else {
-        await createEvent.mutateAsync(data as any);
+        await createEvent.mutateAsync(payload as any);
         toast.success("Evento criado");
       }
       setIsModalOpen(false);
       refetch();
-    } catch (error) {
-      toast.error("Erro ao salvar evento");
+    } catch (error: any) {
+      console.error("[AdminEvents] save error:", error);
+      const msg = error?.message || error?.shape?.message || "Erro ao salvar evento";
+      toast.error(msg.length > 120 ? "Erro ao salvar evento — verifique os campos" : msg);
     }
   };
 

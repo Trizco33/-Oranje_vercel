@@ -37,8 +37,7 @@ export const tourOperationsRouter = router({
 
       // Validação de elegibilidade — espelha a regra do CTA no front.
       // Passeios walk-only ou sem flag de motorista NÃO podem ser solicitados via este endpoint.
-      const t = tour as any;
-      const isEligible = !t.walkOnly && (t.requiresTransport || t.recommendedWithDriver);
+      const isEligible = !tour.walkOnly && (tour.requiresTransport || tour.recommendedWithDriver);
       if (!isEligible) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -184,7 +183,7 @@ export const tourOperationsRouter = router({
             await db.updateOranjeOperation(
               linked.id,
               sync,
-              (ctx as any)?.user?.name ?? (ctx as any)?.user?.email ?? "admin",
+              ctx.user.name ?? ctx.user.email ?? "admin",
             );
           }
         }

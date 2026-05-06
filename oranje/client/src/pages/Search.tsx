@@ -1,7 +1,7 @@
 import { OranjeHeader } from "@/components/OranjeHeader";
 import { PlaceCard } from "@/components/PlaceCard";
 import { TabBar } from "@/components/TabBar";
-import { useCategoriesList, usePlacesList, useFavorites } from "@/hooks/useMockData";
+import { useCategoriesList, usePlacesSearch, useFavorites } from "@/hooks/useMockData";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Filter, Search, X } from "lucide-react";
@@ -56,9 +56,17 @@ export default function SearchPage() {
 
   const { user } = useAuth();
   const { data: categories } = useCategoriesList();
-  // Limit alto: a busca filtra no cliente, então precisamos de TODOS os lugares
-  // (do contrário, lugares com id alto ficavam de fora — bug do Istok não aparecer).
-  const { data: places, isLoading } = usePlacesList({ categoryId: selectedCategory, limit: 500, offset: 0 });
+  // Busca server-side: o backend filtra por nome/descrição/endereço/categoria
+  // (e tags) usando LIKE no MySQL. Isso escala pra centenas/milhares de lugares
+  // sem mandar tudo pro navegador. Usa o `debouncedQuery` pra não bater no
+  // backend a cada tecla.
+  const { data: places, isLoading, isFetching } = usePlacesSearch({
+    query: debouncedQuery,
+    categoryId: selectedCategory,
+    tags: selectedTags,
+    limit: 60,
+    offset: 0,
+  });
 
   const { favoriteIds, addFavorite, removeFavorite } = useFavorites(!!user);
 
@@ -89,40 +97,21 @@ export default function SearchPage() {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
   }
 
-  const filteredPlaces = places?.filter((p: any) => {
-    if (debouncedQuery.trim().length > 0) {
-      const q = debouncedQuery.toLowerCase().trim();
-      const name = (p.name ?? "").toLowerCase();
-      const desc = (p.description ?? "").toLowerCase();
-      const addr = (p.address ?? "").toLowerCase();
-      const catName = (categories?.find((c: any) => c.id === p.categoryId)?.name ?? "").toLowerCase();
-      const neighborhood = (p.neighborhood ?? p.bairro ?? "").toLowerCase();
-      if (
-        !name.includes(q) &&
-        !desc.includes(q) &&
-        !addr.includes(q) &&
-        !catName.includes(q) &&
-        !neighborhood.includes(q)
-      ) return false;
+  // Filtragem (texto / categoria / tags) já vem feita pelo backend.
+  // O servidor também ordena por relevância — só reordenamos no cliente quando
+  // o usuário escolhe "Melhor avaliação" ou "Mais recente".
+  const filteredPlaces = (() => {
+    if (!places) return places;
+    if (sortBy === "avaliacao") {
+      return [...places].sort((a: any, b: any) => (b.rating ?? 0) - (a.rating ?? 0));
     }
-    if (selectedTags.length > 0) {
-      const placeTags: string[] = Array.isArray(p.tags) ? p.tags : [];
-      if (!selectedTags.some(t => placeTags.includes(t))) return false;
+    if (sortBy === "recente") {
+      return [...places].sort(
+        (a: any, b: any) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime(),
+      );
     }
-    return true;
-  }).sort((a: any, b: any) => {
-    if (sortBy === "avaliacao") return (b.rating ?? 0) - (a.rating ?? 0);
-    if (sortBy === "recente") return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
-    if (sortBy === "relevancia" && debouncedQuery.trim().length > 0) {
-      const q = debouncedQuery.toLowerCase().trim();
-      const aName = (a.name ?? "").toLowerCase();
-      const bName = (b.name ?? "").toLowerCase();
-      const aStarts = aName.startsWith(q) ? 0 : 1;
-      const bStarts = bName.startsWith(q) ? 0 : 1;
-      return aStarts - bStarts;
-    }
-    return 0;
-  });
+    return places;
+  })();
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--ds-color-bg-primary)" }}>
@@ -227,7 +216,7 @@ export default function SearchPage() {
         {/* Results */}
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs" style={{ color: "var(--ds-color-text-muted)" }}>
-            {isLoading ? "Buscando..." : `${filteredPlaces?.length ?? 0} resultados`}
+            {isLoading || isFetching ? "Buscando..." : `${filteredPlaces?.length ?? 0} resultados`}
           </p>
           {(selectedTags.length > 0 || selectedCategory || selectedPriceRange || selectedLocation || sortBy !== "relevancia" || debouncedQuery) && (
             <button

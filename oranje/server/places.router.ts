@@ -3,7 +3,7 @@ import { publicProcedure, adminProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import * as db from "./db";
 import { places, placePhotos, categories } from "../drizzle/schema";
-import { eq, like, and, asc, inArray, sql } from "drizzle-orm";
+import { eq, and, asc, inArray, sql, type SQL } from "drizzle-orm";
 
 export const placesRouter = router({
   // Get all places (for listing)
@@ -246,29 +246,123 @@ export const placesRouter = router({
       return { success: true, count: input.orderedIds.length };
     }),
 
-  // Search places
+  // Search places — full server-side text search.
+  //
+  // Por que server-side: a tela /app/buscar carregava todos os lugares e filtrava
+  // no cliente, o que não escala (passa de ~500 lugares e o limit volta a esconder
+  // resultados, e o payload incha). Aqui usamos LIKE direto no MySQL — colunas
+  // estão em collation utf8mb4_*_ci, então a comparação já é case-insensitive
+  // e tolera acentos do mesmo grupo (ex: "isto" casa "Istok").
+  //
+  // Campos pesquisados: name, shortDesc, longDesc, address, city e o nome
+  // da categoria (via LEFT JOIN). O schema de `places` não tem coluna
+  // `neighborhood`/`bairro` (ver drizzle/schema.ts) — bairro/região vivem
+  // dentro de `address` (ex: "Rua Figueiras, bairro Palm Park...") e de
+  // `longDesc`, então o LIKE nesses dois campos já cobre a busca por bairro.
+  // O filtro client-side anterior chamava `p.neighborhood ?? p.bairro`, que
+  // era código morto (sempre undefined). Filtros opcionais: categoryId e
+  // tags (semântica OR, igual ao filtro client-side anterior).
+  //
+  // Ordenação por relevância: match no início do name > contém no name >
+  // demais campos. Empates desempatam por rating desc.
   search: publicProcedure
     .input(z.object({
-      query: z.string(),
-      limit: z.number().default(10),
+      query: z.string().default(""),
+      categoryId: z.number().optional(),
+      tags: z.array(z.string()).optional(),
+      limit: z.number().int().positive().max(100).default(50),
+      offset: z.number().int().min(0).default(0),
     }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return [];
+      const conn = await getDb();
+      if (!conn) return [];
 
       try {
-        // Busca por nome — exclui lugares pendentes e inativos
-        const results = await db
-          .select()
-          .from(places)
-          .where(and(
-            like(places.name, `%${input.query}%`),
-            eq(places.dataPending, false),
-            eq(places.status, "active"),
-          ))
-          .limit(input.limit);
+        const conditions = [
+          eq(places.status, "active"),
+          eq(places.dataPending, false),
+        ];
+        if (input.categoryId) conditions.push(eq(places.categoryId, input.categoryId));
 
-        return results;
+        const rawQuery = input.query.trim();
+        // Escapa wildcards do LIKE pra evitar que "%" / "_" digitados pelo
+        // usuário virem coringas (e o "\" precisa ir primeiro).
+        const escaped = rawQuery
+          .replace(/\\/g, "\\\\")
+          .replace(/%/g, "\\%")
+          .replace(/_/g, "\\_");
+        const likePattern = `%${escaped}%`;
+        const startsPattern = `${escaped}%`;
+
+        if (rawQuery.length > 0) {
+          conditions.push(
+            sql`(
+              ${places.name} LIKE ${likePattern}
+              OR ${places.shortDesc} LIKE ${likePattern}
+              OR ${places.longDesc} LIKE ${likePattern}
+              OR ${places.address} LIKE ${likePattern}
+              OR ${places.city} LIKE ${likePattern}
+              OR ${categories.name} LIKE ${likePattern}
+            )`
+          );
+        }
+
+        // Tags: semântica OR — o lugar precisa ter pelo menos uma das tags
+        // marcadas pelo usuário. JSON_CONTAINS espera JSON quotado.
+        if (input.tags && input.tags.length > 0) {
+          const tagClauses: SQL[] = input.tags.map(
+            (t) => sql`JSON_CONTAINS(${places.tags}, ${JSON.stringify(t)})`,
+          );
+          const [first, ...rest] = tagClauses;
+          const joined = rest.reduce<SQL>(
+            (acc, c) => sql`${acc} OR ${c}`,
+            first,
+          );
+          conditions.push(sql`(${joined})`);
+        }
+
+        // Score de relevância: menor = mais relevante.
+        // 1: name começa com a query  · 2: name contém  · 3: shortDesc/longDesc/address/city
+        // 4: nome da categoria        · 5: sem texto buscado (lista neutra)
+        // O `.as("relevance")` é obrigatório: sem ele o ORDER BY não consegue
+        // referenciar o alias da expressão e o MySQL devolve erro 1054.
+        const relevance = (rawQuery.length === 0
+          ? sql<number>`5`
+          : sql<number>`CASE
+              WHEN ${places.name} LIKE ${startsPattern} THEN 1
+              WHEN ${places.name} LIKE ${likePattern} THEN 2
+              WHEN ${places.shortDesc} LIKE ${likePattern}
+                OR ${places.longDesc} LIKE ${likePattern}
+                OR ${places.address} LIKE ${likePattern}
+                OR ${places.city} LIKE ${likePattern} THEN 3
+              WHEN ${categories.name} LIKE ${likePattern} THEN 4
+              ELSE 5
+            END`
+        ).as("relevance");
+
+        const rows = await conn
+          .select({
+            place: places,
+            categoryName: categories.name,
+            categorySlug: categories.slug,
+            relevance,
+          })
+          .from(places)
+          .leftJoin(categories, eq(places.categoryId, categories.id))
+          .where(and(...conditions))
+          .orderBy(
+            sql`relevance ASC`,
+            sql`${places.rating} DESC`,
+            asc(places.id),
+          )
+          .limit(input.limit)
+          .offset(input.offset);
+
+        return rows.map((r) => ({
+          ...r.place,
+          categoryName: r.categoryName,
+          categorySlug: r.categorySlug,
+        }));
       } catch (error) {
         console.error("[Places] Error searching places:", error);
         return [];

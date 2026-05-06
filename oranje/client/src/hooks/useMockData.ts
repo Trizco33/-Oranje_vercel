@@ -70,6 +70,44 @@ export function usePlacesList(params?: {
   };
 }
 
+// Server-side search: substitui o filtro client-side da tela /app/buscar.
+// Mandar `query=""` (sem categoryId/tags) devolve uma lista neutra paginada,
+// então também serve pra exibir resultados quando a caixa de busca está vazia.
+// `keepPreviousData` evita o flicker de "Buscando..." entre teclas digitadas.
+export function usePlacesSearch(params: {
+  query: string;
+  categoryId?: number;
+  tags?: string[];
+  limit?: number;
+  offset?: number;
+  enabled?: boolean;
+}) {
+  const { enabled = true, ...rest } = params;
+  const query = trpc.places.search.useQuery(
+    {
+      query: rest.query,
+      categoryId: rest.categoryId,
+      tags: rest.tags && rest.tags.length > 0 ? rest.tags : undefined,
+      limit: rest.limit ?? 50,
+      offset: rest.offset ?? 0,
+    },
+    {
+      enabled,
+      staleTime: 15_000,
+      retry: 1,
+      throwOnError: false,
+      placeholderData: (prev) => prev,
+    }
+  );
+  return {
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    error: query.error,
+    refetch: query.refetch,
+  };
+}
+
 export function usePlaceById(id: number) {
   const query = trpc.places.byId.useQuery({ id }, {
     enabled: !!id,
